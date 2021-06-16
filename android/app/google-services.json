@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "773120696330",
+    "firebase_url": "https://apppronutrir-e0737.firebaseio.com",
+    "project_id": "apppronutrir-e0737",
+    "storage_bucket": "apppronutrir-e0737.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773120696330:android:0c90f29b57d661b1e9bff3",
+        "android_client_info": {
+          "package_name": "com.apppronutrir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773120696330-onmq4gvmftebnmkmao1t9hfauvdtd1c2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apppronutrir",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "773120696330-lrpe35rmbmprn236vavgkkdkg8sghbm6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8_6iCJbbmL5aYUgvSwg8fmdd5mZOSHyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773120696330-lrpe35rmbmprn236vavgkkdkg8sghbm6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "773120696330-5a7i9hvr8obomtljrmd7viphem35uvot.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.Pronutrir.AppPronutrir"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773120696330:android:dfb0c1875fffacace9bff3",
+        "android_client_info": {
+          "package_name": "com.apppronutrircompany"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773120696330-lrpe35rmbmprn236vavgkkdkg8sghbm6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8_6iCJbbmL5aYUgvSwg8fmdd5mZOSHyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773120696330-lrpe35rmbmprn236vavgkkdkg8sghbm6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "773120696330-5a7i9hvr8obomtljrmd7viphem35uvot.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.Pronutrir.AppPronutrir"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

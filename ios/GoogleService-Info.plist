@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>773120696330-2sfrpaqfdairg4kmcmmij9orintf3dnr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.773120696330-2sfrpaqfdairg4kmcmmij9orintf3dnr</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>773120696330-onmq4gvmftebnmkmao1t9hfauvdtd1c2.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCIIEbkgyZciTHCz3Dn_camzvnueQoVqI0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>773120696330</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.AppPronutrirCompany</string>
+	<key>PROJECT_ID</key>
+	<string>apppronutrir-e0737</string>
+	<key>STORAGE_BUCKET</key>
+	<string>apppronutrir-e0737.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:773120696330:ios:5cd3feb52d6f0e61e9bff3</string>
+	<key>DATABASE_URL</key>
+	<string>https://apppronutrir-e0737.firebaseio.com</string>
+</dict>
+</plist>
