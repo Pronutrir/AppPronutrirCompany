@@ -2,10 +2,8 @@ import * as React from 'react';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 
 import Home from '../pages/home/home';
-import Teste from '../pages/teste';
 import ConsultaCpf from '../pages/consultaCPF/consultaCpf';
 import MyHeader from '../componentes/MyHeader';
-import ValidacaoSmsEmail from '../pages/validacaoSmsEmail/validacaoSmsEmail';
 import Login from '../pages/login/login';
 import Cadastro from '../pages/cadastro/cadastro';
 import ConsultaNome from '../pages/consultarNome/consultarNome';
@@ -51,15 +49,6 @@ export default function routeApp() {
             <Stack.Screen
                 name='ConsultaCpf'
                 component={ConsultaCpf}
-            />
-            <Stack.Screen
-                name='ValidacaoSmsEmail'
-                component={ValidacaoSmsEmail}
-            />
-            <Stack.Screen
-                name='Teste'
-                component={Teste}
-                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name='Login'

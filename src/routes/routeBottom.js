@@ -15,7 +15,7 @@ export default function routeBottom() {
     const size = Dimensions.get('screen').width / 20
     const sizeBottom = Dimensions.get('screen').height / 15
 
-    const tabBarVisibility = ( route ) => {
+    /* const tabBarVisibility = ( route ) => {
         const routeName = route.state
         ? route.state.routes[route.state.index].name
         : '';
@@ -24,7 +24,7 @@ export default function routeBottom() {
             return false
         }
         return true;
-    } 
+    }  */
 
     return (
         <Tab.Navigator
@@ -57,9 +57,9 @@ export default function routeBottom() {
             <Tab.Screen
                 name='Inicio'
                 component={DashBoardNavigator}
-                options={({ route }) => ({
+                /* options={({ route }) => ({
                     tabBarVisible: tabBarVisibility(route)
-                })}
+                })} */
             />
             <Tab.Screen
                 name='Busca'
