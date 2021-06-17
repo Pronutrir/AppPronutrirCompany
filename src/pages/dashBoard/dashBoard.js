@@ -7,7 +7,6 @@ import Api from '../../services/api';
 import styles from './style';
 import AuthContext from '../../contexts/auth';
 import ErrorContext from '../../contexts/errorNotification';
-import AgendaConsultaContext from '../../contexts/agendaConsultas';
 import AgendarConsultaImg from '../../assets/svg/AgendarConsulta.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import LembreteImg from '../../assets/svg/lembrete.svg';
@@ -26,7 +25,6 @@ export default function dashBoard({ navigation }) {
     const { addError } = useContext(ErrorContext);
     const { stateAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
-    const { dispathConvenios } = useContext(AgendaConsultaContext);
     const [proximaconsulta, setProximaConsulta] = useState(null);
     const [saudacao, setSaudacao] = useState();
     const [aviso, setAviso] = useState();

@@ -1,10 +1,8 @@
 import React, { useEffect, useContext } from 'react';
 import { StyleSheet, Text, SafeAreaView, View, TouchableOpacity, Dimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import AgendaConsultaContext from '../../contexts/agendaConsultas';
 import NotificacaoSvg from '../../assets/svg/notificacao.svg';
 import ExcluirSvg from '../../assets/svg/excluir.svg';
-import AuthContext from '../../contexts/auth';
 import moment from 'moment';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
@@ -12,7 +10,6 @@ export default function lembretesNotificacoes() {
 
     const size = Dimensions.get('screen').width / 15
 
-    const { HistoryNotifyFirabase, stateConsultas, deleteNotifyFirabase } = useContext(AgendaConsultaContext);
     const { Notifications } = stateConsultas;
 
     const deleteNotificacao = async (refDoc) => {
@@ -24,7 +21,7 @@ export default function lembretesNotificacoes() {
     }
 
     useEffect(() => {
-        HistoryNotifyFirabase();
+       
     }, [])
 
     const renderItem = ({ item }) => (

@@ -1,6 +1,5 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import RouteBottom from '../routes/routeBottom';
 import MyDrawerContent from '../componentes/MyDrawerContent';
 import { InitialStackNavigator } from '../routes/routeDashboard';
 

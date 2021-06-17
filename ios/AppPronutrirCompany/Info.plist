@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -35,7 +37,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<!-- Required with iOS 10 and higher -->
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) Gostaria de acessar sua camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
