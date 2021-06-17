@@ -1,15 +1,12 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Modal, Text, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
 import PhotoSvg from '../assets/svg/foto.svg';
-import AgendaConsultaContext from '../contexts/agendaConsultas';
-import { precoMask } from '../services/validacoes';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 
 export default function MyModalOptions({ activeModal, setActiveModal, option1, option2 }) {
 
     const size = Dimensions.get('screen').width / 10
 
-    const { stateConsultas } = useContext(AgendaConsultaContext);
     const _view = useRef(null);
     const [childrenIds, setChildrenIds] = useState();
 

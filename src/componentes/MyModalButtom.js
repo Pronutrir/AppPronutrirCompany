@@ -1,9 +1,6 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Modal, Text, TouchableOpacity } from 'react-native';
 import OkImg from '../assets/svg/ok.svg';
-import AgendaConsultaContext from '../contexts/agendaConsultas';
-import { precoMask } from '../services/validacoes';
-import MyLoadingBall from './MyLoadingBall';
 
 export default function MyModalButtom({ activeModal, setActiveModal, action, label }) {
 

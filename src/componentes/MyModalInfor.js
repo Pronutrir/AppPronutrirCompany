@@ -2,15 +2,12 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Modal, Text, TouchableOpacity, Dimensions } from 'react-native';
 import OkImg from '../assets/svg/ok.svg';
 import Credencial from '../assets/svg/carteira-de-identidade.svg';
-import AgendaConsultaContext from '../contexts/agendaConsultas';
-import { precoMask } from '../services/validacoes';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 
 export default function MyModalInfor({ activeModal, setActiveModal, message }) {
 
     const size = Dimensions.get('screen').width / 10
 
-    const { stateConsultas } = useContext(AgendaConsultaContext);
     const _view = useRef(null);
     const [childrenIds, setChildrenIds] = useState();
 

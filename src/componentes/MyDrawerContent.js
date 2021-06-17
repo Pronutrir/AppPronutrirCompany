@@ -8,8 +8,7 @@ import AuthContext from '../contexts/auth';
 import auth from '@react-native-firebase/auth';
 import ArrowBackImg from '../assets/svg/arrowBack.svg';
 import AvatarImg from '../assets/svg/avatar.svg';
-import CruzVermelhaImg from '../assets/svg/cruzVermelha.svg';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 
 export default function MyDrawerContent({ navigation }) {
 
@@ -52,10 +51,6 @@ export default function MyDrawerContent({ navigation }) {
                 <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Perfil')}>
                     <AvatarImg fill={'#748080'} width={size} height={size} />
                     <Text style={styles.text3}>Perfil</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('ListaConvenios', { value: 'Meus Convenios' })}>
-                    <CruzVermelhaImg fill={'#748080'} width={size} height={size} />
-                    <Text style={styles.text3}>Convênios</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.box3}>
