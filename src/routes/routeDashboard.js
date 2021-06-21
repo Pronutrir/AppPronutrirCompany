@@ -1,15 +1,10 @@
 import React from 'react';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import DashBoard from '../pages/dashBoard/dashBoard';
-
-import LembretesNotificacoes from '../pages/LembretesNotificacoes/lembretesNotificacoes';
 import MyHeaderDashBoard from '../componentes/MyHeaderDashBoard';
 import Perfil from '../pages/perfil/perfil';
 import User from '../pages/perfil/perfil';
 import Busca from '../pages/busca/busca';
-
-
-
 import InformacoesPessoais from '../pages/perfil/informacoesPessoais/informacoesPessoais';
 import DadosContato from '../pages/perfil/dadosContato/dadosContato';
 import Credenciais from '../pages/perfil/credenciais/credenciais';
@@ -105,11 +100,6 @@ const DashBoardNavigator = () => {
                 name='DashBoard'
                 component={DashBoard}
                 options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name='LembretesNotificacoes'
-                component={LembretesNotificacoes}
-                options={{ title: 'Lembrete e Notificações' }}
             />
             <Stack.Screen
                 name='Perfil'

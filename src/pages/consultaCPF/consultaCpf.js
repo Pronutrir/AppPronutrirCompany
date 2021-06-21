@@ -1,10 +1,10 @@
 import React, { useState, useRef, useContext } from 'react';
-import { Text, View, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
+import { Text, View, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Dimensions, PixelRatio } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import Prosseguir from '../../componentes/prosseguir';
 
 import styles from './style';
-import MybackButton from '../../componentes/MyBackButton';
+import BackButton from '../../components/buttons/BackButton';
 import Api from '../../services/api';
 import { valicacaoCPF } from '../../services/validacaoCpf';
 import Loading from '../../componentes/Loading';
@@ -14,6 +14,7 @@ import * as Yup from 'yup';
 import firestore from '@react-native-firebase/firestore';
 import { Pressable } from 'react-native';
 import Notification from '../../componentes/Notification';
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 export default function consultaCpf({ navigation }) {
 
@@ -101,8 +102,8 @@ export default function consultaCpf({ navigation }) {
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>
             <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
-                <View style={{ marginTop: 20 }}>
-                    <MybackButton onPress={() => navigation.goBack()} />
+                <View>
+                    <BackButton onPress={() => navigation.goBack()} />
                 </View>
                 <Formik
                     initialValues={{
@@ -117,8 +118,8 @@ export default function consultaCpf({ navigation }) {
                         <View style={{ flex: 1 }} >
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
-                                behavior={Platform.OS === "ios" ? "height" : "height"}
-                                keyboardVerticalOffset={Dimensions.get('screen').height / 6.8}
+                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                                keyboardVerticalOffset={-180}
                             >
                                 <View style={styles.box1}>
                                     <Text style={styles.textInfo}>Informe seu CPF</Text>

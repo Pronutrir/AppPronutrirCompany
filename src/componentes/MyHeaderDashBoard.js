@@ -5,7 +5,6 @@ import AgendarConsultaImg from '../assets/svg/AgendarConsulta.svg';
 import ConsultasMarcadasImg from '../assets/svg/ConsultasMarcadas.svg';
 import CruzVermelha from '../assets/svg/cruzVermelha.svg';
 import PilulaCompromido from '../assets/svg/pilula-e-comprimido.svg';
-import QuimioTerapia from '../assets/svg/quimioterapia.svg';
 import Lembrete from '../assets/svg/lembrete.svg';
 import Avatar from '../assets/svg/avatar.svg';
 import Hospital from '../assets/svg/hospital.svg';
@@ -15,11 +14,11 @@ import LembreteImg from '../assets/svg/lembrete.svg';
 import HospitalLocationSvg from '../assets/svg/hospitalLocation.svg';
 import FotoClick from '../assets/svg/foto.svg';
 import PilulaComprimidoImg from '../assets/svg/pilula-e-comprimido.svg';
-import { RFValue } from "react-native-responsive-fontsize";
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 export default function MyHeaderDashBoard({ onPress, title }) {
 
-    const size = Dimensions.get('screen').width / 10
+    const size = RFPercentage(5, 680);
 
     const setIcone = () => {
         switch (title) {

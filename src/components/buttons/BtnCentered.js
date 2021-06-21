@@ -1,8 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
-import { RFValue } from "react-native-responsive-fontsize";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Dimensions } from 'react-native';
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 import LinearGradient from 'react-native-linear-gradient';
 import propTypes from 'prop-types';
+
+const widthScreen = Dimensions.get('screen').width;
+const heightScreen = Dimensions.get('screen').height;
 
 const BtnCentered = ({ labelBtn, fontSize, onPress }) => {
     return (
@@ -39,8 +42,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     btn: {
-        width: 250,
-        height: 60,
+        width: RFPercentage(18, 680),
+        height: RFPercentage(6, 680),
         marginVertical: 5,
         backgroundColor: 'transparent',
         borderRadius: 30,

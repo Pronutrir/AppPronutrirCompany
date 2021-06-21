@@ -1,7 +1,10 @@
-import React from 'react'
-import { View, StyleSheet, Image, Modal, Text } from 'react-native'
+import React from 'react';
+import { View, StyleSheet, Image, Modal, Dimensions } from 'react-native';
 
 export default function Loading({ activeModal }) {
+
+    console.log(Dimensions.get('screen').width * Dimensions.get('screen').height);
+
     return (
         <View>
             <Modal
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     modalImg: {
-        width: 50,
-        height: 50,
+        width: Dimensions.get('screen').width / 10,
+        height: Dimensions.get('screen').width / 10,
     },
 })

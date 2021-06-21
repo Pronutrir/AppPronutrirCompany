@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native'
+import { StyleSheet, Dimensions } from 'react-native';
 
 const styles = StyleSheet.create({
     container:{
@@ -7,8 +7,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     imgGif:{
-        width: Dimensions.get('screen').width / 5,
-        height: Dimensions.get('screen').width / 5
+        width: Dimensions.get('screen').height / 10,
+        height: Dimensions.get('screen').height / 10
     },
     box1: {
         flex: 1,

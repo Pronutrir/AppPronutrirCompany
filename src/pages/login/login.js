@@ -6,7 +6,7 @@ import Loading from '../../componentes/Loading';
 import Prosseguir from '../../componentes/prosseguir';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import MybackButton from '../../componentes/MyBackButton';
+import BackButton from '../../components/buttons/BackButton';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import AuthContext from '../../contexts/auth';
@@ -96,33 +96,33 @@ export default function login({ navigation }) {
             if (code) {
                 switch (code) {
                     case 'auth/invalid-email':
-                        setModalNotification(prevState => {                          
+                        setModalNotification(prevState => {
                             return { ...prevState, active: true, message: 'Formato Inválido de E-mail', type: 'error' }
                         });
                         break;
                     case 'auth/user-not-found':
-                        setModalNotification(prevState => {                          
+                        setModalNotification(prevState => {
                             return { ...prevState, active: true, message: 'Usuário não encontrado!', type: 'error' }
                         });
                         break;
                     case 'auth/wrong-password':
-                        setModalNotification(prevState => {                           
+                        setModalNotification(prevState => {
                             return { ...prevState, active: true, message: 'A senha é inválida!', type: 'error' }
                         });
                         break;
                     case 'auth/network-request-failed':
-                        setModalNotification(prevState => {                          
+                        setModalNotification(prevState => {
                             return { ...prevState, active: true, message: 'Verifique sua conexão com a Internet', type: 'error' }
                         });
                         break;
                     case 'auth/too-many-requests':
-                        setModalNotification(prevState => {                          
+                        setModalNotification(prevState => {
                             return { ...prevState, active: true, message: 'Aguarde!, muitas tentativas de acesso!', type: 'error' }
                         });
                         break;
                     case 'auth/email-already-in-use':
                         setModalNotification(prevState => {
-                            
+
                             return { ...prevState, active: true, message: 'Email já está sendo utilizado!', type: 'error' }
                         });
                         break;
@@ -153,69 +153,64 @@ export default function login({ navigation }) {
     })
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-            <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-                <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
-                    <View style={{ marginTop: 20 }}>
-                        <MybackButton onPress={() => navigation.goBack()} />
-                    </View>
-                    <Formik
-                        initialValues={{
-                            Senha: '',
-                        }}
-                        onSubmit={values => {
-                            autenticacao(values.Senha);
-                        }}
-                        validationSchema={FormSchema}
-                    >
-                        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                            <View style={{ flex: 1 }} >
-                                <KeyboardAvoidingView
-                                    style={{ flex: 1 }}
-                                    behavior={Platform.OS === "ios" ? "height" : "height"}
-                                    keyboardVerticalOffset={Dimensions.get('screen').height / 6.8}
-                                >
-                                    <View style={styles.box1}>
-                                        <Text style={styles.textInfo}>Digite sua senha</Text>
-                                        <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
-                                        <View style={styles.sectionInput}>
-                                            <TextInput
-                                                ref={Senha}
-                                                style={styles.input}
-                                                onChangeText={handleChange('Senha')}
-                                                onBlur={handleBlur('Senha')}
-                                                value={values.Senha}
-                                                secureTextEntry={showPassword}
-                                                autoCapitalize={'none'}
-                                            />
-                                            <VisaoPassword active={showPassword} setActive={setShowPassword} />
-                                        </View>
-                                        {(touched.Senha && errors.Senha) && <Text style={styles.Error}>{errors.Senha}</Text>}
-                                        <TouchableOpacity style={styles.btnRecovery} onPress={() => navigation.navigate('RecuperarSenha')}>
-                                            <Text style={styles.text}>Recuperar senha</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={styles.box2}>
-                                        <Prosseguir
-                                            onPress={() => handleSubmit()}
+        <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+            <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
+                <View style={{ marginTop: 20 }}>
+                    <BackButton onPress={() => navigation.goBack()} />
+                </View>
+                <Formik
+                    initialValues={{
+                        Senha: '',
+                    }}
+                    onSubmit={values => {
+                        autenticacao(values.Senha);
+                    }}
+                    validationSchema={FormSchema}
+                >
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
+                        <View style={{ flex: 1 }} >
+                            <KeyboardAvoidingView
+                                style={{ flex: 1 }}
+                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                                keyboardVerticalOffset={-180}
+                            >
+                                <View style={styles.box1}>
+                                    <Text style={styles.textInfo}>Digite sua senha</Text>
+                                    <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
+                                    <View style={styles.sectionInput}>
+                                        <TextInput
+                                            ref={Senha}
+                                            style={styles.input}
+                                            onChangeText={handleChange('Senha')}
+                                            onBlur={handleBlur('Senha')}
+                                            value={values.Senha}
+                                            secureTextEntry={showPassword}
+                                            autoCapitalize={'none'}
                                         />
+                                        <VisaoPassword active={showPassword} setActive={setShowPassword} />
                                     </View>
-                                </KeyboardAvoidingView>
-                            </View>
-                        )}
-                    </Formik>
-                    <Loading activeModal={loadingActive} />
-                    <Notification
-                        active={modalNotification.active}
-                        setActive={setModalNotification}
-                        type={modalNotification.type}
-                        message={modalNotification.message}
-                    />
-                </ImageBackground>
-            </Pressable>
-        </KeyboardAvoidingView>
+                                    {(touched.Senha && errors.Senha) && <Text style={styles.Error}>{errors.Senha}</Text>}
+                                    <TouchableOpacity style={styles.btnRecovery} onPress={() => navigation.navigate('RecuperarSenha')}>
+                                        <Text style={styles.text}>Recuperar senha</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.box2}>
+                                    <Prosseguir
+                                        onPress={() => handleSubmit()}
+                                    />
+                                </View>
+                            </KeyboardAvoidingView>
+                        </View>
+                    )}
+                </Formik>
+                <Loading activeModal={loadingActive} />
+                <Notification
+                    active={modalNotification.active}
+                    setActive={setModalNotification}
+                    type={modalNotification.type}
+                    message={modalNotification.message}
+                />
+            </ImageBackground>
+        </Pressable>
     )
 }
