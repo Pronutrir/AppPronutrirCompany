@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import MyBackButton from '../componentes/MyBackButton';
+import BackButton from '../components/buttons/BackButton';
 
 const MyHeader = ({ onPress, transparent }) => {
     return (
         <View style={transparent ? styles.container2 : styles.container}>
             <View style={[styles.box1, transparent && { backgroundColor: 'transparent' }]}/>
             <View style={[styles.box2, transparent && { backgroundColor: 'transparent' }]}>
-                <MyBackButton onPress={onPress}/>
+                <BackButton onPress={onPress}/>
             </View>
         </View>
     )

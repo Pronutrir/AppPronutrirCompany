@@ -3,7 +3,7 @@ import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAv
 
 import styles from './style';
 import Loading from '../../componentes/Loading';
-import Prosseguir from '../../componentes/prosseguir';
+import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import BackButton from '../../components/buttons/BackButton';
@@ -195,7 +195,7 @@ export default function login({ navigation }) {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.box2}>
-                                    <Prosseguir
+                                    <Btnprosseguir
                                         onPress={() => handleSubmit()}
                                     />
                                 </View>

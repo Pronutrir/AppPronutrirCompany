@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Text, View, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Dimensions, PixelRatio } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
-import Prosseguir from '../../componentes/prosseguir';
+import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 
 import styles from './style';
 import BackButton from '../../components/buttons/BackButton';
@@ -14,7 +14,6 @@ import * as Yup from 'yup';
 import firestore from '@react-native-firebase/firestore';
 import { Pressable } from 'react-native';
 import Notification from '../../componentes/Notification';
-import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 export default function consultaCpf({ navigation }) {
 
@@ -135,7 +134,7 @@ export default function consultaCpf({ navigation }) {
                                     {(touched.CPF && errors.CPF) && <Text style={styles.Error}>{errors.CPF}</Text>}
                                 </View>
                                 <View style={styles.box2}>
-                                    <Prosseguir
+                                    <Btnprosseguir
                                         onPress={() => handleSubmit()}
                                     />
                                 </View>

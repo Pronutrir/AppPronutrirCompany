@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Pressable, TextInput, Dimensions, Keyboard, Key
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import Prosseguir from '../../../componentes/prosseguir';
+import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import AuthContext from '../../../contexts/auth';
 import Loading from '../../../componentes/Loading';
 import Notification from '../../../componentes/Notification';
@@ -136,7 +136,7 @@ export default function informacoesPessoais() {
                                         </Pressable>
                                     </View>
                                     <View style={styles.box2}>
-                                        <Prosseguir
+                                        <Btnprosseguir
                                             valueText={'Alterar'}
                                             onPress={() => handleSubmit()}
                                         />

@@ -3,7 +3,7 @@ import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAv
 
 import styles from './style';
 import Loading from '../../componentes/Loading';
-import Prosseguir from '../../componentes/prosseguir';
+import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AuthContext from '../../contexts/auth';
@@ -72,7 +72,7 @@ export default function consultaConfirmarEmail({ navigation }) {
                                     {(touched.ConfEmail && errors.ConfEmail) && <Text style={styles.Error}>{errors.ConfEmail}</Text>}
                                 </View>
                                 <View style={styles.box2}>
-                                    <Prosseguir
+                                    <Btnprosseguir
                                         onPress={() => handleSubmit()}
                                     />
                                 </View>

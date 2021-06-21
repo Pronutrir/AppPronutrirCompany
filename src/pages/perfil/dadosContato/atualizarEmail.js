@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Pressable, TextInput, Dimensions, Keyboard, Tou
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import Prosseguir from '../../../componentes/prosseguir';
+import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import AuthContext from '../../../contexts/auth';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -242,7 +242,7 @@ export default function atualizarEmail({ navigation }) {
                                                 </TouchableOpacity>
                                             </View>
                                             <View style={styles.box2}>
-                                                <Prosseguir
+                                                <Btnprosseguir
                                                     valueText={'Prosseguir'}
                                                     onPress={() => handleSubmit()}
                                                 />

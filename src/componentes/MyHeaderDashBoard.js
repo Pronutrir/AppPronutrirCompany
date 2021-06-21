@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, Text, Platform } from 'react-native';
-import MyBackButton from '../componentes/MyBackButton';
+import BackButton from '../components/buttons/BackButton';
 import AgendarConsultaImg from '../assets/svg/AgendarConsulta.svg';
 import ConsultasMarcadasImg from '../assets/svg/ConsultasMarcadas.svg';
 import CruzVermelha from '../assets/svg/cruzVermelha.svg';
@@ -106,7 +106,7 @@ export default function MyHeaderDashBoard({ onPress, title }) {
                     {setIcone()}
                 </View>
                 <View style={styles.item2}>
-                    <MyBackButton onPress={onPress} />
+                    <BackButton onPress={onPress} />
                 </View>
             </View>
         </View>
@@ -147,7 +147,9 @@ const styles = StyleSheet.create({
     item2: {
         flex: 0.5,
         backgroundColor: '#fff',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        position: 'absolute',
+        marginTop: Dimensions.get('screen').height / 30
     },
     title: {
         fontSize: RFValue(20, 680),

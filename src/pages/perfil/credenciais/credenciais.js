@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Pressable, TextInput, Dimensions, Keyboard } fr
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import Prosseguir from '../../../componentes/prosseguir';
+import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import AuthContext from '../../../contexts/auth';
 import { cpfMask } from '../../../services/validacoes';
 import Loading from '../../../componentes/Loading';
@@ -60,7 +60,7 @@ export default function credenciais() {
                                     </Pressable>
                                 </View>
                                 <View style={styles.box2}>
-                                    <Prosseguir
+                                    <Btnprosseguir
                                         valueText={'Alterar'}
                                         onPress={() => handleSubmit()}
                                     />

@@ -3,7 +3,7 @@ import { Text, View, Pressable, TextInput, ImageBackground, Keyboard } from 'rea
 
 import styles from './style';
 import Loading from '../../componentes/Loading';
-import Prosseguir from '../../componentes/prosseguir';
+import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AuthContext from '../../contexts/auth';
@@ -78,7 +78,7 @@ export default function recuperarSenha({ navigation }) {
                                 />
                             </View>
                             <View style={styles.box2}>
-                                <Prosseguir
+                                <Btnprosseguir
                                     valueText={'Enviar Email'}
                                     onPress={() => handleSubmit()}
                                 />

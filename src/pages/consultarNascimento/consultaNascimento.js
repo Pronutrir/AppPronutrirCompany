@@ -3,7 +3,7 @@ import { Text, View, Pressable, Keyboard, TextInput, ImageBackground, KeyboardAv
 
 import styles from './style';
 import Loading from '../../componentes/Loading';
-import Prosseguir from '../../componentes/prosseguir';
+import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { TextInputMask } from 'react-native-masked-text';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -81,7 +81,7 @@ export default function consultaNascimento({ navigation }) {
                                     {(touched.DataNascimento && errors.DataNascimento) && <Text style={styles.Error}>{errors.DataNascimento}</Text>}
                                 </View>
                                 <View style={styles.box2}>
-                                    <Prosseguir
+                                    <Btnprosseguir
                                         onPress={() => handleSubmit()}
                                     />
                                 </View>
