@@ -1,19 +1,15 @@
 import React from 'react';
-import { Dimensions } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BuscaStackNavigator, UserStackNavigator, DashBoardNavigator } from '../routes/routeDashboard';
 import DrawerOpen from '../componentes/DrawerOpen';
 import HomeImg from '../assets/svg/Home.svg';
 import LupaImg from '../assets/svg/Lupa.svg';
 import UserImg from '../assets/svg/avatar.svg';
-import { RFValue } from "react-native-responsive-fontsize";
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 const Tab = createBottomTabNavigator()
 
 export default function routeBottom() {
-
-    const size = Dimensions.get('screen').width / 20
-    const sizeBottom = Dimensions.get('screen').height / 15
 
     /* const tabBarVisibility = ( route ) => {
         const routeName = route.state
@@ -32,16 +28,17 @@ export default function routeBottom() {
             tabBarOptions={{
                 activeTintColor: '#08948A',
                 labelPosition: 'below-icon',
-                labelStyle:{fontSize: RFValue(12, 680)}
+                labelStyle:{fontSize: RFValue(14, 680)},
+                style:{height: RFPercentage(8, 680)}
             }}
              screenOptions={({ route }) => ({  
                 tabBarIcon: ({ color }) => {
                     switch (route.name) {
-                        case 'Inicio': return <HomeImg fill={color} width={size} height={size} />
+                        case 'Inicio': return <HomeImg fill={color} width={RFPercentage(4, 680)} height={RFPercentage(4, 680)} />
                             break;
-                        case 'Busca': return <LupaImg fill={color} width={size} height={size} />
+                        case 'Busca': return <LupaImg fill={color} width={RFPercentage(4, 680)} height={RFPercentage(4, 680)} />
                             break;
-                        case 'Perfil': return <UserImg fill={color} width={size} height={size} />
+                        case 'Perfil': return <UserImg fill={color} width={RFPercentage(4, 680)} height={RFPercentage(4, 680)} />
                             break;
                     }
                 }

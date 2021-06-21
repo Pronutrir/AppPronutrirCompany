@@ -9,12 +9,11 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 export default function DrawerOpen() {
 
     const navigation = useNavigation();
-    const size = Dimensions.get('screen').width / 20
 
     return (
             <TouchableOpacity style={styles.container} onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                 <View style={styles.btnItem}>
-                    <BotaoMenu fill={'#8E8E8F'} width={size} height={size} />
+                    <BotaoMenu fill={'#8E8E8F'} width={RFPercentage(3, 680)} height={RFPercentage(3, 680)} />
                 </View>
                 <View style={styles.btnItem}>
                     <Text style={styles.text}>Menu</Text>
