@@ -1,14 +1,22 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Text, View, Modal, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Modal, TouchableOpacity, Image, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import Cancel from '../assets/svg/cancel.svg';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 import moment from 'moment';
+
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
 
 const MyModal = ({ modalActive, postagem, mudarState }) => {
 
     const toggleModal = () => {
         mudarState(!modalActive)
     }
+
+    console.log("height",Dimensions.get('screen').height);
+    console.log("width",Dimensions.get('screen').width);
+    console.log("scale",Dimensions.get('screen').scale);
+    console.log("fontScale",Dimensions.get('screen').fontScale);
 
     return (
         <View>
@@ -74,7 +82,7 @@ const styles = StyleSheet.create({
         elevation: 3
     },
     box1: {
-        flex: 1,
+        flex: width > 500 ? 1.8 : 1,
     },
     box2: {
         flex: 1,

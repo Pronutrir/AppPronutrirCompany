@@ -28,7 +28,7 @@ export default function routeBottom() {
             tabBarOptions={{
                 activeTintColor: '#08948A',
                 labelPosition: 'below-icon',
-                labelStyle:{fontSize: RFValue(14, 680)},
+                labelStyle:{fontSize: RFValue(12, 680), paddingBottom: 5},
                 style:{height: RFPercentage(8, 680)}
             }}
              screenOptions={({ route }) => ({  

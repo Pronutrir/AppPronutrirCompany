@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Image, TouchableOpacity, StyleSheet, Text, Dimensions } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
 
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     },
     text:{
         fontSize: RFValue(12, 680),
-        color: '#8E8E8F'
+        color: '#8E8E8F',
+        paddingBottom: 5
     },
     btnItem:{
         flex: 1, 
