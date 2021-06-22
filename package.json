@@ -54,6 +54,7 @@
     "react-native-spinkit": "^1.5.1",
     "react-native-svg": "^12.1.1",
     "react-native-svg-transformer": "^0.14.3",
+    "rn-range-slider": "^2.0.4",
     "yup": "^0.32.9"
   },
   "devDependencies": {

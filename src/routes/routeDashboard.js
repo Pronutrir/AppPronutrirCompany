@@ -13,6 +13,8 @@ import AtualizarEmail from '../pages/perfil/dadosContato/atualizarEmail';
 import AtualizarCelular from '../pages/perfil/dadosContato/atualizarCelular';
 import RecuperarSenha from '../pages/recuperarSenha/recuperarSenha';
 
+import SinaisVitais from '../pages/sinaisVitais/sinaisVitais';
+
 import CameraPerson from '../pages/cameraPerson/cameraPerson';
 
 import RouteBottom from '../routes/routeBottom';
@@ -78,6 +80,11 @@ const InitialStackNavigator = () => {
                 name='CameraPerson'
                 component={CameraPerson}
                 options={{ title: 'Foto perfil' }}
+            />
+            <Stack.Screen
+                name='SinaisVitais'
+                component={SinaisVitais}
+                options={{ title: 'Sinais Vitais' }}
             />
         </Stack.Navigator>
     )

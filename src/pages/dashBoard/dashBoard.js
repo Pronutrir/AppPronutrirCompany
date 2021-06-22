@@ -26,12 +26,12 @@ export default function dashBoard({ navigation }) {
                     <Carousel />
                 </View>
                 <View style={styles.box2}>
-                    <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
+                    <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("SinaisVitais")}>
                         <View style={styles.img_btnHotrizontal}>
                             <AgendarConsultaImg fill={'#748080'} width={size} height={size} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
-                            <Text style={styles.text_btnHorizontal}>Agendar Consulta</Text>
+                            <Text style={styles.text_btnHorizontal}>Sinais Vitais</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
