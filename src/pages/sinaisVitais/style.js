@@ -15,6 +15,22 @@ const styles = StyleSheet.create({
     height: Dimensions.get('screen').height / 15,
     backgroundColor: "#08948A"
   },
+  box1: {
+    flex: 0.2
+  },
+  box2: {
+    flex: 2
+  },
+  item1: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  item2: {
+    flex: 1
+  },
+  box3: {
+    flex: 0.2
+  },
   textInputStyle: {
     fontSize: RFValue(20, 680)
   },
@@ -60,7 +76,24 @@ const styles = StyleSheet.create({
   descricao: {
     color: '#1E707D',
     fontSize: RFValue(16, 680)
-  }
+  },
+  valueInput: {
+    width: 80,
+    fontSize: RFValue(20, 680),
+    textAlign: 'center',
+    color: '#7C9292',
+  },
+  btnInc: {
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textInc: {
+    color: '#7C9292',
+    fontSize: RFValue(40, 680),
+    textAlign: 'center'
+  },
 })
 
 export default styles;

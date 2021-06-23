@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import RangeSlider from 'rn-range-slider';
 import Label from './Label';
@@ -7,14 +7,16 @@ import Rail from './Rail';
 import RailSelected from './RailSelected';
 import Thumb from './Thumb';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import IncrementDecrement from '../../components/IncrementDecrement';
 
-const SlideReanger = () => {
+const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, valueMax= 10, valueRanger = 1.00, setValueRanger  }) => {
 
-    const [rangeDisabled, setRangeDisabled] = useState(false);
-    const [valueRanger, setValueRanger] = useState(1.50);
-    const [min, setMin] = useState(1);
-    const [max, setMax] = useState(2.5);
-    const [floatingLabel, setFloatingLabel] = useState(false);
+    //const [rangeDisabled, setRangeDisabled] = useState(false);
+    //const [min, setMin] = useState(1);
+    //const [max, setMax] = useState(2.5);
+    //const [floatingLabel, setFloatingLabel] = useState(false);
+
+    //const [value, setValue] = useState(1.50);
 
     const renderThumb = useCallback(() => <Thumb />, []);
     const renderRail = useCallback(() => <Rail />, []);
@@ -23,20 +25,25 @@ const SlideReanger = () => {
     const renderNotch = useCallback(() => <Notch />, []);
 
     const handleValueChange = useCallback(value => {
-        setValueRanger(value.toFixed(2));
+        setValueRanger(parseFloat(value).toFixed(2));
     }, []);
+
+    /* useEffect(() => {
+        handleValueChange(valueRanger);
+    }, []) */
 
     return (
         <View style={styles.ContainerRanger}>
             <View style={styles.labelRanger}>
-                <Text style={styles.textLabel}>Altura</Text>
-                <Text style={styles.textLabel}>{valueRanger} cm</Text>
+                <Text style={styles.textLabel}>{label}</Text>
+                <IncrementDecrement RangerValue={valueRanger} setRangerValue={setValueRanger}/>
             </View>
             <RangeSlider
                 style={styles.RangeSlider}
-                min={min}
-                max={max}
-                step={0.01}
+                low={parseFloat(valueRanger)}
+                min={valueMin}
+                max={valueMax}
+                step={step}
                 floatingLabel
                 renderThumb={renderThumb}
                 renderRail={renderRail}
@@ -53,9 +60,9 @@ const SlideReanger = () => {
 const styles = StyleSheet.create({
     ContainerRanger: {
         flex: 1,
-        padding: RFPercentage(2, 680),
-        marginLeft: RFPercentage(2, 680),
-        marginRight: RFPercentage(2, 680),
+        padding: RFPercentage(1, 680),
+        marginLeft: RFPercentage(1, 680),
+        marginRight: RFPercentage(1, 680),
         alignItems: "stretch",
         justifyContent: "center"
     },
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
         paddingVertical: RFPercentage(1, 680)
     },
     textLabel: {
-        fontSize: RFValue(20, 680),
+        fontSize: RFValue(16, 680),
         color: '#666666',
         fontWeight: 'bold'
     }

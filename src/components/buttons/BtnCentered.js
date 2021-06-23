@@ -7,7 +7,7 @@ import propTypes from 'prop-types';
 const widthScreen = Dimensions.get('screen').width;
 const heightScreen = Dimensions.get('screen').height;
 
-const BtnCentered = ({ labelBtn, fontSize, onPress }) => {
+const BtnCentered = ({ labelBtn = "OK", fontSize = 12 , onPress }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.btn} onPress={() => onPress()}>
