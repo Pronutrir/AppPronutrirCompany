@@ -56,7 +56,7 @@ function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
             </Pressable>
-        </View>
+        </View> 
     )
 }
 
