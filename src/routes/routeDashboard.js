@@ -81,6 +81,11 @@ const InitialStackNavigator = () => {
                 component={CameraPerson}
                 options={{ title: 'Foto perfil' }}
             />
+            <Stack.Screen
+                name='SinaisVitais'
+                component={SinaisVitais}
+                options={{ title: 'Sinais Vitais' }}
+            />
         </Stack.Navigator>
     )
 }
@@ -107,11 +112,6 @@ const DashBoardNavigator = () => {
                 name='Perfil'
                 component={Perfil}
                 options={{ title: 'Perfil' }}
-            />
-            <Stack.Screen
-                name='SinaisVitais'
-                component={SinaisVitais}
-                options={{ title: 'Sinais Vitais' }}
             />
         </Stack.Navigator>
     )

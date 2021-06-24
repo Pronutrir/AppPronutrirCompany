@@ -16,14 +16,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#08948A"
   },
   box1: {
-    flex: 0.2
+    flex: 0.1
   },
   box2: {
-    flex: 2
+    flex: 2,
+    marginVertical: RFPercentage(1, 680)
   },
   item1: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   item2: {
     flex: 1
@@ -77,22 +79,14 @@ const styles = StyleSheet.create({
     color: '#1E707D',
     fontSize: RFValue(16, 680)
   },
-  valueInput: {
-    width: 80,
-    fontSize: RFValue(20, 680),
-    textAlign: 'center',
-    color: '#7C9292',
+  label: {
+    color: '#1E707D',
+    fontSize: RFValue(16, 680),
+    fontWeight: 'bold'
   },
-  btnInc: {
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textInc: {
-    color: '#7C9292',
-    fontSize: RFValue(40, 680),
-    textAlign: 'center'
+  text: {
+    color: '#1E707D',
+    fontSize: RFValue(16, 680)
   },
 })
 

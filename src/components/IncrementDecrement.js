@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TextInput, Pressable, Dimensions } from 'react-native';
+import { StyleSheet, View, TextInput, Pressable, Dimensions, Text } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import propTypes from 'prop-types';
 import Adicao from '../assets/svg/math-plus.svg';
@@ -7,18 +7,30 @@ import Subtracao from '../assets/svg/math-minus.svg';
 
 const noop = () => { };
 
-function IncrementDecrement({ RangerValue = 0.00, setRangerValue }) {
+function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
 
     const size = Dimensions.get('screen').height / 40
 
     const inc_Dec = (tipo) => {
-        switch (tipo) {
-            case 'soma': setRangerValue((parseFloat(RangerValue) + 0.01).toFixed(2));
-                break;
-            case 'subtracao': setRangerValue((parseFloat(RangerValue) - 0.01).toFixed(2));
-                break;
+
+        var value = 1;
+
+        switch (medida) {
+            case '°C': {
+                value = 0.1;
+                if (tipo === 'soma') {
+                    var ranger = 
+                    setRangerValue((parseFloat(RangerValue) + value).toFixed(1));
+                } else if (tipo === 'subtracao') {
+                    setRangerValue((parseFloat(RangerValue) - value).toFixed(1));
+                }
+            } break;
             default:
-                break;
+                if (tipo === 'soma') {
+                    setRangerValue((parseInt(RangerValue) + value));
+                } else if (tipo === 'subtracao') {
+                    setRangerValue((parseInt(RangerValue) - value));
+                } break;
         }
     }
 
@@ -32,9 +44,13 @@ function IncrementDecrement({ RangerValue = 0.00, setRangerValue }) {
                 <Subtracao fill={'#748080'} width={size} height={size} />
             </Pressable>
             <TextInput
+                keyboardType={'numeric'}
                 value={RangerValue.toString()}
                 style={styles.valueInput}
+                onChange={text => setRangerValue(parseInt(text))}
+                onFocus={text => setRangerValue(parseInt(0))}
             />
+            <Text>{medida && medida}</Text>
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
             </Pressable>
@@ -57,7 +73,7 @@ const styles = StyleSheet.create({
         color: '#7C9292',
     },
     btnInc: {
-        width: 50,
+        width: 40,
         height: 50,
         alignItems: 'center',
         justifyContent: 'center'
@@ -72,12 +88,13 @@ const styles = StyleSheet.create({
 
 IncrementDecrement.prototype = {
     RangerValue: propTypes.number.isRequired,
-    setRangerValue: propTypes.func.isRequired
+    setRangerValue: propTypes.func.isRequired,
+    medida: propTypes.string
 }
 
 IncrementDecrement.defaultProps = {
     RangerValue: 0.00,
-    setRangerValue: noop,
+    setRangerValue: noop
 }
 
 export default IncrementDecrement;

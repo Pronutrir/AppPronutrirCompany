@@ -9,7 +9,7 @@ import Thumb from './Thumb';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import IncrementDecrement from '../../components/IncrementDecrement';
 
-const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, valueMax= 10, valueRanger = 1.00, setValueRanger  }) => {
+const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, valueMax= 10, valueRanger = 1.00, setValueRanger }) => {
 
     //const [rangeDisabled, setRangeDisabled] = useState(false);
     //const [min, setMin] = useState(1);
@@ -25,7 +25,7 @@ const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, val
     const renderNotch = useCallback(() => <Notch />, []);
 
     const handleValueChange = useCallback(value => {
-        setValueRanger(parseFloat(value).toFixed(2));
+        setValueRanger(value);
     }, []);
 
     /* useEffect(() => {
@@ -36,11 +36,11 @@ const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, val
         <View style={styles.ContainerRanger}>
             <View style={styles.labelRanger}>
                 <Text style={styles.textLabel}>{label}</Text>
-                <IncrementDecrement RangerValue={valueRanger} setRangerValue={setValueRanger}/>
+                <IncrementDecrement RangerValue={valueRanger} setRangerValue={setValueRanger} medida={medida}/>
             </View>
             <RangeSlider
                 style={styles.RangeSlider}
-                low={parseFloat(valueRanger)}
+                low={valueRanger}
                 min={valueMin}
                 max={valueMax}
                 step={step}

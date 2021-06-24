@@ -7,7 +7,7 @@ const api = axios.create({
     //teste
     baseURL: 'http://webapppronutrir.com.br:9001/api/v1/',
     //ngrok
-    //baseURL: 'https://4dd98d272e10.ngrok.io/api/v1/',
+    //baseURL: 'https://c1fde3d40d7b.ngrok.io/api/v1/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
