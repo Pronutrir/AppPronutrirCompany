@@ -25,6 +25,9 @@ const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, val
     const renderNotch = useCallback(() => <Notch />, []);
 
     const handleValueChange = useCallback(value => {
+        if(!Number.isInteger(value)){
+            value = parseFloat(value.toFixed(1))
+        }
         setValueRanger(value);
     }, []);
 
@@ -44,11 +47,11 @@ const SlideReanger = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, val
                 min={valueMin}
                 max={valueMax}
                 step={step}
-                floatingLabel
+                floatingLabel={true}
                 renderThumb={renderThumb}
                 renderRail={renderRail}
                 renderRailSelected={renderRailSelected}
-                renderLabel={renderLabel}
+                //renderLabel={renderLabel}
                 renderNotch={renderNotch}
                 onValueChanged={handleValueChange}
                 disableRange={true}

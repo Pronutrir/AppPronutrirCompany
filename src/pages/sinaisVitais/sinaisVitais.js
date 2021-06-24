@@ -27,12 +27,6 @@ const sinaisVitais = () => {
         spinnerVisibility: false,
     });
 
-    const [modalNotification, setModalNotification] = useState({
-        active: false,
-        message: '',
-        type: ''
-    });
-
     const [activeBall, setActiveBall] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
     const [selected, setSelected] = useState();
@@ -91,15 +85,11 @@ const sinaisVitais = () => {
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
         }).then(response =>{
             setActiveModal(false);
-            addNotification("Dados atualizados com sucesso !", 'success');
+            addNotification("Dados atualizados com sucesso!", 'success');
         }).catch(error => {
             setActiveModal(false);
-            addNotification("Dados atualizados com sucesso !", 'success');
+            addNotification("Não foi possivel atualizar tente mais tarde!", 'error');
         })
-    }
-
-    const UpdateSinaisVitais = async () =>{
-        await AddSinaisVitais();
     }
 
     const autoSet = (dadosAtendimento) => {
@@ -109,6 +99,15 @@ const sinaisVitais = () => {
             dadosAtendimento.qT_TEMP && setTemperatura(dadosAtendimento?.qT_TEMP);
             dadosAtendimento.qT_SATURACAO_O2 && setOxigenacao(dadosAtendimento?.qT_SATURACAO_O2);
         }
+    }
+
+    const ChangerProperty = () => {
+
+        let x = false;
+
+        x = atendimento.qT_ALTURA_CM === Altura && atendimento.qT_PESO === Peso && atendimento.qT_SATURACAO_O2 === oxigenacao && atendimento.qT_TEMP === temperatura
+        
+        return x;
     }
 
     useEffect(() => {
@@ -227,7 +226,7 @@ const sinaisVitais = () => {
                             </View>
                             <View style={styles.item3}>
                                 {selected &&
-                                    <BtnCentered labelBtn={"Adicionar"} onPress={() => AddSinaisVitais()} />
+                                    <BtnCentered labelBtn={"Adicionar"} onPress={() => AddSinaisVitais()} enabled={ChangerProperty()} />
                                 }
                             </View>
                         </>
@@ -239,12 +238,6 @@ const sinaisVitais = () => {
                 </ScrollView>
             </View>
             <Loading activeModal={activeModal}/>
-            <Notification
-                active={modalNotification.active}
-                setActive={setModalNotification}
-                type={modalNotification.type}
-                message={modalNotification.message}
-            />
         </SafeAreaView>
     )
 }

@@ -18,11 +18,11 @@ function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
         switch (medida) {
             case '°C': {
                 value = 0.1;
+                let ranger = RangerValue;
                 if (tipo === 'soma') {
-                    var ranger = 
-                    setRangerValue((parseFloat(RangerValue) + value).toFixed(1));
+                    setRangerValue(ranger + value);
                 } else if (tipo === 'subtracao') {
-                    setRangerValue((parseFloat(RangerValue) - value).toFixed(1));
+                    setRangerValue(ranger - value);
                 }
             } break;
             default:
@@ -43,13 +43,15 @@ function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('subtracao')}>
                 <Subtracao fill={'#748080'} width={size} height={size} />
             </Pressable>
-            <TextInput
-                keyboardType={'numeric'}
-                value={RangerValue.toString()}
+            <Text
+                //keyboardType={'numeric'}
+                //value={RangerValue.toString()}
+                //maxLength={3}
+                //editable={false}
                 style={styles.valueInput}
-                onChange={text => setRangerValue(parseInt(text))}
-                onFocus={text => setRangerValue(parseInt(0))}
-            />
+                //onChange={text => setRangerValue(parseInt(text))}
+                //onBlur={text => setRangerValue(parseInt(0))}
+            >{Number.isInteger(RangerValue) ? RangerValue : RangerValue.toFixed(1)}</Text>
             <Text>{medida && medida}</Text>
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
