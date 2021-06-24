@@ -11,7 +11,19 @@ import moment from 'moment';
 import AuthContext from '../../contexts/auth';
 import ErrorContext from '../../contexts/errorNotification';
 import Loading from '../../componentes/Loading';
-import Notification from '../../componentes/Notification';
+
+const sinaisVitaisDefault = {
+    iE_PRESSAO: 'D',
+    iE_MEMBRO: 'MSE',
+    iE_MANGUITO: 'C',
+    iE_APARELHO_PA: 'C',
+    iE_COND_SAT_O2: "AA",
+    iE_MEMBRO_SAT_O2: 'MSE',
+    iE_RITMO_ECG: '1',
+    iE_DECUBITO: 'DDH',
+    iE_UNID_MED_PESO: 'Kg',
+    iE_UNID_MED_ALTURA: 'cm',
+}
 
 const sinaisVitais = () => {
 
@@ -55,9 +67,15 @@ const sinaisVitais = () => {
         setState(prevState => { return { ...prevState, dataSource: [] } });
         try {
             const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${item.cD_PESSOA_FISICA}`);
-            setAtendimento(result);
+            if(result){
+                setAtendimento(result);
+            }else{
+                setAtendimento(sinaisVitaisDefault);
+            }
+            
             setActiveBall(false);
         } catch (error) {
+            setActiveBall(false);
             console.log(error);
         }
     }
@@ -69,8 +87,8 @@ const sinaisVitais = () => {
             iE_MEMBRO: atendimento.iE_MEMBRO,
             iE_MANGUITO: atendimento.iE_MANGUITO,
             iE_APARELHO_PA: atendimento.iE_APARELHO_PA,
-            cD_PACIENTE: atendimento.cD_PACIENTE,
-            cD_PESSOA_FISICA: atendimento.cD_PESSOA_FISICA,
+            cD_PACIENTE: atendimento?.cD_PACIENTE ?? selected.cD_PESSOA_FISICA,
+            cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             qT_SATURACAO_O2: oxigenacao,
             iE_COND_SAT_O2: atendimento?.iE_COND_SAT_O2 ?? "AA",
             iE_MEMBRO_SAT_O2: atendimento.iE_MEMBRO_SAT_O2,
@@ -83,7 +101,7 @@ const sinaisVitais = () => {
             iE_UNID_MED_ALTURA: atendimento.iE_UNID_MED_ALTURA,
             iE_SITUACAO: atendimento.iE_SITUACAO,
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
-        }).then(response =>{
+        }).then(response => {
             setActiveModal(false);
             addNotification("Dados atualizados com sucesso!", 'success');
         }).catch(error => {
@@ -106,7 +124,7 @@ const sinaisVitais = () => {
         let x = false;
 
         x = atendimento.qT_ALTURA_CM === Altura && atendimento.qT_PESO === Peso && atendimento.qT_SATURACAO_O2 === oxigenacao && atendimento.qT_TEMP === temperatura
-        
+
         return x;
     }
 
@@ -237,7 +255,7 @@ const sinaisVitais = () => {
                     }
                 </ScrollView>
             </View>
-            <Loading activeModal={activeModal}/>
+            <Loading activeModal={activeModal} />
         </SafeAreaView>
     )
 }

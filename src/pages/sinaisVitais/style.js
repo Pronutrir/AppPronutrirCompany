@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
   box2: {
     flex: 2,
-    marginVertical: RFPercentage(1, 680)
+    marginVertical: RFPercentage(3, 680)
   },
   item1: {
     flex: 1,

@@ -52,7 +52,7 @@ function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
                 //onChange={text => setRangerValue(parseInt(text))}
                 //onBlur={text => setRangerValue(parseInt(0))}
             >{Number.isInteger(RangerValue) ? RangerValue : RangerValue.toFixed(1)}</Text>
-            <Text>{medida && medida}</Text>
+            <Text style={styles.text}>{medida && medida}</Text>
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
             </Pressable>
@@ -84,8 +84,11 @@ const styles = StyleSheet.create({
         color: '#7C9292',
         fontSize: RFValue(20, 680),
         textAlign: 'center',
-        backgroundColor: 'red'
     },
+    text:{
+        color: '#7C9292',
+        fontSize: RFValue(14, 680),
+    }
 });
 
 IncrementDecrement.prototype = {
