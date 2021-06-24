@@ -9,11 +9,14 @@ import BtnCentered from '../../components/buttons/BtnCentered';
 import Api from '../../services/api';
 import moment from 'moment';
 import AuthContext from '../../contexts/auth';
+import ErrorContext from '../../contexts/errorNotification';
 import Loading from '../../componentes/Loading';
+import Notification from '../../componentes/Notification';
 
 const sinaisVitais = () => {
 
     const { stateAuth: { usertasy } } = useContext(AuthContext);
+    const { addNotification } = useContext(ErrorContext);
 
     const [state, setState] = useState({
         query: "",
@@ -22,6 +25,12 @@ const sinaisVitais = () => {
         dataBackup: [],
         dataSource: [],
         spinnerVisibility: false,
+    });
+
+    const [modalNotification, setModalNotification] = useState({
+        active: false,
+        message: '',
+        type: ''
     });
 
     const [activeBall, setActiveBall] = useState(false);
@@ -51,9 +60,7 @@ const sinaisVitais = () => {
         setSelected(item);
         setState(prevState => { return { ...prevState, dataSource: [] } });
         try {
-            setActiveModal(true);
             const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${item.cD_PESSOA_FISICA}`);
-            setActiveModal(true);
             setAtendimento(result);
             setActiveBall(false);
         } catch (error) {
@@ -61,9 +68,8 @@ const sinaisVitais = () => {
         }
     }
 
-    const AddSinaisVitais = () => {
-        console.log(atendimento);
-        console.log(selected);
+    const AddSinaisVitais = async () => {
+        setActiveModal(true);
         Api.post('SinaisVitaisMonitoracaoGeral', {
             iE_PRESSAO: atendimento.iE_PRESSAO,
             iE_MEMBRO: atendimento.iE_MEMBRO,
@@ -82,12 +88,18 @@ const sinaisVitais = () => {
             qT_ALTURA_CM: Altura,
             iE_UNID_MED_ALTURA: atendimento.iE_UNID_MED_ALTURA,
             iE_SITUACAO: atendimento.iE_SITUACAO,
-            nM_USUARIO: 'AppMobile'
+            nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
         }).then(response =>{
-            console.log(response)
+            setActiveModal(false);
+            addNotification("Dados atualizados com sucesso !", 'success');
         }).catch(error => {
-            console.log(error);
+            setActiveModal(false);
+            addNotification("Dados atualizados com sucesso !", 'success');
         })
+    }
+
+    const UpdateSinaisVitais = async () =>{
+        await AddSinaisVitais();
     }
 
     const autoSet = (dadosAtendimento) => {
@@ -141,7 +153,7 @@ const sinaisVitais = () => {
                     />
                     {
                         state.dataSource.length > 0 &&
-                        <View style={styles.containerAutoComplete} >
+                        <View style={styles.containerAutoComplete}>
                             <FlatList
                                 data={state.dataSource}
                                 renderItem={renderItem}
@@ -227,6 +239,12 @@ const sinaisVitais = () => {
                 </ScrollView>
             </View>
             <Loading activeModal={activeModal}/>
+            <Notification
+                active={modalNotification.active}
+                setActive={setModalNotification}
+                type={modalNotification.type}
+                message={modalNotification.message}
+            />
         </SafeAreaView>
     )
 }
