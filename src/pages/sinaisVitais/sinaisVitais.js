@@ -11,6 +11,7 @@ import moment from 'moment';
 import AuthContext from '../../contexts/auth';
 import ErrorContext from '../../contexts/errorNotification';
 import Loading from '../../componentes/Loading';
+import ModalCentralizedOptions from '../../components/Modais/ModalCentralizedOptions';
 
 const sinaisVitaisDefault = {
     iE_PRESSAO: 'D',
@@ -263,6 +264,7 @@ const sinaisVitais = () => {
                 </ScrollView>
             </View>
             <Loading activeModal={activeModal} />
+            <ModalCentralizedOptions activeModal={true} message={"Deseja adicionar os Sinais Vitais ?"}/>
         </SafeAreaView>
     )
 }

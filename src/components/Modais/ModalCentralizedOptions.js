@@ -1,29 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
+import BtnOptions from '../buttons/BtnOptions';
 import propTypes from 'prop-types';
 
 const windowWidth = Dimensions.get('screen').width;
 const windowHeight = Dimensions.get('screen').height;
 
-const ModalCentralized = ({children , activeModal, modal}) => {
+const ModalCentralized = ({ activeModal = true, message = 'teste' }) => {
 
-    const size = Dimensions.get('screen').width / 10
-
-    const _view = useRef(null);
-   
-    const [childrenIds, setChildrenIds] = useState();
     const [active, setActive] = useState(activeModal);
-
-    const getIdRef = () => {
-        const { current } = _view;
-        if (current) {
-            setChildrenIds(current._nativeTag);
-        }
-    }
-
-    useEffect(() => {
-        getIdRef();
-    }, [activeModal])
 
     return (
         <View>
@@ -33,26 +18,21 @@ const ModalCentralized = ({children , activeModal, modal}) => {
                 backdropOpacity={0.9}
                 visible={active}
             >
-                <View style={styles.centeredView}
-                    ref={_view}
-                    onStartShouldSetResponder={evt => {
-                        evt.persist();
-                        if (evt.target._nativeTag === childrenIds) {
-                            setActive(false)
-                        }
-                    }}
-                >
+                <View style={styles.centeredView}>
                     <SafeAreaView style={styles.modalView}>
-                        {children}
+                        <View style={styles.menssage}>
+                            <Text style={styles.textMenssage}>{message}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
+                            <BtnOptions valueText={"Ok"}/>
+                            <BtnOptions valueText={"Cancelar"} onPress={() => setActive(false)}/>
+                        </View>
                     </SafeAreaView>
                 </View>
-                {modal}
             </Modal>
         </View>
     )
 }
-
-export default ModalCentralized;
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -62,6 +42,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,.8)'
     },
     modalView: {
+        padding: 10,
         backgroundColor: "#ffff",
         borderRadius: 20,
         alignItems: 'center',
@@ -80,6 +61,12 @@ const styles = StyleSheet.create({
                 elevation: 3,
             }
         })
+    },
+    menssage:{
+        
+    },
+    textMenssage:{
+        padding: 10
     }
 })
 
@@ -90,3 +77,5 @@ ModalCentralized.propTypes = {
 ModalCentralized.defaultProps = {
     activeModal: false
 }
+
+export default ModalCentralized;
