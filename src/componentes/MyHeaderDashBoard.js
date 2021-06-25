@@ -2,18 +2,12 @@ import React from 'react';
 import { StyleSheet, View, Dimensions, Text, Platform } from 'react-native';
 import BackButton from '../components/buttons/BackButton';
 import AgendarConsultaImg from '../assets/svg/AgendarConsulta.svg';
-import ConsultasMarcadasImg from '../assets/svg/ConsultasMarcadas.svg';
-import CruzVermelha from '../assets/svg/cruzVermelha.svg';
-import PilulaCompromido from '../assets/svg/pilula-e-comprimido.svg';
 import Lembrete from '../assets/svg/lembrete.svg';
 import Avatar from '../assets/svg/avatar.svg';
-import Hospital from '../assets/svg/hospital.svg';
-import Equipe from '../assets/svg/trabalho-em-equipe.svg';
 import LupaImg from '../assets/svg/Lupa.svg';
 import LembreteImg from '../assets/svg/lembrete.svg';
-import HospitalLocationSvg from '../assets/svg/hospitalLocation.svg';
 import FotoClick from '../assets/svg/foto.svg';
-import PilulaComprimidoImg from '../assets/svg/pilula-e-comprimido.svg';
+import Vital from '../assets/svg/vital.svg';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 export default function MyHeaderDashBoard({ onPress, title }) {
@@ -22,53 +16,17 @@ export default function MyHeaderDashBoard({ onPress, title }) {
 
     const setIcone = () => {
         switch (title) {
-            case 'Agendar Consulta':
-                return <AgendarConsultaImg fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Convênios':
-                return <CruzVermelha fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Minhas Consultas':
-                return <ConsultasMarcadasImg fill={'#748080'} width={size} height={size} />
-                break;
-            case 'MedicamentosRotina':
-                return <PilulaCompromido fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Medicamentos':
-                return <PilulaComprimidoImg fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Medicamentos ativos':
-                return <PilulaComprimidoImg fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Adicionar Medicamentos':
-                return <PilulaComprimidoImg fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Editar medicamento':
-                return <PilulaComprimidoImg fill={'#748080'} width={size} height={size} />
-                break;
             case 'LembretesNotificacoes':
                 return <Lembrete fill={'#748080'} width={size} height={size} />
                 break;
             case 'Perfil':
                 return <Avatar fill={'#748080'} width={size} height={size} />
                 break;
-            case 'Nossas Unidades':
-                return <Hospital fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Unidades':
-                return <Hospital fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Equipe Médica':
-                return <Equipe fill={'#748080'} width={size} height={size} />
-                break;
             case 'Busca':
                 return <LupaImg fill={'#748080'} width={size - 10} height={size - 10} />
                 break;
             case 'Lembrete e Notificações':
                 return <LembreteImg fill={'#748080'} width={size} height={size} />
-                break;
-            case 'Unidades de Atendimento':
-                return <HospitalLocationSvg fill={'#748080'} width={size} height={size} />
                 break;
             case 'Informacoes Pessoais':
                 return <Avatar fill={'#748080'} width={size} height={size} />
@@ -90,6 +48,9 @@ export default function MyHeaderDashBoard({ onPress, title }) {
                 break;
             case 'Foto perfil':
                 return <FotoClick fill={'#748080'} width={size} height={size} />
+                break;
+            case 'Sinais Vitais':
+                return <Vital fill={'#748080'} width={size} height={size} />
                 break;
             default:
                 return <AgendarConsultaImg fill={'#748080'} width={size} height={size} />
@@ -149,12 +110,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         justifyContent: 'center',
         position: 'absolute',
-        marginTop: Dimensions.get('screen').height / 30
+        marginTop: Dimensions.get('screen').height / 25
     },
     title: {
         fontSize: RFValue(20, 680),
         color: '#666666',
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     img: {
         width: 40,

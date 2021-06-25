@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, FlatList, Text, UIManager, TouchableOpacity } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import * as Animatable from 'react-native-animatable';
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import styles from './style';
 
@@ -17,102 +18,54 @@ export default function busca({ navigation }) {
     const listaFuncionalidade = [
         {
             id: '1',
-            name: 'Unidades',
-            rota: 'menuUnidades',
-            descricao: 'Unidades de atendimento e principais convênios.'
-        },
-        {
-            id: '2',
             name: 'Perfil',
             rota: 'Perfil',
             descricao: 'Acesse seus dados cadastrais.'
         },
         {
-            id: '3',
+            id: '2',
             name: 'Inicial',
             rota: 'DashBoard',
             descricao: 'Pagina inicial.'
         },
         {
-            id: '4',
-            name: 'Agendar Consulta',
-            rota: 'AgendarConsultas01',
-            descricao: 'Agendamento de consulta'
-        },
-        {
-            id: '5',
-            name: 'Consultas marcadas',
-            rota: 'ConsultasMarcadas',
-            descricao: 'Pesquise suas consultas marcadas'
-        },
-        {
-            id: '6',
-            name: 'Notificação e Lembretes',
-            rota: 'LembretesNotificacoes',
-            descricao: 'Suas notificações de agendamento de consulta'
-        },
-        {
-            id: '8',
-            name: 'Convênios',
-            rota: 'AddConvenio',
-            descricao: 'Unidades de atendimento e principais convênios.'
-        },
-        {
-            id: '9',
-            name: 'Adicionar convênio',
-            rota: 'AddConvenio',
-            descricao: 'Adicione seu convênio'
-        },
-        {
-            id: '10',
-            name: 'Meus convênios',
-            rota: 'ListaConvenios',
-            descricao: 'Lista dos convênios cadastrados'
-        },
-        {
-            id: '11',
-            name: 'Equipe medica',
-            rota: 'EquipeMedica',
-            descricao: 'Nossos medicos.'
-        },
-        {
-            id: '12',
+            id: '3',
             name: 'Recuperar Senha',
             rota: 'RecuperarSenha',
             descricao: 'Recuperar Senha.'
         },
         {
-            id: '13',
+            id: '4',
             name: 'Alterar numero celular',
             rota: 'AtualizarCelular',
             descricao: 'Atualizar Celular'
         },
         {
-            id: '14',
+            id: '5',
             name: 'Alterar E-mail',
             rota: 'AtualizarEmail',
             descricao: 'Alterar endereço de E-mail'
         },
         {
-            id: '15',
+            id: '6',
             name: 'Alterar Senha',
             rota: 'AlterarSenha',
             descricao: 'Alterar Senha'
         },
         {
-            id: '16',
+            id: '7',
             name: 'Credenciais',
             rota: 'Credenciais',
             descricao: 'Suas credenciais de acesso'
         },
         {
-            id: '17',
+            id: '8',
             name: 'Dados de Contato',
             rota: 'DadosContato',
             descricao: 'E-mail e telefone de contato'
         },
         {
-            id: '18',
+            id: '9',
             name: 'Informações Pessoais',
             rota: 'InformacoesPessoais',
             descricao: 'Nome completo e data de nascimento.'
@@ -169,6 +122,10 @@ export default function busca({ navigation }) {
                     placeholder="Pesquisar no app"
                     spinnerVisibility={state.spinnerVisibility}
                     style={styles.SearchBarStyle}
+                    textInputStyle={styles.textInputStyle}
+                    spinnerSize={RFValue(20, 680)}
+                    clearIconImageStyle={styles.clearIconImageStyle}
+                    searchIconImageStyle={styles.searchIconImageStyle}
                     onChangeText={(text) => {
                         if (text.length === 0)
                             setState(prevState => {

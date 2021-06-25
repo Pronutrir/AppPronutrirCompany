@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Pressable, TextInput, Dimensions, Keyboard, Tou
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
+import Prosseguir from '../../../components/buttons/Btnprosseguir';
 import VisaoPassword from '../../../componentes/visaoPassword';
 import auth from '@react-native-firebase/auth';
 import Loading from '../../../componentes/Loading';
@@ -230,7 +230,7 @@ export default function alterarSenha({ navigation }) {
                                                 </View>
                                             </View>
                                             <View style={styles.box2}>
-                                                <Btnprosseguir
+                                                <Prosseguir
                                                     valueText={'Alterar'}
                                                     onPress={() => handleSubmit()}
                                                 />

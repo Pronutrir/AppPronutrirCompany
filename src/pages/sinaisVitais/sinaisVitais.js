@@ -70,9 +70,9 @@ const sinaisVitais = () => {
             if(result){
                 setAtendimento(result);
             }else{
+                resetValores();
                 setAtendimento(sinaisVitaisDefault);
             }
-            
             setActiveBall(false);
         } catch (error) {
             setActiveBall(false);
@@ -128,15 +128,22 @@ const sinaisVitais = () => {
         return x;
     }
 
+    const resetValores = () => {
+        setPeso(0);
+        setAltura(0);
+        setOxigenacao(0);
+        setTemperatura(0);
+    }
+
     useEffect(() => {
-        autoSet(atendimento)
+        autoSet(atendimento);
     }, [atendimento])
 
     const Onclean = () => {
         setSelected();
         setAtendimento();
         setState(prevState => {
-            return { ...prevState, spinnerVisibility: false }
+            return { ...prevState, spinnerVisibility: false, dataSource: [] }
         });
     }
 
@@ -225,18 +232,18 @@ const sinaisVitais = () => {
                                     label={"Temperatura"}
                                     medida={'°C'}
                                     step={0.1}
-                                    valueMin={0}
-                                    valueMax={45}
+                                    valueMin={30}
+                                    valueMax={42}
                                     valueRanger={temperatura}
                                     setValueRanger={setTemperatura}
                                 />
                             </View>
                             <View style={styles.item2}>
                                 <SlideRanger
-                                    label={"Oxigênio"}
+                                    label={"Oximetria"}
                                     medida={'SpO²'}
                                     step={1}
-                                    valueMin={0}
+                                    valueMin={50}
                                     valueMax={100}
                                     valueRanger={oxigenacao}
                                     setValueRanger={setOxigenacao}

@@ -9,69 +9,80 @@ export const centerSubtitleStyle = (item) => ({
 });
 
 const styles = StyleSheet.create({
-    safeAreaViewStyle: {
-        flex: 1,
-        backgroundColor: "#fff",
-        paddingTop: 10
+  safeAreaViewStyle: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 10
+  },
+  flatListStyle: {
+    flex: 1,
+    marginTop: 10,
+    alignItems: 'center'
+  },
+  cardShadowStyle: {
+    ...Platform.select({
+      ios: {
+        shadowRadius: 3,
+        shadowOpacity: 0.4,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 3,
+          height: 3,
+        },
       },
-      flatListStyle: {
-        flex: 1,
-        marginTop: 10,
-        alignItems: 'center'
+      android: {
+        elevation: 3,
       },
-      cardShadowStyle: {
-        ...Platform.select({
-          ios: {
-            shadowRadius: 3,
-            shadowOpacity: 0.4,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 3,
-              height: 3,
-            },
-          },
-          android: {
-            elevation: 3,
-          },
-        }),
+    }),
+  },
+  SearchBarBoxStyle: {
+    marginTop: Dimensions.get('screen').width / 15,
+    flex: 1
+  },
+  SearchBarStyle: {
+    height: Dimensions.get('screen').height / 15,
+    backgroundColor: "#08948A"
+  },
+  cardStyle: {
+    width: Dimensions.get('screen').width,
+    marginTop: 16,
+    alignItems: "flex-start",
+    justifyContent: "center",
+    borderBottomWidth: 0.5,
+    borderColor: '#7C9292',
+    paddingLeft: 10
+  },
+  container: {
+    ...Platform.select({
+      android: {
+        top: 24,
       },
-      SearchBarBoxStyle:{
-        marginTop: Dimensions.get('screen').width / 15, 
-        flex: 1
-      },
-      SearchBarStyle:{
-        backgroundColor: "#08948A",
-        fontSize: RFValue(30, 680),
-      },
-      cardStyle: {
-        width: Dimensions.get('screen').width, 
-        marginTop: 16,
-        alignItems: "flex-start",
-        justifyContent: "center",
-        borderBottomWidth: 0.5,
-        borderColor: '#7C9292',
-        paddingLeft: 10
-      },
-      container: {
-        ...Platform.select({
-          android: {
-            top: 24,
-          },
-        }),
-        backgroundColor: "#21283d",
-      },
-      label: {
-        marginHorizontal: 10,
-        fontSize: RFValue(18, 680),
-        color: '#08948A'
-      },
-      textDescription:{
-        marginHorizontal: 10,
-        marginVertical: 5,
-        fontSize: RFValue(16, 680),
-        color: '#7C9292'
-      }
-      
-  });
-  
-  export default styles;
+    }),
+    backgroundColor: "#21283d",
+  },
+  label: {
+    marginHorizontal: 10,
+    fontSize: RFValue(18, 680),
+    color: '#08948A'
+  },
+  textDescription: {
+    marginHorizontal: 10,
+    marginVertical: 5,
+    fontSize: RFValue(16, 680),
+    color: '#7C9292'
+  },
+  textInputStyle: {
+    fontSize: RFValue(20, 680)
+  },
+  clearIconImageStyle: {
+    width: RFValue(20, 680),
+    height: RFValue(20, 680)
+  },
+  searchIconImageStyle: {
+    width: RFValue(20, 680),
+    height: RFValue(20, 680)
+  }
+
+});
+
+export default styles;
