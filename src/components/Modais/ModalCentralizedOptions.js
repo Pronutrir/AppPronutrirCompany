@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
 import BtnOptions from '../buttons/BtnOptions';
-import propTypes from 'prop-types';
 
 const windowWidth = Dimensions.get('screen').width;
 const windowHeight = Dimensions.get('screen').height;
@@ -69,13 +68,5 @@ const styles = StyleSheet.create({
         padding: 10
     }
 })
-
-ModalCentralized.propTypes = {
-    activeModal: propTypes.bool
-}
-
-ModalCentralized.defaultProps = {
-    activeModal: false
-}
 
 export default ModalCentralized;

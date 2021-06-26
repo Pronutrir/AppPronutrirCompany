@@ -1,22 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import LinearGradient from 'react-native-linear-gradient';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
-export default function Btnprosseguir({ onPress, valueText = "Ok" }) {
+interface Props {
+    valueText: string;
+    onPress(): void;
+};
+
+const BtnOptions: React.FC<Props> = ({ valueText, onPress } : Props) => {
     return (
         <View style={styles.container}>
             <LinearGradient colors={['#066861', '#52b4ad']} style={styles.linearGradient}>
                 <TouchableOpacity style={styles.btn} onPress={onPress}>
-                    <Text style={styles.text}>{valueText ? valueText : 'Prosseguir'}</Text>
+                    <Text style={styles.text}>{valueText}</Text>
                 </TouchableOpacity>
             </LinearGradient>
         </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -59,3 +64,5 @@ const styles = StyleSheet.create({
         })
     }
 })
+
+export default BtnOptions;

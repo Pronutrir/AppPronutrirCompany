@@ -1,9 +1,13 @@
-import React from 'react'
+import React from 'react';
 import { Platform } from 'react-native';
-import { StyleSheet, TouchableOpacity, Dimensions, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, Dimensions, View } from 'react-native';
 import ArrowBack from '../../assets/svg/arrowBack.svg';
 
-export default function BackButton({ onPress }) {
+interface Props {
+    onPress(): void;
+}
+
+const BackButton: React.FC<Props> = ({ onPress } : Props) => {
 
     const size = Dimensions.get('screen').width / 15
 
@@ -46,3 +50,5 @@ const styles = StyleSheet.create({
         padding: 15,
     }
 })
+
+export default BackButton;
