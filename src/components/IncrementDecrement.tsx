@@ -1,42 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { StyleSheet, View, TextInput, Pressable, Dimensions, Text } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-import propTypes from 'prop-types';
 import Adicao from '../assets/svg/math-plus.svg';
 import Subtracao from '../assets/svg/math-minus.svg';
 
-const noop = () => { };
+interface Props {
+    RangerValue: number;
+    medida: string;
+    setRangerValue(value: number): void;
+};
 
-function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
+const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, medida }: Props) => {
 
     const size = Dimensions.get('screen').height / 40
 
-    const inc_Dec = (tipo) => {
+    const inc_Dec = (tipo: string) => {
 
-        var value = 1;
+        var value: number = 1;
 
         switch (medida) {
             case '°C': {
                 value = 0.1;
-                let ranger = RangerValue;
+                let ranger: number = RangerValue;
                 if (tipo === 'soma') {
                     setRangerValue(ranger + value);
                 } else if (tipo === 'subtracao') {
                     setRangerValue(ranger - value);
                 }
-            } break;
+            }
+                break;
             default:
                 if (tipo === 'soma') {
-                    setRangerValue((parseInt(RangerValue) + value));
+                    setRangerValue(RangerValue + value);
                 } else if (tipo === 'subtracao') {
-                    setRangerValue((parseInt(RangerValue) - value));
+                    setRangerValue(RangerValue - value);
                 } break;
         }
     }
 
     useEffect(() => {
+       // console.log("componente", "IncrementDecrement")
         setRangerValue(RangerValue);
     }, [RangerValue])
+
+    useEffect(() => {
+       console.log("componente", RangerValue)
+    })
 
     return (
         <View style={styles.Container}>
@@ -49,14 +58,14 @@ function IncrementDecrement({ RangerValue = 0, setRangerValue, medida }) {
                 //maxLength={3}
                 //editable={false}
                 style={styles.valueInput}
-                //onChange={text => setRangerValue(parseInt(text))}
-                //onBlur={text => setRangerValue(parseInt(0))}
+            //onChange={text => setRangerValue(parseInt(text))}
+            //onBlur={text => setRangerValue(parseInt(0))}
             >{Number.isInteger(RangerValue) ? RangerValue : RangerValue.toFixed(1)}</Text>
             <Text style={styles.text}>{medida && medida}</Text>
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
             </Pressable>
-        </View> 
+        </View>
     )
 }
 
@@ -85,21 +94,10 @@ const styles = StyleSheet.create({
         fontSize: RFValue(20, 680),
         textAlign: 'center',
     },
-    text:{
+    text: {
         color: '#7C9292',
         fontSize: RFValue(14, 680),
     }
 });
 
-IncrementDecrement.prototype = {
-    RangerValue: propTypes.number.isRequired,
-    setRangerValue: propTypes.func.isRequired,
-    medida: propTypes.string
-}
-
-IncrementDecrement.defaultProps = {
-    RangerValue: 0.00,
-    setRangerValue: noop
-}
-
-export default IncrementDecrement;
+export default memo(IncrementDecrement);

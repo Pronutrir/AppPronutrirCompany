@@ -3,7 +3,7 @@ import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView } from 'react
 import SearchBar from 'react-native-dynamic-search-bar';
 import styles from './style';
 import { RFValue } from "react-native-responsive-fontsize";
-import MyLoadingBall from '../../componentes/MyLoadingBall';
+import LoadingBall from '../../components/Loading/LoadingBall';
 import SlideRanger from '../../components/Slider/SlideRanger';
 import BtnCentered from '../../components/buttons/BtnCentered';
 import Api from '../../services/api';
@@ -68,9 +68,9 @@ const sinaisVitais = () => {
         setState(prevState => { return { ...prevState, dataSource: [] } });
         try {
             const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${item.cD_PESSOA_FISICA}`);
-            if(result){
+            if (result) {
                 setAtendimento(result);
-            }else{
+            } else {
                 resetValores();
                 setAtendimento(sinaisVitaisDefault);
             }
@@ -139,6 +139,10 @@ const sinaisVitais = () => {
     useEffect(() => {
         autoSet(atendimento);
     }, [atendimento])
+
+    useEffect(() => {
+        console.log("Render - sinais Vitais");
+    })
 
     const Onclean = () => {
         setSelected();
@@ -257,14 +261,11 @@ const sinaisVitais = () => {
                             </View>
                         </>
                     }
-                    {
-                        (!atendimento && selected) &&
-                        <MyLoadingBall />
-                    }
+                    <LoadingBall active={(!atendimento && selected)} />
                 </ScrollView>
             </View>
             <Loading activeModal={activeModal} />
-            <ModalCentralizedOptions activeModal={true} message={"Deseja adicionar os Sinais Vitais ?"}/>
+            <ModalCentralizedOptions activeModal={true} message={"Deseja adicionar os Sinais Vitais ?"} />
         </SafeAreaView>
     )
 }

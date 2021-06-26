@@ -1,9 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function Btnprosseguir({ onPress, valueText }) {
+interface Props {
+    valueText: string;
+    onPress(): void;
+};
+
+const Btnprosseguir: React.FC<Props> = ({ onPress, valueText } : Props) => {
     return (
         <View style={styles.container}>
             <LinearGradient colors={['#a5d0d0', '#eaf3f4']} style={styles.linearGradient}>
@@ -35,7 +40,7 @@ const styles = StyleSheet.create({
     },
     linearGradient: {
         flex: 1,
-        width: RFPercentage( 30, 680),
+        width: RFPercentage(30),
         borderRadius: 30,
         marginVertical: 5, 
         ...Platform.select({
@@ -55,4 +60,6 @@ const styles = StyleSheet.create({
             }
         })
     }
-})
+});
+
+export default Btnprosseguir;

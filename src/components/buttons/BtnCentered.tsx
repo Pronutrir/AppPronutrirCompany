@@ -1,22 +1,31 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
-import { RFValue } from "react-native-responsive-fontsize";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Dimensions } from 'react-native';
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 import LinearGradient from 'react-native-linear-gradient';
-import propTypes from 'prop-types';
 
-const BtnRetangular = ({ labelBtn, fontSize, onPress, containerBtnStyle }) => {
+const widthScreen = Dimensions.get('screen').width;
+const heightScreen = Dimensions.get('screen').height;
+
+interface Props {
+    labelBtn: string;
+    enabled: boolean;
+    SizeText: number;
+    onPress(): void;
+};
+
+const BtnCentered: React.FC<Props> = ({ labelBtn = "OK", SizeText = 12 , onPress, enabled = false } : Props) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={[styles.btn, containerBtnStyle && { ...containerBtnStyle }]} onPress={() => onPress()}>
+            <TouchableOpacity disabled={enabled} style={enabled ? styles.btnDisabled : styles.btn} onPress={() => onPress()}>
                 <LinearGradient
                     useAngle={true}
                     angle={45}
                     angleCenter={{ x: 0.5, y: 0.5 }}
-                    colors={['#52b4ad', '#219f96', '#08948a']}
+                    colors={ enabled ? ['#e6f4f3', '#e6f4f3'] : ['#52b4ad', '#219f96', '#08948a'] }
                     style={styles.linearGradient}
                 >
                     <Text
-                        style={[styles.text, fontSize && { fontSize: RFValue(fontSize, 680) }]}
+                        style={[styles.text, { fontSize: RFValue(SizeText, 680) }]}
                     >
                         {labelBtn}
                     </Text>
@@ -39,10 +48,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     btn: {
-        width: 150,
-        height: 50,
+        width: RFPercentage(18),
+        height: RFPercentage(6),
         marginVertical: 5,
         backgroundColor: 'transparent',
+        borderRadius: 30,
         ...Platform.select({
             android: {
                 elevation: 5
@@ -60,21 +70,17 @@ const styles = StyleSheet.create({
             }
         })
     },
+    btnDisabled: {
+        width: RFPercentage(18),
+        height: RFPercentage(6),
+        marginVertical: 5
+    },
     linearGradient: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderRadius: 30,
     }
 });
 
-BtnRetangular.propTypes = {
-    labelBtn: propTypes.string,
-    fontSize: propTypes.number
-}
-
-BtnRetangular.defaultProps = {
-    actilabelBtnveModal: 'MyButtom',
-    fontSize: 16
-}
-
-export default BtnRetangular;
+export default BtnCentered;

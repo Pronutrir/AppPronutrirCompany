@@ -3,9 +3,9 @@ import { Alert } from 'react-native';
 
 const api = axios.create({
     //producao
-    baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
+    //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
     //teste
-    //baseURL: 'http://webapppronutrir.com.br:9001/api/v1/',
+    baseURL: 'http://webapppronutrir.com.br:9001/api/v1/',
     //ngrok
     //baseURL: 'https://c1fde3d40d7b.ngrok.io/api/v1/',
     headers: {

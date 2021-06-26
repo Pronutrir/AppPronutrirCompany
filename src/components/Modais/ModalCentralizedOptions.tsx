@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
+import React, { useState, memo } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Modal, Platform } from 'react-native';
 import BtnOptions from '../buttons/BtnOptions';
 
-const windowWidth = Dimensions.get('screen').width;
-const windowHeight = Dimensions.get('screen').height;
+interface Props {
+    activeModal: boolean;
+    message: string;
+};
 
-const ModalCentralized = ({ activeModal = true, message = 'teste' }) => {
+const ModalCentralized: React.FC<Props> = ({ activeModal = true, message = 'teste' }: Props) => {
 
     const [active, setActive] = useState(activeModal);
 
@@ -14,7 +16,6 @@ const ModalCentralized = ({ activeModal = true, message = 'teste' }) => {
             <Modal
                 animationType='fade'
                 transparent={true}
-                backdropOpacity={0.9}
                 visible={active}
             >
                 <View style={styles.centeredView}>
@@ -23,7 +24,7 @@ const ModalCentralized = ({ activeModal = true, message = 'teste' }) => {
                             <Text style={styles.textMenssage}>{message}</Text>
                         </View>
                         <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
-                            <BtnOptions valueText={"Ok"}/>
+                            <BtnOptions valueText={"Ok"} onPress={() => setActive(false)}/>
                             <BtnOptions valueText={"Cancelar"} onPress={() => setActive(false)}/>
                         </View>
                     </SafeAreaView>
@@ -69,4 +70,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ModalCentralized;
+export default memo(ModalCentralized);
