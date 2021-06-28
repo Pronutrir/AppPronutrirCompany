@@ -13,7 +13,34 @@ import ErrorContext from '../../contexts/errorNotification';
 import Loading from '../../componentes/Loading';
 import ModalCentralizedOptions from '../../components/Modais/ModalCentralizedOptions';
 
-const sinaisVitaisDefault = {
+interface SinaisVitais {
+    iE_PRESSAO: string,
+    iE_MEMBRO: string,
+    iE_MANGUITO: string,
+    iE_APARELHO_PA: string,
+    iE_COND_SAT_O2: string,
+    iE_MEMBRO_SAT_O2: string,
+    iE_RITMO_ECG: string,
+    iE_DECUBITO: string,
+    iE_UNID_MED_PESO: string,
+    iE_UNID_MED_ALTURA: string,
+    cD_PACIENTE: string,
+    cD_PESSOA_FISICA: string,
+    qT_SATURACAO_O2: number,
+    qT_TEMP: number,
+    qT_PESO: number,
+    qT_ALTURA_CM: number,
+    iE_SITUACAO: string,
+    nM_USUARIO: string
+}
+
+interface PessoaSelected {
+    cD_PESSOA_FISICA: string;
+    nM_PESSOA_FISICA: string;
+    dT_NASCIMENTO: string;
+}
+
+const sinaisVitaisDefault: SinaisVitais = {
     iE_PRESSAO: 'D',
     iE_MEMBRO: 'MSE',
     iE_MANGUITO: 'C',
@@ -24,9 +51,17 @@ const sinaisVitaisDefault = {
     iE_DECUBITO: 'DDH',
     iE_UNID_MED_PESO: 'Kg',
     iE_UNID_MED_ALTURA: 'cm',
+    cD_PACIENTE: null,
+    cD_PESSOA_FISICA: null,
+    qT_SATURACAO_O2: null,
+    qT_TEMP: null,
+    qT_PESO: null,
+    qT_ALTURA_CM: null,
+    iE_SITUACAO: null,
+    nM_USUARIO: null
 }
 
-const sinaisVitais = () => {
+const sinaisVitais: React.FC = () => {
 
     const { stateAuth: { usertasy } } = useContext(AuthContext);
     const { addNotification } = useContext(ErrorContext);
@@ -40,10 +75,10 @@ const sinaisVitais = () => {
         spinnerVisibility: false,
     });
 
-    const [activeBall, setActiveBall] = useState(false);
-    const [activeModal, setActiveModal] = useState(false);
-    const [selected, setSelected] = useState();
-    const [atendimento, setAtendimento] = useState();
+    const [activeBall, setActiveBall] = useState<boolean>(false);
+    const [activeModal, setActiveModal] = useState<boolean>(false);
+    const [selected, setSelected] = useState<PessoaSelected>();
+    const [atendimento, setAtendimento] = useState<SinaisVitais>();
 
     const [Peso, setPeso] = useState(0);
     const [Altura, setAltura] = useState(0);
@@ -51,13 +86,15 @@ const sinaisVitais = () => {
     const [oxigenacao, setOxigenacao] = useState(0);
 
     const Search = async (nome) => {
-        setSelected();
-        setAtendimento();
+        setSelected(undefined);
+        setAtendimento(undefined);
         setState(prevState => { return { ...prevState, spinnerVisibility: true } });
         try {
-            const { data: { result } } = await Api.get(`PessoaFisica/filtroPessoas/${nome}`);
+            const { data: { result } } = await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}`);
             setState(prevState => { return { ...prevState, spinnerVisibility: false, dataSource: result } });
         } catch (error) {
+            setState(prevState => { return { ...prevState, spinnerVisibility: false } });
+            addNotification({ message: "Não foi possivel realizar a consulta, tente mais tarde!", status: 'error' });
             console.log(error);
         }
     }
@@ -67,7 +104,7 @@ const sinaisVitais = () => {
         setSelected(item);
         setState(prevState => { return { ...prevState, dataSource: [] } });
         try {
-            const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${item.cD_PESSOA_FISICA}`);
+            const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentes/${item.cD_PESSOA_FISICA}`);
             if (result) {
                 setAtendimento(result);
             } else {
@@ -76,6 +113,7 @@ const sinaisVitais = () => {
             }
             setActiveBall(false);
         } catch (error) {
+            addNotification({ message: "Não foi possivel realizar a consulta, tente mais tarde!", status: 'error' });
             setActiveBall(false);
             console.log(error);
         }
@@ -104,10 +142,10 @@ const sinaisVitais = () => {
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
         }).then(response => {
             setActiveModal(false);
-            addNotification("Dados atualizados com sucesso!", 'success');
+            addNotification({ message: "Dados atualizados com sucesso!", status: 'sucess' });
         }).catch(error => {
             setActiveModal(false);
-            addNotification("Não foi possivel atualizar tente mais tarde!", 'error');
+            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error'});
         })
     }
 
@@ -145,8 +183,8 @@ const sinaisVitais = () => {
     })
 
     const Onclean = () => {
-        setSelected();
-        setAtendimento();
+        setSelected(undefined);
+        setAtendimento(undefined);
         setState(prevState => {
             return { ...prevState, spinnerVisibility: false, dataSource: [] }
         });
@@ -261,7 +299,7 @@ const sinaisVitais = () => {
                             </View>
                         </>
                     }
-                    <LoadingBall active={(!atendimento && selected)} />
+                    <LoadingBall active={!atendimento && !!selected} />
                 </ScrollView>
             </View>
             <Loading activeModal={activeModal} />

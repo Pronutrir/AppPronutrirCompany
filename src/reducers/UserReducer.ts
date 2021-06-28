@@ -1,4 +1,4 @@
-export const initialState : LoginState = {
+export const initialState: LoginState = {
     Usuario: {
         email: '',
         token: ''
@@ -17,7 +17,8 @@ export const initialState : LoginState = {
         nR_TELEFONE_CELULAR: '', //986849878
         dS_EMAIL: '', // williame_lima@hotmail.com
         nR_Senha: '',
-        ImgPerfil: '' //base64
+        ImgPerfil: '', //base64
+        usuariO_FUNCIONARIO: []
     }
 };
 
@@ -27,63 +28,73 @@ export interface UsuarioFirebase {
 }
 
 export interface LoginState {
-    Usuario: UsuarioFirebase
-    usertasy : UserTasy
+    Usuario: UsuarioFirebase;
+    usertasy: UserTasy;
 }
 
 export interface UserTasy {
-    cD_PESSOA_FISICA: string,
-        dT_ATUALIZACAO: string,
-        dT_NASCIMENTO: string,
-        iE_FUNCIONARIO: string,
-        iE_TIPO_PESSOA: number,
-        nM_PESSOA_FISICA: string,
-        nM_USUARIO: string,
-        nR_CPF: string,
-        nR_PRONTUARIO: number,
-        nR_DDD_CELULAR: string,
-        nR_TELEFONE_CELULAR: string,
-        dS_EMAIL: string,
-        nR_Senha: string,
-        ImgPerfil: string 
+    cD_PESSOA_FISICA: string;
+    dT_ATUALIZACAO: string;
+    dT_NASCIMENTO: string;
+    iE_FUNCIONARIO: string;
+    iE_TIPO_PESSOA: number;
+    nM_PESSOA_FISICA: string;
+    nM_USUARIO: string;
+    nR_CPF: string;
+    nR_PRONTUARIO: number;
+    nR_DDD_CELULAR: string;
+    nR_TELEFONE_CELULAR: string;
+    dS_EMAIL: string;
+    nR_Senha: string;
+    ImgPerfil: string;
+    usuariO_FUNCIONARIO: UsuarioFuncionario[]; 
 }
 
-export type LoginAction = 
-    { type: 'delUser' | 'setToken' | 'UpdateUserTasyCPF' | 'UpdateUserTasyNome' | 'UpdateUserTasyDataNasc' |
-      'UpdateUserTasyDDD' | 'UpdateUserTasyFone' | 'UpdateUserTasyEmail' | 'UpdateSenha' | 'setImgPerfil';
-       payload: string;
+export interface UsuarioFuncionario {
+    nM_USUARIO: string;
+    cD_SETOR_ATENDIMENTO: number;
+    dS_SETOR_ATENDIMENTO: string;
+    cD_ESTABELECIMENTO: number
+}
+
+export type LoginAction =
+    {
+        type: 'delUser' | 'setToken' | 'UpdateUserTasyCPF' | 'UpdateUserTasyNome' | 'UpdateUserTasyDataNasc' |
+        'UpdateUserTasyDDD' | 'UpdateUserTasyFone' | 'UpdateUserTasyEmail' | 'UpdateSenha' | 'setImgPerfil';
+        payload: string;
     }
     |
-    {type: 'setUserTasy'; payload: UserTasy}
+    { type: 'setUserTasy'; payload: UserTasy }
     |
-    {type: 'setUser'; payload: UsuarioFirebase}
+    { type: 'setUser'; payload: UsuarioFirebase }
 
-export const UserReducer = (state: LoginState, action: LoginAction) : LoginState => {
+export const UserReducer = (state: LoginState, action: LoginAction): LoginState => {
     switch (action.type) {
         case 'setUser':
             return { ...state, Usuario: action.payload };
             break;
         case 'delUser':
             return {
-                Usuario:{
+                Usuario: {
                     email: '',
                     token: '',
                 },
                 usertasy: {
-                    cD_PESSOA_FISICA: '', 
-                    dT_ATUALIZACAO: '', 
-                    dT_NASCIMENTO: '', 
+                    cD_PESSOA_FISICA: '',
+                    dT_ATUALIZACAO: '',
+                    dT_NASCIMENTO: '',
                     iE_FUNCIONARIO: 'N',
-                    iE_TIPO_PESSOA: 1, 
-                    nM_PESSOA_FISICA: '', 
-                    nM_USUARIO: 'AppMobile', 
-                    nR_CPF: '', 
-                    nR_PRONTUARIO: null, 
-                    nR_DDD_CELULAR: '', 
-                    nR_TELEFONE_CELULAR: '', 
-                    dS_EMAIL: '', 
+                    iE_TIPO_PESSOA: 1,
+                    nM_PESSOA_FISICA: '',
+                    nM_USUARIO: 'AppMobile',
+                    nR_CPF: '',
+                    nR_PRONTUARIO: null,
+                    nR_DDD_CELULAR: '',
+                    nR_TELEFONE_CELULAR: '',
+                    dS_EMAIL: '',
                     nR_Senha: '',
-                    ImgPerfil: ''
+                    ImgPerfil: '',
+                    usuariO_FUNCIONARIO: []
                 }
             };
             break;

@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
   item2: {
     flex: 1
   },
+  item3: {
+    
+  },
   box3: {
     flex: 0.2
   },

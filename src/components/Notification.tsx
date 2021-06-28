@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Platform } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import OkImg from '../assets/svg/ok.svg';
 import Cancel from '../assets/svg/cancel.svg';
@@ -8,7 +8,7 @@ import AlertSvg from '../assets/svg/alerta.svg';
 import { RFValue } from "react-native-responsive-fontsize";
 import ErrorContext from "../contexts/errorNotification";
 
-export default function Notification({ type, message }) {
+export default function Notification() {
 
     const { notification, removeNotification } = useContext(ErrorContext);
 
@@ -19,8 +19,8 @@ export default function Notification({ type, message }) {
     }
 
     const buttomType = () => {
-        switch (notification.status) {
-            case 'success': return '#388e3c'
+        switch (notification?.status) {
+            case 'sucess': return '#388e3c'
                 break;
             case 'error': return '#d32f2f'
                 break;
@@ -35,8 +35,8 @@ export default function Notification({ type, message }) {
     }
 
     const ImgType = () => {
-        switch (notification.status) {
-            case 'success': return <OkImg fill={'#fff'} width={size} height={size} />
+        switch (notification?.status) {
+            case 'sucess': return <OkImg fill={'#fff'} width={size} height={size} />
                 break;
             case 'error': return <Cancel fill={'#fff'} width={size} height={size} />
                 break;

@@ -1,10 +1,10 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Modal, TouchableOpacity, Platform } from 'react-native';
 import OkImg from '../../assets/svg/ok.svg';
 import { RFValue } from "react-native-responsive-fontsize";
 import ErrorContext from "../../contexts/errorNotification";
 
-export default function ErrorNotification() {
+const ErrorNotification: React.FC = () => {
 
     const { error, removeError } = useContext(ErrorContext);
 
@@ -19,7 +19,6 @@ export default function ErrorNotification() {
             <Modal
                 animationType='fade'
                 transparent={true}
-                //backdropOpacity={0.9}
                 visible={!!error}
             >
                 <View style={styles.centeredView}>
@@ -29,7 +28,7 @@ export default function ErrorNotification() {
                         </View>
                         <View style={styles.box}>
                             <Text style={styles.text}>
-                                {error && error.message}
+                                {error?.message}
                             </Text>
                         </View>
                         <View style={styles.boxBtn}>
@@ -44,6 +43,8 @@ export default function ErrorNotification() {
         </View>
     )
 }
+
+export default ErrorNotification;
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -122,34 +123,5 @@ const styles = StyleSheet.create({
     description: {
         fontSize: RFValue(16, 680),
         color: '#08948A'
-    },
-    boxBtn: {
-        marginVertical: 20,
-        width: '90%',
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-    },
-    btn: {
-        width: 80,
-        height: 50,
-        backgroundColor: '#fff',
-        opacity: 0.9,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3
-            }
-        }),
-        alignItems: 'center',
-        borderRadius: 10,
-        justifyContent: 'center',
-        flexDirection: 'row'
-    },
+    }
 })
