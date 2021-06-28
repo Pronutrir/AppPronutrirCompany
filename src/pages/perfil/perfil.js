@@ -49,7 +49,7 @@ export default function perfil({ navigation }) {
         }).then(response => {
             const { result } = response.data
             if (result) {
-                dispatchAuth({ type: 'setImgPerfil', ImgPerfil: result.iM_PESSOA_FISICA })
+                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
             }
             setLoading(false);
         }).catch(error => {
@@ -73,7 +73,7 @@ export default function perfil({ navigation }) {
         }).then(response => {
             const { result } = response.data
             if (result) {
-                dispatchAuth({ type: 'setImgPerfil', ImgPerfil: result.iM_PESSOA_FISICA })
+                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
             }
             setLoading(false);
         }).catch(error => {
@@ -88,7 +88,7 @@ export default function perfil({ navigation }) {
         Api.get(`PessoaFisica/DadosFotoPerfilPessoaFisica?cpf=${usertasy.nR_CPF}`).then(response => {
             const { result } = response.data
             if (result) {
-                dispatchAuth({ type: 'setImgPerfil', ImgPerfil: result.iM_PESSOA_FISICA })
+                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
             }
         }).catch(error => {
             setModalNotification(prevState => {

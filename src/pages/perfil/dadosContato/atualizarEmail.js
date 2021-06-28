@@ -54,7 +54,7 @@ export default function atualizarEmail({ navigation }) {
                 setModalNotification(prevState => {
                     return { ...prevState, active: true, message: 'O Seu E-mail foi atualizado com sucesso!', type: 'success' }
                 });
-                dispatchAuth({ type: 'UpdateUserTasyEmail', dS_EMAIL: result.dS_EMAIL })
+                dispatchAuth({ type: 'UpdateUserTasyEmail', payload: result.dS_EMAIL })
             }
             return result
         }).catch(error => {

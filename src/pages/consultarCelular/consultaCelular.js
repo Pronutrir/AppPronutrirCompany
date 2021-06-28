@@ -41,7 +41,7 @@ export default function consultaCelular({ navigation }) {
     })
 
     const setFone = (value) => {
-        dispatchAuth({ type: 'UpdateUserTasyFone', nR_TELEFONE_CELULAR: value.Telefone })
+        dispatchAuth({ type: 'UpdateUserTasyFone', payload: value.Telefone })
         navigation.navigate('ConsultarSenha')
     }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Image, ImageBackground } from 'react-native';
 import CarouselText from '../../componentes/Carousel_text';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import BtnCentered from '../../components/buttons/BtnCentered';
@@ -44,7 +44,7 @@ export default function home({ navigation }) {
                         <CarouselText />
                     </View>
                     <View style={styles.box3}>
-                        <BtnCentered labelBtn={"Começar"} fontSize={18} onPress={() => navigation.navigate('ConsultaCpf')} />
+                        <BtnCentered labelBtn={"Começar"} SizeText={18} onPress={() => navigation.navigate('ConsultaCpf')} />
                     </View>
             </ImageBackground>
         </View>

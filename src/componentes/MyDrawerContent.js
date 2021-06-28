@@ -14,8 +14,7 @@ export default function MyDrawerContent({ navigation }) {
 
     const size = Dimensions.get('screen').width / 15
 
-    const { stateAuth, dispatchAuth } = useContext(AuthContext);
-    const { usertasy } = stateAuth;
+    const { stateAuth: { usertasy }, dispatchAuth } = useContext(AuthContext);
 
     const [loading, setLoading] = useState(false);
 

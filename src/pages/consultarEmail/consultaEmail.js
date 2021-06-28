@@ -36,7 +36,7 @@ export default function consultaEmail({ navigation }) {
     })
 
     const setEmail = (value) => {
-        dispatchAuth({ type: 'UpdateUserTasyEmail', dS_EMAIL: value.Email })
+        dispatchAuth({ type: 'UpdateUserTasyEmail', payload: value.Email })
         navigation.navigate('ConsultaConfimarEmail')
     }
 

@@ -26,7 +26,7 @@ export default function consultarSenha({ navigation }) {
     })
 
     const setSenha = (value) => {
-        dispatchAuth({ type: 'UpdateSenha', nR_Senha: value.Senha })
+        dispatchAuth({ type: 'UpdateSenha', payload: value.Senha })
         navigation.navigate('ConsultarConfirmarSenha')
     }
 

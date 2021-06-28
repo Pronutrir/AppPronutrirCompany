@@ -24,7 +24,7 @@ export default function consultarNome({ navigation }) {
     })
 
     const setNome = (value) => {
-        dispatchAuth({ type: 'UpdateUserTasyNome', nM_PESSOA_FISICA: value.Nome })
+        dispatchAuth({ type: 'UpdateUserTasyNome', payload: value.Nome })
         navigation.navigate('consultarNascimento')
     }
 

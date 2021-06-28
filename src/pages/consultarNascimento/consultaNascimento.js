@@ -34,7 +34,7 @@ export default function consultaNascimento({ navigation }) {
     })
 
     const setDataNasc = (value) => {
-        dispatchAuth({ type: 'UpdateUserTasyDataNasc', dT_NASCIMENTO: value.DataNascimento })
+        dispatchAuth({ type: 'UpdateUserTasyDataNasc', payload: value.DataNascimento })
         navigation.navigate('ConsultaEmail')
     }
 

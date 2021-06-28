@@ -2,7 +2,6 @@ import React, { useState, useRef, useContext } from 'react';
 import { Text, View, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Dimensions, PixelRatio } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
-
 import styles from './style';
 import BackButton from '../../components/buttons/BackButton';
 import Api from '../../services/api';
@@ -56,14 +55,14 @@ export default function consultaCpf({ navigation }) {
             let updateTasy = null;
             let cd_tasy = null;
             let firebaseExiste = null;
-            let cd_firebase = null
+            let cd_firebase = null;
 
             // consulta o cpf do cliente na api tasy
             const dadosTasy = await getCpf(_Cpf);
     
             if (dadosTasy) {
                 //guarda os dados do cliente no reducer
-                dispatchAuth({ type: 'setUserTasy', usertasy: dadosTasy })
+                dispatchAuth({ type: 'setUserTasy', payload: dadosTasy })
 
                 // consulta se o usuario tem cadastro no firebase
                 firebaseExiste = await consultaFirebase(dadosTasy.nR_CPF, dadosTasy.dS_EMAIL);
@@ -74,7 +73,7 @@ export default function consultaCpf({ navigation }) {
                     navigation.navigate('ConsultaNome');
                 }
             } else {
-                dispatchAuth({ type: 'UpdateUserTasyCPF', nR_CPF: _Cpf });
+                dispatchAuth({ type: 'UpdateUserTasyCPF', payload: _Cpf });
                 navigation.navigate('ConsultaNome');
             }
 

@@ -49,7 +49,7 @@ export default function informacoesPessoais() {
                 setModalNotification(prevState => {
                     return { ...prevState, active: true, message: 'O Seu perfil foi atualizado com sucesso!', type: 'success' }
                 });
-                dispatchAuth({ type: 'UpdateUserTasyNome', nM_PESSOA_FISICA: result.nM_PESSOA_FISICA })
+                dispatchAuth({ type: 'UpdateUserTasyNome', payload: result.nM_PESSOA_FISICA })
             }
             setModalActive(false);
         }).catch(error => {

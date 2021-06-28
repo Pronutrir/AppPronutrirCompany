@@ -51,7 +51,7 @@ export default function cameraPerson({ navigation }) {
         }).then(response => {
             const { result } = response.data
             if (result) {
-                dispatchAuth({ type: 'setImgPerfil', ImgPerfil: result.iM_PESSOA_FISICA })
+                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
             }
             setLoading(false);
             navigation.goBack();
@@ -76,7 +76,7 @@ export default function cameraPerson({ navigation }) {
         }).then(response => {
             const { result } = response.data
             if (result) {
-                dispatchAuth({ type: 'setImgPerfil', ImgPerfil: result.iM_PESSOA_FISICA })
+                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
             }
             setLoading(false);
             navigation.goBack();

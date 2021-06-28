@@ -256,7 +256,7 @@ const sinaisVitais = () => {
                             </View>
                             <View style={styles.item3}>
                                 {selected &&
-                                    <BtnCentered labelBtn={"Adicionar"} onPress={() => AddSinaisVitais()} enabled={ChangerProperty()} />
+                                    <BtnCentered SizeText={18} labelBtn={"Adicionar"} onPress={() => AddSinaisVitais()} enabled={ChangerProperty()} />
                                 }
                             </View>
                         </>

@@ -70,18 +70,18 @@ export const UserReducer = (state: LoginState, action: LoginAction) : LoginState
                     token: '',
                 },
                 usertasy: {
-                    cD_PESSOA_FISICA: '', //159969
-                    dT_ATUALIZACAO: '', //2020-09-23T13:24:42
-                    dT_NASCIMENTO: '', //1985-08-19T00:00:00
+                    cD_PESSOA_FISICA: '', 
+                    dT_ATUALIZACAO: '', 
+                    dT_NASCIMENTO: '', 
                     iE_FUNCIONARIO: 'N',
-                    iE_TIPO_PESSOA: 1, //1
-                    nM_PESSOA_FISICA: '', //WILLIAME CORREIA DE LIMA
-                    nM_USUARIO: 'AppMobile', //CM.TECNOLOGIA
-                    nR_CPF: '', //67023339353
-                    nR_PRONTUARIO: null, //14170
-                    nR_DDD_CELULAR: '', //85
-                    nR_TELEFONE_CELULAR: '', //986849878
-                    dS_EMAIL: '', // williame_lima@hotmail.com
+                    iE_TIPO_PESSOA: 1, 
+                    nM_PESSOA_FISICA: '', 
+                    nM_USUARIO: 'AppMobile', 
+                    nR_CPF: '', 
+                    nR_PRONTUARIO: null, 
+                    nR_DDD_CELULAR: '', 
+                    nR_TELEFONE_CELULAR: '', 
+                    dS_EMAIL: '', 
                     nR_Senha: '',
                     ImgPerfil: ''
                 }

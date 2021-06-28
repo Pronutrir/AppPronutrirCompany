@@ -48,8 +48,8 @@ export default function atualizarCelular() {
                 setModalNotification(prevState => {
                     return { ...prevState, active: true, message: 'O Seu celular foi atualizado com sucesso!', type: 'success' }
                 });
-                dispatchAuth({ type: 'UpdateUserTasyDDD', nR_DDD_CELULAR: result.nR_DDD_CELULAR })
-                dispatchAuth({ type: 'UpdateUserTasyFone', nR_TELEFONE_CELULAR: result.nR_TELEFONE_CELULAR })
+                dispatchAuth({ type: 'UpdateUserTasyDDD', payload: result.nR_DDD_CELULAR })
+                dispatchAuth({ type: 'UpdateUserTasyFone', payload: result.nR_TELEFONE_CELULAR })
             }
             setLoadingActive(false);
             return result
