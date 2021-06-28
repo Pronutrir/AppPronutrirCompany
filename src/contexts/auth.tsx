@@ -4,15 +4,21 @@ import { credenciais_Mobile } from '../credenciais';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Api from '../services/api';
-import { initialState, UserReducer } from '../reducers/UserReducer';
+import { initialState, UserReducer, UserTasy, UsuarioFirebase, LoginState, LoginAction } from '../reducers/UserReducer';
 import { getUserTasy, deleteUserTasy } from '../utils';
 
-const AuthContext = createContext({ signed: false });
+interface AuthContextData {
+    signed: boolean;
+    stateAuth: LoginState;
+    dispatchAuth: React.Dispatch<LoginAction>;
+    loading: boolean;
+}
 
-export const AuthProvider = ({ children }) => {
+const AuthContext = createContext({} as AuthContextData);
+
+export const AuthProvider: React.FC = ({ children }) => {
 
     const [stateAuth, dispatchAuth] = useReducer(UserReducer, initialState);
-
     const [usuario, setUsuario] = useState({
         email: '',
         uid: ''
@@ -65,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     // metodo principal de validacão de acesso!
-    const singIn = async (user) => {
+    const singIn = async (user: any) => {
         setTimeout(async ()  => {
             try {
                 if (user) {
@@ -73,24 +79,24 @@ export const AuthProvider = ({ children }) => {
                     const { email, uid } = user;
 
                     //armazena os dados da api Firebase
-                    dispatchAuth({ type: 'setUser', usuario: { email: email, uid: uid } })
+                    dispatchAuth({ type: 'setUser',  payload: { email: email, token: uid } })
 
                     //pega os dados atualizados do firestone
                     const getFireStone = await consultaFirebase(uid);
 
                     // armazena || atualiza os dados do usuário do tasy
-                    const result = await ConsultaCpfTasy(getFireStone.cpf);
+                    const result: UserTasy = await ConsultaCpfTasy(getFireStone.cpf);
                     if (result) {
                         //informa que há usuário logado
                         setUsuario({ email, uid });
                         setLoading(false);
-                        dispatchAuth({ type: 'setUserTasy', usertasy: result })
+                        dispatchAuth({ type: 'setUserTasy', payload: result })
                     }
 
                 } else {
                     deleteUserTasy();
                     setLoading(false)
-                    setUsuario({ email: undefined })
+                    setUsuario({ email: undefined, uid: undefined })
                 }
             } catch (error) {
                 setLoading(false)
@@ -112,7 +118,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ signed: Boolean(usuario.email), loading, token, stateAuth, dispatchAuth }}>
+        <AuthContext.Provider value={{ signed: Boolean(usuario.email), loading, stateAuth, dispatchAuth }}>
             {children}
         </AuthContext.Provider>
     )
