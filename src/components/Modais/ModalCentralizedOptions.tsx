@@ -1,22 +1,34 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Modal, Platform } from 'react-native';
 import BtnOptions from '../buttons/BtnOptions';
-
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 interface Props {
     activeModal: boolean;
     message: string;
+    onpress(): void;
+    setActiveModal(parms: boolean): void;
 };
 
-const ModalCentralized: React.FC<Props> = ({ activeModal = true, message = 'teste' }: Props) => {
+const ModalCentralized: React.FC<Props> = ({ activeModal = false, message = 'teste', onpress, setActiveModal }: Props) => {
 
-    const [active, setActive] = useState(activeModal);
+    /* useEffect(() => {
+       setActive(activeModal);
+    }, [activeModal]) */
+
+    const Ok = () => {
+        setActiveModal(false);
+        onpress();
+    }
+    const Cancel = () => {
+        setActiveModal(false);
+    }
 
     return (
         <View>
             <Modal
                 animationType='fade'
                 transparent={true}
-                visible={active}
+                visible={activeModal}
             >
                 <View style={styles.centeredView}>
                     <SafeAreaView style={styles.modalView}>
@@ -24,8 +36,8 @@ const ModalCentralized: React.FC<Props> = ({ activeModal = true, message = 'test
                             <Text style={styles.textMenssage}>{message}</Text>
                         </View>
                         <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
-                            <BtnOptions valueText={"Ok"} onPress={() => setActive(false)}/>
-                            <BtnOptions valueText={"Cancelar"} onPress={() => setActive(false)}/>
+                            <BtnOptions valueText={"Ok"} onPress={() => Ok()}/>
+                            <BtnOptions valueText={"Cancelar"} onPress={() => Cancel()}/>
                         </View>
                     </SafeAreaView>
                 </View>
@@ -66,6 +78,7 @@ const styles = StyleSheet.create({
         
     },
     textMenssage:{
+        fontSize: RFValue(16, 680),
         padding: 10
     }
 })

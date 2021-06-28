@@ -1,9 +1,8 @@
 import React, { useEffect, memo } from 'react';
-import { StyleSheet, View, TextInput, Pressable, Dimensions, Text } from 'react-native';
+import { StyleSheet, View, Pressable, Dimensions, Text } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import Adicao from '../assets/svg/math-plus.svg';
 import Subtracao from '../assets/svg/math-minus.svg';
-
 interface Props {
     RangerValue: number;
     medida: string;
@@ -29,6 +28,16 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
                 }
             }
                 break;
+            case 'kg': {
+                value = 0.1;
+                let ranger: number = RangerValue;
+                if (tipo === 'soma') {
+                    setRangerValue(ranger + value);
+                } else if (tipo === 'subtracao') {
+                    setRangerValue(ranger - value);
+                }
+            }
+                break;
             default:
                 if (tipo === 'soma') {
                     setRangerValue(RangerValue + value);
@@ -39,12 +48,11 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
     }
 
     useEffect(() => {
-       // console.log("componente", "IncrementDecrement")
         setRangerValue(RangerValue);
     }, [RangerValue])
 
     useEffect(() => {
-       console.log("componente", RangerValue)
+        console.log("componente", RangerValue)
     })
 
     return (
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
         zIndex: 1
     },
     valueInput: {
-        width: 60,
+        width: Dimensions.get('screen').width / 8,
         fontSize: RFValue(20, 680),
         textAlign: 'center',
         color: '#7C9292',

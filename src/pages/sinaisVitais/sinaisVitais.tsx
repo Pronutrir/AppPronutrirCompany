@@ -40,6 +40,15 @@ interface PessoaSelected {
     dT_NASCIMENTO: string;
 }
 
+interface Consulta {
+    query: string,
+    isLoading: boolean,
+    refreshing: boolean,
+    dataBackup: PessoaSelected[],
+    dataSource: PessoaSelected[],
+    spinnerVisibility: boolean,
+}
+
 const sinaisVitaisDefault: SinaisVitais = {
     iE_PRESSAO: 'D',
     iE_MEMBRO: 'MSE',
@@ -66,8 +75,8 @@ const sinaisVitais: React.FC = () => {
     const { stateAuth: { usertasy } } = useContext(AuthContext);
     const { addNotification } = useContext(ErrorContext);
 
-    const [state, setState] = useState({
-        query: "",
+    const [state, setState] = useState<Consulta>({
+        query: '',
         isLoading: true,
         refreshing: false,
         dataBackup: [],
@@ -77,6 +86,7 @@ const sinaisVitais: React.FC = () => {
 
     const [activeBall, setActiveBall] = useState<boolean>(false);
     const [activeModal, setActiveModal] = useState<boolean>(false);
+    const [activeModalOptions, setActiveModalOptions] = useState<boolean>(false);
     const [selected, setSelected] = useState<PessoaSelected>();
     const [atendimento, setAtendimento] = useState<SinaisVitais>();
 
@@ -88,7 +98,7 @@ const sinaisVitais: React.FC = () => {
     const Search = async (nome) => {
         setSelected(undefined);
         setAtendimento(undefined);
-        setState(prevState => { return { ...prevState, spinnerVisibility: true } });
+        setState((prevState) => { return { ...prevState, spinnerVisibility: true }});
         try {
             const { data: { result } } = await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}`);
             setState(prevState => { return { ...prevState, spinnerVisibility: false, dataSource: result } });
@@ -104,7 +114,7 @@ const sinaisVitais: React.FC = () => {
         setSelected(item);
         setState(prevState => { return { ...prevState, dataSource: [] } });
         try {
-            const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentes/${item.cD_PESSOA_FISICA}`);
+            const { data: { result } } = await Api.get(`SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${item.cD_PESSOA_FISICA}`);
             if (result) {
                 setAtendimento(result);
             } else {
@@ -121,7 +131,7 @@ const sinaisVitais: React.FC = () => {
 
     const AddSinaisVitais = async () => {
         setActiveModal(true);
-        Api.post('SinaisVitaisMonitoracaoGeral', {
+        Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
             iE_PRESSAO: atendimento.iE_PRESSAO,
             iE_MEMBRO: atendimento.iE_MEMBRO,
             iE_MANGUITO: atendimento.iE_MANGUITO,
@@ -142,6 +152,7 @@ const sinaisVitais: React.FC = () => {
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
         }).then(response => {
             setActiveModal(false);
+            Onclean();
             addNotification({ message: "Dados atualizados com sucesso!", status: 'sucess' });
         }).catch(error => {
             setActiveModal(false);
@@ -217,6 +228,7 @@ const sinaisVitais: React.FC = () => {
                         searchIconImageStyle={styles.searchIconImageStyle}
                         onChangeText={(text) => text.length > 4 ? Search(text) : setState(prevState => { return { ...prevState, spinnerVisibility: false } })}
                         onClearPress={() => Onclean()}
+                        textBreakStrategy='balanced'
                     />
                     {
                         state.dataSource.length > 0 &&
@@ -263,7 +275,7 @@ const sinaisVitais: React.FC = () => {
                                 <SlideRanger
                                     label={"Peso"}
                                     medida={'kg'}
-                                    step={1}
+                                    step={0.1}
                                     valueMin={0}
                                     valueMax={200}
                                     valueRanger={Peso}
@@ -294,7 +306,7 @@ const sinaisVitais: React.FC = () => {
                             </View>
                             <View style={styles.item3}>
                                 {selected &&
-                                    <BtnCentered SizeText={18} labelBtn={"Adicionar"} onPress={() => AddSinaisVitais()} enabled={ChangerProperty()} />
+                                    <BtnCentered SizeText={18} labelBtn={"Adicionar"} onPress={() => setActiveModalOptions(true)} enabled={ChangerProperty()} />
                                 }
                             </View>
                         </>
@@ -303,7 +315,7 @@ const sinaisVitais: React.FC = () => {
                 </ScrollView>
             </View>
             <Loading activeModal={activeModal} />
-            <ModalCentralizedOptions activeModal={true} message={"Deseja adicionar os Sinais Vitais ?"} />
+            <ModalCentralizedOptions activeModal={activeModalOptions} message={"Deseja adicionar os Sinais Vitais ?"} onpress={() => AddSinaisVitais()} setActiveModal={setActiveModalOptions} />
         </SafeAreaView>
     )
 }
