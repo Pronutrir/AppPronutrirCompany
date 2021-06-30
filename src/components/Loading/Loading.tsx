@@ -15,7 +15,7 @@ const Loading : React.FC<Props> = ({ activeModal }: Props) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Image style={styles.modalImg} source={require('../assets/imagens/logo.gif')} />
+                        <Image style={styles.modalImg} source={require('../../assets/imagens/logo.gif')} />
                     </View>
                 </View>
             </Modal>
@@ -28,8 +28,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: '#847e7e',
-        opacity: 0.7
+        backgroundColor: 'rgba(0,0,0,.6)'
     },
     modalView: {
         backgroundColor: "#fff",

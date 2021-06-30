@@ -73,6 +73,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
     const [activeBall, setActiveBall] = useState<boolean>(false);
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] = useState<boolean>(false);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const GetSinaisVitais = async () => {
         try {
@@ -86,8 +87,9 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                 }
             });
             setListSinaisVitais(sinaisVitais);
-            console.log(sinaisVitais);
+            setRefreshing(false);
         } catch (error) {
+            setRefreshing(false);
             console.log(error);
         }
     }
@@ -182,6 +184,11 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                         data={listSinaisVitais}
                         renderItem={({ item, index }) => (renderItem({ item, index }))}
                         keyExtractor={(item, index) => index.toString()}
+                        refreshing={refreshing}
+                        onRefresh={() => {
+                            setRefreshing(true);
+                            GetSinaisVitais();
+                        }}
                     />
                     :
                     <LoadingBall active={true} />

@@ -20,7 +20,14 @@ const styles = StyleSheet.create({
   },
   box2: {
     flex: 2,
-    marginVertical: RFPercentage(3, 680)
+    marginVertical: RFPercentage(3)
+  },
+  listBox2: {
+    flex: 2,
+    marginVertical: RFPercentage(3),
+    marginTop: RFPercentage(8),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   item1: {
     flex: 1,

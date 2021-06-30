@@ -9,7 +9,7 @@ import { sinaisVitais } from '../historySinaisVitais/historySinaisVitais';
 import AuthContext from '../../../contexts/auth';
 import ErrorContext from '../../../contexts/errorNotification';
 import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
-import Loading from '../../../componentes/Loading';
+import Loading from '../../../components/Loading/Loading';
 import moment from 'moment';
 import Api from '../../../services/api';
 

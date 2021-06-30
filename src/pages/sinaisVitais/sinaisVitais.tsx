@@ -10,10 +10,11 @@ import Api from '../../services/api';
 import moment from 'moment';
 import AuthContext from '../../contexts/auth';
 import ErrorContext from '../../contexts/errorNotification';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import ModalCentralizedOptions from '../../components/Modais/ModalCentralizedOptions';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { useNavigation } from '@react-navigation/native';
+import EndSinaisVitais from './endSinaisVitais';
 
 export interface SinaisVitais {
     iE_PRESSAO: string,
@@ -35,7 +36,7 @@ export interface SinaisVitais {
     iE_SITUACAO: string,
     nM_USUARIO: string
 }
- 
+
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -101,7 +102,7 @@ const sinaisVitais: React.FC = (props) => {
     const Search = async (nome: string) => {
         setSelected(undefined);
         setAtendimento(null);
-        setState((prevState) => { return { ...prevState, spinnerVisibility: true }});
+        setState((prevState) => { return { ...prevState, spinnerVisibility: true, query: nome } });
         try {
             const { data: { result } } = await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}`);
             setState(prevState => { return { ...prevState, spinnerVisibility: false, dataSource: result } });
@@ -159,7 +160,7 @@ const sinaisVitais: React.FC = (props) => {
             addNotification({ message: "Dados atualizados com sucesso!", status: 'sucess' });
         }).catch(error => {
             setActiveModal(false);
-            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error'});
+            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error' });
         })
     }
 
@@ -173,11 +174,8 @@ const sinaisVitais: React.FC = (props) => {
     }
 
     const ChangerProperty = () => {
-
         let x = false;
-
         x = atendimento?.qT_ALTURA_CM === Altura && atendimento?.qT_PESO === Peso && atendimento?.qT_SATURACAO_O2 === oxigenacao && atendimento?.qT_TEMP === temperatura
-
         return x;
     }
 
@@ -196,11 +194,11 @@ const sinaisVitais: React.FC = (props) => {
         setSelected(undefined);
         setAtendimento(null);
         setState(prevState => {
-            return { ...prevState, spinnerVisibility: false, dataSource: [] }
+            return { ...prevState, spinnerVisibility: false, dataSource: [], query: '' }
         });
     }
 
-    const Item = ({ title }: { title: PessoaSelected}) => {
+    const Item = ({ title }: { title: PessoaSelected }) => {
         return (
             <Pressable key={title.nM_PESSOA_FISICA} style={styles.item} onPress={() => SearchAtendimentos(title)}>
                 <Text style={styles.descricao}>{`${title.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
@@ -208,7 +206,7 @@ const sinaisVitais: React.FC = (props) => {
         )
     }
 
-    const renderItem = ({ item }: { item: PessoaSelected}) => (
+    const renderItem = ({ item }: { item: PessoaSelected }) => (
         <Item title={item} />
     );
 
@@ -218,19 +216,20 @@ const sinaisVitais: React.FC = (props) => {
                 <View style={styles.box1}>
                     <SearchBar
                         darkMode
-                        placeholder="Pesquisar"
+                        placeholder="Pesquise o nome do paciente"
                         spinnerVisibility={state.spinnerVisibility}
                         style={styles.SearchBarStyle}
                         textInputStyle={styles.textInputStyle}
                         spinnerSize={RFValue(20, 680)}
                         clearIconImageStyle={styles.clearIconImageStyle}
                         searchIconImageStyle={styles.searchIconImageStyle}
-                        onChangeText={(text) => text.length > 4 ? Search(text) : setState(prevState => { return { ...prevState, spinnerVisibility: false } })}
+                        onChangeText={(text) => text.length > 4 ? Search(text) : setState(prevState => { return { ...prevState, spinnerVisibility: false, query: text } })}
                         onClearPress={() => Onclean()}
                         selectionColor='#fff'
+                        value={state.query}
                     />
                     {
-                        state.dataSource.length > 0 &&
+                        (state.dataSource.length > 0 && state.query.length > 4) &&
                         <View style={styles.containerAutoComplete}>
                             <FlatList
                                 data={state.dataSource}
@@ -240,81 +239,89 @@ const sinaisVitais: React.FC = (props) => {
                         </View>
                     }
                 </View>
-                <ScrollView style={styles.box2}>
-                    {
-                        selected &&
-                        <View style={styles.item1}>
-                            <View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Text style={styles.label}>Nome: </Text>
-                                    <Text style={styles.text}>{selected.nM_PESSOA_FISICA}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Text style={styles.label}>Nascimento: </Text>
-                                    <Text style={styles.text}>{moment(selected.dT_NASCIMENTO).format('DD-MM-YYYY')}</Text>
-                                </View>
-                            </View>
-                            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
-                                <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
-                            </TouchableOpacity>
+                {
+                    !state.query
+                        ?
+                        <View style={styles.listBox2}>
+                            <EndSinaisVitais />
                         </View>
-                    }
-                    {
-                        atendimento &&
-                        <>
-                            <View style={styles.item2}>
-                                <SlideRanger
-                                    label={"Altura"}
-                                    medida={'cm'}
-                                    step={1}
-                                    valueMin={0}
-                                    valueMax={300}
-                                    valueRanger={Altura}
-                                    setValueRanger={setAltura}
-                                />
-                            </View>
-                            <View style={styles.item2}>
-                                <SlideRanger
-                                    label={"Peso"}
-                                    medida={'kg'}
-                                    step={0.1}
-                                    valueMin={0}
-                                    valueMax={200}
-                                    valueRanger={Peso}
-                                    setValueRanger={setPeso}
-                                />
-                            </View>
-                            <View style={styles.item2}>
-                                <SlideRanger
-                                    label={"Temperatura"}
-                                    medida={'°C'}
-                                    step={0.1}
-                                    valueMin={30}
-                                    valueMax={42}
-                                    valueRanger={temperatura}
-                                    setValueRanger={setTemperatura}
-                                />
-                            </View>
-                            <View style={styles.item2}>
-                                <SlideRanger
-                                    label={"Oximetria"}
-                                    medida={'SpO²'}
-                                    step={1}
-                                    valueMin={50}
-                                    valueMax={100}
-                                    valueRanger={oxigenacao}
-                                    setValueRanger={setOxigenacao}
-                                />
-                            </View>
-                            <View style={styles.item3}>
-                                {selected &&
-                                    <BtnCentered SizeText={18} labelBtn={"Adicionar"} onPress={() => setActiveModalOptions(true)} enabled={ChangerProperty()} />
-                                }
-                            </View>
-                        </>
-                    }
-                    <LoadingBall active={!atendimento && !!selected} />
-                </ScrollView>
+                        :
+                        <ScrollView style={styles.box2}>
+                            {
+                                selected &&
+                                <View style={styles.item1}>
+                                    <View>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.label}>Nome: </Text>
+                                            <Text style={styles.text}>{selected.nM_PESSOA_FISICA}</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.label}>Nascimento: </Text>
+                                            <Text style={styles.text}>{moment(selected.dT_NASCIMENTO).format('DD-MM-YYYY')}</Text>
+                                        </View>
+                                    </View>
+                                    <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
+                                        <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                            {
+                                atendimento &&
+                                <>
+                                    <View style={styles.item2}>
+                                        <SlideRanger
+                                            label={"Altura"}
+                                            medida={'cm'}
+                                            step={1}
+                                            valueMin={0}
+                                            valueMax={300}
+                                            valueRanger={Altura}
+                                            setValueRanger={setAltura}
+                                        />
+                                    </View>
+                                    <View style={styles.item2}>
+                                        <SlideRanger
+                                            label={"Peso"}
+                                            medida={'kg'}
+                                            step={0.1}
+                                            valueMin={0}
+                                            valueMax={200}
+                                            valueRanger={Peso}
+                                            setValueRanger={setPeso}
+                                        />
+                                    </View>
+                                    <View style={styles.item2}>
+                                        <SlideRanger
+                                            label={"Temperatura"}
+                                            medida={'°C'}
+                                            step={0.1}
+                                            valueMin={30}
+                                            valueMax={42}
+                                            valueRanger={temperatura}
+                                            setValueRanger={setTemperatura}
+                                        />
+                                    </View>
+                                    <View style={styles.item2}>
+                                        <SlideRanger
+                                            label={"Oximetria"}
+                                            medida={'SpO²'}
+                                            step={1}
+                                            valueMin={50}
+                                            valueMax={100}
+                                            valueRanger={oxigenacao}
+                                            setValueRanger={setOxigenacao}
+                                        />
+                                    </View>
+                                    <View style={styles.item3}>
+                                        {selected &&
+                                            <BtnCentered SizeText={18} labelBtn={"Adicionar"} onPress={() => setActiveModalOptions(true)} enabled={ChangerProperty()} />
+                                        }
+                                    </View>
+                                </>
+                            }
+                            <LoadingBall active={!atendimento && !!selected} />
+                        </ScrollView>
+                }
             </View>
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions activeModal={activeModalOptions} message={"Deseja adicionar os Sinais Vitais ?"} onpress={() => AddSinaisVitais()} setActiveModal={setActiveModalOptions} />
