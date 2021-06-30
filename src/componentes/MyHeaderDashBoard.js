@@ -12,7 +12,7 @@ import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 export default function MyHeaderDashBoard({ onPress, title }) {
 
-    const size = RFPercentage(5, 680);
+    const size = RFPercentage(5);
 
     const setIcone = () => {
         switch (title) {
@@ -50,6 +50,9 @@ export default function MyHeaderDashBoard({ onPress, title }) {
                 return <FotoClick fill={'#748080'} width={size} height={size} />
                 break;
             case 'Sinais Vitais':
+                return <Vital fill={'#748080'} width={size} height={size} />
+                break;
+            case 'Historico Sinais Vitais':
                 return <Vital fill={'#748080'} width={size} height={size} />
                 break;
             default:

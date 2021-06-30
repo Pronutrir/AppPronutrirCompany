@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView } from 'react-native';
+import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import styles from './style';
-import { RFValue } from "react-native-responsive-fontsize";
+import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 import LoadingBall from '../../components/Loading/LoadingBall';
 import SlideRanger from '../../components/Slider/SlideRanger';
 import BtnCentered from '../../components/buttons/BtnCentered';
@@ -12,8 +12,10 @@ import AuthContext from '../../contexts/auth';
 import ErrorContext from '../../contexts/errorNotification';
 import Loading from '../../componentes/Loading';
 import ModalCentralizedOptions from '../../components/Modais/ModalCentralizedOptions';
+import HistorySvg from '../../assets/svg/historico.svg';
+import { useNavigation } from '@react-navigation/native';
 
-interface SinaisVitais {
+export interface SinaisVitais {
     iE_PRESSAO: string,
     iE_MEMBRO: string,
     iE_MANGUITO: string,
@@ -33,8 +35,8 @@ interface SinaisVitais {
     iE_SITUACAO: string,
     nM_USUARIO: string
 }
-
-interface PessoaSelected {
+ 
+export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO: string;
@@ -60,18 +62,19 @@ const sinaisVitaisDefault: SinaisVitais = {
     iE_DECUBITO: 'DDH',
     iE_UNID_MED_PESO: 'Kg',
     iE_UNID_MED_ALTURA: 'cm',
-    cD_PACIENTE: null,
-    cD_PESSOA_FISICA: null,
-    qT_SATURACAO_O2: null,
-    qT_TEMP: null,
-    qT_PESO: null,
-    qT_ALTURA_CM: null,
-    iE_SITUACAO: null,
-    nM_USUARIO: null
+    cD_PACIENTE: '',
+    cD_PESSOA_FISICA: '',
+    qT_SATURACAO_O2: 0,
+    qT_TEMP: 0,
+    qT_PESO: 0,
+    qT_ALTURA_CM: 0,
+    iE_SITUACAO: '',
+    nM_USUARIO: ''
 }
 
-const sinaisVitais: React.FC = () => {
+const sinaisVitais: React.FC = (props) => {
 
+    const navigation = useNavigation();
     const { stateAuth: { usertasy } } = useContext(AuthContext);
     const { addNotification } = useContext(ErrorContext);
 
@@ -88,16 +91,16 @@ const sinaisVitais: React.FC = () => {
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] = useState<boolean>(false);
     const [selected, setSelected] = useState<PessoaSelected>();
-    const [atendimento, setAtendimento] = useState<SinaisVitais>();
+    const [atendimento, setAtendimento] = useState<SinaisVitais | null>(null);
 
     const [Peso, setPeso] = useState(0);
     const [Altura, setAltura] = useState(0);
     const [temperatura, setTemperatura] = useState(0);
     const [oxigenacao, setOxigenacao] = useState(0);
 
-    const Search = async (nome) => {
+    const Search = async (nome: string) => {
         setSelected(undefined);
-        setAtendimento(undefined);
+        setAtendimento(null);
         setState((prevState) => { return { ...prevState, spinnerVisibility: true }});
         try {
             const { data: { result } } = await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}`);
@@ -109,7 +112,7 @@ const sinaisVitais: React.FC = () => {
         }
     }
 
-    const SearchAtendimentos = async (item) => {
+    const SearchAtendimentos = async (item: PessoaSelected) => {
         setActiveBall(true);
         setSelected(item);
         setState(prevState => { return { ...prevState, dataSource: [] } });
@@ -132,23 +135,23 @@ const sinaisVitais: React.FC = () => {
     const AddSinaisVitais = async () => {
         setActiveModal(true);
         Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
-            iE_PRESSAO: atendimento.iE_PRESSAO,
-            iE_MEMBRO: atendimento.iE_MEMBRO,
-            iE_MANGUITO: atendimento.iE_MANGUITO,
-            iE_APARELHO_PA: atendimento.iE_APARELHO_PA,
-            cD_PACIENTE: atendimento?.cD_PACIENTE ?? selected.cD_PESSOA_FISICA,
+            iE_PRESSAO: atendimento?.iE_PRESSAO,
+            iE_MEMBRO: atendimento?.iE_MEMBRO,
+            iE_MANGUITO: atendimento?.iE_MANGUITO,
+            iE_APARELHO_PA: atendimento?.iE_APARELHO_PA,
+            cD_PACIENTE: atendimento?.cD_PACIENTE ?? selected?.cD_PESSOA_FISICA,
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             qT_SATURACAO_O2: oxigenacao,
             iE_COND_SAT_O2: atendimento?.iE_COND_SAT_O2 ?? "AA",
-            iE_MEMBRO_SAT_O2: atendimento.iE_MEMBRO_SAT_O2,
-            iE_RITMO_ECG: atendimento.iE_RITMO_ECG,
-            iE_DECUBITO: atendimento.iE_DECUBITO,
+            iE_MEMBRO_SAT_O2: atendimento?.iE_MEMBRO_SAT_O2,
+            iE_RITMO_ECG: atendimento?.iE_RITMO_ECG,
+            iE_DECUBITO: atendimento?.iE_DECUBITO,
             qT_TEMP: temperatura,
             qT_PESO: Peso,
-            iE_UNID_MED_PESO: atendimento.iE_UNID_MED_PESO,
+            iE_UNID_MED_PESO: atendimento?.iE_UNID_MED_PESO,
             qT_ALTURA_CM: Altura,
-            iE_UNID_MED_ALTURA: atendimento.iE_UNID_MED_ALTURA,
-            iE_SITUACAO: atendimento.iE_SITUACAO,
+            iE_UNID_MED_ALTURA: atendimento?.iE_UNID_MED_ALTURA,
+            iE_SITUACAO: atendimento?.iE_SITUACAO,
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
         }).then(response => {
             setActiveModal(false);
@@ -160,7 +163,7 @@ const sinaisVitais: React.FC = () => {
         })
     }
 
-    const autoSet = (dadosAtendimento) => {
+    const autoSet = (dadosAtendimento: SinaisVitais | null) => {
         if (dadosAtendimento) {
             dadosAtendimento.qT_ALTURA_CM && setAltura(dadosAtendimento?.qT_ALTURA_CM);
             dadosAtendimento.qT_PESO && setPeso(dadosAtendimento?.qT_PESO);
@@ -173,7 +176,7 @@ const sinaisVitais: React.FC = () => {
 
         let x = false;
 
-        x = atendimento.qT_ALTURA_CM === Altura && atendimento.qT_PESO === Peso && atendimento.qT_SATURACAO_O2 === oxigenacao && atendimento.qT_TEMP === temperatura
+        x = atendimento?.qT_ALTURA_CM === Altura && atendimento?.qT_PESO === Peso && atendimento?.qT_SATURACAO_O2 === oxigenacao && atendimento?.qT_TEMP === temperatura
 
         return x;
     }
@@ -189,27 +192,23 @@ const sinaisVitais: React.FC = () => {
         autoSet(atendimento);
     }, [atendimento])
 
-    useEffect(() => {
-        console.log("Render - sinais Vitais");
-    })
-
     const Onclean = () => {
         setSelected(undefined);
-        setAtendimento(undefined);
+        setAtendimento(null);
         setState(prevState => {
             return { ...prevState, spinnerVisibility: false, dataSource: [] }
         });
     }
 
-    const Item = ({ title }) => {
+    const Item = ({ title }: { title: PessoaSelected}) => {
         return (
-            <Pressable key={title.cD_PESSOA_FISICA} style={styles.item} onPress={() => SearchAtendimentos(title)}>
+            <Pressable key={title.nM_PESSOA_FISICA} style={styles.item} onPress={() => SearchAtendimentos(title)}>
                 <Text style={styles.descricao}>{`${title.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
             </Pressable>
         )
     }
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({ item }: { item: PessoaSelected}) => (
         <Item title={item} />
     );
 
@@ -228,7 +227,7 @@ const sinaisVitais: React.FC = () => {
                         searchIconImageStyle={styles.searchIconImageStyle}
                         onChangeText={(text) => text.length > 4 ? Search(text) : setState(prevState => { return { ...prevState, spinnerVisibility: false } })}
                         onClearPress={() => Onclean()}
-                        textBreakStrategy='balanced'
+                        selectionColor='#fff'
                     />
                     {
                         state.dataSource.length > 0 &&
@@ -255,6 +254,9 @@ const sinaisVitais: React.FC = () => {
                                     <Text style={styles.text}>{moment(selected.dT_NASCIMENTO).format('DD-MM-YYYY')}</Text>
                                 </View>
                             </View>
+                            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
+                                <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
+                            </TouchableOpacity>
                         </View>
                     }
                     {
@@ -320,4 +322,4 @@ const sinaisVitais: React.FC = () => {
     )
 }
 
-export default sinaisVitais
+export default sinaisVitais;

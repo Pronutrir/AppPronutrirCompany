@@ -12,12 +12,11 @@ import AlterarSenha from '../pages/perfil/alteracaoSenha/alterarSenha';
 import AtualizarEmail from '../pages/perfil/dadosContato/atualizarEmail';
 import AtualizarCelular from '../pages/perfil/dadosContato/atualizarCelular';
 import RecuperarSenha from '../pages/recuperarSenha/recuperarSenha';
-
 import SinaisVitais from '../pages/sinaisVitais/sinaisVitais';
-
 import CameraPerson from '../pages/cameraPerson/cameraPerson';
-
 import RouteBottom from '../routes/routeBottom';
+import { historySinaisVitais } from '../pages/sinaisVitais/historySinaisVitais/historySinaisVitais';
+import { updateSinais } from '../pages/sinaisVitais/updateSinaisVitais/updateSinais';
 
 const Stack = createStackNavigator();
 
@@ -85,6 +84,16 @@ const InitialStackNavigator = () => {
                 name='SinaisVitais'
                 component={SinaisVitais}
                 options={{ title: 'Sinais Vitais' }}
+            />
+             <Stack.Screen
+                name='historySinaisVitais'
+                component={historySinaisVitais}
+                options={{ title: 'Historico Sinais Vitais' }}
+            />
+             <Stack.Screen
+                name='updateSinais'
+                component={updateSinais}
+                options={{ title: 'Atualizar Sinais Vitais' }}
             />
         </Stack.Navigator>
     )

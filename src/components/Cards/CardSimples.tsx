@@ -1,12 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Platform, ViewStyle, TouchableOpacityProps } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
-const CardSimples = ({ children }) => {
+interface Props {
+    styleCardContainer?: ViewStyle;
+    children: JSX.Element
+};
+
+const CardSimples: React.FC<Props> = ({ children, styleCardContainer } : Props) => {
     return (
-        <TouchableOpacity style={styles.card} onPress={() => console.log('teste')}>
+        <View style={[styles.card, styleCardContainer]}>
             {children}
-        </TouchableOpacity>
+        </View>
     )
 }
 
@@ -19,7 +24,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         backgroundColor: "#fff",
-        borderRadius: 10,
         margin: 10,
         padding: 10,
         ...Platform.select({
