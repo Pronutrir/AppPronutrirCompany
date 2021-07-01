@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import LinearGradient from 'react-native-linear-gradient';
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default BtnOptions;
+export default memo(BtnOptions);

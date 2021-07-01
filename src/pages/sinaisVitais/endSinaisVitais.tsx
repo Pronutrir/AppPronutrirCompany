@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useContext } from 'react';
 import { View, FlatList, Platform, Text, StyleSheet } from 'react-native';
 import { sinaisVitais } from './historySinaisVitais/historySinaisVitais';
 import HistorySvg from '../../assets/svg/historico.svg';
@@ -7,9 +7,11 @@ import CardSimples from '../../components/Cards/CardSimples';
 import LoadingBall from '../../components/Loading/LoadingBall';
 import moment from 'moment';
 import Api from '../../services/api';
+import ErrorContext from '../../contexts/errorNotification';
 
 const EndSinaisVitais: React.FC = ({ }) => {
 
+    const { addNotification } = useContext(ErrorContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [listSinaisVitais, setListSinaisVitais] = useState<sinaisVitais[] | null>(null);
 
@@ -28,7 +30,7 @@ const EndSinaisVitais: React.FC = ({ }) => {
             setRefreshing(false);
         } catch (error) {
             setRefreshing(false);
-            console.log(error);
+            addNotification({ message: "Não foi possivel realizar a consulta, tente mais tarde!", status: 'error' });
         }
     }
 
@@ -78,6 +80,12 @@ const EndSinaisVitais: React.FC = ({ }) => {
         </CardSimples>
     );
 
+    const renderItemEmpty = () => (
+        <CardSimples styleCardContainer={styles.cardStyle}>
+            <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
+        </CardSimples>
+    );
+
     useEffect(() => {
         GetSinaisVitais();
     }, [])
@@ -97,6 +105,7 @@ const EndSinaisVitais: React.FC = ({ }) => {
                                 setRefreshing(true);
                                 GetSinaisVitais();
                             }}
+                            ListEmptyComponent={renderItemEmpty}
                         />
                     </>
                     :

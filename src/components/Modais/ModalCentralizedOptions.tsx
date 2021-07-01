@@ -11,10 +11,6 @@ interface Props {
 
 const ModalCentralized: React.FC<Props> = ({ activeModal = false, message = 'teste', onpress, setActiveModal }: Props) => {
 
-    /* useEffect(() => {
-       setActive(activeModal);
-    }, [activeModal]) */
-
     const Ok = () => {
         setActiveModal(false);
         onpress();

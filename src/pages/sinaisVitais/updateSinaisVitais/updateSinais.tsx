@@ -12,7 +12,6 @@ import ModalCentralizedOptions from '../../../components/Modais/ModalCentralized
 import Loading from '../../../components/Loading/Loading';
 import moment from 'moment';
 import Api from '../../../services/api';
-
 interface sinaisVitaisUpdate {
     nR_SEQUENCIA: number;
     cD_PACIENTE: string;

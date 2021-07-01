@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback, memo } from 'react';
 import { Text, View, FlatList, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import Api from '../../../services/api';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -59,6 +59,11 @@ type RootStackParamList = {
     Feed: { sort: 'updateSinais' } | undefined;
 };
 
+interface Parms{
+    item: sinaisVitais;
+    index: number;
+}
+
 type Props = StackScreenProps<RootStackParamList, 'Profile'>;
 
 const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
@@ -68,7 +73,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
     const { addNotification } = useContext(ErrorContext);
     const selected: PessoaSelected = route.params
     const [listSinaisVitais, setListSinaisVitais] = useState<sinaisVitais[] | null>(null);
-    const [selectedSinais, setSelectedSinais] = useState<sinaisVitaisUpdate>({iE_SITUACAO: '', nR_SEQUENCIA: 0, cD_PACIENTE: ''});
+    const [selectedSinais, setSelectedSinais] = useState<sinaisVitaisUpdate>({ iE_SITUACAO: '', nR_SEQUENCIA: 0, cD_PACIENTE: '' });
 
     const [activeBall, setActiveBall] = useState<boolean>(false);
     const [activeModal, setActiveModal] = useState<boolean>(false);
@@ -90,7 +95,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
             setRefreshing(false);
         } catch (error) {
             setRefreshing(false);
-            console.log(error);
+            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error' });
         }
     }
 
@@ -101,14 +106,14 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
             iE_SITUACAO: sinaisUpdate?.iE_SITUACAO,
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO,
             cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
-            
+
         }).then(response => {
             setActiveModal(false);
             //Onclean();
             addNotification({ message: "Dados atualizados com sucesso!", status: 'sucess' });
         }).catch(error => {
             setActiveModal(false);
-            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error'});
+            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error' });
         })
     }
 
@@ -118,7 +123,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
         }
     }, []);
 
-    const Item = ({ item, index }: { item: sinaisVitais, index: number }) => {
+    const Item = memo<Parms>(({ item, index }) => {
         return (
             <View style={{ flexDirection: 'row' }}>
                 <View style={styles.box}>
@@ -157,24 +162,34 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                 <View style={[styles.box, { justifyContent: 'flex-end' }]}>
                     {
                         index === 0 ?
-                            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("updateSinais", { sinaisVitais: item, pessoaSelected: selected } )}>
+                            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("updateSinais", { sinaisVitais: item, pessoaSelected: selected })}>
                                 <EditarSvg fill={'#748080'} width={RFPercentage(4)} height={RFPercentage(4)}>Botão</EditarSvg>
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity style={styles.btn} onPress={() => {setSelectedSinais({iE_SITUACAO: item.iE_SITUACAO, nR_SEQUENCIA: item.nR_SEQUENCIA, cD_PACIENTE: item.cD_PACIENTE}), setActiveModalOptions(true)}}>
+                            <TouchableOpacity style={styles.btn} onPress={() => { setActiveModalOptions(true) }}>
                                 <DisabledSvg fill={'#748080'} width={RFPercentage(4)} height={RFPercentage(4)}>Botão</DisabledSvg>
                             </TouchableOpacity>
                     }
                 </View>
             </View>
         )
-    }
+    });
 
-    const renderItem = ({ item, index }: { item: sinaisVitais, index: number }) => (
+    const renderItem = useCallback(({ item, index }: { item: sinaisVitais, index: number }) => {
+        return (
+            <CardSimples styleCardContainer={styles.cardStyle}>
+                <Item key={item.nR_SEQUENCIA} item={item} index={index} />
+            </CardSimples>
+        )
+    }, [listSinaisVitais]);
+
+    const renderItemEmpty = () => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={item.nR_SEQUENCIA} item={item} index={index} />
+            <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
         </CardSimples>
     );
+
+    const renderItemCall = useCallback(({ item, index }) => renderItem({ item, index }), []);
 
     return (
         <View style={styles.container}>
@@ -182,13 +197,14 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                 !!listSinaisVitais ?
                     <FlatList
                         data={listSinaisVitais}
-                        renderItem={({ item, index }) => (renderItem({ item, index }))}
+                        renderItem={renderItemCall}
                         keyExtractor={(item, index) => index.toString()}
                         refreshing={refreshing}
                         onRefresh={() => {
                             setRefreshing(true);
                             GetSinaisVitais();
                         }}
+                        ListEmptyComponent={renderItemEmpty}
                     />
                     :
                     <LoadingBall active={true} />
