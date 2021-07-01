@@ -126,10 +126,10 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
     const Item = memo<Parms>(({ item, index }) => {
         return (
             <View style={{ flexDirection: 'row' }}>
-                <View style={styles.box}>
+                <View style={styles.box1}>
                     <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
                 </View>
-                <View style={styles.box}>
+                <View style={styles.box2}>
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Paciente: </Text>
                         <Text style={styles.text}>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
@@ -159,7 +159,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                         </View>
                     </View>
                 </View>
-                <View style={[styles.box, { justifyContent: 'flex-end' }]}>
+                <View style={[styles.box3, { justifyContent: 'flex-end' }]}>
                     {
                         index === 0 ?
                             <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("updateSinais", { sinaisVitais: item, pessoaSelected: selected })}>
@@ -237,7 +237,8 @@ const styles = StyleSheet.create({
     },
     item: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        flexWrap: 'wrap'
     },
     SubItem: {
         flex: 1,
@@ -245,7 +246,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    box: {
+    box1: {
+        flex: 0.5,
+        margin: 10,
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+    },
+    box2: {
+        flex: 5,
+        margin: 10,
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+    },
+    box3: {
+        flex: 0.8,
         margin: 10,
         justifyContent: 'center',
         alignItems: 'flex-start'

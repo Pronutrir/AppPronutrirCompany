@@ -100,6 +100,10 @@ const styles = StyleSheet.create({
     color: '#1E707D',
     fontSize: RFValue(16, 680)
   },
+  textBtn: {
+    color: '#1E707D',
+    fontSize: RFValue(12, 680)
+  },
   btn: {
     padding: 10,
     marginHorizontal: 5,

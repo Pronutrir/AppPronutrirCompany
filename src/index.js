@@ -8,7 +8,7 @@ import { ErrorNotificationProvider } from './contexts/errorNotification';
 import ErrorNotification from './components/ErrorNotifications/ErrorNotification';
 import Notification from './components/Notification';
 //import messaging from '@react-native-firebase/messaging';
-//import OneSignal from 'react-native-onesignal';
+import OneSignal from 'react-native-onesignal';
 
 export default function index() {
 
@@ -34,15 +34,15 @@ export default function index() {
         Text.defaultProps = Text.defaultProps || {};
         // Ignore dynamic type scaling on iOS
         Text.defaultProps.allowFontScaling = false;
-        //OneSignal.setAppId("2c990bbc-f7ab-404f-9b95-ef981885ff18");
-        //OneSignal.setLogLevel(6, 0);
-        //OneSignal.setRequiresUserPrivacyConsent(false);
-        //OneSignal.getDeviceState().then(response => {
-        //    console.log(response);
-        //})
-        //OneSignal.promptForPushNotificationsWithUserResponse(response => {
-        //console.log("Prompt response:", response);
-        //});
+        OneSignal.setAppId("2c990bbc-f7ab-404f-9b95-ef981885ff18");
+        OneSignal.setLogLevel(6, 0);
+        OneSignal.setRequiresUserPrivacyConsent(false);
+        OneSignal.getDeviceState().then(response => {
+            console.log(response);
+        })
+        OneSignal.promptForPushNotificationsWithUserResponse(response => {
+            console.log("Prompt response:", response);
+        });
         /* O N E S I G N A L  H A N D L E R S */
         /*  OneSignal.setNotificationWillShowInForegroundHandler(notifReceivedEvent => {
              //console.log("OneSignal: notification will show in foreground:", notifReceivedEvent);

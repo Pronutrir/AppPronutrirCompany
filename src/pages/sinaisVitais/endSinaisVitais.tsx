@@ -17,7 +17,7 @@ const EndSinaisVitais: React.FC = ({ }) => {
 
     const GetSinaisVitais = async () => {
         try {
-            const sinaisVitais: sinaisVitais[] = await Api.get(`SinaisVitaisMonitoracaoGeral/FiltrarDadosSVMGPacientePorAtendimentoPessoaFisica/${"WILLIAME CORREIA DE LIMA"}`).then(response => {
+            const sinaisVitais: sinaisVitais[] = await Api.get(`SinaisVitaisMonitoracaoGeral/ListarTodosSVMG?pagina=${1}&rows=${5}`).then(response => {
                 const { result } = response.data;
                 if (result) {
                     const order_result = result.sort(function (a: sinaisVitais, b: sinaisVitais) {
@@ -37,10 +37,10 @@ const EndSinaisVitais: React.FC = ({ }) => {
     const Item = ({ item, index }: { item: sinaisVitais, index: number }) => {
         return (
             <View style={{ flexDirection: 'row' }}>
-                <View style={styles.box}>
+                <View style={styles.box1}>
                     <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
                 </View>
-                <View style={styles.box}>
+                <View style={styles.box2}>
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Paciente: </Text>
                         <Text style={styles.text}>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
@@ -137,7 +137,8 @@ const styles = StyleSheet.create({
     },
     item: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        flexWrap: 'wrap'
     },
     SubItem: {
         flex: 1,
@@ -145,7 +146,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    box: {
+    box1: {
+        flex: 0.5,
+        margin: 10,
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+    },
+    box2: {
+        flex: 5,
         margin: 10,
         justifyContent: 'center',
         alignItems: 'flex-start'

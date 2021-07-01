@@ -17,7 +17,7 @@ const CardSimples: React.FC<Props> = ({ children, styleCardContainer } : Props) 
 
 const styles = StyleSheet.create({
     card: {
-        flex: 1,
+        width: '90%',
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',

@@ -397,6 +397,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - OneSignal (3.5.2)
+  - OneSignalXCFramework (3.4.4)
   - OpenSSL-Universal (1.1.180)
   - PromisesObjC (1.2.12)
   - RCT-Folly (2020.01.13.00):
@@ -604,6 +606,9 @@ PODS:
     - React-Core
   - react-native-image-picker (4.0.3):
     - React-Core
+  - react-native-onesignal (4.1.1):
+    - OneSignalXCFramework (= 3.4.4)
+    - React (< 1.0.0, >= 0.13.0)
   - react-native-safe-area-context (3.2.0):
     - React-Core
   - react-native-spinkit (1.4.1):
@@ -775,6 +780,7 @@ DEPENDENCIES:
   - FlipperKit/FlipperKitUserDefaultsPlugin (~> 0.75.1)
   - FlipperKit/SKIOSNetworkPlugin (~> 0.75.1)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - OneSignal (< 4.0, >= 3.0)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -791,6 +797,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-spinkit (from `../node_modules/react-native-spinkit`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -854,6 +861,8 @@ SPEC REPOS:
     - leveldb-library
     - libevent
     - nanopb
+    - OneSignal
+    - OneSignalXCFramework
     - OpenSSL-Universal
     - PromisesObjC
     - YogaKit
@@ -897,6 +906,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-onesignal:
+    :path: "../node_modules/react-native-onesignal"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-spinkit:
@@ -995,6 +1006,8 @@ SPEC CHECKSUMS:
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  OneSignal: 055f4c94ee8af87417777ad33fb807cea70df320
+  OneSignalXCFramework: eaf286b7438aa1f030f03e5fa9f1c79ede5d8f04
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
@@ -1011,6 +1024,7 @@ SPEC CHECKSUMS:
   react-native-camera: 7bf59f2728ffb019fa25e60a225d2c57e1a8f0f6
   react-native-date-picker: 2dfef0fcb6c36d078bc62f5de3ca79eff7f42486
   react-native-image-picker: 474cf2c33c2b6671da53d293a16c97995f0aec15
+  react-native-onesignal: 2a7c3a5f2aa1c599d94cda6cc583205e1548828d
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-spinkit: da294fd828216ad211fe36a5c14c1e09f09e62db
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737
@@ -1044,6 +1058,6 @@ SPEC CHECKSUMS:
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 3f76fc229c04a9d863d3b21a55d6537f1839645a
+PODFILE CHECKSUM: 0db51292b69d9889af1fc3b4973de5e723c2882f
 
 COCOAPODS: 1.10.1

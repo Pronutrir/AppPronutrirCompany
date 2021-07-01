@@ -34,6 +34,7 @@ export interface SinaisVitais {
     qT_PESO: number,
     qT_ALTURA_CM: number,
     iE_SITUACAO: string,
+    dT_LIBERACAO: string,
     nM_USUARIO: string
 }
 
@@ -70,6 +71,7 @@ const sinaisVitaisDefault: SinaisVitais = {
     qT_PESO: 0,
     qT_ALTURA_CM: 0,
     iE_SITUACAO: '',
+    dT_LIBERACAO: '',
     nM_USUARIO: ''
 }
 
@@ -153,6 +155,7 @@ const sinaisVitais: React.FC = (props) => {
             qT_ALTURA_CM: Altura,
             iE_UNID_MED_ALTURA: atendimento?.iE_UNID_MED_ALTURA,
             iE_SITUACAO: atendimento?.iE_SITUACAO,
+            dT_LIBERACAO: moment().format(),
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
         }).then(response => {
             setActiveModal(false);
@@ -260,9 +263,12 @@ const sinaisVitais: React.FC = (props) => {
                                             <Text style={styles.text}>{moment(selected.dT_NASCIMENTO).format('DD-MM-YYYY')}</Text>
                                         </View>
                                     </View>
-                                    <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
-                                        <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
-                                    </TouchableOpacity>
+                                    <View style={{justifyContent: 'center', alignItems: 'center',}}>
+                                        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
+                                            <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
+                                        </TouchableOpacity>
+                                        <Text style={styles.textBtn}>Histórico</Text>
+                                    </View>
                                 </View>
                             }
                             {
