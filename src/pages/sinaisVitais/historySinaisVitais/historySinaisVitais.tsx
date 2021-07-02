@@ -4,10 +4,11 @@ import Api from '../../../services/api';
 import { StackScreenProps } from '@react-navigation/stack';
 import LoadingBall from '../../../components/Loading/LoadingBall';
 import CardSimples from '../../../components/Cards/CardSimples';
-import sinaisVitais, { PessoaSelected } from '../sinaisVitais';
+import sinaisVitais, { PessoaSelected, SinaisVitais } from '../sinaisVitais';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 import HistorySvg from '../../../assets/svg/historico.svg';
 import EditarSvg from '../../../assets/svg/editar.svg';
+import ExcluirSvg from '../../../assets/svg/excluir.svg'
 import DisabledSvg from '../../../assets/svg/disable.svg';
 import AuthContext from '../../../contexts/auth';
 import ErrorContext from '../../../contexts/errorNotification';
@@ -59,7 +60,7 @@ type RootStackParamList = {
     Feed: { sort: 'updateSinais' } | undefined;
 };
 
-interface Parms{
+interface Parms {
     item: sinaisVitais;
     index: number;
 }
@@ -78,11 +79,13 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
     const [activeBall, setActiveBall] = useState<boolean>(false);
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] = useState<boolean>(false);
+    const [activeModalDel, setActiveModalDel] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const GetSinaisVitais = async () => {
+        setListSinaisVitais(null);
         try {
-            const sinaisVitais: sinaisVitais[] = await Api.get(`SinaisVitaisMonitoracaoGeral/FiltrarDadosSVMGPacientePorAtendimentoPessoaFisica/${selected.nM_PESSOA_FISICA}`).then(response => {
+            const sinaisVitais: sinaisVitais[] = await Api.get(`SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${selected.nM_PESSOA_FISICA}`).then(response => {
                 const { result } = response.data;
                 if (result) {
                     const order_result = result.sort(function (a: sinaisVitais, b: sinaisVitais) {
@@ -106,15 +109,38 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
             iE_SITUACAO: sinaisUpdate?.iE_SITUACAO,
             nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO,
             cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
-
         }).then(response => {
+            GetSinaisVitais();
             setActiveModal(false);
             //Onclean();
-            addNotification({ message: "Dados atualizados com sucesso!", status: 'sucess' });
+            addNotification({ message: "Dado inativado com sucesso!", status: 'sucess' });
         }).catch(error => {
             setActiveModal(false);
-            addNotification({ message: "Não foi possivel atualizar tente mais tarde!", status: 'error' });
+            addNotification({ message: "Não foi possivel inativar tente mais tarde!", status: 'error' });
         })
+    }
+
+    const DeleteSinaisVitais = async (id: number) => {
+        setActiveModal(true);
+        Api.delete(`SinaisVitaisMonitoracaoGeral/DeleteSVMG/${id}`).then(response => {
+            GetSinaisVitais();
+            setActiveModal(false);
+            //Onclean();
+            addNotification({ message: "Dado excluir com sucesso!", status: 'sucess' });
+        }).catch(error => {
+            setActiveModal(false);
+            addNotification({ message: "Não foi possivel excluir tente mais tarde!", status: 'error' });
+        })
+    }
+
+    const setSelectedSinaisInativar = (item: sinaisVitaisUpdate) => {
+        setActiveModalOptions(true);
+        setSelectedSinais(item);
+    }
+
+    const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
+        setActiveModalDel(true);
+        setSelectedSinais(item);
     }
 
     useEffect(() => {
@@ -162,11 +188,16 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                 <View style={[styles.box3, { justifyContent: 'flex-end' }]}>
                     {
                         index === 0 ?
-                            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("updateSinais", { sinaisVitais: item, pessoaSelected: selected })}>
-                                <EditarSvg fill={'#748080'} width={RFPercentage(4)} height={RFPercentage(4)}>Botão</EditarSvg>
-                            </TouchableOpacity>
+                            <View style={{flex: 1, justifyContent: 'space-between'}}>
+                                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("updateSinais", { sinaisVitais: item, pessoaSelected: selected })}>
+                                    <EditarSvg fill={'#748080'} width={RFPercentage(4)} height={RFPercentage(4)}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.btn} onPress={() => setSelectedSinaisDeletar(item)}>
+                                    <ExcluirSvg fill={'#748080'} width={RFPercentage(4)} height={RFPercentage(4)}/>
+                                </TouchableOpacity>
+                            </View>
                             :
-                            <TouchableOpacity style={styles.btn} onPress={() => { setActiveModalOptions(true) }}>
+                            <TouchableOpacity style={styles.btn} onPress={() => setSelectedSinaisInativar(item)}>
                                 <DisabledSvg fill={'#748080'} width={RFPercentage(4)} height={RFPercentage(4)}>Botão</DisabledSvg>
                             </TouchableOpacity>
                     }
@@ -211,6 +242,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
             }
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions activeModal={activeModalOptions} message={"Deseja inativar este Sinal Vital ?"} onpress={() => UpdateSinaisVitais(selectedSinais)} setActiveModal={setActiveModalOptions} />
+            <ModalCentralizedOptions activeModal={activeModalDel} message={"Deseja deletar este Sinal Vital ?"} onpress={() => DeleteSinaisVitais(selectedSinais.nR_SEQUENCIA)} setActiveModal={setActiveModalDel} />
         </View>
     );
 }

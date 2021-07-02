@@ -1,15 +1,18 @@
-import React, { useEffect, memo } from 'react';
-import { StyleSheet, View, Pressable, Dimensions, Text } from 'react-native';
+import React, { useEffect, memo, useCallback } from 'react';
+import { StyleSheet, View, Pressable, Dimensions, Text, TextInput, TextInputProps } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import Adicao from '../assets/svg/math-plus.svg';
 import Subtracao from '../assets/svg/math-minus.svg';
+import TextInputMask from 'react-native-text-input-mask';
 interface Props {
     RangerValue: number;
     medida: string;
+    min: number;
+    max: number
     setRangerValue(value: number): void;
 };
 
-const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, medida }: Props) => {
+const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, medida, min= 0, max= 100 }: Props) => {
 
     const size = Dimensions.get('screen').height / 40
 
@@ -47,9 +50,30 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
         }
     }
 
-    useEffect(() => {
-        setRangerValue(RangerValue);
-    }, [RangerValue])
+    const setValue = useCallback((value: string) => {
+        if (value) {
+            var _value: number = parseFloat(value);
+            _value = _value < min ? min : _value;
+            _value = _value > max ? max : _value;
+            setRangerValue(_value);
+        } else {
+            setRangerValue(0);
+        }
+    }, []);
+
+    const setMask = (): string => {
+        switch (medida) {
+            case '°C': return "[99].[9]";
+                break;
+            case 'kg': return "[999].[9]";
+                break;
+            case 'SpO²': return "[999]";
+                break;
+            case 'cm': return "[999]";
+                break;
+            default: return "[9999]";
+        }
+    }
 
     useEffect(() => {
         console.log("componente", RangerValue)
@@ -60,15 +84,16 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('subtracao')}>
                 <Subtracao fill={'#748080'} width={size} height={size} />
             </Pressable>
-            <Text
-                //keyboardType={'numeric'}
-                //value={RangerValue.toString()}
-                //maxLength={3}
-                //editable={false}
+            <TextInputMask
+                mask={setMask()}
+                keyboardType={'numeric'}
+                value={RangerValue.toString()}
+                maxLength={5}
                 style={styles.valueInput}
-            //onChange={text => setRangerValue(parseInt(text))}
-            //onBlur={text => setRangerValue(parseInt(0))}
-            >{Number.isInteger(RangerValue) ? RangerValue : RangerValue.toFixed(1)}</Text>
+                //onChangeText={(maskedText) => setValue(maskedText)}
+                onEndEditing={(event) => setValue(event.nativeEvent.text)}
+            />
+
             <Text style={styles.text}>{medida && medida}</Text>
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
@@ -76,6 +101,8 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
         </View>
     )
 }
+
+{/* {Number.isInteger(RangerValue) ? RangerValue : RangerValue.toFixed(1)} */ }
 
 const styles = StyleSheet.create({
     Container: {
@@ -86,10 +113,10 @@ const styles = StyleSheet.create({
         zIndex: 1
     },
     valueInput: {
-        width: Dimensions.get('screen').width / 8,
+        width: Dimensions.get('screen').width / 7,
         fontSize: RFValue(20, 680),
         textAlign: 'center',
-        color: '#7C9292',
+        color: '#7C9292'
     },
     btnInc: {
         width: 40,

@@ -40,7 +40,7 @@ const SlideReanger: React.FC<Props> = ({ label = "texto", medida= "cm", step= 1,
         <View style={styles.ContainerRanger}>
             <View style={styles.labelRanger}>
                 <Text style={styles.textLabel}>{label}</Text>
-                <IncrementDecrement RangerValue={valueRanger} setRangerValue={setValueRanger} medida={medida}/>
+                <IncrementDecrement RangerValue={valueRanger} setRangerValue={setValueRanger} medida={medida} max={valueMax} min={valueMin} />
             </View>
             <RangeSlider
                 style={styles.RangeSlider}

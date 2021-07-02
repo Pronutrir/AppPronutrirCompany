@@ -70,7 +70,7 @@ const sinaisVitaisDefault: SinaisVitais = {
     qT_TEMP: 0,
     qT_PESO: 0,
     qT_ALTURA_CM: 0,
-    iE_SITUACAO: '',
+    iE_SITUACAO: 'A',
     dT_LIBERACAO: '',
     nM_USUARIO: ''
 }
@@ -142,7 +142,7 @@ const sinaisVitais: React.FC = (props) => {
             iE_MEMBRO: atendimento?.iE_MEMBRO,
             iE_MANGUITO: atendimento?.iE_MANGUITO,
             iE_APARELHO_PA: atendimento?.iE_APARELHO_PA,
-            cD_PACIENTE: atendimento?.cD_PACIENTE ?? selected?.cD_PESSOA_FISICA,
+            cD_PACIENTE: selected?.cD_PESSOA_FISICA,
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             qT_SATURACAO_O2: oxigenacao,
             iE_COND_SAT_O2: atendimento?.iE_COND_SAT_O2 ?? "AA",
