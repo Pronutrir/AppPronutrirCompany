@@ -10,6 +10,9 @@ const ApiInterageMd = axios.create({
     }
 });
 
+ApiInterageMd.CancelToken = axios.CancelToken;
+ApiInterageMd.isCancel = axios.isCancel;
+
 ApiInterageMd.interceptors.request.use(
     config => {
         console.log(config);
