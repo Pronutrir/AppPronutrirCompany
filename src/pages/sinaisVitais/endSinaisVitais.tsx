@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     SubItem: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center'
     },
     box1: {

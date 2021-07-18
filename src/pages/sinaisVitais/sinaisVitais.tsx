@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import styles from './style';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
@@ -247,13 +247,6 @@ const sinaisVitais: React.FC = (props) => {
         autoSet(atendimento);
     }, [atendimento])
 
-    useEffect(() => {
-
-        return () => {
-            console.log("component desmount");
-        }
-    }, [])
-
     const Onclean = () => {
         setSelected(undefined);
         setAtendimento(null);
@@ -261,6 +254,15 @@ const sinaisVitais: React.FC = (props) => {
             return { ...prevState, spinnerVisibility: false, dataSource: [], query: '' }
         });
     }
+
+    const renderFooter = () => {
+        if (!state.loadingScrow) return null;
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size={"small"} color={'#08948A'} />
+            </View>
+        );
+    };
 
     const Item = ({ title }: { title: PessoaSelected }) => {
         return (
@@ -301,7 +303,7 @@ const sinaisVitais: React.FC = (props) => {
                                 keyExtractor={(item, index) => index.toString()}
                                 onEndReached={LoadingSearch}
                                 onEndReachedThreshold={0.5}
-                            />
+                                ListFooterComponent={renderFooter} />
                         </View>
                     }
                 </View>
