@@ -22,6 +22,11 @@ api.interceptors.response.use(
         console.log(error);
         let flag = true;
 
+        if(axios.isCancel(error)){
+            console.log(error.message);
+            return Promise.reject(error)
+        }
+
         if (error.request._hasError === true && error.request._response.includes('connect')) {
             flag = false;
             Alert.alert(

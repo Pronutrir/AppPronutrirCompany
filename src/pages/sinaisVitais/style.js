@@ -122,6 +122,11 @@ const styles = StyleSheet.create({
         elevation: 3,
       }
     })
+  },
+  loading:{
+    width: "100%",
+    height: "100%",
+    backgroundColor: '#fff'
   }
 })
 

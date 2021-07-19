@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import styles from './style';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
@@ -15,6 +15,8 @@ import ModalCentralizedOptions from '../../components/Modais/ModalCentralizedOpt
 import HistorySvg from '../../assets/svg/historico.svg';
 import { useNavigation } from '@react-navigation/native';
 import EndSinaisVitais from './endSinaisVitais';
+import axios, { CancelTokenSource } from 'axios';
+import ApiInterageMd from '../../services/apiInterageMedicamentos';
 
 export interface SinaisVitais {
     iE_PRESSAO: string,
@@ -45,12 +47,14 @@ export interface PessoaSelected {
 }
 
 interface Consulta {
-    query: string,
-    isLoading: boolean,
-    refreshing: boolean,
-    dataBackup: PessoaSelected[],
-    dataSource: PessoaSelected[],
-    spinnerVisibility: boolean,
+    query: string;
+    isLoading: boolean;
+    refreshing: boolean;
+    dataSource: PessoaSelected[];
+    spinnerVisibility: boolean;
+    page: number;
+    loadingScrow: boolean;
+    continue: boolean;
 }
 
 const sinaisVitaisDefault: SinaisVitais = {
@@ -85,9 +89,11 @@ const sinaisVitais: React.FC = (props) => {
         query: '',
         isLoading: true,
         refreshing: false,
-        dataBackup: [],
         dataSource: [],
         spinnerVisibility: false,
+        page: 1,
+        loadingScrow: false,
+        continue: true
     });
 
     const [activeBall, setActiveBall] = useState<boolean>(false);
@@ -100,18 +106,66 @@ const sinaisVitais: React.FC = (props) => {
     const [Altura, setAltura] = useState(0);
     const [temperatura, setTemperatura] = useState(0);
     const [oxigenacao, setOxigenacao] = useState(0);
+    const axiosSource = useRef<CancelTokenSource | null>(null);
 
     const Search = async (nome: string) => {
+
+        //Check if there are any previous pending requests
+        if (axiosSource != null) {
+            axiosSource.current?.cancel("Operação cancelada por uma nova requisição!")
+        }
+
+        axiosSource.current = axios.CancelToken.source();
+
         setSelected(undefined);
         setAtendimento(null);
         setState((prevState) => { return { ...prevState, spinnerVisibility: true, query: nome } });
-        try {
-            const { data: { result } } = await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}`);
+
+        await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}?rows=10`, { cancelToken: axiosSource.current.token }).then(response => {
+            const { result } = response.data;
             setState(prevState => { return { ...prevState, spinnerVisibility: false, dataSource: result } });
-        } catch (error) {
+        }).catch(error => {
+            if (axios.isCancel(error)) { return };
             setState(prevState => { return { ...prevState, spinnerVisibility: false } });
             addNotification({ message: "Não foi possivel realizar a consulta, tente mais tarde!", status: 'error' });
             console.log(error);
+        });
+    }
+
+    const LoadingSearch = async () => {
+        if (state.continue && state.dataSource.length >= 10) {
+            setState({ ...state, loadingScrow: true })
+            await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${state.query}?pagina=${state.page}&rows=10`).then(response => {
+                const { result } = response.data;
+                if (result && result?.length) {
+                    setState(
+                        prevState => {
+                            return {
+                                ...prevState,
+                                loadingScrow: false,
+                                dataSource: [...prevState.dataSource, ...result],
+                                page: prevState.page + 1,
+                                continue: true
+                            }
+                        }
+                    );
+                } else {
+                    setState(
+                        prevState => {
+                            return {
+                                ...prevState,
+                                loadingScrow: false,
+                                continue: false,
+                                page: 2
+                            }
+                        }
+                    );
+                }
+            }).catch(error => {
+                addNotification({ message: error, status: 'error' });
+            });
+        } else {
+            console.log('fim da lista');
         }
     }
 
@@ -201,6 +255,15 @@ const sinaisVitais: React.FC = (props) => {
         });
     }
 
+    const renderFooter = () => {
+        if (!state.loadingScrow) return null;
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size={"small"} color={'#08948A'} />
+            </View>
+        );
+    };
+
     const Item = ({ title }: { title: PessoaSelected }) => {
         return (
             <Pressable key={title.nM_PESSOA_FISICA} style={styles.item} onPress={() => SearchAtendimentos(title)}>
@@ -238,7 +301,9 @@ const sinaisVitais: React.FC = (props) => {
                                 data={state.dataSource}
                                 renderItem={renderItem}
                                 keyExtractor={(item, index) => index.toString()}
-                            />
+                                onEndReached={LoadingSearch}
+                                onEndReachedThreshold={0.5}
+                                ListFooterComponent={renderFooter} />
                         </View>
                     }
                 </View>
@@ -263,7 +328,7 @@ const sinaisVitais: React.FC = (props) => {
                                             <Text style={styles.text}>{moment(selected.dT_NASCIMENTO).format('DD-MM-YYYY')}</Text>
                                         </View>
                                     </View>
-                                    <View style={{justifyContent: 'center', alignItems: 'center',}}>
+                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                                         <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
                                             <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
                                         </TouchableOpacity>
