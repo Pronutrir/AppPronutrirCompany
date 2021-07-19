@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#08948A"
   },
   box1: {
-    flex: 0.1
+    flex: 0.1,
   },
   box2: {
     flex: 2,
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     flex: 0.2
   },
   textInputStyle: {
-    fontSize: RFValue(20, 680)
+    fontSize: RFValue(18, 680)
   },
   clearIconImageStyle: {
     width: RFValue(20, 680),

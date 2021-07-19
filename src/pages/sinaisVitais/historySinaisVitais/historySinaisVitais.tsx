@@ -275,12 +275,12 @@ const styles = StyleSheet.create({
     SubItem: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center'
     },
     box1: {
         flex: 0.5,
-        margin: 10,
+        padding: 0.5,
         justifyContent: 'center',
         alignItems: 'flex-start'
     },
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start'
     },
     btn: {
-        padding: 10,
+        padding: 5,
         marginHorizontal: 5,
         backgroundColor: '#fff',
         borderRadius: 30,

@@ -36,7 +36,7 @@ const EndSinaisVitais: React.FC = ({ }) => {
 
     const Item = ({ item, index }: { item: sinaisVitais, index: number }) => {
         return (
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
                     <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
                 </View>
@@ -148,34 +148,15 @@ const styles = StyleSheet.create({
     },
     box1: {
         flex: 0.5,
-        margin: 10,
         justifyContent: 'center',
-        alignItems: 'flex-start'
+        alignItems: 'center',
+        margin: 3
     },
     box2: {
         flex: 5,
-        margin: 10,
         justifyContent: 'center',
-        alignItems: 'flex-start'
-    },
-    btn: {
-        padding: 10,
-        marginHorizontal: 5,
-        backgroundColor: '#fff',
-        borderRadius: 30,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            }
-        })
+        alignItems: 'flex-start',
+        margin: 3
     }
 })
 

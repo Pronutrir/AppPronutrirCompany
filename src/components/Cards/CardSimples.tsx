@@ -17,7 +17,7 @@ const CardSimples: React.FC<Props> = ({ children, styleCardContainer } : Props) 
 
 const styles = StyleSheet.create({
     card: {
-        width: '90%',
+        width: '95%',
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: "#fff",
         margin: 10,
-        padding: 10,
         ...Platform.select({
             ios: {
                 shadowOffset: {

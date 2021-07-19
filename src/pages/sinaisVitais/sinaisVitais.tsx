@@ -119,7 +119,7 @@ const sinaisVitais: React.FC = (props) => {
 
         setSelected(undefined);
         setAtendimento(null);
-        setState((prevState) => { return { ...prevState, spinnerVisibility: true, query: nome } });
+        setState((prevState) => { return { ...prevState, spinnerVisibility: true, query: nome, dataSource: [] } });
 
         await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}?rows=10`, { cancelToken: axiosSource.current.token }).then(response => {
             const { result } = response.data;
@@ -344,8 +344,8 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Altura"}
                                             medida={'cm'}
                                             step={1}
-                                            valueMin={0}
-                                            valueMax={300}
+                                            valueMin={50}
+                                            valueMax={220}
                                             valueRanger={Altura}
                                             setValueRanger={setAltura}
                                         />
@@ -355,7 +355,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Peso"}
                                             medida={'kg'}
                                             step={0.1}
-                                            valueMin={0}
+                                            valueMin={20}
                                             valueMax={200}
                                             valueRanger={Peso}
                                             setValueRanger={setPeso}
@@ -366,7 +366,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Temperatura"}
                                             medida={'°C'}
                                             step={0.1}
-                                            valueMin={30}
+                                            valueMin={33}
                                             valueMax={42}
                                             valueRanger={temperatura}
                                             setValueRanger={setTemperatura}
@@ -377,7 +377,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Oximetria"}
                                             medida={'SpO²'}
                                             step={1}
-                                            valueMin={50}
+                                            valueMin={60}
                                             valueMax={100}
                                             valueRanger={oxigenacao}
                                             setValueRanger={setOxigenacao}
