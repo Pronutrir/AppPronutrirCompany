@@ -112,7 +112,6 @@ const EndSinaisVitais: React.FC = ({ }) => {
                     <LoadingBall active={true} />                
             }
         </View>
-
     );
 }
 

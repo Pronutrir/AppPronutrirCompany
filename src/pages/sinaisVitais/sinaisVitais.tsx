@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, SafeAreaView, FlatList, Pressable, Text, ScrollView, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import styles from './style';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
@@ -19,25 +19,25 @@ import axios, { CancelTokenSource } from 'axios';
 import ApiInterageMd from '../../services/apiInterageMedicamentos';
 
 export interface SinaisVitais {
-    iE_PRESSAO: string,
-    iE_MEMBRO: string,
-    iE_MANGUITO: string,
-    iE_APARELHO_PA: string,
-    iE_COND_SAT_O2: string,
-    iE_MEMBRO_SAT_O2: string,
-    iE_RITMO_ECG: string,
-    iE_DECUBITO: string,
-    iE_UNID_MED_PESO: string,
-    iE_UNID_MED_ALTURA: string,
-    cD_PACIENTE: string,
-    cD_PESSOA_FISICA: string,
-    qT_SATURACAO_O2: number,
-    qT_TEMP: number,
-    qT_PESO: number,
-    qT_ALTURA_CM: number,
-    iE_SITUACAO: string,
-    dT_LIBERACAO: string,
-    nM_USUARIO: string
+    iE_PRESSAO: string;
+    iE_MEMBRO: string;
+    iE_MANGUITO: string;
+    iE_APARELHO_PA: string;
+    iE_COND_SAT_O2: string;
+    iE_MEMBRO_SAT_O2: string;
+    iE_RITMO_ECG: string;
+    iE_DECUBITO: string;
+    iE_UNID_MED_PESO: string;
+    iE_UNID_MED_ALTURA: string;
+    cD_PACIENTE: string;
+    cD_PESSOA_FISICA: string;
+    qT_SATURACAO_O2: number | null;
+    qT_TEMP: number | null;
+    qT_PESO: number | null;
+    qT_ALTURA_CM: number | null;
+    iE_SITUACAO: string;
+    dT_LIBERACAO: string;
+    nM_USUARIO: string;
 }
 
 export interface PessoaSelected {
@@ -102,10 +102,10 @@ const sinaisVitais: React.FC = (props) => {
     const [selected, setSelected] = useState<PessoaSelected>();
     const [atendimento, setAtendimento] = useState<SinaisVitais | null>(null);
 
-    const [Peso, setPeso] = useState(0);
-    const [Altura, setAltura] = useState(0);
-    const [temperatura, setTemperatura] = useState(0);
-    const [oxigenacao, setOxigenacao] = useState(0);
+    const [Peso, setPeso] = useState<number | null>(null);
+    const [Altura, setAltura] = useState<number | null>(null);
+    const [temperatura, setTemperatura] = useState<number | null>(null);
+    const [oxigenacao, setOxigenacao] = useState<number | null>(null);
     const axiosSource = useRef<CancelTokenSource | null>(null);
 
     const Search = async (nome: string) => {
@@ -278,7 +278,9 @@ const sinaisVitais: React.FC = (props) => {
 
     return (
         <SafeAreaView style={styles.safeAreaViewStyle}>
-            <View style={styles.SearchBarBoxStyle}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.SearchBarBoxStyle}>
                 <View style={styles.box1}>
                     <SearchBar
                         darkMode
@@ -318,8 +320,8 @@ const sinaisVitais: React.FC = (props) => {
                             {
                                 selected &&
                                 <View style={styles.item1}>
-                                    <View>
-                                        <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flex: 3, paddingHorizontal: RFPercentage(4)}}>
+                                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                             <Text style={styles.label}>Nome: </Text>
                                             <Text style={styles.text}>{selected.nM_PESSOA_FISICA}</Text>
                                         </View>
@@ -328,7 +330,7 @@ const sinaisVitais: React.FC = (props) => {
                                             <Text style={styles.text}>{moment(selected.dT_NASCIMENTO).format('DD-MM-YYYY')}</Text>
                                         </View>
                                     </View>
-                                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                         <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('historySinaisVitais', selected)}>
                                             <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)}>Botão</HistorySvg>
                                         </TouchableOpacity>
@@ -346,7 +348,7 @@ const sinaisVitais: React.FC = (props) => {
                                             step={1}
                                             valueMin={50}
                                             valueMax={220}
-                                            valueRanger={Altura}
+                                            valueRanger={!!Altura ? Altura : 0}
                                             setValueRanger={setAltura}
                                         />
                                     </View>
@@ -357,7 +359,7 @@ const sinaisVitais: React.FC = (props) => {
                                             step={0.1}
                                             valueMin={20}
                                             valueMax={200}
-                                            valueRanger={Peso}
+                                            valueRanger={!!Peso ? Peso : 0}
                                             setValueRanger={setPeso}
                                         />
                                     </View>
@@ -368,7 +370,7 @@ const sinaisVitais: React.FC = (props) => {
                                             step={0.1}
                                             valueMin={33}
                                             valueMax={42}
-                                            valueRanger={temperatura}
+                                            valueRanger={!!temperatura ? temperatura : 0}
                                             setValueRanger={setTemperatura}
                                         />
                                     </View>
@@ -379,7 +381,7 @@ const sinaisVitais: React.FC = (props) => {
                                             step={1}
                                             valueMin={60}
                                             valueMax={100}
-                                            valueRanger={oxigenacao}
+                                            valueRanger={!!oxigenacao ? oxigenacao : 0}
                                             setValueRanger={setOxigenacao}
                                         />
                                     </View>
@@ -393,7 +395,7 @@ const sinaisVitais: React.FC = (props) => {
                             <LoadingBall active={!atendimento && !!selected} />
                         </ScrollView>
                 }
-            </View>
+            </KeyboardAvoidingView>
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions activeModal={activeModalOptions} message={"Deseja adicionar os Sinais Vitais ?"} onpress={() => AddSinaisVitais()} setActiveModal={setActiveModalOptions} />
         </SafeAreaView>
