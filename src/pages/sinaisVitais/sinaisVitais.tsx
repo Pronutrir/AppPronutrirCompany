@@ -16,7 +16,6 @@ import HistorySvg from '../../assets/svg/historico.svg';
 import { useNavigation } from '@react-navigation/native';
 import EndSinaisVitais from './endSinaisVitais';
 import axios, { CancelTokenSource } from 'axios';
-import ApiInterageMd from '../../services/apiInterageMedicamentos';
 
 export interface SinaisVitais {
     iE_PRESSAO: string;

@@ -13,9 +13,11 @@ import * as Yup from 'yup';
 import firestore from '@react-native-firebase/firestore';
 import { Pressable } from 'react-native';
 import Notification from '../../componentes/Notification';
+import ErrorContext from '../../contexts/errorNotification';
 
 export default function consultaCpf({ navigation }) {
 
+    const { addNotification } = useContext(ErrorContext);
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const [modalActive, setModalActive] = useState(false);
     const [modalNotification, setModalNotification] = useState({
@@ -59,8 +61,8 @@ export default function consultaCpf({ navigation }) {
 
             // consulta o cpf do cliente na api tasy
             const dadosTasy = await getCpf(_Cpf);
-    
-            if (dadosTasy) {
+
+            if (dadosTasy && dadosTasy.iE_FUNCIONARIO === "S") {
                 //guarda os dados do cliente no reducer
                 dispatchAuth({ type: 'setUserTasy', payload: dadosTasy })
 
@@ -73,8 +75,8 @@ export default function consultaCpf({ navigation }) {
                     navigation.navigate('ConsultaNome');
                 }
             } else {
-                dispatchAuth({ type: 'UpdateUserTasyCPF', payload: _Cpf });
-                navigation.navigate('ConsultaNome');
+                setModalActive(false);
+                addNotification({ message: "Acesso disponível somente para funcionários!", status: 'error' });
             }
 
         } catch (error) {

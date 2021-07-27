@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, Dimensions } from 'react-native';
+import React, { useRef, useState, useContext } from 'react';
+import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 
 import styles from './style';
 import Loading from '../../componentes/Loading';
@@ -10,13 +10,13 @@ import BackButton from '../../components/buttons/BackButton';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import AuthContext from '../../contexts/auth';
-import { useContext } from 'react';
-import { TouchableOpacity } from 'react-native';
 import VisaoPassword from '../../componentes/visaoPassword';
 import Notification from '../../componentes/Notification';
+import ErrorContext from '../../contexts/errorNotification';
 
 export default function login({ navigation }) {
 
+    const { addNotification } = useContext(ErrorContext);
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);
@@ -77,11 +77,8 @@ export default function login({ navigation }) {
     }
 
     const autenticacao = async (password) => {
-
         setLoadingActive(true);
-
         try {
-
             const cd_firestone = await consultaFirebase(usertasy.nR_CPF.replace(/[.-]/g, ""));
 
             if (usertasy.dS_EMAIL === cd_firestone.email) {
@@ -90,54 +87,36 @@ export default function login({ navigation }) {
                 const authFirebase = await autenticar(cd_firestone.email, password);
                 const upFirebase = await updateEmailFirebase(usertasy.dS_EMAIL, cd_firestone);
             }
-
         } catch (error) {
             const { code, message } = error;
             if (code) {
                 switch (code) {
                     case 'auth/invalid-email':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Formato Inválido de E-mail', type: 'error' }
-                        });
+                        addNotification({ message: "Formato Inválido de E-mail!", status: 'error' });
                         break;
                     case 'auth/user-not-found':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Usuário não encontrado!', type: 'error' }
-                        });
+                        addNotification({ message: "Usuário não encontrado!", status: 'error' });
                         break;
                     case 'auth/wrong-password':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'A senha é inválida!', type: 'error' }
-                        });
+                        addNotification({ message: "A senha é inválida!", status: 'error' });
                         break;
                     case 'auth/network-request-failed':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Verifique sua conexão com a Internet', type: 'error' }
-                        });
+                        addNotification({ message: "Verifique sua conexão com a Internet!", status: 'error' });
                         break;
                     case 'auth/too-many-requests':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Aguarde!, muitas tentativas de acesso!', type: 'error' }
-                        });
+                        addNotification({ message: "Aguarde!, muitas tentativas de acesso!", status: 'error' });
                         break;
                     case 'auth/email-already-in-use':
-                        setModalNotification(prevState => {
-
-                            return { ...prevState, active: true, message: 'Email já está sendo utilizado!', type: 'error' }
-                        });
+                        addNotification({ message: "Email já está sendo utilizado!", status: 'error' });
                         break;
                     default:
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: error.code, type: 'error' }
-                        });
+                        addNotification({ message: error.code, status: 'error' });
                         break;
                 }
             } else {
                 switch (message) {
                     default:
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: error.message, type: 'error' }
-                        });
+                        addNotification({ message: error.message, status: 'error' });
                         break;
                 }
             }
