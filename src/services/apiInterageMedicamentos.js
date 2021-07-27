@@ -12,7 +12,6 @@ const ApiInterageMd = axios.create({
 
 ApiInterageMd.interceptors.request.use(
     config => {
-        console.log(config);
         return config;
     },
 

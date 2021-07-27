@@ -75,10 +75,6 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
         }
     }
 
-    useEffect(() => {
-        console.log("componente", RangerValue)
-    })
-
     return (
         <View style={styles.Container}>
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('subtracao')}>

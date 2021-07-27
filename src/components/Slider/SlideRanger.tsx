@@ -29,7 +29,6 @@ const SlideReanger: React.FC<Props> = ({ label = "texto", medida= "cm", step= 1,
     const renderNotch = useCallback(() => <Notch />, []);
 
     const handleValueChange = useCallback(value => {
-        console.log("Render - SlideReanger");
         if(!Number.isInteger(value)){
             value = parseFloat(value.toFixed(1))
         }

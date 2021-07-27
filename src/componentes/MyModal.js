@@ -13,11 +13,6 @@ const MyModal = ({ modalActive, postagem, mudarState }) => {
         mudarState(!modalActive)
     }
 
-    console.log("height",Dimensions.get('screen').height);
-    console.log("width",Dimensions.get('screen').width);
-    console.log("scale",Dimensions.get('screen').scale);
-    console.log("fontScale",Dimensions.get('screen').fontScale);
-
     return (
         <View>
             <Modal

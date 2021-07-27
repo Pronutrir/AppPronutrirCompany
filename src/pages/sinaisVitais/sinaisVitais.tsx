@@ -128,7 +128,6 @@ const sinaisVitais: React.FC = (props) => {
             if (axios.isCancel(error)) { return };
             setState(prevState => { return { ...prevState, spinnerVisibility: false } });
             addNotification({ message: "Não foi possivel realizar a consulta, tente mais tarde!", status: 'error' });
-            console.log(error);
         });
     }
 
@@ -165,7 +164,7 @@ const sinaisVitais: React.FC = (props) => {
                 addNotification({ message: error, status: 'error' });
             });
         } else {
-            console.log('fim da lista');
+            
         }
     }
 
@@ -185,7 +184,6 @@ const sinaisVitais: React.FC = (props) => {
         } catch (error) {
             addNotification({ message: "Não foi possivel realizar a consulta, tente mais tarde!", status: 'error' });
             setActiveBall(false);
-            console.log(error);
         }
     }
 

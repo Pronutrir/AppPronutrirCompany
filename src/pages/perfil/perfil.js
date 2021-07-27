@@ -100,7 +100,6 @@ export default function perfil({ navigation }) {
     const showImagePicker = () => {
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
-                console.log('operação cancelada pelo usuário');
             }
             if (response.errorMessage) {
                 setModalNotification(prevState => {

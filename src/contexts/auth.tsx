@@ -14,15 +14,25 @@ interface AuthContextData {
     loading: boolean;
 }
 
+interface IFirebaseLogin {
+    email: string;
+    uid: string;
+}
+
+interface IFirestone {
+    cpf: string;
+    email: string;
+    nM_USUARIO: string;
+    nome: string;
+    token: string;
+}
+
 const AuthContext = createContext({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
 
     const [stateAuth, dispatchAuth] = useReducer(UserReducer, initialState);
-    const [usuario, setUsuario] = useState({
-        email: '',
-        uid: ''
-    });
+    const [usuario, setUsuario] = useState<IFirebaseLogin | null>(null);
 
     const [token, setToken] = useState();
 
@@ -32,16 +42,14 @@ export const AuthProvider: React.FC = ({ children }) => {
     const GetAuth = async () => {
         return Api.post('Auth/login', credenciais_Mobile).then(response => {
             const { token } = response.data;
-            console.log(token)
             Api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             return token;
         }).catch(error => {
-            console.log(error)
         })
     }
 
     //consulta e retorna o usuário da api tasy
-    const ConsultaCpfTasy = async (cpf) => {
+    const ConsultaCpfTasy = async (cpf: string) => {
         return Api.get(`PessoaFisica/buscaCpfEmail?cpf=${cpf}`
         ).then(response => {
             const { result } = response.data;
@@ -53,7 +61,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         })
     }
 
-    const consultaFirebase = async (token) => {
+    const consultaFirebase = async (token: string): Promise<IFirestone | null> => {
 
         const usersRef = firestore().collection('users');
         let dados = null;
@@ -72,35 +80,35 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     // metodo principal de validacão de acesso!
     const singIn = async (user: any) => {
-        setTimeout(async ()  => {
+        setTimeout(async () => {
             try {
                 if (user) {
 
-                    const { email, uid } = user;
+                    const { email, uid }: IFirebaseLogin = user;
 
                     //armazena os dados da api Firebase
-                    dispatchAuth({ type: 'setUser',  payload: { email: email, token: uid } })
+                    dispatchAuth({ type: 'setUser', payload: { email: email, token: uid } })
 
                     //pega os dados atualizados do firestone
                     const getFireStone = await consultaFirebase(uid);
 
-                    // armazena || atualiza os dados do usuário do tasy
-                    const result: UserTasy = await ConsultaCpfTasy(getFireStone.cpf);
-                    if (result) {
-                        //informa que há usuário logado
-                        setUsuario({ email, uid });
-                        setLoading(false);
-                        dispatchAuth({ type: 'setUserTasy', payload: result })
+                    if (getFireStone != null) {
+                        // armazena || atualiza os dados do usuário do tasy
+                        const result: UserTasy = await ConsultaCpfTasy(getFireStone?.cpf);
+                        if (result) {
+                            //informa que há usuário logado
+                            setUsuario({ email, uid });
+                            setLoading(false);
+                            dispatchAuth({ type: 'setUserTasy', payload: result })
+                        }
                     }
-
                 } else {
                     deleteUserTasy();
                     setLoading(false)
-                    setUsuario({ email: undefined, uid: undefined })
+                    setUsuario(null)
                 }
             } catch (error) {
                 setLoading(false)
-                console.log(error);
             }
         }, 3000);
     }
@@ -112,13 +120,13 @@ export const AuthProvider: React.FC = ({ children }) => {
                 const subscribe = auth().onAuthStateChanged(singIn);
             }
             return () => {
-        
+
             }
         })()
     }, [])
 
     return (
-        <AuthContext.Provider value={{ signed: Boolean(usuario.email), loading, stateAuth, dispatchAuth }}>
+        <AuthContext.Provider value={{ signed: Boolean(usuario), loading, stateAuth, dispatchAuth }}>
             {children}
         </AuthContext.Provider>
     )

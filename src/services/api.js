@@ -3,9 +3,9 @@ import { Alert } from 'react-native';
 
 const api = axios.create({
     //producao
-    //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
+    baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
     //teste
-    baseURL: 'http://webapppronutrir.com.br:9001/api/v1/',
+    //baseURL: 'http://webapppronutrir.com.br:9001/api/v1/',
     //ngrok
     //baseURL: 'https://c37995fb6467.ngrok.io/api/v1/',
     headers: {
@@ -19,11 +19,8 @@ api.interceptors.response.use(
         return response;
     },
     error => {
-        console.log(error);
         let flag = true;
-
         if(axios.isCancel(error)){
-            console.log(error.message);
             return Promise.reject(error)
         }
 
