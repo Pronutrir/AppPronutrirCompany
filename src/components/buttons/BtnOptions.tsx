@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     linearGradient: {
-        width: screenWidth / 6,
+        width: screenWidth / 4,
         height: screenHeight/ 20,
         borderRadius: 10,
         marginVertical: 5, 
