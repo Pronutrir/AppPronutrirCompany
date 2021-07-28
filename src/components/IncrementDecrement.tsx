@@ -1,9 +1,9 @@
-import React, { useEffect, memo, useCallback } from 'react';
+import React, { useState, memo, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Dimensions, Text, TextInput, TextInputProps } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import Adicao from '../assets/svg/math-plus.svg';
 import Subtracao from '../assets/svg/math-minus.svg';
-import TextInputMask from 'react-native-text-input-mask';
+import { MaskedTextInput } from 'react-native-mask-text';
 interface Props {
     RangerValue: number;
     medida: string;
@@ -13,6 +13,8 @@ interface Props {
 };
 
 const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, medida, min= 0, max= 100 }: Props) => {
+
+    const [ inputValue, setInputValue ] = useState(RangerValue.toString());
 
     const size = Dimensions.get('screen').height / 40
 
@@ -61,15 +63,19 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
         }
     }, []);
 
+    useEffect(() => {
+        setInputValue(RangerValue.toString())
+    }, [RangerValue]);
+
     const setMask = (): string => {
         switch (medida) {
-            case '°C': return "[99].[9]";
+            case '°C': return "99.9";
                 break;
-            case 'kg': return "[999].[9]";
+            case 'kg': return "999.9";
                 break;
-            case 'SpO²': return "[999]";
+            case 'SpO²': return "999";
                 break;
-            case 'cm': return "[999]";
+            case 'cm': return "999";
                 break;
             default: return "[9999]";
         }
@@ -80,14 +86,15 @@ const IncrementDecrement: React.FC<Props> = ({ RangerValue = 0, setRangerValue, 
             <Pressable style={styles.btnInc} onPress={() => inc_Dec('subtracao')}>
                 <Subtracao fill={'#748080'} width={size} height={size} />
             </Pressable>
-            <TextInputMask
+            <MaskedTextInput
                 mask={setMask()}
                 keyboardType={'numeric'}
-                value={RangerValue.toString()}
-                maxLength={5}
+                value={inputValue}
+                maxLength={4}
                 style={styles.valueInput}
-                //onChangeText={(maskedText) => setValue(maskedText)}
-                onEndEditing={(event) => setValue(event.nativeEvent.text)}
+                onChangeText={(text, rawText) => setInputValue(text)}
+                onBlur={() => setValue(inputValue.toString())}
+                //onEndEditing={(event) => setValue(event.nativeEvent.text)}
             />
 
             <Text style={styles.text}>{medida && medida}</Text>
