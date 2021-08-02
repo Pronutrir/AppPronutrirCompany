@@ -102,9 +102,14 @@ const sinaisVitais: React.FC = (props) => {
     const [atendimento, setAtendimento] = useState<SinaisVitais | null>(null);
 
     const [Peso, setPeso] = useState<number | null>(null);
+    const [PesoMin, setPesoMin] = useState<number>(20);
     const [Altura, setAltura] = useState<number | null>(null);
+    const [AlturaMin, setAlturaMin] = useState<number>(50);
     const [temperatura, setTemperatura] = useState<number | null>(null);
+    const [temperaturaMin, setTemperaturaMin] = useState<number>(33);
     const [oxigenacao, setOxigenacao] = useState<number | null>(null);
+    const [oxigenacaoMin, setOxigenacaoMin] = useState<number>(30);
+    
     const axiosSource = useRef<CancelTokenSource | null>(null);
 
     const Search = async (nome: string) => {
@@ -195,19 +200,19 @@ const sinaisVitais: React.FC = (props) => {
             iE_APARELHO_PA: atendimento?.iE_APARELHO_PA,
             cD_PACIENTE: selected?.cD_PESSOA_FISICA,
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
-            qT_SATURACAO_O2: oxigenacao,
+            qT_SATURACAO_O2: oxigenacao === oxigenacaoMin ? null : oxigenacao,
             iE_COND_SAT_O2: atendimento?.iE_COND_SAT_O2 ?? "AA",
             iE_MEMBRO_SAT_O2: atendimento?.iE_MEMBRO_SAT_O2,
             iE_RITMO_ECG: atendimento?.iE_RITMO_ECG,
             iE_DECUBITO: atendimento?.iE_DECUBITO,
-            qT_TEMP: temperatura,
-            qT_PESO: Peso,
+            qT_TEMP: temperatura === temperaturaMin ? null : temperatura,
+            qT_PESO: Peso === PesoMin ? null : Peso,
             iE_UNID_MED_PESO: atendimento?.iE_UNID_MED_PESO,
-            qT_ALTURA_CM: Altura,
+            qT_ALTURA_CM: Altura === AlturaMin ? null : Altura,
             iE_UNID_MED_ALTURA: atendimento?.iE_UNID_MED_ALTURA,
             iE_SITUACAO: atendimento?.iE_SITUACAO,
             dT_LIBERACAO: moment().format(),
-            nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO
+            nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO 
         }).then(response => {
             setActiveModal(false);
             Onclean();
@@ -221,16 +226,16 @@ const sinaisVitais: React.FC = (props) => {
     const autoSet = (dadosAtendimento: SinaisVitais | null) => {
         if (dadosAtendimento) {
             dadosAtendimento.qT_ALTURA_CM && setAltura(dadosAtendimento?.qT_ALTURA_CM);
-            dadosAtendimento.qT_PESO && setPeso(dadosAtendimento?.qT_PESO);
-            dadosAtendimento.qT_TEMP && setTemperatura(dadosAtendimento?.qT_TEMP);
-            dadosAtendimento.qT_SATURACAO_O2 && setOxigenacao(dadosAtendimento?.qT_SATURACAO_O2);
         }
     }
 
     const ChangerProperty = () => {
-        let x = false;
-        x = atendimento?.qT_ALTURA_CM === Altura && atendimento?.qT_PESO === Peso && atendimento?.qT_SATURACAO_O2 === oxigenacao && atendimento?.qT_TEMP === temperatura
-        return x;
+
+        let teste = atendimento?.qT_PESO
+
+        let Changer = false;
+        Changer = atendimento?.qT_ALTURA_CM !== Altura || Peso !== PesoMin || oxigenacao !== oxigenacaoMin || temperatura !== temperaturaMin
+        return Changer;
     }
 
     const resetValores = () => {
@@ -343,7 +348,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Altura"}
                                             medida={'cm'}
                                             step={1}
-                                            valueMin={50}
+                                            valueMin={AlturaMin}
                                             valueMax={220}
                                             valueRanger={!!Altura ? Altura : 0}
                                             setValueRanger={setAltura}
@@ -354,7 +359,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Peso"}
                                             medida={'kg'}
                                             step={0.1}
-                                            valueMin={20}
+                                            valueMin={PesoMin}
                                             valueMax={200}
                                             valueRanger={!!Peso ? Peso : 0}
                                             setValueRanger={setPeso}
@@ -365,7 +370,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Temperatura"}
                                             medida={'°C'}
                                             step={0.1}
-                                            valueMin={33}
+                                            valueMin={temperaturaMin}
                                             valueMax={42}
                                             valueRanger={!!temperatura ? temperatura : 0}
                                             setValueRanger={setTemperatura}
@@ -376,7 +381,7 @@ const sinaisVitais: React.FC = (props) => {
                                             label={"Oximetria"}
                                             medida={'SpO²'}
                                             step={1}
-                                            valueMin={60}
+                                            valueMin={oxigenacaoMin}
                                             valueMax={100}
                                             valueRanger={!!oxigenacao ? oxigenacao : 0}
                                             setValueRanger={setOxigenacao}

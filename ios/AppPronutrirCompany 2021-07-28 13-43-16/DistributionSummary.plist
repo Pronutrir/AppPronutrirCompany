@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AppPronutrirCompany.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>D1EEB20F57199633A696AD983A87421F7B681B09</string>
+				<key>dateExpires</key>
+				<string>18/05/22</string>
+				<key>type</key>
+				<string>Apple Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>D1EEB20F57199633A696AD983A87421F7B681B09</string>
+						<key>dateExpires</key>
+						<string>18/05/22</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>OneSignal.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>NN4H9B2Q2B</string>
+						<key>name</key>
+						<string>williame correia de lima</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>D1EEB20F57199633A696AD983A87421F7B681B09</string>
+						<key>dateExpires</key>
+						<string>18/05/22</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>OpenSSL.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>NN4H9B2Q2B</string>
+						<key>name</key>
+						<string>williame correia de lima</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>D1EEB20F57199633A696AD983A87421F7B681B09</string>
+						<key>dateExpires</key>
+						<string>18/05/22</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>entitlements</key>
+					<dict>
+						<key>application-identifier</key>
+						<string>NN4H9B2Q2B.org.AppPronutrirCompany.OneSignalNotificationServiceExtension</string>
+						<key>com.apple.developer.team-identifier</key>
+						<string>NN4H9B2Q2B</string>
+						<key>com.apple.security.application-groups</key>
+						<array>
+							<string>group.grouporg.Pronutrir.AppPronutrir.onesignal</string>
+							<string>group.org.Pronutrir.AppPronutrir.onesignal</string>
+						</array>
+						<key>get-task-allow</key>
+						<false/>
+					</dict>
+					<key>name</key>
+					<string>OneSignalNotificationServiceExtension.appex</string>
+					<key>profile</key>
+					<dict>
+						<key>UUID</key>
+						<string>40c6b79b-f541-4f8e-b235-770a17f84015</string>
+						<key>name</key>
+						<string>iOS Team Ad Hoc Provisioning Profile: org.AppPronutrirCompany.OneSignalNotificationServiceExtension</string>
+					</dict>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>NN4H9B2Q2B</string>
+						<key>name</key>
+						<string>williame correia de lima</string>
+					</dict>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>NN4H9B2Q2B.org.AppPronutrirCompany</string>
+				<key>aps-environment</key>
+				<string>production</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>NN4H9B2Q2B</string>
+				<key>com.apple.security.application-groups</key>
+				<array>
+					<string>group.grouporg.Pronutrir.AppPronutrir.onesignal</string>
+					<string>group.org.Pronutrir.AppPronutrir.onesignal</string>
+				</array>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>AppPronutrirCompany.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>f53e5963-175b-48b2-82e4-209f8d2fbe25</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: org.AppPronutrirCompany</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>NN4H9B2Q2B</string>
+				<key>name</key>
+				<string>williame correia de lima</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

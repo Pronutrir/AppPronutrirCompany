@@ -3,13 +3,16 @@ import { StyleSheet, Image, View, Dimensions } from 'react-native';
 
 interface Props {
     active: boolean;
+    width?: number;
 };
 
-const LoadingBall: React.FC<Props> = ({ active }: Props) => {
+const DimensionsWidth = Dimensions.get('screen').width / 8;
+
+const LoadingBall: React.FC<Props> = ({ active, width = DimensionsWidth }: Props) => {
     return (
         <View style={styles.container}>
             {
-                active && <Image style={styles.loadingImg} source={require('../../assets/imagens/DualBall.gif')} />
+                active && <Image style={{ width: width, height: width }} source={require('../../assets/imagens/DualBall.gif')} />
             }
         </View>
     )
@@ -20,10 +23,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    loadingImg:{
-        width: Dimensions.get('screen').width / 8,
-        height: Dimensions.get('screen').width / 8
     }
 })
 

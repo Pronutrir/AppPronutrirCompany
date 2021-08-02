@@ -16,12 +16,12 @@ interface Props {
 const BtnCentered: React.FC<Props> = ({ labelBtn = "OK", SizeText = 12 , onPress, enabled = false } : Props) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity disabled={enabled} style={enabled ? styles.btnDisabled : styles.btn} onPress={() => onPress()}>
+            <TouchableOpacity disabled={!enabled} style={!enabled ? styles.btnDisabled : styles.btn} onPress={() => onPress()}>
                 <LinearGradient
                     useAngle={true}
                     angle={45}
                     angleCenter={{ x: 0.5, y: 0.5 }}
-                    colors={ enabled ? ['#e6f4f3', '#e6f4f3'] : ['#52b4ad', '#219f96', '#08948a'] }
+                    colors={ !enabled ? ['#e6f4f3', '#e6f4f3'] : ['#52b4ad', '#219f96', '#08948a'] }
                     style={styles.linearGradient}
                 >
                     <Text

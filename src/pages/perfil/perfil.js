@@ -12,6 +12,7 @@ import Api from '../../services/api';
 import moment from 'moment';
 import Notification from '../../componentes/Notification';
 import Loading from '../../componentes/Loading';
+import LoadingBall from '../../components/Loading/LoadingBall';
 
 export default function perfil({ navigation }) {
 
@@ -89,6 +90,8 @@ export default function perfil({ navigation }) {
             const { result } = response.data
             if (result) {
                 dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
+            }else{
+                dispatchAuth({ type: 'setImgPerfil', payload: null })
             }
         }).catch(error => {
             setModalNotification(prevState => {
@@ -109,7 +112,7 @@ export default function perfil({ navigation }) {
             if (usertasy.ImgPerfil && response.base64) {
                 PutImgPerfil(usertasy.cD_PESSOA_FISICA, response.base64)
             }
-            if(!usertasy.ImgPerfil && response.base64){
+            if (!usertasy.ImgPerfil && response.base64) {
                 PostImgPerfil(response.base64);
             }
             setModalActive(false);
@@ -135,11 +138,17 @@ export default function perfil({ navigation }) {
                 <TouchableOpacity style={styles.boxImg} onPress={() => OptionsModal()}>
                     {
                         !usertasy.ImgPerfil ?
-                            <UserSvg width={size + 60} height={size + 60} />
+                            usertasy.ImgPerfil === undefined ?
+                                <View style={{ width: 50, margin: 30 }}>
+                                    <LoadingBall active={true} width={50} />
+                                </View>
+                                :
+                                <UserSvg width={size + 60} height={size + 60} />
                             :
                             <Image
                                 style={styles.perfilImg}
                                 source={{ uri: `data:image/png;base64,${usertasy.ImgPerfil}` }}
+                                fadeDuration={2000}
                             />
                     }
                     <PhotoSvg width={size} height={size} fill="#748080" />

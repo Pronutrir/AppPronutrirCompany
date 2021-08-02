@@ -52,21 +52,21 @@ const EndSinaisVitais: React.FC = ({ }) => {
                     <View style={styles.item}>
                         <View style={styles.SubItem}>
                             <Text style={styles.textLabel}>Altura: </Text>
-                            <Text style={styles.text}>{`${item?.qT_ALTURA_CM ?? 0}`}</Text>
+                            <Text style={styles.text}>{`${item?.qT_ALTURA_CM ?? ''}`}</Text>
                         </View>
                         <View style={styles.SubItem}>
                             <Text style={styles.textLabel}>Peso: </Text>
-                            <Text style={styles.text}>{`${item?.qT_PESO ?? 0}`}</Text>
+                            <Text style={styles.text}>{`${item?.qT_PESO ?? ''}`}</Text>
                         </View>
                     </View>
                     <View style={styles.item}>
                         <View style={styles.SubItem}>
                             <Text style={styles.textLabel}>Oxigenação: </Text>
-                            <Text style={styles.text}>{`${item?.qT_SATURACAO_O2 ?? 0}`}</Text>
+                            <Text style={styles.text}>{`${item?.qT_SATURACAO_O2 ?? ''}`}</Text>
                         </View>
                         <View style={styles.SubItem}>
                             <Text style={styles.textLabel}>Temperatura: </Text>
-                            <Text style={styles.text}>{`${item?.qT_TEMP ?? 0}`}</Text>
+                            <Text style={styles.text}>{`${item?.qT_TEMP ?? ''}`}</Text>
                         </View>
                     </View>
                 </View>

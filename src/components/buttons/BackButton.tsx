@@ -23,7 +23,8 @@ const BackButton: React.FC<Props> = ({ onPress } : Props) => {
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        backgroundColor: 'transparent'
     },
     btn: {
         padding: 5,
