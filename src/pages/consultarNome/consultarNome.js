@@ -48,7 +48,7 @@ export default function consultarNome({ navigation }) {
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
                                 behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={-180}
+                                keyboardVerticalOffset={Platform.OS === "ios" ? 130 : -180}
                             >
                                 <View style={styles.box1}>
                                     <Text style={styles.textInfo}>Informe seu nome e sobrenome</Text>

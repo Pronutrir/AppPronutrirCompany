@@ -48,9 +48,9 @@ export default function consultarSenha({ navigation }) {
                     {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                         <View style={{ flex: 1 }} >
                             <KeyboardAvoidingView
-                                style={{ flex: 1 }}
-                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={-180}
+                               style={{ flex: 1 }}
+                               behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                               keyboardVerticalOffset={Platform.OS === "ios" ? 130 : -180}
                             >
                                 <View style={styles.box1}>
                                     <Text style={styles.textInfo}>Cadastre sua senha</Text>

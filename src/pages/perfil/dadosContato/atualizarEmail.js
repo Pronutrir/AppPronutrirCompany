@@ -214,8 +214,8 @@ export default function atualizarEmail({ navigation }) {
                                     <View style={{ flex: 1 }} >
                                         <KeyboardAvoidingView
                                             style={{ flex: 1 }}
-                                            behavior={Platform.OS === "ios" ? "height" : "height"}
-                                            keyboardVerticalOffset={Dimensions.get('screen').height / 5.2}
+                                            behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                                            keyboardVerticalOffset={Platform.OS === "ios" ? 140 : -180}
                                         >
                                             <View style={styles.box1}>
                                                 <View style={styles.item1}>
@@ -274,7 +274,7 @@ export default function atualizarEmail({ navigation }) {
                                         <KeyboardAvoidingView
                                             style={{ flex: 1 }}
                                             behavior={Platform.OS === "ios" ? "height" : "height"}
-                                            keyboardVerticalOffset={Dimensions.get('screen').height / 5.2}
+                                            keyboardVerticalOffset={Platform.OS === "ios" ? 140 : -180}
                                         >
                                             <View style={styles.box1}>
                                                 <View style={styles.item1}>
@@ -292,7 +292,7 @@ export default function atualizarEmail({ navigation }) {
                                                 </View>
                                             </View>
                                             <View style={styles.box2}>
-                                                <Prosseguir
+                                                <Btnprosseguir
                                                     valueText={'Alterar'}
                                                     onPress={() => handleSubmit()}
                                                 />

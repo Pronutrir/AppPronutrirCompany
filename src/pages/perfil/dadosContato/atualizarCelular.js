@@ -108,8 +108,8 @@ export default function atualizarCelular() {
                             <View style={{ flex: 1 }} >
                                 <KeyboardAvoidingView
                                     style={{ flex: 1 }}
-                                    behavior={Platform.OS === "ios" ? "height" : "height"}
-                                    keyboardVerticalOffset={Dimensions.get('screen').height / 5.2}
+                                    behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                                    keyboardVerticalOffset={Platform.OS === "ios" ? 140 : -180}
                                 >
                                     <View style={styles.box1}>
                                         <View style={styles.item1}>

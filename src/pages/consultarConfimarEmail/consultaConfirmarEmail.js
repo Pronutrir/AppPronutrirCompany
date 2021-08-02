@@ -54,7 +54,7 @@ export default function consultaConfirmarEmail({ navigation }) {
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
                                 behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={-180}
+                                keyboardVerticalOffset={Platform.OS === "ios" ? 110 : -180}
                             >
                                 <View style={styles.box1}>
                                     <Text style={styles.textInfo}>Confirme seu Email</Text>

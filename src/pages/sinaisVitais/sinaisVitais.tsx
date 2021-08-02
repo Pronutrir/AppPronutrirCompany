@@ -230,12 +230,9 @@ const sinaisVitais: React.FC = (props) => {
     }
 
     const ChangerProperty = () => {
-
-        let teste = atendimento?.qT_PESO
-
         let Changer = false;
         Changer = atendimento?.qT_ALTURA_CM !== Altura || Peso !== PesoMin || oxigenacao !== oxigenacaoMin || temperatura !== temperaturaMin
-        return Changer;
+        return !Changer;
     }
 
     const resetValores = () => {
