@@ -1,5 +1,7 @@
-import React from 'react'
-import { View, Image, ImageBackground } from 'react-native'
+import AnimatedLottieView from 'lottie-react-native';
+import React from 'react';
+import { View, Image, ImageBackground } from 'react-native';
+import LogoNameSvg from '../../assets/svg/logoName.svg';
 
 import styles from './style'
 
@@ -8,10 +10,17 @@ export default function inicial() {
         <View style={styles.container}>
             <ImageBackground style={{ flex: 1 }} resizeMode={'cover'} source={require('../../assets/imagens/logoBackgroud.png')}>
                 <View style={styles.box1}>
-                    <Image style={styles.imgGif} source={require('../../assets/imagens/logo.gif')} />
+                    <AnimatedLottieView
+                        source={require('../../assets/Animacoes/logoAnimated.json')}
+                        autoPlay={true}
+                        loop={true}
+                        style={{ width: 100, height: 100 }}
+                    />
                 </View>
                 <View style={styles.box2}>
-                    <Image style={styles.img} source={require('../../assets/imagens/Pronutrir1.png')} />
+                    <View style={styles.img}>
+                        <LogoNameSvg />
+                    </View>
                 </View>
             </ImageBackground>
         </View>

@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     menssage: {},
     textMenssage: {
         fontSize: RFValue(16, 680),
-        padding: 10,
+        padding: 20,
     },
 });
 
