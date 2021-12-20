@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import AuthContext from '../../../contexts/auth';
-import Loading from '../../../componentes/Loading';
+import Loading from '../../../components/Loading/Loading';
 import Notification from '../../../componentes/Notification';
 import moment from 'moment';
 import Api from '../../../services/api';

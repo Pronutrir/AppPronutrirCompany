@@ -15,7 +15,7 @@ import { valicacaoCPF } from '../../services/validacaoCpf';
 import AuthContext from '../../contexts/auth';
 import ErrorContext from '../../contexts/errorNotification';
 import { TextInputMask } from 'react-native-masked-text';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import styles from './style';
 import AvatarImg from '../../assets/svg/avatar.svg';
 import CadeadoImg from '../../assets/svg/cadeado.svg';

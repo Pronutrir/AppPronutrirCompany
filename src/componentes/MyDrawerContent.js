@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, Alert, Dimensions } from 'react-native';
 import { Image } from 'react-native-animatable';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Loading from '../componentes/Loading';
+import Loading from '../components/Loading/Loading';
 import AuthContext from '../contexts/auth';
 
 import auth from '@react-native-firebase/auth';

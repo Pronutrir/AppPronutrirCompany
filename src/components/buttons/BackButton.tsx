@@ -7,9 +7,8 @@ interface Props {
     onPress(): void;
 }
 
-const BackButton: React.FC<Props> = ({ onPress } : Props) => {
-
-    const size = Dimensions.get('screen').width / 15
+const BackButton: React.FC<Props> = ({ onPress }: Props) => {
+    const size = Dimensions.get('screen').width / 15;
 
     return (
         <View style={styles.container}>
@@ -17,39 +16,37 @@ const BackButton: React.FC<Props> = ({ onPress } : Props) => {
                 <ArrowBack fill={'#748080'} width={size} height={size} />
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'flex-start',
-        backgroundColor: 'transparent'
     },
     btn: {
+        width: Dimensions.get('screen').width / 10,
+        height: Dimensions.get('screen').width / 10,
+        margin: 10,
         padding: 5,
         backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 10,
         ...Platform.select({
             ios: {
                 shadowOffset: {
                     width: 0,
-                    height: 5
+                    height: 5,
                 },
                 shadowOpacity: 0.2,
                 shadowRadius: 6,
             },
             android: {
                 elevation: 3,
-            }
+            },
         }),
-        borderRadius: 100,
+        borderRadius: 30,
     },
-    imgBtn: {
-        padding: 15,
-    }
-})
+});
 
 export default BackButton;

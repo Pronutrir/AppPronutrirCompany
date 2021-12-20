@@ -119,9 +119,6 @@ export const AuthProvider: React.FC = ({ children }) => {
             if (token) {
                 const subscribe = auth().onAuthStateChanged(singIn);
             }
-            return () => {
-
-            }
         })()
     }, [])
 

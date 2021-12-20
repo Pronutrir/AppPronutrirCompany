@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import { Text, View, Pressable, Keyboard, TextInput, ImageBackground, KeyboardAvoidingView, Dimensions } from 'react-native';
 
 import styles from './style';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { TextInputMask } from 'react-native-masked-text';
 import { Formik } from 'formik';

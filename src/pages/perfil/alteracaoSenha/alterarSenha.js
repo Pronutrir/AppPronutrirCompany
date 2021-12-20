@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import Prosseguir from '../../../components/buttons/Btnprosseguir';
 import VisaoPassword from '../../../componentes/visaoPassword';
 import auth from '@react-native-firebase/auth';
-import Loading from '../../../componentes/Loading';
+import Loading from '../../../components/Loading/Loading';
 import Notification from '../../../componentes/Notification';
 import AuthContext from '../../../contexts/auth';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";

@@ -8,7 +8,7 @@ import ConfirmarSvg from '../../assets/svg/checked.svg';
 import styles from './style';
 import Api from '../../services/api';
 import AuthContext from '../../contexts/auth';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import moment from 'moment';
 import { Svg, Defs, Rect, Mask, Circle } from 'react-native-svg';
 import Notification from '../../componentes/Notification';

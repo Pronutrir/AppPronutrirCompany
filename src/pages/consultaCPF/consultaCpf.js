@@ -6,7 +6,7 @@ import styles from './style';
 import BackButton from '../../components/buttons/BackButton';
 import Api from '../../services/api';
 import { valicacaoCPF } from '../../services/validacaoCpf';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
 import { Formik } from 'formik';
 import * as Yup from 'yup';

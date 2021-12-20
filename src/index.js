@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Routes from './routes/index';
 import { Text } from 'react-native';
-
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
 import { ErrorNotificationProvider } from './contexts/errorNotification';

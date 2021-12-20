@@ -2,7 +2,7 @@ import React, { useRef, useState, useContext } from 'react';
 import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, Dimensions } from 'react-native';
 
 import styles from './style';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
 import * as Yup from 'yup';

@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import AuthContext from '../../../contexts/auth';
 import { cpfMask } from '../../../services/validacoes';
-import Loading from '../../../componentes/Loading';
+import Loading from '../../../components/Loading/Loading';
 import MyModalInfor from '../../../componentes/MyModalInfor';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 

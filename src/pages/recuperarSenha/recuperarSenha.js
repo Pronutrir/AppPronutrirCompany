@@ -2,10 +2,9 @@ import React, { useRef, useState, useContext } from 'react';
 import { Text, View, Pressable, TextInput, ImageBackground, Keyboard } from 'react-native';
 
 import styles from './style';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import AuthContext from '../../contexts/auth';
 import MybackButton from '../../componentes/MyBackButton';
 import auth from '@react-native-firebase/auth';
@@ -14,7 +13,7 @@ import MyModalSimples from '../../componentes/MyModalSimples';
 export default function recuperarSenha({ navigation }) {
 
     const { stateAuth } = useContext(AuthContext);
-    const { usertasy } = stateAuth;
+    const { usertasy, Usuario: { email } } = stateAuth;
 
     const Email = useRef(null);
     const [modalLoading, setModalLoading] = useState(false);
@@ -38,7 +37,7 @@ export default function recuperarSenha({ navigation }) {
             //dynamicLinkDomain: "https://apppronutrir.page.link"
         };
 
-        auth().sendPasswordResetEmail(usertasy.dS_EMAIL, actionCodeSettings)
+        auth().sendPasswordResetEmail(email, actionCodeSettings)
             .then(function () {
                 // Verification email sent.
                 setModalLoading(false);
@@ -58,7 +57,7 @@ export default function recuperarSenha({ navigation }) {
                 </View>
                 <Formik
                     initialValues={{
-                        Email: usertasy.dS_EMAIL,
+                        Email: email,
                     }}
                     onSubmit={values => {
                         recoveryPassword(values);

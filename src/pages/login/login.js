@@ -2,7 +2,7 @@ import React, { useRef, useState, useContext } from 'react';
 import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 
 import styles from './style';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -84,8 +84,10 @@ export default function login({ navigation }) {
             if (usertasy.dS_EMAIL === cd_firestone.email) {
                 const authFirebase = await autenticar(cd_firestone.email, password);
             } else {
-                const authFirebase = await autenticar(cd_firestone.email, password);
-                const upFirebase = await updateEmailFirebase(usertasy.dS_EMAIL, cd_firestone);
+                await autenticar(cd_firestone.email, password);
+                if(usertasy?.dS_EMAIL){
+                    await updateEmailFirebase(usertasy.dS_EMAIL, cd_firestone);
+                }
             }
         } catch (error) {
             const { code, message } = error;

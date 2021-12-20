@@ -11,7 +11,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Api from '../../services/api';
 import moment from 'moment';
 import Notification from '../../componentes/Notification';
-import Loading from '../../componentes/Loading';
+import Loading from '../../components/Loading/Loading';
 import LoadingBall from '../../components/Loading/LoadingBall';
 
 export default function perfil({ navigation }) {

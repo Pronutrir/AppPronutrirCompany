@@ -1,16 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
+import { View, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
 import propTypes from 'prop-types';
 
-const windowWidth = Dimensions.get('screen').width;
-const windowHeight = Dimensions.get('screen').height;
-
-const ModalCentralized = ({children , activeModal, modal}) => {
+const ModalCentralized = ({ children, activeModal, setActiveModal, modal }) => {
 
     const size = Dimensions.get('screen').width / 10
 
     const _view = useRef(null);
-   
+
     const [childrenIds, setChildrenIds] = useState();
     const [active, setActive] = useState(activeModal);
 
@@ -31,14 +28,14 @@ const ModalCentralized = ({children , activeModal, modal}) => {
                 animationType='fade'
                 transparent={true}
                 backdropOpacity={0.9}
-                visible={active}
+                visible={activeModal}
             >
                 <View style={styles.centeredView}
                     ref={_view}
                     onStartShouldSetResponder={evt => {
                         evt.persist();
                         if (evt.target._nativeTag === childrenIds) {
-                            setActive(false)
+                            setActiveModal(false)
                         }
                     }}
                 >
@@ -58,14 +55,13 @@ const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
         backgroundColor: 'rgba(0,0,0,.8)'
     },
     modalView: {
-        backgroundColor: "#ffff",
+        backgroundColor: "transparent",
         borderRadius: 20,
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
         shadowColor: "#000",
         ...Platform.select({
             ios: {

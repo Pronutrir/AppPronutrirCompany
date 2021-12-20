@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import AuthContext from '../../../contexts/auth';
 import { foneMask } from '../../../services/validacoes';
-import Loading from '../../../componentes/Loading';
+import Loading from '../../../components/Loading/Loading';
 import Notification from '../../../componentes/Notification';
 import Api from '../../../services/api';
 import moment from 'moment';
