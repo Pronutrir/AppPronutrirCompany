@@ -1,536 +1,137 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
-    View,
-    SafeAreaView,
-    FlatList,
-    Pressable,
     Text,
-    ScrollView,
+    View,
+    FlatList,
     TouchableOpacity,
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
+    useWindowDimensions,
+    ListRenderItem,
+    ViewToken,
 } from 'react-native';
-import SearchBar from 'react-native-dynamic-search-bar';
+import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
+import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais';
 import styles from './style';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
-import LoadingBall from '../../components/Loading/LoadingBall';
-import SlideRanger from '../../components/Slider/SlideRanger';
-import BtnCentered from '../../components/buttons/BtnCentered';
-import Api from '../../services/api';
-import moment from 'moment';
-import AuthContext from '../../contexts/auth';
-import ErrorContext from '../../contexts/errorNotification';
-import Loading from '../../components/Loading/Loading';
-import ModalCentralizedOptions from '../../components/Modais/ModalCentralizedOptions';
-import HistorySvg from '../../assets/svg/historico.svg';
-import { useNavigation } from '@react-navigation/native';
-import EndSinaisVitais from './endSinaisVitais';
-import axios, { CancelTokenSource } from 'axios';
-
-export interface SinaisVitais {
-    iE_PRESSAO: string;
-    iE_MEMBRO: string;
-    iE_MANGUITO: string;
-    iE_APARELHO_PA: string;
-    iE_COND_SAT_O2: string;
-    iE_MEMBRO_SAT_O2: string;
-    iE_RITMO_ECG: string;
-    iE_DECUBITO: string;
-    iE_UNID_MED_PESO: string;
-    iE_UNID_MED_ALTURA: string;
-    cD_PACIENTE: string;
-    cD_PESSOA_FISICA: string;
-    qT_SATURACAO_O2: number | null;
-    qT_TEMP: number | null;
-    qT_PESO: number | null;
-    qT_ALTURA_CM: number | null;
-    iE_SITUACAO: string;
-    dT_LIBERACAO: string;
-    nM_USUARIO: string;
+interface PagesSinaisVitais {
+    Name: string;
 }
-
-export interface PessoaSelected {
-    cD_PESSOA_FISICA: string;
-    nM_PESSOA_FISICA: string;
-    dT_NASCIMENTO: string;
-}
-
-interface Consulta {
-    query: string;
-    isLoading: boolean;
-    refreshing: boolean;
-    dataSource: PessoaSelected[];
-    spinnerVisibility: boolean;
-    page: number;
-    loadingScrow: boolean;
-    continue: boolean;
-}
-
-const sinaisVitaisDefault: SinaisVitais = {
-    iE_PRESSAO: 'D',
-    iE_MEMBRO: 'MSE',
-    iE_MANGUITO: 'C',
-    iE_APARELHO_PA: 'C',
-    iE_COND_SAT_O2: 'AA',
-    iE_MEMBRO_SAT_O2: 'MSE',
-    iE_RITMO_ECG: '1',
-    iE_DECUBITO: 'DDH',
-    iE_UNID_MED_PESO: 'Kg',
-    iE_UNID_MED_ALTURA: 'cm',
-    cD_PACIENTE: '',
-    cD_PESSOA_FISICA: '',
-    qT_SATURACAO_O2: 0,
-    qT_TEMP: 0,
-    qT_PESO: 0,
-    qT_ALTURA_CM: 0,
-    iE_SITUACAO: 'A',
-    dT_LIBERACAO: '',
-    nM_USUARIO: '',
-};
 
 const SinaisVitais: React.FC = () => {
-    const navigation = useNavigation();
-    const {
-        stateAuth: { usertasy },
-    } = useContext(AuthContext);
-    const { addNotification } = useContext(ErrorContext);
+    const refFlatlist = useRef<FlatList>(null);
+    const refView1 = useRef<TouchableOpacity>(null);
+    const refView2 = useRef<TouchableOpacity>(null);
+    const deviceWidth = useWindowDimensions();
+    //const {getEvolucoesPepVinculados} = useContext(ExamesContext);
+    const [pages] = useState<PagesSinaisVitais[]>([
+        {
+            Name: 'Consultas',
+        },
+        {
+            Name: 'Oncologia',
+        },
+    ]);
+    //const [refresh, setRefresh] = useState(false);
 
-    const [state, setState] = useState<Consulta>({
-        query: '',
-        isLoading: true,
-        refreshing: false,
-        dataSource: [],
-        spinnerVisibility: false,
-        page: 1,
-        loadingScrow: false,
-        continue: true,
+    const getItemLayout = (data: any, index: any) => {
+        return {
+            length: deviceWidth.width,
+            offset: deviceWidth.width * index,
+            index,
+        };
+    };
+
+    const scrollToIndex = (index: number) => {
+        refFlatlist.current?.scrollToIndex({ animated: true, index: index });
+    };
+
+    const viewabilityConfig = useRef({
+        itemVisiblePercentThreshold: 50,
+        waitForInteraction: true,
+        minimumViewTime: 5,
     });
 
-    const [activeBall, setActiveBall] = useState<boolean>(false);
-    const [activeModal, setActiveModal] = useState<boolean>(false);
-    const [activeModalOptions, setActiveModalOptions] =
-        useState<boolean>(false);
-    const [selected, setSelected] = useState<PessoaSelected>();
-    const [atendimento, setAtendimento] = useState<SinaisVitais | null>(null);
-
-    const [Peso, setPeso] = useState<number | null>(null);
-    const [PesoMin, setPesoMin] = useState<number>(20);
-    const [Altura, setAltura] = useState<number | null>(null);
-    const [AlturaMin, setAlturaMin] = useState<number>(50);
-    const [temperatura, setTemperatura] = useState<number | null>(null);
-    const [temperaturaMin, setTemperaturaMin] = useState<number>(33);
-    const [oxigenacao, setOxigenacao] = useState<number | null>(null);
-    const [oxigenacaoMin, setOxigenacaoMin] = useState<number>(30);
-
-    const axiosSource = useRef<CancelTokenSource | null>(null);
-
-    const Search = async (nome: string) => {
-        //Check if there are any previous pending requests
-        if (axiosSource != null) {
-            axiosSource.current?.cancel(
-                'Operação cancelada por uma nova requisição!',
-            );
-        }
-
-        axiosSource.current = axios.CancelToken.source();
-
-        setSelected(undefined);
-        setAtendimento(null);
-        setState((prevState) => {
-            return {
-                ...prevState,
-                spinnerVisibility: true,
-                query: nome,
-                dataSource: [],
-            };
-        });
-
-        await Api.get(`PessoaFisica/FiltrarPFdadosReduzidos/${nome}?rows=10`, {
-            cancelToken: axiosSource.current.token,
-        })
-            .then((response) => {
-                const { result } = response.data;
-                setState((prevState) => {
-                    return {
-                        ...prevState,
-                        spinnerVisibility: false,
-                        dataSource: result,
-                    };
-                });
-            })
-            .catch((error) => {
-                if (axios.isCancel(error)) {
-                    return;
-                }
-                setState((prevState) => {
-                    return { ...prevState, spinnerVisibility: false };
-                });
-                addNotification({
-                    message:
-                        'Não foi possivel realizar a consulta, tente mais tarde!',
-                    status: 'error',
-                });
-            });
-    };
-
-    const LoadingSearch = async () => {
-        if (state.continue && state.dataSource.length >= 10) {
-            setState({ ...state, loadingScrow: true });
-            await Api.get(
-                `PessoaFisica/FiltrarPFdadosReduzidos/${state.query}?pagina=${state.page}&rows=10`,
-            )
-                .then((response) => {
-                    const { result } = response.data;
-                    if (result && result?.length) {
-                        setState((prevState) => {
-                            return {
-                                ...prevState,
-                                loadingScrow: false,
-                                dataSource: [
-                                    ...prevState.dataSource,
-                                    ...result,
-                                ],
-                                page: prevState.page + 1,
-                                continue: true,
-                            };
-                        });
-                    } else {
-                        setState((prevState) => {
-                            return {
-                                ...prevState,
-                                loadingScrow: false,
-                                continue: false,
-                                page: 2,
-                            };
-                        });
-                    }
-                })
-                .catch((error) => {
-                    addNotification({ message: error, status: 'error' });
-                });
+    const selected = useCallback((index: number) => {
+        scrollToIndex(index);
+        if (index === 0) {
+            refView1.current?.setNativeProps({ style: styles.btnSelected });
+            refView2.current?.setNativeProps({ style: styles.btn });
         } else {
+            refView1.current?.setNativeProps({ style: styles.btn });
+            refView2.current?.setNativeProps({ style: styles.btnSelected });
         }
-    };
+    }, []);
 
-    const SearchAtendimentos = async (item: PessoaSelected) => {
-        setActiveBall(true);
-        setSelected(item);
-        setState((prevState) => {
-            return { ...prevState, dataSource: [] };
-        });
-        try {
-            const {
-                data: { result },
-            } = await Api.get(
-                `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${item.cD_PESSOA_FISICA}`,
-            );
-            if (result) {
-                setAtendimento(result);
-            } else {
-                resetValores();
-                setAtendimento(sinaisVitaisDefault);
+    const onViewableItemsChanged = React.useCallback(
+        (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
+            const { changed } = info;
+            const [viewableItem] = changed;
+            if (viewableItem) {
+                const { key } = changed[0];
+                key === 'Consultas' && selected(0);
+                key === 'Oncologia' && selected(1);
             }
-            setActiveBall(false);
-        } catch (error) {
-            addNotification({
-                message:
-                    'Não foi possivel realizar a consulta, tente mais tarde!',
-                status: 'error',
-            });
-            setActiveBall(false);
-        }
-    };
-
-    const AddSinaisVitais = async () => {
-        setActiveModal(true);
-        Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
-            iE_PRESSAO: atendimento?.iE_PRESSAO,
-            iE_MEMBRO: atendimento?.iE_MEMBRO,
-            iE_MANGUITO: atendimento?.iE_MANGUITO,
-            iE_APARELHO_PA: atendimento?.iE_APARELHO_PA,
-            cD_PACIENTE: selected?.cD_PESSOA_FISICA,
-            cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
-            qT_SATURACAO_O2: oxigenacao === oxigenacaoMin ? null : oxigenacao,
-            iE_COND_SAT_O2: atendimento?.iE_COND_SAT_O2 ?? 'AA',
-            iE_MEMBRO_SAT_O2: atendimento?.iE_MEMBRO_SAT_O2,
-            iE_RITMO_ECG: atendimento?.iE_RITMO_ECG,
-            iE_DECUBITO: atendimento?.iE_DECUBITO,
-            qT_TEMP: temperatura === temperaturaMin ? null : temperatura,
-            qT_PESO: Peso === PesoMin ? null : Peso,
-            iE_UNID_MED_PESO: atendimento?.iE_UNID_MED_PESO,
-            qT_ALTURA_CM: Altura === AlturaMin ? null : Altura,
-            iE_UNID_MED_ALTURA: atendimento?.iE_UNID_MED_ALTURA,
-            iE_SITUACAO: atendimento?.iE_SITUACAO,
-            dT_LIBERACAO: moment().format(),
-            nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO,
-        })
-            .then((response) => {
-                setActiveModal(false);
-                Onclean();
-                addNotification({
-                    message: 'Dados atualizados com sucesso!',
-                    status: 'sucess',
-                });
-            })
-            .catch((error) => {
-                setActiveModal(false);
-                addNotification({
-                    message: 'Não foi possivel atualizar tente mais tarde!',
-                    status: 'error',
-                });
-            });
-    };
-
-    const autoSet = (dadosAtendimento: SinaisVitais | null) => {
-        if (dadosAtendimento) {
-            dadosAtendimento.qT_ALTURA_CM &&
-                setAltura(dadosAtendimento?.qT_ALTURA_CM);
-        }
-    };
-
-    const ChangerProperty = () => {
-        let Changer = false;
-        Changer =
-            atendimento?.qT_ALTURA_CM !== Altura ||
-            Peso !== PesoMin ||
-            oxigenacao !== oxigenacaoMin ||
-            temperatura !== temperaturaMin;
-        return !Changer;
-    };
-
-    const resetValores = () => {
-        setPeso(0);
-        setAltura(0);
-        setOxigenacao(0);
-        setTemperatura(0);
-    };
-
-    useEffect(() => {
-        autoSet(atendimento);
-    }, [atendimento]);
-
-    const Onclean = () => {
-        setSelected(undefined);
-        setAtendimento(null);
-        setState((prevState) => {
-            return {
-                ...prevState,
-                spinnerVisibility: false,
-                dataSource: [],
-                query: '',
-            };
-        });
-    };
-
-    const renderFooter = () => {
-        if (!state.loadingScrow) {
-            return null;
-        }
-        return (
-            <View style={styles.loading}>
-                <ActivityIndicator size={'small'} color={'#08948A'} />
-            </View>
-        );
-    };
-
-    const Item = ({ title }: { title: PessoaSelected }) => {
-        return (
-            <Pressable
-                key={title.nM_PESSOA_FISICA}
-                style={styles.item}
-                onPress={() => SearchAtendimentos(title)}>
-                <Text
-                    style={
-                        styles.descricao
-                    }>{`${title.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
-            </Pressable>
-        );
-    };
-
-    const renderItem = ({ item }: { item: PessoaSelected }) => (
-        <Item title={item} />
+        },
+        [selected],
     );
 
+    const renderPagesItem: ListRenderItem<PagesSinaisVitais> = ({
+        item: { Name },
+    }) => {
+        if (Name === 'Consultas') {
+            return <ConsultasSinaisVitais />;
+        } else {
+            return <OncologiaSinaisVitais />;
+        }
+    };
+
+    const EmptyComponent = () => (
+        <View style={styles.viewEmpty}>
+            <Text style={styles.textEmpty}>
+                Você ainda não possui exame anexado.
+            </Text>
+        </View>
+    );
+
+    useEffect(() => {
+        selected(0);
+    }, [selected]);
     return (
-        <SafeAreaView style={styles.safeAreaViewStyle}>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.SearchBarBoxStyle}>
-                <View style={styles.box1}>
-                    <SearchBar
-                        darkMode
-                        placeholder="Pesquise o nome do paciente"
-                        spinnerVisibility={state.spinnerVisibility}
-                        style={styles.SearchBarStyle}
-                        textInputStyle={styles.textInputStyle}
-                        spinnerSize={RFValue(20, 680)}
-                        clearIconImageStyle={styles.clearIconImageStyle}
-                        searchIconImageStyle={styles.searchIconImageStyle}
-                        onChangeText={(text) =>
-                            text.length > 4
-                                ? Search(text)
-                                : setState((prevState) => {
-                                      return {
-                                          ...prevState,
-                                          spinnerVisibility: false,
-                                          query: text,
-                                      };
-                                  })
-                        }
-                        onClearPress={() => Onclean()}
-                        selectionColor="#fff"
-                        value={state.query}
-                    />
-                    {state.dataSource.length > 0 && state.query.length > 4 && (
-                        <View style={styles.containerAutoComplete}>
-                            <FlatList
-                                data={state.dataSource}
-                                renderItem={renderItem}
-                                keyExtractor={(item, index) => index.toString()}
-                                onEndReached={LoadingSearch}
-                                onEndReachedThreshold={0.5}
-                                ListFooterComponent={renderFooter}
-                            />
-                        </View>
-                    )}
-                </View>
-                {!state.query ? (
-                    <View style={styles.listBox2}>
-                        <EndSinaisVitais />
-                    </View>
-                ) : (
-                    <ScrollView style={styles.box2}>
-                        {selected && (
-                            <View style={styles.item1}>
-                                <View
-                                    style={{
-                                        flex: 3,
-                                        paddingHorizontal: RFPercentage(4),
-                                    }}>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            flexWrap: 'wrap',
-                                        }}>
-                                        <Text style={styles.label}>Nome: </Text>
-                                        <Text style={styles.text}>
-                                            {selected.nM_PESSOA_FISICA}
-                                        </Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.label}>
-                                            Nascimento:{' '}
-                                        </Text>
-                                        <Text style={styles.text}>
-                                            {moment(
-                                                selected.dT_NASCIMENTO,
-                                            ).format('DD-MM-YYYY')}
-                                        </Text>
-                                    </View>
-                                </View>
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}>
-                                    <TouchableOpacity
-                                        style={styles.btn}
-                                        onPress={() =>
-                                            navigation.navigate(
-                                                'historySinaisVitais',
-                                                selected,
-                                            )
-                                        }>
-                                        <HistorySvg
-                                            width={RFPercentage(5)}
-                                            height={RFPercentage(5)}>
-                                            Botão
-                                        </HistorySvg>
-                                    </TouchableOpacity>
-                                    <Text style={styles.textBtn}>
-                                        Histórico
-                                    </Text>
-                                </View>
-                            </View>
-                        )}
-                        {atendimento && (
-                            <>
-                                <View style={styles.item2}>
-                                    <SlideRanger
-                                        label={'Altura'}
-                                        medida={'cm'}
-                                        step={1}
-                                        valueMin={AlturaMin}
-                                        valueMax={220}
-                                        valueRanger={Altura ? Altura : 0}
-                                        setValueRanger={setAltura}
-                                    />
-                                </View>
-                                <View style={styles.item2}>
-                                    <SlideRanger
-                                        label={'Peso'}
-                                        medida={'kg'}
-                                        step={0.1}
-                                        valueMin={PesoMin}
-                                        valueMax={200}
-                                        valueRanger={Peso ? Peso : 0}
-                                        setValueRanger={setPeso}
-                                    />
-                                </View>
-                                <View style={styles.item2}>
-                                    <SlideRanger
-                                        label={'Temperatura'}
-                                        medida={'°C'}
-                                        step={0.1}
-                                        valueMin={temperaturaMin}
-                                        valueMax={42}
-                                        valueRanger={
-                                            temperatura ? temperatura : 0
-                                        }
-                                        setValueRanger={setTemperatura}
-                                    />
-                                </View>
-                                <View style={styles.item2}>
-                                    <SlideRanger
-                                        label={'Oximetria'}
-                                        medida={'SpO²'}
-                                        step={1}
-                                        valueMin={oxigenacaoMin}
-                                        valueMax={100}
-                                        valueRanger={
-                                            oxigenacao ? oxigenacao : 0
-                                        }
-                                        setValueRanger={setOxigenacao}
-                                    />
-                                </View>
-                                <View style={styles.item3}>
-                                    {selected && (
-                                        <BtnCentered
-                                            SizeText={18}
-                                            labelBtn={'Adicionar'}
-                                            onPress={() =>
-                                                setActiveModalOptions(true)
-                                            }
-                                            enabled={ChangerProperty()}
-                                        />
-                                    )}
-                                </View>
-                            </>
-                        )}
-                        <LoadingBall active={!atendimento && !!selected} />
-                    </ScrollView>
-                )}
-            </KeyboardAvoidingView>
-            <Loading activeModal={activeModal} />
-            <ModalCentralizedOptions
-                activeModal={activeModalOptions}
-                message={'Deseja adicionar os Sinais Vitais ?'}
-                onpress={() => AddSinaisVitais()}
-                setActiveModal={setActiveModalOptions}
-            />
-        </SafeAreaView>
+        <View style={styles.container}>
+            <View style={styles.box1}>
+                <TouchableOpacity
+                    ref={refView1}
+                    style={styles.btn}
+                    onPress={() => selected(0)}>
+                    <Text style={styles.textBtn}>Consultas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    ref={refView2}
+                    style={styles.btn}
+                    onPress={() => selected(1)}>
+                    <Text style={styles.textBtn}>Oncologia</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.box2}>
+                <FlatList
+                    ref={refFlatlist}
+                    data={pages}
+                    keyExtractor={(item) => item.Name.toString()}
+                    renderItem={renderPagesItem}
+                    horizontal={true}
+                    pagingEnabled={true}
+                    showsHorizontalScrollIndicator={false}
+                    onViewableItemsChanged={onViewableItemsChanged}
+                    viewabilityConfig={viewabilityConfig.current}
+                    initialNumToRender={2}
+                    ListEmptyComponent={EmptyComponent}
+                    getItemLayout={getItemLayout}
+                    //refreshing={refresh}
+                    /* onRefresh={() => {
+                        setRefresh(true);
+                        GetExames();
+                    }} */
+                />
+            </View>
+        </View>
     );
 };
 

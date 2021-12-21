@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import DashBoard from '../pages/dashBoard/dashBoard';
-import MyHeaderDashBoard from '../componentes/MyHeaderDashBoard';
+import HeaderDashBoard from '../components/header/HeaderDashBoard';
 import Perfil from '../pages/perfil/perfil';
 import User from '../pages/perfil/perfil';
 import Busca from '../pages/busca/busca';
@@ -30,7 +30,7 @@ const InitialStackNavigator = () => {
                     const { options } = scene.descriptor;
                     const Title = options.title ? options.title : null
                     return (
-                        <MyHeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
+                        <HeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
                     )
                 }
             }}
@@ -107,7 +107,7 @@ const DashBoardNavigator = () => {
                     const { options } = scene.descriptor;
                     const Title = options.title ? options.title : null
                     return (
-                        <MyHeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
+                        <HeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
                     )
                 }
             }}
@@ -135,7 +135,7 @@ const BuscaStackNavigator = () => {
                         const { options } = scene.descriptor;
                         const Title = options.title ? options.title : null
                         return (
-                            <MyHeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
+                            <HeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
                         )
                     }
                 }}
@@ -159,7 +159,7 @@ const UserStackNavigator = () => {
                         const { options } = scene.descriptor;
                         const Title = options.title ? options.title : null
                         return (
-                            <MyHeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
+                            <HeaderDashBoard onPress={() => navigation.goBack()} title={Title} />
                         )
                     }
                 }}

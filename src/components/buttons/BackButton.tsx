@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { StyleSheet, TouchableOpacity, Dimensions, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import ArrowBack from '../../assets/svg/arrowBack.svg';
 
 interface Props {
@@ -8,12 +9,14 @@ interface Props {
 }
 
 const BackButton: React.FC<Props> = ({ onPress }: Props) => {
-    const size = Dimensions.get('screen').width / 15;
-
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.btn} onPress={onPress}>
-                <ArrowBack fill={'#748080'} width={size} height={size} />
+                <ArrowBack
+                    fill={'#748080'}
+                    width={RFPercentage(3.5)}
+                    height={RFPercentage(3.5)}
+                />
             </TouchableOpacity>
         </View>
     );
@@ -25,8 +28,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     btn: {
-        width: Dimensions.get('screen').width / 10,
-        height: Dimensions.get('screen').width / 10,
+        width: RFPercentage(5),
+        height: RFPercentage(5),
         margin: 10,
         padding: 5,
         backgroundColor: '#fff',

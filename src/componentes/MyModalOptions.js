@@ -70,8 +70,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center',
-        backgroundColor: '#847e7e',
-        opacity: 0.9
+        backgroundColor: 'rgba(0,0,0,.8)',
     },
     modalView: {
         backgroundColor: "#ffff",
