@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/auth';
 import { ErrorNotificationProvider } from './contexts/errorNotification';
 import ErrorNotification from './components/ErrorNotifications/ErrorNotification';
 import Notification from './components/Notification';
+import {SinaisVitaisProvider} from './contexts/sinaisVitaisContext';
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
 
@@ -61,12 +62,12 @@ export default function index() {
 
     return (
         <NavigationContainer>
-            {/* <EmailLinkHandler /> */}
             {/* contexto disponível para toda aplicação */}
             <AuthProvider>
                 <ErrorNotificationProvider>
-                    {/* <Teste/> */}
+                    <SinaisVitaisProvider>
                     <Routes />
+                    </SinaisVitaisProvider>
                     <ErrorNotification />
                     <Notification />
                 </ErrorNotificationProvider>

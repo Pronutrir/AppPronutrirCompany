@@ -17,7 +17,7 @@ import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 
 interface Props {
-    title?: string;
+    title?: string | null;
     onPress(): void;
 }
 
