@@ -74,6 +74,19 @@ const styles = StyleSheet.create({
         fontSize: RFValue(16, 680),
         color: '#7C9292',
     },
+    indicator: {
+        position:"absolute",
+        width:20,
+        height: 5,
+        //top:0,
+        //right:0,
+        backgroundColor:"red"
+    },
+    indicatorWrapper: {
+        flexDirection: 'row',
+        flex: 0.1,
+        backgroundColor: 'green',
+    }
 });
 
 export default styles;

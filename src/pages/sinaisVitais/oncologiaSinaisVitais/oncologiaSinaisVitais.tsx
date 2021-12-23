@@ -19,12 +19,12 @@ interface Consulta {
 }
 
 const OncologiaSinaisVitais = () => {
-    const { consultasQT: QTConsultas } = useContext(SinaisVitaisContext);
+    const { consultasQT } = useContext(SinaisVitaisContext);
     const [state, setState] = useState<Consulta>({
         query: '',
         isLoading: true,
         refreshing: false,
-        dataSource: QTConsultas,
+        dataSource: consultasQT,
         spinnerVisibility: false,
         page: 1,
         loadingScrow: false,
@@ -32,10 +32,10 @@ const OncologiaSinaisVitais = () => {
     });
 
     const Search = async (name: string) => {
-        const SeachResult = QTConsultas.filter((item) =>
-            item.NM_PESSOA_FISICA.toLocaleLowerCase().includes(
-                name.toLocaleLowerCase(),
-            ),
+        const SeachResult = consultasQT.filter((item) =>
+            item.nM_PESSOA_FISICA
+                .toLocaleLowerCase()
+                .includes(name.toLocaleLowerCase()),
         );
         if (SeachResult.length > 0) {
             setState((old) => {

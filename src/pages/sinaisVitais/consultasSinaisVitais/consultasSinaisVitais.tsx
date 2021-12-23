@@ -1,11 +1,15 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useContext } from 'react';
+import { View } from 'react-native';
 import styles from './style';
+import CardSinaisVitais from '../components/cardSinaisVitais';
+import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 
 const ConsultasSinaisVitais: React.FC = () => {
+    const { consultas } = useContext(SinaisVitaisContext);
+
     return (
         <View style={styles.container}>
-            <Text>Sinais Vitais</Text>
+            <CardSinaisVitais dataSource={consultas} />
         </View>
     );
 };

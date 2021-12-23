@@ -9,13 +9,12 @@ import {
 import HistorySvg from '../../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../components/Cards/CardSimples';
-import moment from 'moment';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { consultaQT } from '../../../contexts/sinaisVitaisContext';
+import { Consultas, consultaQT } from '../../../contexts/sinaisVitaisContext';
 import { useNavigation } from '@react-navigation/native';
 
 interface Props {
-    dataSource: consultaQT[];
+    dataSource: Consultas[] | consultaQT[];
 }
 
 const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
@@ -24,7 +23,7 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
 
     const navigation = useNavigation();
 
-    const Item = ({ item }: { item: consultaQT; index: number }) => {
+    const Item = ({ item }: { item: Consultas; index: number }) => {
         return (
             <TouchableOpacity
                 onPress={() =>
@@ -44,41 +43,11 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
                         <Text
                             style={
                                 styles.text
-                            }>{`${item.NM_PESSOA_FISICA.toUpperCase()}`}</Text>
+                            }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
                     </View>
                     <View style={styles.item}>
-                        <Text style={styles.textLabel}>Data: </Text>
-                        <Text style={styles.text}>{`${moment(
-                            item.DT_PREVISTA,
-                        ).format('DD-MM-YYYY')}`}</Text>
-                    </View>
-                    <View style={styles.item}>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Altura: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.QT_ALTURA ?? ''
-                            }`}</Text>
-                        </View>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Peso: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.QT_PESO ?? ''
-                            }`}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.item}>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Oxigenação: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.QT_SUPERF_CORPORAL ?? ''
-                            }`}</Text>
-                        </View>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Temperatura: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.QT_ALTURA ?? ''
-                            }`}</Text>
-                        </View>
+                        <Text style={styles.textLabel}>Especialidade: </Text>
+                        <Text style={styles.text}>{item.dS_ESPECIALIDADE}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -89,11 +58,11 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
         item,
         index,
     }: {
-        item: consultaQT;
+        item: Consultas;
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={item.CD_PESSOA_FISICA} item={item} index={index} />
+            <Item key={item.cD_PESSOA_FISICA} item={item} index={index} />
         </CardSimples>
     );
 
