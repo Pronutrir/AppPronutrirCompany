@@ -2,12 +2,12 @@ import React, { useCallback, memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 // @ts-ignore
 import RangeSlider from 'rn-range-slider';
-import Label from './Label';
+//import Label from './Label';
 import Notch from './Notch';
 import Rail from './Rail';
 import RailSelected from './RailSelected';
 import Thumb from './Thumb';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import IncrementDecrement from '../IncrementDecrement';
 
 interface Props {
@@ -18,28 +18,44 @@ interface Props {
     valueMax: number;
     valueRanger: number;
     setValueRanger(value: number): void;
-};
+}
 
-const SlideReanger: React.FC<Props> = ({ label = "texto", medida= "cm", step= 1, valueMin= 0, valueMax= 10, valueRanger = 1.00, setValueRanger }: Props) => {
-
+const SlideReanger: React.FC<Props> = ({
+    label = 'texto',
+    medida = 'cm',
+    step = 1,
+    valueMin = 0,
+    valueMax = 10,
+    valueRanger = 1.0,
+    setValueRanger,
+}: Props) => {
     const renderThumb = useCallback(() => <Thumb />, []);
     const renderRail = useCallback(() => <Rail />, []);
     const renderRailSelected = useCallback(() => <RailSelected />, []);
-    const renderLabel = useCallback(value => <Label text={value} />, []);
+    //const renderLabel = useCallback((value) => <Label text={value} />, []);
     const renderNotch = useCallback(() => <Notch />, []);
 
-    const handleValueChange = useCallback(value => {
-        if(!Number.isInteger(value)){
-            value = parseFloat(value.toFixed(1))
-        }
-        setValueRanger(value);
-    }, []);
+    const handleValueChange = useCallback(
+        (value) => {
+            if (!Number.isInteger(value)) {
+                value = parseFloat(value.toFixed(1));
+            }
+            setValueRanger(value);
+        },
+        [setValueRanger],
+    );
 
     return (
         <View style={styles.ContainerRanger}>
             <View style={styles.labelRanger}>
                 <Text style={styles.textLabel}>{label}</Text>
-                <IncrementDecrement RangerValue={valueRanger} setRangerValue={setValueRanger} medida={medida} max={valueMax} min={valueMin} />
+                <IncrementDecrement
+                    RangerValue={valueRanger}
+                    setRangerValue={setValueRanger}
+                    medida={medida}
+                    max={valueMax}
+                    min={valueMin}
+                />
             </View>
             <RangeSlider
                 style={styles.RangeSlider}
@@ -57,17 +73,15 @@ const SlideReanger: React.FC<Props> = ({ label = "texto", medida= "cm", step= 1,
                 disableRange={true}
             />
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     ContainerRanger: {
         flex: 1,
-        padding: RFPercentage(1),
-        marginLeft: RFPercentage(1),
-        marginRight: RFPercentage(1),
-        alignItems: "stretch",
-        justifyContent: "center"
+        paddingVertical: RFPercentage(1),
+        alignItems: 'stretch',
+        justifyContent: 'center',
     },
     labelRanger: {
         width: '100%',
@@ -75,17 +89,16 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: RFPercentage(2),
-        paddingVertical: RFPercentage(1)
+        paddingVertical: RFPercentage(0.5),
     },
     RangeSlider: {
-        //backgroundColor: 'blue',
-        paddingVertical: RFPercentage(1)
+        paddingVertical: RFPercentage(1),
     },
     textLabel: {
         fontSize: RFValue(16, 680),
         color: '#666666',
-        fontWeight: 'bold'
-    }
+        fontWeight: 'bold',
+    },
 });
 
 export default memo(SlideReanger);

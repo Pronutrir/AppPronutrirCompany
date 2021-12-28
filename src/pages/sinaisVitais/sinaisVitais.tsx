@@ -15,6 +15,14 @@ interface PagesSinaisVitais {
     Name: string;
 }
 
+export interface FilterConsultas {
+    codMedico?: number | null;
+    codEspecialidade?: number | null;
+    dataInicio?: string | null;
+    dataFinal?: string | null;
+    pagina?: number | null;
+}
+
 const SinaisVitais: React.FC = () => {
     const refFlatlist = useRef<FlatList>(null);
     const refView1 = useRef<TouchableOpacity>(null);
@@ -114,7 +122,7 @@ const SinaisVitais: React.FC = () => {
                 <FlatList
                     ref={refFlatlist}
                     data={pages}
-                    keyExtractor={(item) => item.Name.toString()}
+                    keyExtractor={(item) => item.Name}
                     renderItem={renderPagesItem}
                     horizontal={true}
                     pagingEnabled={true}

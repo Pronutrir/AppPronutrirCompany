@@ -46,8 +46,6 @@ const OncologiaSinaisVitais = () => {
                 return { ...old, query: name };
             });
         }
-
-        console.log(SeachResult);
     };
 
     const Onclean = () => {
@@ -57,7 +55,7 @@ const OncologiaSinaisVitais = () => {
             return {
                 ...prevState,
                 spinnerVisibility: false,
-                dataSource: [],
+                dataSource: consultasQT,
                 query: '',
             };
         });

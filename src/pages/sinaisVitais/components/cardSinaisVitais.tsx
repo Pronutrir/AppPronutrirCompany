@@ -46,9 +46,19 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
                             }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
                     </View>
                     <View style={styles.item}>
-                        <Text style={styles.textLabel}>Especialidade: </Text>
-                        <Text style={styles.text}>{item.dS_ESPECIALIDADE}</Text>
+                        <Text style={styles.textLabel}>Data Nascimento: </Text>
+                        <Text style={styles.text}>{item.dT_NASCIMENTO}</Text>
                     </View>
+                    {item.dS_ESPECIALIDADE && (
+                        <View style={styles.item}>
+                            <Text style={styles.textLabel}>
+                                Especialidade:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.dS_ESPECIALIDADE}
+                            </Text>
+                        </View>
+                    )}
                 </View>
             </TouchableOpacity>
         );
