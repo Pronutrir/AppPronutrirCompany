@@ -8,11 +8,9 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import SinaisVitaisContext, {
-    Consultas,
-} from '../../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { FilterConsultas } from '../../sinaisVitais';
-
+import { Consultas } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: FilterConsultas): void;
     selectedFilter?: FilterConsultas;

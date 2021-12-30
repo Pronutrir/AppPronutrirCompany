@@ -1,11 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import { RFValue } from 'react-native-responsive-fontsize';
-import SinaisVitaisContext, {
-    consultaQT,
-} from '../../../contexts/sinaisVitaisContext';
-import CardSinaisVitais from '../components/cardSinaisVitais';
+import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
+import CardConsultasQTComponent from '../components/cardConsultasQTComponent/cardConsultasQTComponent';
+import { consultaQT } from '../../../reducers/ConsultasQTReducer';
 import styles from './style';
 interface Consulta {
     query: string;
@@ -96,6 +95,17 @@ const OncologiaSinaisVitais = () => {
 
     //const renderItem = ({ item }: { item: any }) => <Item item={item} />;
 
+    useEffect(() => {
+        setState((prevState) => {
+            return {
+                ...prevState,
+                spinnerVisibility: false,
+                dataSource: consultasQT,
+                query: '',
+            };
+        });
+    }, [consultasQT]);
+
     return (
         <View style={styles.container}>
             <SearchBar
@@ -112,7 +122,7 @@ const OncologiaSinaisVitais = () => {
                 selectionColor="#fff"
                 value={state.query}
             />
-            <CardSinaisVitais dataSource={state.dataSource} />
+            <CardConsultasQTComponent dataSourceQT={state.dataSource} />
         </View>
     );
 };

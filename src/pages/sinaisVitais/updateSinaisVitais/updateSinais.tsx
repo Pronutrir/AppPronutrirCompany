@@ -21,7 +21,7 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
     //const selectedSinaisVitais: consultaQT = route.params.consultaQt;
     //const selectedPessoa: PessoaSelected = route.params.pessoaSelected;
 
-    const [activeModal, setActiveModal] = useState<boolean>(true);
+    const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] =
         useState<boolean>(false);
 

@@ -1,60 +1,30 @@
-import React, { createContext, useContext } from 'react';
-import JsonMoc from '../QuimioterapiasDia';
-import ConsultasMoc from '../agendaConsultas';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useReducer,
+} from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';
 import moment from 'moment';
 import NotificationGlobalContext from './notificationGlobalContext';
-export interface consultaQT {
-    //DT_PREVISTA: string;
-    //DT_REAL: string;
-    cD_PESSOA_FISICA: string;
-    nM_PESSOA_FISICA: string;
-    dT_NASCIMENTO?: string;
-    //DS_DIA_CICLO: string;
-    //QT_PESO: string;
-    //QT_ALTURA: number;
-    //QT_SUPERF_CORPORAL: number;
-    //DT_PREVISTA_1: string;
-    //DT_REAL_1: string;
-    //NR_SEQ_PACIENTE: number;
-    //CD_ESTABELECIMENTO: number;
-    //PROTOCOLO: string;
-    //NM_MEDICACAO: string;
-}
-
-export interface Consultas {
-    nR_SEQUENCIA?: number;
-    cD_AGENDA?: number;
-    nM_PACIENTE?: string;
-    cD_PESSOA_FISICA: string;
-    nM_PESSOA_FISICA: string;
-    dT_NASCIMENTO?: string;
-    cD_ESPECIALIDADE?: number;
-    dS_ESPECIALIDADE?: string;
-    nM_GUERRA?: string;
-    nR_TELEFONE?: string;
-    nR_TELEFONE_CELULAR?: string;
-    dT_AGENDA?: string;
-    nR_MINUTO_DURACAO?: number;
-    iE_STATUS_AGENDA?: string;
-    iE_CLASSIF_AGENDA?: string;
-    dT_ATUALIZACAO?: string;
-    nM_USUARIO?: string;
-    cD_TURNO?: string;
-    cD_CONVENIO?: number;
-    cD_CATEGORIA?: string;
-    cD_PLANO?: string;
-    dS_CONVENIO?: string;
-    dS_PLANO?: string;
-    cD_ESTABELECIMENTO?: number;
-    eNDERECO?: string;
-}
+import {
+    ConsultasQTReducer,
+    initialStateQT,
+    consultaQT,
+} from '../reducers/ConsultasQTReducer';
+import {
+    ConsultasReducer,
+    initialStateConsultas,
+    Consultas,
+} from '../reducers/ConsultasReducer';
 
 interface AuthContextData {
     consultasQT: consultaQT[];
     consultas: Consultas[];
     AddSinaisVitais(atendimento: SinaisVitaisPost): Promise<void>;
+    GetConsultasQT(): Promise<void>;
+    GetConsultas(): Promise<void>;
 }
 
 export interface SinaisVitais {
@@ -118,6 +88,16 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const { addAlert } = useContext(NotificationGlobalContext);
 
+    const [stateConsultasQT, dispatchConsultasQT] = useReducer(
+        ConsultasQTReducer,
+        initialStateQT,
+    );
+
+    const [stateConsultas, dispatchConsultas] = useReducer(
+        ConsultasReducer,
+        initialStateConsultas,
+    );
+
     const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
         await Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
             iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
@@ -156,6 +136,38 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
+    const GetConsultasQT = useCallback(async () => {
+        await Api.get(
+            'AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,2021-12-30,2021-12-30?pagina=1',
+        )
+            .then((response) => {
+                const { result } = response.data;
+                dispatchConsultasQT({
+                    type: 'setConsultasQT',
+                    payload: result,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+    const GetConsultas = useCallback(async () => {
+        await Api.get(
+            'AgendaConsultas/FilterAgendamentosGeral/2021-12-30,2021-12-30?pagina=1',
+        )
+            .then((response) => {
+                const { result } = response.data;
+                dispatchConsultas({
+                    type: 'setConsultas',
+                    payload: result,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
     /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
         Api.put<sinaisVitaisUpdate>(
@@ -189,9 +201,11 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     return (
         <SinaisVitaisContext.Provider
             value={{
-                consultasQT: JsonMoc,
-                consultas: ConsultasMoc,
+                consultasQT: stateConsultasQT,
+                consultas: stateConsultas,
                 AddSinaisVitais,
+                GetConsultasQT,
+                GetConsultas,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

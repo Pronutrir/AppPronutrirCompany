@@ -1,7 +1,7 @@
 export const initialState: LoginState = {
     Usuario: {
         email: '',
-        token: ''
+        token: '',
     },
     usertasy: {
         cD_PESSOA_FISICA: '', //159969
@@ -18,13 +18,13 @@ export const initialState: LoginState = {
         dS_EMAIL: '', // williame_lima@hotmail.com
         nR_Senha: '',
         ImgPerfil: '', //base64
-        usuariO_FUNCIONARIO: []
-    }
+        usuariO_FUNCIONARIO: [],
+    },
 };
 
 export interface UsuarioFirebase {
     email: string;
-    token: string
+    token: string;
 }
 
 export interface LoginState {
@@ -41,38 +41,48 @@ export interface UserTasy {
     nM_PESSOA_FISICA: string;
     nM_USUARIO: string;
     nR_CPF: string;
-    nR_PRONTUARIO: number;
+    nR_PRONTUARIO: number | null;
     nR_DDD_CELULAR: string;
     nR_TELEFONE_CELULAR: string;
     dS_EMAIL: string;
     nR_Senha: string;
     ImgPerfil: string;
-    usuariO_FUNCIONARIO: UsuarioFuncionario[]; 
+    usuariO_FUNCIONARIO: UsuarioFuncionario[];
 }
 
 export interface UsuarioFuncionario {
     nM_USUARIO: string;
     cD_SETOR_ATENDIMENTO: number;
     dS_SETOR_ATENDIMENTO: string;
-    cD_ESTABELECIMENTO: number
+    cD_ESTABELECIMENTO: number;
 }
 
 export type LoginAction =
-    {
-        type: 'delUser' | 'setToken' | 'UpdateUserTasyCPF' | 'UpdateUserTasyNome' | 'UpdateUserTasyDataNasc' |
-        'UpdateUserTasyDDD' | 'UpdateUserTasyFone' | 'UpdateUserTasyEmail' | 'UpdateSenha' | 'setImgPerfil';
-        payload: string;
-    }
-    |
-    { type: 'setUserTasy'; payload: UserTasy }
-    |
-    { type: 'setUser'; payload: UsuarioFirebase }
+    | {
+          type:
+              | 'delUser'
+              | 'setToken'
+              | 'UpdateUserTasyCPF'
+              | 'UpdateUserTasyNome'
+              | 'UpdateUserTasyDataNasc'
+              | 'UpdateUserTasyDDD'
+              | 'UpdateUserTasyFone'
+              | 'UpdateUserTasyEmail'
+              | 'UpdateSenha'
+              | 'setImgPerfil';
+          payload: string;
+      }
+    | { type: 'setUserTasy'; payload: UserTasy }
+    | { type: 'setUser'; payload: UsuarioFirebase };
 
-export const UserReducer = (state: LoginState, action: LoginAction): LoginState => {
+export const UserReducer = (
+    state: LoginState,
+    action: LoginAction,
+): LoginState => {
     switch (action.type) {
         case 'setUser':
             return { ...state, Usuario: action.payload };
-            break;
+
         case 'delUser':
             return {
                 Usuario: {
@@ -94,38 +104,68 @@ export const UserReducer = (state: LoginState, action: LoginAction): LoginState 
                     dS_EMAIL: '',
                     nR_Senha: '',
                     ImgPerfil: '',
-                    usuariO_FUNCIONARIO: []
-                }
+                    usuariO_FUNCIONARIO: [],
+                },
             };
-            break;
+
         case 'setUserTasy':
             return { ...state, usertasy: action.payload };
-            break;
+
         case 'UpdateUserTasyCPF':
-            return { ...state, usertasy: { ...state.usertasy, nR_CPF: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: { ...state.usertasy, nR_CPF: action.payload },
+            };
+
         case 'UpdateUserTasyNome':
-            return { ...state, usertasy: { ...state.usertasy, nM_PESSOA_FISICA: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: {
+                    ...state.usertasy,
+                    nM_PESSOA_FISICA: action.payload,
+                },
+            };
+
         case 'UpdateUserTasyDataNasc':
-            return { ...state, usertasy: { ...state.usertasy, dT_NASCIMENTO: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: { ...state.usertasy, dT_NASCIMENTO: action.payload },
+            };
+
         case 'UpdateUserTasyDDD':
-            return { ...state, usertasy: { ...state.usertasy, nR_DDD_CELULAR: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: { ...state.usertasy, nR_DDD_CELULAR: action.payload },
+            };
+
         case 'UpdateUserTasyFone':
-            return { ...state, usertasy: { ...state.usertasy, nR_TELEFONE_CELULAR: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: {
+                    ...state.usertasy,
+                    nR_TELEFONE_CELULAR: action.payload,
+                },
+            };
+
         case 'UpdateUserTasyEmail':
-            return { ...state, usertasy: { ...state.usertasy, dS_EMAIL: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: { ...state.usertasy, dS_EMAIL: action.payload },
+            };
+
         case 'UpdateSenha':
-            return { ...state, usertasy: { ...state.usertasy, nR_Senha: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: { ...state.usertasy, nR_Senha: action.payload },
+            };
+
         case 'setImgPerfil':
-            return { ...state, usertasy: { ...state.usertasy, ImgPerfil: action.payload } };
-            break;
+            return {
+                ...state,
+                usertasy: { ...state.usertasy, ImgPerfil: action.payload },
+            };
+
         default:
             return state;
     }
-}
+};

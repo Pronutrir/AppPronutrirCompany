@@ -6,24 +6,25 @@ import {
     StyleSheet,
     TouchableOpacity,
 } from 'react-native';
-import HistorySvg from '../../../assets/svg/historico.svg';
+import HistorySvg from '../../../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
-import CardSimples from '../../../components/Cards/CardSimples';
-import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { Consultas, consultaQT } from '../../../contexts/sinaisVitaisContext';
+import CardSimples from '../../../../components/Cards/CardSimples';
+import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
+import { consultaQT } from '../../../../reducers/ConsultasQTReducer';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 interface Props {
-    dataSource: Consultas[] | consultaQT[];
+    dataSourceQT?: consultaQT[];
 }
 
-const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
+const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     //const { addNotification } = useContext(ErrorContext);
     //const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
 
-    const Item = ({ item }: { item: Consultas; index: number }) => {
+    const Item = ({ item }: { item: consultaQT; index: number }) => {
         return (
             <TouchableOpacity
                 onPress={() =>
@@ -47,18 +48,10 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
                     </View>
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Data Nascimento: </Text>
-                        <Text style={styles.text}>{item.dT_NASCIMENTO}</Text>
+                        <Text style={styles.text}>
+                            {moment(item.dT_NASCIMENTO).format('DD-MM-YYYY')}
+                        </Text>
                     </View>
-                    {item.dS_ESPECIALIDADE && (
-                        <View style={styles.item}>
-                            <Text style={styles.textLabel}>
-                                Especialidade:{' '}
-                            </Text>
-                            <Text style={styles.text}>
-                                {item.dS_ESPECIALIDADE}
-                            </Text>
-                        </View>
-                    )}
                 </View>
             </TouchableOpacity>
         );
@@ -68,7 +61,7 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
         item,
         index,
     }: {
-        item: Consultas;
+        item: consultaQT;
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
@@ -84,23 +77,24 @@ const CardSinaisVitais: React.FC<Props> = ({ dataSource }: Props) => {
 
     return (
         <View style={styles.container}>
-            {dataSource ? (
-                <FlatList
-                    data={dataSource}
-                    renderItem={({ item, index }) =>
-                        renderItem({ item, index })
-                    }
-                    keyExtractor={(item, index) => index.toString()}
-                    //refreshing={refreshing}
-                    //onRefresh={() => {
-                    //setRefreshing(true);
-                    //GetSinaisVitais();
-                    //}}
-                    ListEmptyComponent={renderItemEmpty}
-                />
-            ) : (
-                Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
-            )}
+            {dataSourceQT &&
+                (dataSourceQT?.length ? (
+                    <FlatList
+                        data={dataSourceQT}
+                        renderItem={({ item, index }) =>
+                            renderItem({ item, index })
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                        //refreshing={refreshing}
+                        //onRefresh={() => {
+                        //setRefreshing(true);
+                        //GetSinaisVitais();
+                        //}}
+                        ListEmptyComponent={renderItemEmpty}
+                    />
+                ) : (
+                    Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
+                ))}
         </View>
     );
 };
@@ -152,4 +146,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default memo(CardSinaisVitais);
+export default memo(CardConsultasQTComponent);

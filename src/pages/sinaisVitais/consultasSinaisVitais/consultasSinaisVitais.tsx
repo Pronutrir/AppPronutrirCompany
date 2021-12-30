@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import { View } from 'react-native';
 import styles from './style';
-import CardSinaisVitais from '../components/cardSinaisVitais';
+import CardConsultasComponent from '../components/cardConsultasComponent/cardConsultasComponent';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import FilterConsultasComponent from '../components/filterConsultasComponent/filterConsultasComponent';
 import MedicosConsultasComponent from '../components/medicosConsultasComponent/medicosConsultasComponent';
@@ -37,22 +37,6 @@ const ConsultasSinaisVitais: React.FC = () => {
 
     const SelectedModal = ({ item }: { item: string | null }) => {
         switch (item) {
-            /* case 'Periodos':
-                return (
-                    <PeriodosExamesComponent
-                        onPressOK={(value) => FilterExames(value)}
-                        onPressCancel={() =>
-                            refModalBottom.current?.closeModal()
-                        }
-                        onPressClear={() => {
-                            FilterExames({
-                                dataFinal: null,
-                                dataInicio: null,
-                            });
-                        }}
-                        selectedFilter={selectFilter.current}
-                    />
-                ); */
             case 'Especialidade':
                 return (
                     <EspecialidadeConsultasComponent
@@ -77,7 +61,7 @@ const ConsultasSinaisVitais: React.FC = () => {
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
             />
-            <CardSinaisVitais dataSource={consultas} />
+            <CardConsultasComponent dataSourceConsultas={consultas} />
             <ModalBottom ref={refModalBottom} animationType={'slide'}>
                 <SelectedModal item={selectedModal} />
             </ModalBottom>
