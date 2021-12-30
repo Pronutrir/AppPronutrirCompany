@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import Home from '../pages/home/home';
 import ConsultaCpf from '../pages/consultaCPF/consultaCpf';
@@ -19,77 +19,53 @@ import { TransitionPresets } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
-export default function routeApp() {
+const RouteApp: React.FC = () => {
     return (
         <Stack.Navigator
-            initialRouteName='Home'
+            initialRouteName="Home"
             screenOptions={{
-                headerStatusBarHeight : 0,
+                headerStatusBarHeight: 0,
                 //cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
                 ...TransitionPresets.SlideFromRightIOS,
-                headerShown:false,
-                header: ({ navigation, scene }) => {
-                    let routeName = scene.route.name;
+                headerShown: false,
+                header: ({ navigation }) => {
                     return (
                         <MyHeader
                             transparent={true}
                             onPress={() => navigation.goBack()}
                         />
-                    )
-                }
-            }}
-        >
+                    );
+                },
+            }}>
             <Stack.Screen
-                name='Home'
+                name="Home"
                 component={Home}
                 options={{
                     headerShown: false,
                 }}
             />
+            <Stack.Screen name="ConsultaCpf" component={ConsultaCpf} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Cadastro" component={Cadastro} />
+            <Stack.Screen name="ConsultaNome" component={ConsultaNome} />
             <Stack.Screen
-                name='ConsultaCpf'
-                component={ConsultaCpf}
-            />
-            <Stack.Screen
-                name='Login'
-                component={Login}
-            />
-            <Stack.Screen
-                name='Cadastro'
-                component={Cadastro}
-            />
-            <Stack.Screen
-                name='ConsultaNome'
-                component={ConsultaNome}
-            />
-             <Stack.Screen
-                name='consultarNascimento'
+                name="consultarNascimento"
                 component={consultarNascimento}
             />
+            <Stack.Screen name="ConsultaEmail" component={ConsultaEmail} />
             <Stack.Screen
-                name='ConsultaEmail'
-                component={ConsultaEmail}
-            />
-            <Stack.Screen
-                name='ConsultaConfimarEmail'
+                name="ConsultaConfimarEmail"
                 component={ConsultaConfimarEmail}
             />
-             <Stack.Screen
-                name='ConsultaCelular'
-                component={ConsultaCelular}
-            />
+            <Stack.Screen name="ConsultaCelular" component={ConsultaCelular} />
+            <Stack.Screen name="ConsultarSenha" component={ConsultarSenha} />
             <Stack.Screen
-                name='ConsultarSenha'
-                component={ConsultarSenha}
-            />
-             <Stack.Screen
-                name='ConsultarConfirmarSenha'
+                name="ConsultarConfirmarSenha"
                 component={ConsultarConfirmarSenha}
             />
-            <Stack.Screen
-                name='RecuperarSenha'
-                component={RecuperarSenha}
-            />
+            <Stack.Screen name="RecuperarSenha" component={RecuperarSenha} />
         </Stack.Navigator>
-    )
-}
+    );
+};
+
+export default RouteApp;

@@ -3,38 +3,25 @@ import { View, ScrollView, Text } from 'react-native';
 import styles from './style';
 import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
-import AuthContext from '../../../contexts/auth';
-import ErrorContext from '../../../contexts/errorNotification';
 import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
 import Loading from '../../../components/Loading/Loading';
-import Api from '../../../services/api';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
-interface sinaisVitaisUpdate {
-    nR_SEQUENCIA: number;
-    cD_PACIENTE: string;
-    qT_TEMP: number;
-    qT_PESO: number;
-    qT_SATURACAO_O2: number;
-    qT_ALTURA_CM: number;
-}
+import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'updateSinais'>;
-
 interface Props {
     route: ProfileScreenRouteProp;
 }
 
 const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
-    const {
-        stateAuth: { usertasy },
-    } = useContext(AuthContext);
-    const { addNotification } = useContext(ErrorContext);
+    //const { addNotification } = useContext(ErrorContext);
+    const { AddSinaisVitais } = useContext(SinaisVitaisContext);
 
     //const selectedSinaisVitais: consultaQT = route.params.consultaQt;
     //const selectedPessoa: PessoaSelected = route.params.pessoaSelected;
 
-    const [activeModal, setActiveModal] = useState<boolean>(false);
+    const [activeModal, setActiveModal] = useState<boolean>(true);
     const [activeModalOptions, setActiveModalOptions] =
         useState<boolean>(false);
 
@@ -53,7 +40,7 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
         return x;
     }; */
 
-    const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
+    /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
         Api.put<sinaisVitaisUpdate>(
             `SinaisVitaisMonitoracaoGeral/PutSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
@@ -81,6 +68,18 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
                     status: 'error',
                 });
             });
+    }; */
+
+    const PostSinaisVitais = async () => {
+        setActiveModal(true);
+        await AddSinaisVitais({
+            cD_PACIENTE: route.params.consultaQt.cD_PESSOA_FISICA,
+            qT_ALTURA_CM: Altura,
+            qT_PESO: Peso,
+            qT_SATURACAO_O2: oxigenacao,
+            qT_TEMP: temperatura,
+        });
+        setActiveModal(false);
     };
 
     return (
@@ -159,16 +158,7 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
             <ModalCentralizedOptions
                 activeModal={activeModalOptions}
                 message={'Deseja atualizar o Sinal Vital ?'}
-                onpress={() =>
-                    UpdateSinaisVitais({
-                        cD_PACIENTE: route.params.consultaQt.cD_PESSOA_FISICA,
-                        nR_SEQUENCIA: 10,
-                        qT_ALTURA_CM: Altura,
-                        qT_PESO: Peso,
-                        qT_SATURACAO_O2: oxigenacao,
-                        qT_TEMP: temperatura,
-                    })
-                }
+                onpress={() => PostSinaisVitais()}
                 setActiveModal={setActiveModalOptions}
             />
         </View>
