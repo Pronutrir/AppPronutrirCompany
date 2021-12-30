@@ -15,6 +15,7 @@ const ConsultasSinaisVitais: React.FC = () => {
     const { consultas } = useContext(SinaisVitaisContext);
     const refModalBottom = useRef<ModalHandles>(null);
     const [selectedModal, setSelectedModal] = useState<string | null>(null);
+    const [activeModal, setActiveModal] = useState(false);
     const selectFilter = useRef<FilterConsultas>({
         codEspecialidade: null,
         codMedico: null,
@@ -25,6 +26,7 @@ const ConsultasSinaisVitais: React.FC = () => {
 
     const FilterExames = async (item: FilterConsultas) => {
         refModalBottom.current?.openModal();
+        setActiveModal(false);
         selectFilter.current = { ...selectFilter.current, ...item };
         //refModalBottom.current?.closeModal();
         //await getEvolucoesPepVinculadosFilter(selectFilter.current);
@@ -32,6 +34,7 @@ const ConsultasSinaisVitais: React.FC = () => {
 
     const selectedFilter = (value: string) => {
         setSelectedModal(value);
+        setActiveModal(true);
         refModalBottom.current?.openModal();
     };
 
@@ -62,7 +65,10 @@ const ConsultasSinaisVitais: React.FC = () => {
                 onpress={(item) => selectedFilter(item.name)}
             />
             <CardConsultasComponent dataSourceConsultas={consultas} />
-            <ModalBottom ref={refModalBottom} animationType={'slide'}>
+            <ModalBottom
+                activeModal={activeModal}
+                ref={refModalBottom}
+                animationType={'slide'}>
                 <SelectedModal item={selectedModal} />
             </ModalBottom>
         </View>

@@ -75,6 +75,7 @@ export default MedicosExamesComponent;
 
 const styles = StyleSheet.create({
     container: {
+        height: 100,
         marginTop: 20,
         marginHorizontal: 10,
     },

@@ -25,7 +25,7 @@ export interface ModalHandles {
 
 type ThemeOpacity = 'light' | 'dark';
 
-export const ModalBottom = React.forwardRef<ModalHandles, Props>(
+const ModalBottom = React.forwardRef<ModalHandles, Props>(
     (
         { animationType = 'none', children, style, activeModal = false }: Props,
         ref,
@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center',
-        //backgroundColor: 'rgba(0,0,0,.8)',
     },
     modalView: {
         flexBasis: 'auto',
