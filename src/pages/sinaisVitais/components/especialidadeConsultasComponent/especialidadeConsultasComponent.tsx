@@ -10,7 +10,7 @@ import {
 import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { FilterConsultas } from '../../sinaisVitais';
-import { Consultas } from '../../../../reducers/ConsultasReducer';
+import { IConsultas } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: FilterConsultas): void;
     selectedFilter?: FilterConsultas;
@@ -20,9 +20,11 @@ const EspecialidadeConsultasComponent: React.FC<Props> = ({
     onPress,
     selectedFilter,
 }: Props) => {
-    const { consultas } = useContext(SinaisVitaisContext);
+    const {
+        stateConsultas: { consultas },
+    } = useContext(SinaisVitaisContext);
 
-    const renderItem: ListRenderItem<Consultas> = ({ item }) => (
+    const renderItem: ListRenderItem<IConsultas> = ({ item }) => (
         <View
             style={[
                 selectedFilter?.codEspecialidade === item.cD_ESPECIALIDADE

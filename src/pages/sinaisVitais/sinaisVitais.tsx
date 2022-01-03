@@ -24,6 +24,7 @@ interface PagesSinaisVitais {
 
 export interface FilterConsultas {
     codMedico?: number | null;
+    nM_GUERRA?: string | null;
     codEspecialidade?: number | null;
     dataInicio?: string | null;
     dataFinal?: string | null;
@@ -31,8 +32,13 @@ export interface FilterConsultas {
 }
 
 const SinaisVitais: React.FC = () => {
-    const { GetConsultasQT, GetConsultas, consultas, consultasQT } =
-        useContext(SinaisVitaisContext);
+    const {
+        GetConsultasQT,
+        GetConsultas,
+        GetMedicosConsultas,
+        stateConsultas: { consultas, flag, medicos },
+        stateConsultasQT: { consultasQT, flagQT },
+    } = useContext(SinaisVitaisContext);
     const refFlatlist = useRef<FlatList>(null);
     const refView1 = useRef<TouchableOpacity>(null);
     const refView2 = useRef<TouchableOpacity>(null);
@@ -109,14 +115,27 @@ const SinaisVitais: React.FC = () => {
     );
 
     useEffect(() => {
-        if (consultas.length === 0) {
+        if (consultas.length === 0 && !flag) {
             GetConsultas();
         }
-        if (consultasQT.length === 0) {
+    }, [GetConsultas, consultas, consultasQT, flag, flagQT]);
+
+    useEffect(() => {
+        if (consultasQT.length === 0 && !flagQT) {
             GetConsultasQT();
         }
+    }, [GetConsultasQT, flagQT, consultasQT]);
+
+    useEffect(() => {
+        if (medicos?.length === 0 && !flag) {
+            GetMedicosConsultas();
+        }
+    }, [GetMedicosConsultas, medicos, consultasQT, flag, flagQT]);
+
+    useEffect(() => {
         selected(0);
-    }, [selected, GetConsultasQT, GetConsultas, consultas, consultasQT]);
+    }, [selected]);
+
     return (
         <View style={styles.container}>
             <View style={styles.box1}>

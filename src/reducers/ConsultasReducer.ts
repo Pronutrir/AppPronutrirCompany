@@ -1,6 +1,29 @@
-export const initialStateConsultas: Consultas[] = [];
-
-export interface Consultas {
+export const initialStateConsultas: IstateConsultas = {
+    flag: false,
+    consultas: [],
+    medicos: [],
+};
+export interface IstateConsultas {
+    flag: boolean;
+    consultas: IConsultas[];
+    medicos?: IMedico[];
+}
+export interface IMedico {
+    cD_PESSOA_FISICA: string;
+    nR_CRM: string;
+    nM_GUERRA: string;
+    iE_VINCULO_MEDICO: number;
+    dT_ATUALIZACAO: string;
+    nM_USUARIO: string;
+    iE_CORPO_CLINICO: string;
+    iE_CORPO_ASSIST: string;
+    cD_ESPECIALIDADE: number;
+    dS_ESPECIALIDADE: string;
+    iE_SITUACAO: string;
+    cD_ESTABELECIMENTO: number;
+    iE_DIA_SEMANA: number;
+}
+export interface IConsultas {
     nR_SEQUENCIA?: number;
     cD_AGENDA?: number;
     nM_PACIENTE?: string;
@@ -28,19 +51,22 @@ export interface Consultas {
     eNDERECO?: string;
 }
 
-export type ConsultasAction = {
-    type: 'setConsultas';
-    payload: Consultas[];
-};
-//   | { type: 'setUserTasy'; payload: UserTasy }
+export type ConsultasAction =
+    | {
+          type: 'setConsultas';
+          payload: IstateConsultas;
+      }
+    | { type: 'setMedicos'; payload: IstateConsultas };
 //   | { type: 'setUser'; payload: UsuarioFirebase };
 
 export const ConsultasReducer = (
-    state: Consultas[],
+    state: IstateConsultas,
     action: ConsultasAction,
-): Consultas[] => {
+): IstateConsultas => {
     switch (action.type) {
         case 'setConsultas':
+            return action.payload;
+        case 'setMedicos':
             return action.payload;
         default:
             return state;

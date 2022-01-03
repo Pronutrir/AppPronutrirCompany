@@ -4,13 +4,13 @@ import SearchBar from 'react-native-dynamic-search-bar';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import CardConsultasQTComponent from '../components/cardConsultasQTComponent/cardConsultasQTComponent';
-import { consultaQT } from '../../../reducers/ConsultasQTReducer';
+import { IconsultaQT } from '../../../reducers/ConsultasQTReducer';
 import styles from './style';
 interface Consulta {
     query: string;
     isLoading: boolean;
     refreshing: boolean;
-    dataSource: consultaQT[];
+    dataSource: IconsultaQT[];
     spinnerVisibility: boolean;
     page: number;
     loadingScrow: boolean;
@@ -18,7 +18,9 @@ interface Consulta {
 }
 
 const OncologiaSinaisVitais = () => {
-    const { consultasQT } = useContext(SinaisVitaisContext);
+    const {
+        stateConsultasQT: { consultasQT, flagQT },
+    } = useContext(SinaisVitaisContext);
     const [state, setState] = useState<Consulta>({
         query: '',
         isLoading: true,
@@ -122,7 +124,9 @@ const OncologiaSinaisVitais = () => {
                 selectionColor="#fff"
                 value={state.query}
             />
-            <CardConsultasQTComponent dataSourceQT={state.dataSource} />
+            <CardConsultasQTComponent
+                dataSourceQT={flagQT ? state.dataSource : null}
+            />
         </View>
     );
 };

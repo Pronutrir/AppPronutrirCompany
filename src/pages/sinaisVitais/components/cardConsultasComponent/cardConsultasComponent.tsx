@@ -10,12 +10,12 @@ import HistorySvg from '../../../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { Consultas } from '../../../../reducers/ConsultasReducer';
+import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 
 interface Props {
-    dataSourceConsultas?: Consultas[];
+    dataSourceConsultas?: IConsultas[] | null;
 }
 
 const CardConsultasComponent: React.FC<Props> = ({
@@ -26,7 +26,7 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const navigation = useNavigation();
 
-    const Item = ({ item }: { item: Consultas; index: number }) => {
+    const Item = ({ item }: { item: IConsultas; index: number }) => {
         return (
             <TouchableOpacity
                 onPress={() =>
@@ -73,7 +73,7 @@ const CardConsultasComponent: React.FC<Props> = ({
         item,
         index,
     }: {
-        item: Consultas;
+        item: IConsultas;
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
@@ -89,24 +89,23 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
-            {dataSourceConsultas &&
-                (dataSourceConsultas?.length ? (
-                    <FlatList
-                        data={dataSourceConsultas}
-                        renderItem={({ item, index }) =>
-                            renderItem({ item, index })
-                        }
-                        keyExtractor={(item, index) => index.toString()}
-                        //refreshing={refreshing}
-                        //onRefresh={() => {
-                        //setRefreshing(true);
-                        //GetSinaisVitais();
-                        //}}
-                        ListEmptyComponent={renderItemEmpty}
-                    />
-                ) : (
-                    Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
-                ))}
+            {dataSourceConsultas ? (
+                <FlatList
+                    data={dataSourceConsultas}
+                    renderItem={({ item, index }) =>
+                        renderItem({ item, index })
+                    }
+                    keyExtractor={(item, index) => index.toString()}
+                    //refreshing={refreshing}
+                    //onRefresh={() => {
+                    //setRefreshing(true);
+                    //GetSinaisVitais();
+                    //}}
+                    ListEmptyComponent={renderItemEmpty}
+                />
+            ) : (
+                Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
+            )}
         </View>
     );
 };

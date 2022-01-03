@@ -11,22 +11,33 @@ import NotificationGlobalContext from './notificationGlobalContext';
 import {
     ConsultasQTReducer,
     initialStateQT,
-    consultaQT,
+    IstateConsultasQT,
+    IconsultaQT,
 } from '../reducers/ConsultasQTReducer';
 import {
     ConsultasReducer,
     initialStateConsultas,
-    Consultas,
+    IConsultas,
+    IstateConsultas,
+    IMedico,
 } from '../reducers/ConsultasReducer';
-
 interface AuthContextData {
-    consultasQT: consultaQT[];
-    consultas: Consultas[];
+    stateConsultasQT: IstateConsultasQT;
+    stateConsultas: IstateConsultas;
     AddSinaisVitais(atendimento: SinaisVitaisPost): Promise<void>;
     GetConsultasQT(): Promise<void>;
     GetConsultas(): Promise<void>;
+    FilterConsultas(filter: IFilterConsultas): Promise<void>;
+    GetMedicosConsultas(): Promise<void>;
 }
-
+export interface IFilterConsultas {
+    codMedico?: number | null;
+    nM_GUERRA?: string | null;
+    codEspecialidade?: number | null;
+    dataInicio?: string | null;
+    dataFinal?: string | null;
+    pagina?: number | null;
+}
 export interface SinaisVitais {
     iE_PRESSAO: string;
     iE_MEMBRO: string;
@@ -88,7 +99,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const { addAlert } = useContext(NotificationGlobalContext);
 
-    const [stateConsultasQT, dispatchConsultasQT] = useReducer(
+    const [consultasQT, dispatchConsultasQT] = useReducer(
         ConsultasQTReducer,
         initialStateQT,
     );
@@ -138,14 +149,18 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetConsultasQT = useCallback(async () => {
         await Api.get(
-            'AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,2021-12-30,2021-12-30?pagina=1',
+            `AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,${moment().format(
+                'YYYY-MM-DD',
+            )},${moment().format('YYYY-MM-DD')}?pagina=1`,
         )
             .then((response) => {
-                const { result } = response.data;
-                dispatchConsultasQT({
-                    type: 'setConsultasQT',
-                    payload: result,
-                });
+                const { result }: { result: IconsultaQT[] } = response.data;
+                if (result.length > 0) {
+                    dispatchConsultasQT({
+                        type: 'setConsultasQT',
+                        payload: { flagQT: true, consultasQT: result },
+                    });
+                }
             })
             .catch((error) => {
                 console.log(error);
@@ -154,14 +169,60 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetConsultas = useCallback(async () => {
         await Api.get(
-            'AgendaConsultas/FilterAgendamentosGeral/2021-12-30,2021-12-30?pagina=1',
+            `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                'YYYY-MM-DD',
+            )},${moment().format('YYYY-MM-DD')}?pagina=1`,
         )
             .then((response) => {
-                const { result } = response.data;
-                dispatchConsultas({
-                    type: 'setConsultas',
-                    payload: result,
-                });
+                const { result }: { result: IConsultas[] } = response.data;
+                if (result.length > 0) {
+                    dispatchConsultas({
+                        type: 'setConsultas',
+                        payload: {
+                            ...stateConsultas,
+                            flag: true,
+                            consultas: result,
+                        },
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [stateConsultas]);
+
+    const GetMedicosConsultas = useCallback(async () => {
+        await Api.get(`Medicos/filtro?estabelecimento=${7}`)
+            .then((response) => {
+                const { result }: { result: IMedico[] } = response.data;
+                if (result.length > 0) {
+                    dispatchConsultas({
+                        type: 'setMedicos',
+                        payload: { ...stateConsultas, medicos: result },
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [stateConsultas]);
+
+    const FilterConsultas = useCallback(async (filter: IFilterConsultas) => {
+        await Api.get(
+            `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                'YYYY-MM-DD',
+            )},${moment().format('YYYY-MM-DD')}?pagina=1${
+                filter.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
+            }`,
+        )
+            .then((response) => {
+                const { result }: { result: IConsultas[] } = response.data;
+                if (result.length > 0) {
+                    dispatchConsultas({
+                        type: 'setConsultas',
+                        payload: { flag: true, consultas: result },
+                    });
+                }
             })
             .catch((error) => {
                 console.log(error);
@@ -201,11 +262,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     return (
         <SinaisVitaisContext.Provider
             value={{
-                consultasQT: stateConsultasQT,
-                consultas: stateConsultas,
+                stateConsultasQT: consultasQT,
+                stateConsultas: stateConsultas,
                 AddSinaisVitais,
                 GetConsultasQT,
                 GetConsultas,
+                FilterConsultas,
+                GetMedicosConsultas,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

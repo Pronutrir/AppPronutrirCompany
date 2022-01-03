@@ -8,6 +8,7 @@ import Loading from '../../../components/Loading/Loading';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
+import moment from 'moment';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'updateSinais'>;
 interface Props {
@@ -30,15 +31,15 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
     const [temperatura, setTemperatura] = useState(0);
     const [oxigenacao, setOxigenacao] = useState(0);
 
-    /* const ChangerProperty = () => {
+    const ChangerProperty = () => {
         let x = false;
         x =
-            selectedSinaisVitais?.qT_ALTURA_CM === Altura &&
-            selectedSinaisVitais?.qT_PESO === Peso &&
-            selectedSinaisVitais?.qT_SATURACAO_O2 === oxigenacao &&
-            selectedSinaisVitais?.qT_TEMP === temperatura;
+            Altura !== 0 ||
+            Peso !== 0 ||
+            oxigenacao !== 50 ||
+            temperatura !== 30;
         return x;
-    }; */
+    };
 
     /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
@@ -95,7 +96,9 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nascimento: </Text>
                         <Text style={styles.text}>
-                            {route.params.consultaQt.dT_NASCIMENTO}
+                            {moment(
+                                route.params.consultaQt.dT_NASCIMENTO,
+                            ).format('DD-MM-YYYY')}
                         </Text>
                     </View>
                 </View>
@@ -149,7 +152,7 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
                             SizeText={18}
                             labelBtn={'Adicionar'}
                             onPress={() => setActiveModalOptions(true)}
-                            //enabled={ChangerProperty()}
+                            enabled={ChangerProperty()}
                         />
                     </View>
                 </View>

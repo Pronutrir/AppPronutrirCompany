@@ -26,7 +26,7 @@ const BtnCentered: React.FC<Props> = ({
         <View style={styles.container}>
             <TouchableOpacity
                 disabled={enabled}
-                style={enabled ? styles.btnDisabled : styles.btn}
+                style={enabled ? styles.btn : styles.btnDisabled}
                 onPress={() => onPress()}>
                 <LinearGradient
                     useAngle={true}
@@ -34,8 +34,8 @@ const BtnCentered: React.FC<Props> = ({
                     angleCenter={{ x: 0.5, y: 0.5 }}
                     colors={
                         enabled
-                            ? ['#e6f4f3', '#e6f4f3']
-                            : ['#52b4ad', '#219f96', '#08948a']
+                            ? ['#52b4ad', '#219f96', '#08948a']
+                            : ['#e6f4f3', '#e6f4f3']
                     }
                     style={styles.linearGradient}>
                     <Text
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
         }),
     },
     btnDisabled: {
-        width: RFPercentage(22),
-        height: RFPercentage(8),
+        width: RFPercentage(20),
+        height: RFPercentage(6),
         marginVertical: 5,
     },
     linearGradient: {

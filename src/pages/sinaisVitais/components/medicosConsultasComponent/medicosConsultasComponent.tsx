@@ -10,7 +10,7 @@ import {
 import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { FilterConsultas } from '../../sinaisVitais';
-import { Consultas } from '../../../../reducers/ConsultasReducer';
+import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: FilterConsultas): void;
     selectedFilter?: FilterConsultas;
@@ -20,37 +20,39 @@ const MedicosExamesComponent: React.FC<Props> = ({
     onPress,
     selectedFilter,
 }: Props) => {
-    const { consultas } = useContext(SinaisVitaisContext);
+    const {
+        stateConsultas: { medicos },
+    } = useContext(SinaisVitaisContext);
 
-    const FilterMedicos = () => {
-        const filteredArr = consultas.filter(
+    /* const FilterMedicos = () => {
+        const filteredArr = consultas?.filter(
             (item, index, array) =>
                 array.findIndex(
                     (element) => element.nM_GUERRA === item.nM_GUERRA,
                 ) === index,
         );
         return filteredArr;
-    };
+    }; */
 
-    const renderItem: ListRenderItem<Consultas> = ({ item }) => (
+    const renderItem: ListRenderItem<IMedico> = ({ item }) => (
         <View
             style={[
-                selectedFilter?.codMedico === item.nR_SEQUENCIA
+                selectedFilter?.nM_GUERRA === item?.nM_GUERRA
                     ? styles.optionContainerStyleActive
                     : styles.optionContainerStyle,
             ]}>
             <TouchableOpacity
                 onPress={() =>
                     onPress({
-                        codMedico:
-                            selectedFilter?.codMedico === item.nR_SEQUENCIA
+                        nM_GUERRA:
+                            item.nM_GUERRA === selectedFilter?.nM_GUERRA
                                 ? null
-                                : item.nR_SEQUENCIA,
+                                : item.nM_GUERRA,
                     })
                 }>
                 <Text
                     style={[
-                        selectedFilter?.codMedico === item.nR_SEQUENCIA
+                        selectedFilter?.nM_GUERRA === item.nM_GUERRA
                             ? styles.selectTextStyleActive
                             : styles.selectTextStyle,
                     ]}>
@@ -63,7 +65,7 @@ const MedicosExamesComponent: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             <FlatList
-                data={FilterMedicos()}
+                data={medicos}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
             />

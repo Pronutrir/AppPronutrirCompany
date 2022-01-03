@@ -8,15 +8,18 @@ import MedicosConsultasComponent from '../components/medicosConsultasComponent/m
 import ModalBottom, {
     ModalHandles,
 } from '../../../components/Modais/ModalBottom';
-import { FilterConsultas } from '../sinaisVitais';
+import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
 
 const ConsultasSinaisVitais: React.FC = () => {
-    const { consultas } = useContext(SinaisVitaisContext);
+    const {
+        stateConsultas: { consultas, flag },
+        FilterConsultas,
+    } = useContext(SinaisVitaisContext);
     const refModalBottom = useRef<ModalHandles>(null);
     const [selectedModal, setSelectedModal] = useState<string | null>(null);
     const [activeModal, setActiveModal] = useState(false);
-    const selectFilter = useRef<FilterConsultas>({
+    const selectFilter = useRef<IFilterConsultas>({
         codEspecialidade: null,
         codMedico: null,
         dataFinal: null,
@@ -24,11 +27,12 @@ const ConsultasSinaisVitais: React.FC = () => {
         pagina: null,
     });
 
-    const FilterExames = async (item: FilterConsultas) => {
+    const FilterExames = async (item: IFilterConsultas) => {
         refModalBottom.current?.openModal();
         setActiveModal(false);
         selectFilter.current = { ...selectFilter.current, ...item };
-        //refModalBottom.current?.closeModal();
+        refModalBottom.current?.closeModal();
+        await FilterConsultas(item);
         //await getEvolucoesPepVinculadosFilter(selectFilter.current);
     };
 
@@ -64,7 +68,9 @@ const ConsultasSinaisVitais: React.FC = () => {
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
             />
-            <CardConsultasComponent dataSourceConsultas={consultas} />
+            <CardConsultasComponent
+                dataSourceConsultas={flag ? consultas : null}
+            />
             <ModalBottom
                 activeModal={activeModal}
                 ref={refModalBottom}

@@ -1,6 +1,13 @@
-export const initialStateQT: consultaQT[] = [];
+export const initialStateQT: IstateConsultasQT = {
+    flagQT: false,
+    consultasQT: [],
+};
 
-export interface consultaQT {
+export interface IstateConsultasQT {
+    flagQT: boolean;
+    consultasQT: IconsultaQT[];
+}
+export interface IconsultaQT {
     //DT_PREVISTA: string;
     //DT_REAL: string;
     cD_PESSOA_FISICA: string;
@@ -20,15 +27,15 @@ export interface consultaQT {
 
 export type ConsultasQTAction = {
     type: 'setConsultasQT';
-    payload: consultaQT[];
+    payload: IstateConsultasQT;
 };
 //   | { type: 'setUserTasy'; payload: UserTasy }
 //   | { type: 'setUser'; payload: UsuarioFirebase };
 
 export const ConsultasQTReducer = (
-    state: consultaQT[],
+    state: IstateConsultasQT,
     action: ConsultasQTAction,
-): consultaQT[] => {
+): IstateConsultasQT => {
     switch (action.type) {
         case 'setConsultasQT':
             return action.payload;
