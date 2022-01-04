@@ -15,6 +15,8 @@ const ConsultasSinaisVitais: React.FC = () => {
     const {
         stateConsultas: { consultas, flag },
         FilterConsultas,
+        GetConsultas,
+        dispatchConsultas,
     } = useContext(SinaisVitaisContext);
     const refModalBottom = useRef<ModalHandles>(null);
     const [selectedModal, setSelectedModal] = useState<string | null>(null);
@@ -25,18 +27,46 @@ const ConsultasSinaisVitais: React.FC = () => {
         dataFinal: null,
         dataInicio: null,
         pagina: null,
+        nM_GUERRA: null,
+        dS_ESPECIALIDADE: null,
     });
 
-    const FilterExames = async (item: IFilterConsultas) => {
-        refModalBottom.current?.openModal();
-        setActiveModal(false);
-        selectFilter.current = { ...selectFilter.current, ...item };
-        refModalBottom.current?.closeModal();
-        await FilterConsultas(item);
-        //await getEvolucoesPepVinculadosFilter(selectFilter.current);
+    const FilterExames = async (item?: IFilterConsultas | null) => {
+        if (item) {
+            setActiveModal(false);
+            selectFilter.current = { ...selectFilter.current, ...item };
+            refModalBottom.current?.closeModal();
+            await FilterConsultas(item);
+        } else {
+            dispatchConsultas({
+                type: 'setConsultas',
+                payload: {
+                    flag: false,
+                },
+            });
+            selectFilter.current = {
+                ...selectFilter.current,
+                dS_ESPECIALIDADE: null,
+                nM_GUERRA: null,
+            };
+            refModalBottom.current?.closeModal();
+            GetConsultas();
+        }
     };
 
     const selectedFilter = (value: string) => {
+        if (value === 'Médico') {
+            selectFilter.current = {
+                ...selectFilter.current,
+                dS_ESPECIALIDADE: null,
+            };
+        }
+        if (value === 'Especialidade') {
+            selectFilter.current = {
+                ...selectFilter.current,
+                nM_GUERRA: null,
+            };
+        }
         setSelectedModal(value);
         setActiveModal(true);
         refModalBottom.current?.openModal();
@@ -67,6 +97,7 @@ const ConsultasSinaisVitais: React.FC = () => {
         <View style={styles.container}>
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
+                selectedFilter={selectFilter.current}
             />
             <CardConsultasComponent
                 dataSourceConsultas={flag ? consultas : null}

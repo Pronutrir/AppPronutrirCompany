@@ -4,24 +4,15 @@ export const initialStateConsultas: IstateConsultas = {
     medicos: [],
 };
 export interface IstateConsultas {
-    flag: boolean;
-    consultas: IConsultas[];
-    medicos?: IMedico[];
+    flag?: boolean;
+    consultas?: IConsultas[];
+    medicos?: IMedico[] | null;
 }
 export interface IMedico {
-    cD_PESSOA_FISICA: string;
-    nR_CRM: string;
-    nM_GUERRA: string;
-    iE_VINCULO_MEDICO: number;
-    dT_ATUALIZACAO: string;
-    nM_USUARIO: string;
-    iE_CORPO_CLINICO: string;
-    iE_CORPO_ASSIST: string;
     cD_ESPECIALIDADE: number;
     dS_ESPECIALIDADE: string;
-    iE_SITUACAO: string;
-    cD_ESTABELECIMENTO: number;
-    iE_DIA_SEMANA: number;
+    cD_PESSOA_FISICA: string;
+    nM_GUERRA: string;
 }
 export interface IConsultas {
     nR_SEQUENCIA?: number;
@@ -65,9 +56,9 @@ export const ConsultasReducer = (
 ): IstateConsultas => {
     switch (action.type) {
         case 'setConsultas':
-            return action.payload;
+            return { ...state, ...action.payload };
         case 'setMedicos':
-            return action.payload;
+            return { ...state, ...action.payload };
         default:
             return state;
     }

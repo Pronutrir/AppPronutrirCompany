@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center',
+        paddingTop: RFPercentage(10),
     },
     modalView: {
         flexBasis: 'auto',

@@ -20,6 +20,7 @@ import {
     IConsultas,
     IstateConsultas,
     IMedico,
+    ConsultasAction,
 } from '../reducers/ConsultasReducer';
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
@@ -29,11 +30,13 @@ interface AuthContextData {
     GetConsultas(): Promise<void>;
     FilterConsultas(filter: IFilterConsultas): Promise<void>;
     GetMedicosConsultas(): Promise<void>;
+    dispatchConsultas: React.Dispatch<ConsultasAction>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
     nM_GUERRA?: string | null;
     codEspecialidade?: number | null;
+    dS_ESPECIALIDADE?: string | null;
     dataInicio?: string | null;
     dataFinal?: string | null;
     pagina?: number | null;
@@ -179,7 +182,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     dispatchConsultas({
                         type: 'setConsultas',
                         payload: {
-                            ...stateConsultas,
                             flag: true,
                             consultas: result,
                         },
@@ -189,38 +191,22 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .catch((error) => {
                 console.log(error);
             });
-    }, [stateConsultas]);
+    }, []);
 
     const GetMedicosConsultas = useCallback(async () => {
-        await Api.get(`Medicos/filtro?estabelecimento=${7}`)
+        await Api.get(
+            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultasGeral/${moment().format(
+                'YYYY-MM-DD',
+            )},${moment().format(
+                'YYYY-MM-DD',
+            )}?nomeMedico=true&descEspecialidade=true`,
+        )
             .then((response) => {
                 const { result }: { result: IMedico[] } = response.data;
                 if (result.length > 0) {
                     dispatchConsultas({
                         type: 'setMedicos',
-                        payload: { ...stateConsultas, medicos: result },
-                    });
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [stateConsultas]);
-
-    const FilterConsultas = useCallback(async (filter: IFilterConsultas) => {
-        await Api.get(
-            `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
-                'YYYY-MM-DD',
-            )},${moment().format('YYYY-MM-DD')}?pagina=1${
-                filter.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
-            }`,
-        )
-            .then((response) => {
-                const { result }: { result: IConsultas[] } = response.data;
-                if (result.length > 0) {
-                    dispatchConsultas({
-                        type: 'setConsultas',
-                        payload: { flag: true, consultas: result },
+                        payload: { medicos: result },
                     });
                 }
             })
@@ -228,6 +214,45 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 console.log(error);
             });
     }, []);
+
+    const FilterConsultas = useCallback(
+        async (filter: IFilterConsultas) => {
+            dispatchConsultas({
+                type: 'setConsultas',
+                payload: {
+                    ...stateConsultas,
+                    flag: false,
+                },
+            });
+            await Api.get(
+                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                    'YYYY-MM-DD',
+                )},${moment().format('YYYY-MM-DD')}?pagina=1${
+                    filter.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
+                }${
+                    filter.dS_ESPECIALIDADE
+                        ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
+                        : ''
+                }`,
+            )
+                .then((response) => {
+                    const { result }: { result: IConsultas[] } = response.data;
+                    if (result.length > 0) {
+                        dispatchConsultas({
+                            type: 'setConsultas',
+                            payload: {
+                                flag: true,
+                                consultas: result,
+                            },
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        [stateConsultas],
+    );
 
     /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
@@ -269,6 +294,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 GetConsultas,
                 FilterConsultas,
                 GetMedicosConsultas,
+                dispatchConsultas,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

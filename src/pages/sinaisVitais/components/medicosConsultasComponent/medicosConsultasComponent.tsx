@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
-import { FilterConsultas } from '../../sinaisVitais';
+import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
-    onPress(item: FilterConsultas): void;
-    selectedFilter?: FilterConsultas;
+    onPress(item: IFilterConsultas | null): void;
+    selectedFilter?: IFilterConsultas;
 }
 
 const MedicosExamesComponent: React.FC<Props> = ({
@@ -24,16 +24,6 @@ const MedicosExamesComponent: React.FC<Props> = ({
         stateConsultas: { medicos },
     } = useContext(SinaisVitaisContext);
 
-    /* const FilterMedicos = () => {
-        const filteredArr = consultas?.filter(
-            (item, index, array) =>
-                array.findIndex(
-                    (element) => element.nM_GUERRA === item.nM_GUERRA,
-                ) === index,
-        );
-        return filteredArr;
-    }; */
-
     const renderItem: ListRenderItem<IMedico> = ({ item }) => (
         <View
             style={[
@@ -43,12 +33,13 @@ const MedicosExamesComponent: React.FC<Props> = ({
             ]}>
             <TouchableOpacity
                 onPress={() =>
-                    onPress({
-                        nM_GUERRA:
-                            item.nM_GUERRA === selectedFilter?.nM_GUERRA
-                                ? null
-                                : item.nM_GUERRA,
-                    })
+                    onPress(
+                        item.nM_GUERRA !== selectedFilter?.nM_GUERRA
+                            ? {
+                                  nM_GUERRA: item.nM_GUERRA,
+                              }
+                            : null,
+                    )
                 }>
                 <Text
                     style={[
@@ -77,7 +68,6 @@ export default MedicosExamesComponent;
 
 const styles = StyleSheet.create({
     container: {
-        height: 100,
         marginTop: 20,
         marginHorizontal: 10,
     },

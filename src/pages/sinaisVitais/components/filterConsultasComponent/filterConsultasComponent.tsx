@@ -2,10 +2,10 @@ import React, { memo } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import BtnFiilter from '../../../../components/buttons/BtnFilter';
-import { FilterConsultas } from '../../sinaisVitais';
+import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 interface Props {
     onpress(item: BtnExames): void;
-    selectedFilter?: FilterConsultas;
+    selectedFilter: IFilterConsultas;
 }
 
 interface BtnExames {
@@ -23,17 +23,10 @@ const filterConsultasComponent: React.FC<Props> = ({
     ];
 
     const activeBtn = (item: string) => {
-        if (selectedFilter?.codEspecialidade && item === 'Especialidade') {
+        if (selectedFilter?.dS_ESPECIALIDADE && item === 'Especialidade') {
             return true;
         }
-        if (selectedFilter?.codMedico && item === 'Médico') {
-            return true;
-        }
-        if (
-            selectedFilter?.dataFinal &&
-            selectedFilter.dataInicio &&
-            item === 'Periodos'
-        ) {
+        if (selectedFilter?.nM_GUERRA && item === 'Médico') {
             return true;
         }
         return false;

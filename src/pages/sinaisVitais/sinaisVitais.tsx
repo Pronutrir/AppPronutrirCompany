@@ -115,7 +115,7 @@ const SinaisVitais: React.FC = () => {
     );
 
     useEffect(() => {
-        if (consultas.length === 0 && !flag) {
+        if (consultas?.length === 0 && !flag) {
             GetConsultas();
         }
     }, [GetConsultas, consultas, consultasQT, flag, flagQT]);

@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
-import { FilterConsultas } from '../../sinaisVitais';
-import { IConsultas } from '../../../../reducers/ConsultasReducer';
+import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
+import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
-    onPress(item: FilterConsultas): void;
-    selectedFilter?: FilterConsultas;
+    onPress(item: IFilterConsultas | null): void;
+    selectedFilter?: IFilterConsultas;
 }
 
 const EspecialidadeConsultasComponent: React.FC<Props> = ({
@@ -21,30 +21,31 @@ const EspecialidadeConsultasComponent: React.FC<Props> = ({
     selectedFilter,
 }: Props) => {
     const {
-        stateConsultas: { consultas },
+        stateConsultas: { medicos },
     } = useContext(SinaisVitaisContext);
 
-    const renderItem: ListRenderItem<IConsultas> = ({ item }) => (
+    const renderItem: ListRenderItem<IMedico> = ({ item }) => (
         <View
             style={[
-                selectedFilter?.codEspecialidade === item.cD_ESPECIALIDADE
+                selectedFilter?.dS_ESPECIALIDADE === item.dS_ESPECIALIDADE
                     ? styles.optionContainerStyleActive
                     : styles.optionContainerStyle,
             ]}>
             <TouchableOpacity
                 onPress={() =>
-                    onPress({
-                        codEspecialidade:
-                            selectedFilter?.codEspecialidade ===
-                            item.cD_ESPECIALIDADE
-                                ? null
-                                : item.cD_ESPECIALIDADE,
-                    })
+                    onPress(
+                        item.dS_ESPECIALIDADE !==
+                            selectedFilter?.dS_ESPECIALIDADE
+                            ? {
+                                  dS_ESPECIALIDADE: item?.dS_ESPECIALIDADE,
+                              }
+                            : null,
+                    )
                 }>
                 <Text
                     style={[
-                        selectedFilter?.codEspecialidade ===
-                        item.cD_ESPECIALIDADE
+                        selectedFilter?.dS_ESPECIALIDADE ===
+                        item.dS_ESPECIALIDADE
                             ? styles.selectTextStyleActive
                             : styles.selectTextStyle,
                     ]}>
@@ -56,7 +57,7 @@ const EspecialidadeConsultasComponent: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             <FlatList
-                data={consultas.filter(
+                data={medicos?.filter(
                     (item, index, array) =>
                         array.findIndex(
                             (t) => t.cD_ESPECIALIDADE === item.cD_ESPECIALIDADE,
