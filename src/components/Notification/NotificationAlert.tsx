@@ -1,63 +1,53 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Text, View, Dimensions, Platform } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import OkImg from '../assets/svg/ok.svg';
-import Cancel from '../assets/svg/cancel.svg';
-import InfoSvg from '../assets/svg/informacoes.svg';
-import AlertSvg from '../assets/svg/alerta.svg';
-import { RFValue } from 'react-native-responsive-fontsize';
-import notificationGlobalContext from '../contexts/notificationGlobalContext';
+import OkImg from '../../assets/svg/ok.svg';
+import Cancel from '../../assets/svg/cancel.svg';
+import InfoSvg from '../../assets/svg/informacoes.svg';
+import AlertSvg from '../../assets/svg/alerta.svg';
+import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import notificationGlobalContext from '../../contexts/notificationGlobalContext';
 
-export default function Notification() {
-    const { notification, removeNotification } = useContext(
-        notificationGlobalContext,
-    );
+export default function NotificationAlert() {
+    const { alert, removeAlert } = useContext(notificationGlobalContext);
 
     const size = Dimensions.get('screen').width / 20;
 
     const disabled = () => {
-        removeNotification();
+        removeAlert();
     };
 
     const buttomType = () => {
-        switch (notification?.status) {
+        switch (alert?.status) {
             case 'sucess':
-                return '#388e3c';
-
+                return '#6ecb20';
             case 'error':
-                return '#d32f2f';
-
+                return '#cb2720';
             case 'warning':
                 return '#f57c00';
-
             case 'info':
                 return '#1976d2';
-
             default:
                 return '#648dae';
         }
     };
 
     const ImgType = () => {
-        switch (notification?.status) {
+        switch (alert?.status) {
             case 'sucess':
                 return <OkImg fill={'#fff'} width={size} height={size} />;
-
             case 'error':
                 return <Cancel fill={'#fff'} width={size} height={size} />;
-
             case 'warning':
                 return <AlertSvg fill={'#fff'} width={size} height={size} />;
-
             case 'info':
                 return <InfoSvg fill={'#fff'} width={size} height={size} />;
-
             default:
                 return <OkImg fill={'#fff'} width={size} height={size} />;
         }
     };
 
-    if (notification) {
+    if (alert) {
         return (
             <Animatable.View
                 animation="bounceInLeft"
@@ -73,16 +63,14 @@ export default function Notification() {
                         delay={6000}
                         style={[
                             styles.Animatable,
-                            notification.status && {
+                            alert.status && {
                                 backgroundColor: buttomType(),
                             },
                         ]}>
                         <View style={styles.item1}>{ImgType()}</View>
                         <View style={styles.item2}>
-                            {notification ? (
-                                <Text style={styles.text}>
-                                    {notification.message}
-                                </Text>
+                            {alert ? (
+                                <Text style={styles.text}>{alert.message}</Text>
                             ) : (
                                 <Text style={styles.text}>?</Text>
                             )}
@@ -104,9 +92,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: 'flex-end',
         position: 'absolute',
-        bottom: 0,
-        zIndex: 1,
-        marginBottom: 70,
+        zIndex: 100,
+        bottom: RFPercentage(5),
     },
     box1: {
         flex: 1,

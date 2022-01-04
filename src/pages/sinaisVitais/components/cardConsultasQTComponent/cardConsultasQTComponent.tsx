@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import {
     View,
     FlatList,
@@ -13,14 +13,15 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IconsultaQT } from '../../../../reducers/ConsultasQTReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 
 interface Props {
     dataSourceQT?: IconsultaQT[] | null;
 }
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
-    //const { addNotification } = useContext(ErrorContext);
-    //const [refreshing, setRefreshing] = useState<boolean>(false);
+    const { GetConsultasQT } = useContext(SinaisVitaisContext);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
 
@@ -84,11 +85,12 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    //refreshing={refreshing}
-                    //onRefresh={() => {
-                    //setRefreshing(true);
-                    //GetSinaisVitais();
-                    //}}
+                    refreshing={refreshing}
+                    onRefresh={async () => {
+                        setRefreshing(true);
+                        await GetConsultasQT();
+                        setRefreshing(false);
+                    }}
                     ListEmptyComponent={renderItemEmpty}
                 />
             ) : (
@@ -101,11 +103,11 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         marginTop: 10,
     },
     cardStyle: {
         flex: 1,
+        padding: 10,
     },
     titleLabel: {
         alignSelf: 'flex-start',

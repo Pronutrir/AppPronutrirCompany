@@ -16,11 +16,7 @@ interface Props {
 }
 
 const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
-    //const { addNotification } = useContext(ErrorContext);
     const { AddSinaisVitais } = useContext(SinaisVitaisContext);
-
-    //const selectedSinaisVitais: consultaQT = route.params.consultaQt;
-    //const selectedPessoa: PessoaSelected = route.params.pessoaSelected;
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] =

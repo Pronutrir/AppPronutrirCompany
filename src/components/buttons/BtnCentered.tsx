@@ -25,7 +25,7 @@ const BtnCentered: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             <TouchableOpacity
-                disabled={enabled}
+                disabled={!enabled}
                 style={enabled ? styles.btn : styles.btnDisabled}
                 onPress={() => onPress()}>
                 <LinearGradient

@@ -12,12 +12,11 @@ interface ErrorContextData {
 type Notification = {
     message: string;
     status: 'sucess' | 'error' | 'warning' | 'info';
-}
+};
 
 const ErrorContext = createContext({} as ErrorContextData);
 
 export const ErrorNotificationProvider: React.FC = ({ children }) => {
-
     const [error, setError] = useState<Notification | null>(null);
     const [notification, setNotification] = useState<Notification | null>(null);
 
@@ -25,22 +24,26 @@ export const ErrorNotificationProvider: React.FC = ({ children }) => {
     const removeNotification = () => setNotification(null);
 
     const addError = (notification: Notification) => setError(notification);
-    const addNotification = (notification: Notification) => setNotification(notification);
+    const addNotification = (notification: Notification) =>
+        setNotification(notification);
 
     const contextValue: ErrorContextData = {
         error,
-        addError: useCallback(notification => addError(notification), []),
+        addError: useCallback((notification) => addError(notification), []),
         removeError: useCallback(() => removeError(), []),
         notification,
-        addNotification: useCallback(notification => addNotification(notification), []),
-        removeNotification: useCallback(() => removeNotification(), [])
+        addNotification: useCallback(
+            (notification) => addNotification(notification),
+            [],
+        ),
+        removeNotification: useCallback(() => removeNotification(), []),
     };
 
     return (
         <ErrorContext.Provider value={contextValue}>
             {children}
         </ErrorContext.Provider>
-    )
-}
+    );
+};
 
 export default ErrorContext;

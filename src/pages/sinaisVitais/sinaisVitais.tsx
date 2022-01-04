@@ -22,15 +22,6 @@ interface PagesSinaisVitais {
     Name: string;
 }
 
-export interface FilterConsultas {
-    codMedico?: number | null;
-    nM_GUERRA?: string | null;
-    codEspecialidade?: number | null;
-    dataInicio?: string | null;
-    dataFinal?: string | null;
-    pagina?: number | null;
-}
-
 const SinaisVitais: React.FC = () => {
     const {
         GetConsultasQT,

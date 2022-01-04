@@ -5,6 +5,9 @@ import AuthContext from '../contexts/auth';
 import RouteDrawer from './routeDrawer';
 import Inicial from '../pages/inicial/inicial';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import NotificationAlert from '../components/Notification/NotificationAlert';
+import NotificationCentralized from '../components/Notification/NotificationCentralized';
+import ErrorNotification from '../components/ErrorNotifications/ErrorNotification';
 
 const Index: React.FC = () => {
     const { signed, loading } = useContext(AuthContext);
@@ -30,6 +33,9 @@ const Index: React.FC = () => {
                     barStyle="dark-content"
                     translucent={true}
                 />
+                <ErrorNotification />
+                <NotificationCentralized />
+                <NotificationAlert />
                 <RouteDrawer />
             </SafeAreaView>
         </>

@@ -3,6 +3,7 @@ import React, {
     useCallback,
     useContext,
     useReducer,
+    useRef,
 } from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';
@@ -22,13 +23,13 @@ import {
     IMedico,
     ConsultasAction,
 } from '../reducers/ConsultasReducer';
+import axios, { CancelTokenSource } from 'axios';
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
     stateConsultas: IstateConsultas;
     AddSinaisVitais(atendimento: SinaisVitaisPost): Promise<void>;
     GetConsultasQT(): Promise<void>;
-    GetConsultas(): Promise<void>;
-    FilterConsultas(filter: IFilterConsultas): Promise<void>;
+    GetConsultas(filter?: IFilterConsultas): Promise<void>;
     GetMedicosConsultas(): Promise<void>;
     dispatchConsultas: React.Dispatch<ConsultasAction>;
 }
@@ -102,6 +103,8 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const { addAlert } = useContext(NotificationGlobalContext);
 
+    const axiosSource = useRef<CancelTokenSource | null>(null);
+
     const [consultasQT, dispatchConsultasQT] = useReducer(
         ConsultasQTReducer,
         initialStateQT,
@@ -113,7 +116,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     );
 
     const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
-        await Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
+        await Api.post<SinaisVitais>('SinaisVitaisMonitoracao/* Geral */', {
             iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
             iE_MEMBRO: sinaisVitaisDefault.iE_MEMBRO,
             iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
@@ -144,15 +147,17 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .catch((error) => {
                 console.log(error);
                 addAlert({
-                    message: 'Não foi possivel atualizar tente mais tarde!',
+                    message:
+                        'Falha ao enviar os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
+                return;
             });
     };
 
     const GetConsultasQT = useCallback(async () => {
         await Api.get(
-            `AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,${moment().format(
+            `AgendaQuimio/GetAgendaQuimioterapia/* Geral *//7,75,${moment().format(
                 'YYYY-MM-DD',
             )},${moment().format('YYYY-MM-DD')}?pagina=1`,
         )
@@ -165,75 +170,44 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     });
                 }
             })
-            .catch((error) => {
-                console.log(error);
+            .catch(() => {
+                addAlert({
+                    message:
+                        'Falha ao atualizar as consultas oncologicas tente mais tarde!',
+                    status: 'error',
+                });
+                dispatchConsultasQT({
+                    type: 'setConsultasQT',
+                    payload: { flagQT: true, consultasQT: [] },
+                });
+                return;
             });
-    }, []);
+    }, [addAlert]);
 
-    const GetConsultas = useCallback(async () => {
-        await Api.get(
-            `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
-                'YYYY-MM-DD',
-            )},${moment().format('YYYY-MM-DD')}?pagina=1`,
-        )
-            .then((response) => {
-                const { result }: { result: IConsultas[] } = response.data;
-                if (result.length > 0) {
-                    dispatchConsultas({
-                        type: 'setConsultas',
-                        payload: {
-                            flag: true,
-                            consultas: result,
-                        },
-                    });
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
+    const GetConsultas = useCallback(
+        async (filter?: IFilterConsultas) => {
+            //Check if there are any previous pending requests
+            if (axiosSource != null) {
+                axiosSource.current?.cancel(
+                    'Operação cancelada por uma nova requisição!',
+                );
+            }
 
-    const GetMedicosConsultas = useCallback(async () => {
-        await Api.get(
-            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultasGeral/${moment().format(
-                'YYYY-MM-DD',
-            )},${moment().format(
-                'YYYY-MM-DD',
-            )}?nomeMedico=true&descEspecialidade=true`,
-        )
-            .then((response) => {
-                const { result }: { result: IMedico[] } = response.data;
-                if (result.length > 0) {
-                    dispatchConsultas({
-                        type: 'setMedicos',
-                        payload: { medicos: result },
-                    });
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
+            axiosSource.current = axios.CancelToken.source();
 
-    const FilterConsultas = useCallback(
-        async (filter: IFilterConsultas) => {
-            dispatchConsultas({
-                type: 'setConsultas',
-                payload: {
-                    ...stateConsultas,
-                    flag: false,
-                },
-            });
             await Api.get(
-                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                `AgendaConsultas/FilterAgendamentos/* Geral *//${moment().format(
                     'YYYY-MM-DD',
                 )},${moment().format('YYYY-MM-DD')}?pagina=1${
-                    filter.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
+                    filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
                 }${
-                    filter.dS_ESPECIALIDADE
+                    filter?.dS_ESPECIALIDADE
                         ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
                         : ''
                 }`,
+                {
+                    cancelToken: axiosSource.current.token,
+                },
             )
                 .then((response) => {
                     const { result }: { result: IConsultas[] } = response.data;
@@ -248,11 +222,55 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    if (axios.isCancel(error)) {
+                        return;
+                    }
+                    addAlert({
+                        message:
+                            'Falha ao atualizar as consultas agendadas tente mais tarde!',
+                        status: 'error',
+                    });
+                    dispatchConsultas({
+                        type: 'setConsultas',
+                        payload: {
+                            flag: true,
+                            consultas: [],
+                        },
+                    });
+                    return;
                 });
         },
-        [stateConsultas],
+        [addAlert],
     );
+
+    const GetMedicosConsultas = useCallback(async () => {
+        await Api.get(
+            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultas/* Geral *//${moment().format(
+                'YYYY-MM-DD',
+            )},${moment().format(
+                'YYYY-MM-DD',
+            )}?nomeMedico=true&descEspecialidade=true`,
+        )
+            .then((response) => {
+                const { result }: { result: IMedico[] } = response.data;
+                if (result.length > 0) {
+                    dispatchConsultas({
+                        type: 'setMedicos',
+                        payload: { medicos: result },
+                    });
+                }
+            })
+            .catch(() => {
+                dispatchConsultas({
+                    type: 'setConsultas',
+                    payload: {
+                        flag: true,
+                        medicos: [],
+                    },
+                });
+                return;
+            });
+    }, []);
 
     /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
@@ -292,7 +310,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 AddSinaisVitais,
                 GetConsultasQT,
                 GetConsultas,
-                FilterConsultas,
                 GetMedicosConsultas,
                 dispatchConsultas,
             }}>

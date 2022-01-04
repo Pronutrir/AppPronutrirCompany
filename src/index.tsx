@@ -3,15 +3,13 @@ import Routes from './routes/index';
 import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
-import { ErrorNotificationProvider } from './contexts/errorNotification';
-import ErrorNotification from './components/ErrorNotifications/ErrorNotification';
-import Notification from './components/Notification';
-import {SinaisVitaisProvider} from './contexts/sinaisVitaisContext';
+import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';
+import { SinaisVitaisProvider } from './contexts/sinaisVitaisContext';
+
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
 
-export default function index() {
-
+const Index: React.FC = () => {
     /*  async function registerAppWithFCM() {
          await messaging().registerDeviceForRemoteMessages();
      } */
@@ -31,10 +29,12 @@ export default function index() {
     }, []) */
 
     useEffect(() => {
+        //@ts-ignore
         Text.defaultProps = Text.defaultProps || {};
         // Ignore dynamic type scaling on iOS
+        //@ts-ignore
         Text.defaultProps.allowFontScaling = false;
-       /*  OneSignal.setAppId("2c990bbc-f7ab-404f-9b95-ef981885ff18");
+        /*  OneSignal.setAppId("2c990bbc-f7ab-404f-9b95-ef981885ff18");
         OneSignal.setLogLevel(6, 0);
         OneSignal.setRequiresUserPrivacyConsent(false);
         OneSignal.getDeviceState().then(response => {
@@ -47,31 +47,31 @@ export default function index() {
         /*  OneSignal.setNotificationWillShowInForegroundHandler(notifReceivedEvent => {
              //console.log("OneSignal: notification will show in foreground:", notifReceivedEvent);
              let notif = notifReceivedEvent.getNotification();
- 
+
              const button1 = {
                  text: "Cancel",
                  onPress: () => { notifReceivedEvent.complete(); },
                  style: "cancel"
              };
- 
+
              const button2 = { text: "Complete", onPress: () => { notifReceivedEvent.complete(notif); } };
- 
+
              Alert.alert("Complete notification?", "Test", [button1, button2], { cancelable: true });
          }); */
-    }, [])
+    }, []);
 
     return (
         <NavigationContainer>
             {/* contexto disponível para toda aplicação */}
-            <AuthProvider>
-                <ErrorNotificationProvider>
+            <NotificationGlobalProvider>
+                <AuthProvider>
                     <SinaisVitaisProvider>
-                    <Routes />
+                        <Routes />
                     </SinaisVitaisProvider>
-                    <ErrorNotification />
-                    <Notification />
-                </ErrorNotificationProvider>
-            </AuthProvider>
+                </AuthProvider>
+            </NotificationGlobalProvider>
         </NavigationContainer>
-    )
-}
+    );
+};
+
+export default Index;
