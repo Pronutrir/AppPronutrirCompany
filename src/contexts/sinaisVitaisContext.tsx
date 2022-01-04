@@ -116,7 +116,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     );
 
     const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
-        await Api.post<SinaisVitais>('SinaisVitaisMonitoracao/* Geral */', {
+        await Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
             iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
             iE_MEMBRO: sinaisVitaisDefault.iE_MEMBRO,
             iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
@@ -157,7 +157,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetConsultasQT = useCallback(async () => {
         await Api.get(
-            `AgendaQuimio/GetAgendaQuimioterapia/* Geral *//7,75,${moment().format(
+            `AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,${moment().format(
                 'YYYY-MM-DD',
             )},${moment().format('YYYY-MM-DD')}?pagina=1`,
         )
@@ -196,7 +196,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             axiosSource.current = axios.CancelToken.source();
 
             await Api.get(
-                `AgendaConsultas/FilterAgendamentos/* Geral *//${moment().format(
+                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
                     'YYYY-MM-DD',
                 )},${moment().format('YYYY-MM-DD')}?pagina=1${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
@@ -245,7 +245,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetMedicosConsultas = useCallback(async () => {
         await Api.get(
-            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultas/* Geral *//${moment().format(
+            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultasGeral/${moment().format(
                 'YYYY-MM-DD',
             )},${moment().format(
                 'YYYY-MM-DD',
