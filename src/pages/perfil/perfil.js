@@ -1,5 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Text, View, Image, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import {
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    TextInput,
+    Dimensions,
+} from 'react-native';
 import AuthContext from '../../contexts/auth';
 
 import MyModaloptions from '../../componentes/MyModalOptions';
@@ -13,10 +20,10 @@ import moment from 'moment';
 import Notification from '../../componentes/Notification';
 import Loading from '../../components/Loading/Loading';
 import LoadingBall from '../../components/Loading/LoadingBall';
+import ShimmerPaceHolderFotoPerfil from '../../components/shimmerPlaceHolder/shimmerPaceHolderFotoPerfil';
 
 export default function perfil({ navigation }) {
-
-    const size = Dimensions.get('screen').width / 18
+    const size = Dimensions.get('screen').width / 18;
 
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
@@ -27,15 +34,15 @@ export default function perfil({ navigation }) {
     const [modalNotification, setModalNotification] = useState({
         active: false,
         message: '',
-        type: ''
+        type: '',
     });
 
     const options = {
         mediaType: 'photo',
         includeBase64: true,
         maxHeight: 200,
-        maxWidth: 200
-    }
+        maxWidth: 200,
+    };
 
     const PostImgPerfil = (imgBase64) => {
         setLoading(true);
@@ -44,22 +51,32 @@ export default function perfil({ navigation }) {
             base64image: imgBase64,
             dT_ATUALIZACAO: moment().format(),
             dT_ATUALIZACAO_NREC: moment().format(),
-            nM_USUARIO_NREC: "AppMobile",
-            iE_FOTO_PERM_TWS: "S",
-            nM_USUARIO: "AppMobile"
-        }).then(response => {
-            const { result } = response.data
-            if (result) {
-                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
-            }
-            setLoading(false);
-        }).catch(error => {
-            setLoading(false);
-            setModalNotification(prevState => {
-                return { ...prevState, active: true, message: "algo deu errado, tente mais tarde.", type: 'error' }
-            })
+            nM_USUARIO_NREC: 'AppMobile',
+            iE_FOTO_PERM_TWS: 'S',
+            nM_USUARIO: 'AppMobile',
         })
-    }
+            .then((response) => {
+                const { result } = response.data;
+                if (result) {
+                    dispatchAuth({
+                        type: 'setImgPerfil',
+                        payload: result.iM_PESSOA_FISICA,
+                    });
+                }
+                setLoading(false);
+            })
+            .catch((error) => {
+                setLoading(false);
+                setModalNotification((prevState) => {
+                    return {
+                        ...prevState,
+                        active: true,
+                        message: 'algo deu errado, tente mais tarde.',
+                        type: 'error',
+                    };
+                });
+            });
+    };
 
     const PutImgPerfil = (cD_PESSOA_FISICA, imgBase64) => {
         setLoading(true);
@@ -68,89 +85,118 @@ export default function perfil({ navigation }) {
             base64image: imgBase64,
             dT_ATUALIZACAO: moment().format(),
             dT_ATUALIZACAO_NREC: moment().format(),
-            nM_USUARIO_NREC: "AppMobile",
-            iE_FOTO_PERM_TWS: "S",
-            nM_USUARIO: "AppMobile"
-        }).then(response => {
-            const { result } = response.data
-            if (result) {
-                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
-            }
-            setLoading(false);
-        }).catch(error => {
-            setLoading(false);
-            setModalNotification(prevState => {
-                return { ...prevState, active: true, message: "algo deu errado, tente mais tarde.", type: 'error' }
-            })
+            nM_USUARIO_NREC: 'AppMobile',
+            iE_FOTO_PERM_TWS: 'S',
+            nM_USUARIO: 'AppMobile',
         })
-    }
+            .then((response) => {
+                const { result } = response.data;
+                if (result) {
+                    dispatchAuth({
+                        type: 'setImgPerfil',
+                        payload: result.iM_PESSOA_FISICA,
+                    });
+                }
+                setLoading(false);
+            })
+            .catch((error) => {
+                setLoading(false);
+                setModalNotification((prevState) => {
+                    return {
+                        ...prevState,
+                        active: true,
+                        message: 'algo deu errado, tente mais tarde.',
+                        type: 'error',
+                    };
+                });
+            });
+    };
 
     const GetImgPerfil = () => {
-        Api.get(`PessoaFisica/DadosFotoPerfilPessoaFisica?cpf=${usertasy.nR_CPF}`).then(response => {
-            const { result } = response.data
-            if (result) {
-                dispatchAuth({ type: 'setImgPerfil', payload: result.iM_PESSOA_FISICA })
-            }else{
-                dispatchAuth({ type: 'setImgPerfil', payload: null })
-            }
-        }).catch(error => {
-            setModalNotification(prevState => {
-                return { ...prevState, active: true, message: "algo deu errado, tente mais tarde.", type: 'error' }
+        Api.get(
+            `PessoaFisica/DadosFotoPerfilPessoaFisica?cpf=${usertasy.nR_CPF}`,
+        )
+            .then((response) => {
+                const { result } = response.data;
+                if (result) {
+                    dispatchAuth({
+                        type: 'setImgPerfil',
+                        payload: result.iM_PESSOA_FISICA,
+                    });
+                } else {
+                    dispatchAuth({ type: 'setImgPerfil', payload: null });
+                }
             })
-        })
-    }
+            .catch((error) => {
+                setModalNotification((prevState) => {
+                    return {
+                        ...prevState,
+                        active: true,
+                        message: 'algo deu errado, tente mais tarde.',
+                        type: 'error',
+                    };
+                });
+            });
+    };
 
     const showImagePicker = () => {
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
             }
             if (response.errorMessage) {
-                setModalNotification(prevState => {
-                    return { ...prevState, active: true, message: response.errorMessage, type: 'error' }
+                setModalNotification((prevState) => {
+                    return {
+                        ...prevState,
+                        active: true,
+                        message: response.errorMessage,
+                        type: 'error',
+                    };
                 });
             }
             if (usertasy.ImgPerfil && response.base64) {
-                PutImgPerfil(usertasy.cD_PESSOA_FISICA, response.base64)
+                PutImgPerfil(usertasy.cD_PESSOA_FISICA, response.base64);
             }
             if (!usertasy.ImgPerfil && response.base64) {
                 PostImgPerfil(response.base64);
             }
             setModalActive(false);
         });
-    }
+    };
 
     const ShowCameraPicker = () => {
         setModalActive(false);
         navigation.navigate('CameraPerson');
-    }
+    };
 
     const OptionsModal = () => {
         setModalActive(true);
-    }
+    };
 
     useEffect(() => {
         GetImgPerfil();
-    }, [])
+    }, []);
 
     return (
         <View style={styles.container}>
             <View style={styles.box1}>
-                <TouchableOpacity style={styles.boxImg} onPress={() => OptionsModal()}>
-                    {
-                        !usertasy.ImgPerfil ?
-                            usertasy.ImgPerfil === undefined ?
-                                <View style={{ width: 50, margin: 30 }}>
-                                    <LoadingBall active={true} width={50} />
-                                </View>
-                                :
-                                <UserSvg width={size + 60} height={size + 60} />
-                            :
-                            <Image
-                                style={styles.perfilImg}
-                                source={{ uri: `data:image/png;base64,${usertasy.ImgPerfil}` }}
-                                fadeDuration={2000}
-                            />
-                    }
+                <TouchableOpacity
+                    style={styles.boxImg}
+                    onPress={() => OptionsModal()}>
+                    {!usertasy.ImgPerfil ? (
+                        usertasy.ImgPerfil === undefined ? (
+                            <ShimmerPaceHolderFotoPerfil />
+                        ) : (
+                            <UserSvg width={size + 60} height={size + 60} />
+                        )
+                    ) : (
+                        <Image
+                            style={styles.perfilImg}
+                            source={{
+                                uri: `data:image/png;base64,${usertasy.ImgPerfil}`,
+                            }}
+                            fadeDuration={2000}
+                        />
+                    )}
                     <PhotoSvg width={size} height={size} fill="#748080" />
                 </TouchableOpacity>
                 <TextInput
@@ -161,52 +207,84 @@ export default function perfil({ navigation }) {
                 />
             </View>
             <View style={styles.box2}>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('InformacoesPessoais')}>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => navigation.navigate('InformacoesPessoais')}>
                     <View style={styles.item1}>
                         {/* <HospitalLocationSvg fill={'#748080'} width={40} height={40} /> */}
                     </View>
                     <View style={styles.item2}>
                         <Text style={styles.text}>Informações pessoais</Text>
-                        <Text style={styles.textInfo}>Nome completo e data nascimento</Text>
+                        <Text style={styles.textInfo}>
+                            Nome completo e data nascimento
+                        </Text>
                     </View>
                     <View style={styles.item3}>
-                        <ProximoSvg fill={'#748080'} width={size} height={size} />
+                        <ProximoSvg
+                            fill={'#748080'}
+                            width={size}
+                            height={size}
+                        />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('DadosContato')}>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => navigation.navigate('DadosContato')}>
                     <View style={styles.item1}>
                         {/* <HospitalLocationSvg fill={'#748080'} width={40} height={40} /> */}
                     </View>
                     <View style={styles.item2}>
                         <Text style={styles.text}>Dados de contato</Text>
-                        <Text style={styles.textInfo}>Email e telefone de contato</Text>
+                        <Text style={styles.textInfo}>
+                            Email e telefone de contato
+                        </Text>
                     </View>
                     <View style={styles.item3}>
-                        <ProximoSvg fill={'#748080'} width={size} height={size} />
+                        <ProximoSvg
+                            fill={'#748080'}
+                            width={size}
+                            height={size}
+                        />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Credenciais')}>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => navigation.navigate('Credenciais')}>
                     <View style={styles.item1}>
                         {/* <HospitalLocationSvg fill={'#748080'} width={size} height={size} /> */}
                     </View>
                     <View style={styles.item2}>
                         <Text style={styles.text}>Credenciais</Text>
-                        <Text style={styles.textInfo}>Dados de acesso a conta</Text>
+                        <Text style={styles.textInfo}>
+                            Dados de acesso a conta
+                        </Text>
                     </View>
                     <View style={styles.item3}>
-                        <ProximoSvg fill={'#748080'} width={size} height={size} />
+                        <ProximoSvg
+                            fill={'#748080'}
+                            width={size}
+                            height={size}
+                        />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('AlterarSenha')}>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => navigation.navigate('AlterarSenha')}>
                     <View style={styles.item1}>
                         {/* <HospitalLocationSvg fill={'#748080'} width={size} height={size} /> */}
                     </View>
                     <View style={styles.item2}>
                         <Text style={styles.text}>Alterar senha</Text>
-                        <Text style={styles.textInfo}>Atualização de acesso</Text>
+                        <Text style={styles.textInfo}>
+                            Atualização de acesso
+                        </Text>
                     </View>
                     <View style={styles.item3}>
-                        <ProximoSvg fill={'#748080'} width={size} height={size} />
+                        <ProximoSvg
+                            fill={'#748080'}
+                            width={size}
+                            height={size}
+                        />
                     </View>
                 </TouchableOpacity>
                 <MyModaloptions
@@ -224,7 +302,5 @@ export default function perfil({ navigation }) {
             />
             <Loading activeModal={loading} />
         </View>
-    )
+    );
 }
-
-
