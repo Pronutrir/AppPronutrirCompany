@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Carousel from '../../componentes/Carousel_Images';
 import styles from './style';
-import AgendarConsultaImg from '../../assets/svg/AgendarConsulta.svg';
+import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import LembreteImg from '../../assets/svg/lembrete.svg';
 import MedicoImg from '../../assets/svg/medico.svg';
@@ -28,7 +28,7 @@ export default function dashBoard({ navigation }) {
                 <View style={styles.box2}>
                     <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("SinaisVitais")}>
                         <View style={styles.img_btnHotrizontal}>
-                            <AgendarConsultaImg fill={'#748080'} width={size} height={size} />
+                            <SinaisVitaisSvg fill={'#748080'} width={size + 10} height={size + 10} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Sinais Vitais</Text>

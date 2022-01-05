@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import MyBackButton from '../../components/buttons/BackButton';
-import AgendarConsultaImg from '../../assets/svg/AgendarConsulta.svg';
+import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultasMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import CruzVermelha from '../../assets/svg/cruzVermelha.svg';
 import PilulaCompromido from '../../assets/svg/pilula-e-comprimido.svg';
@@ -26,9 +26,9 @@ const HeaderDashBoard: React.FC<Props> = ({ onPress, title }: Props) => {
 
     const SetIcone = () => {
         switch (title) {
-            case 'Agendar Consulta':
+            case 'updateSinais':
                 return (
-                    <AgendarConsultaImg
+                    <SinaisVitaisSvg
                         fill={'#748080'}
                         width={size}
                         height={size}
@@ -134,7 +134,7 @@ const HeaderDashBoard: React.FC<Props> = ({ onPress, title }: Props) => {
                 );
             default:
                 return (
-                    <AgendarConsultaImg
+                    <SinaisVitaisSvg
                         fill={'#748080'}
                         width={size}
                         height={size}
