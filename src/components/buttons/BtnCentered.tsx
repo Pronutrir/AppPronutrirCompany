@@ -20,7 +20,7 @@ const BtnCentered: React.FC<Props> = ({
     labelBtn = 'OK',
     SizeText = 12,
     onPress,
-    enabled = false,
+    enabled = true,
 }: Props) => {
     return (
         <View style={styles.container}>

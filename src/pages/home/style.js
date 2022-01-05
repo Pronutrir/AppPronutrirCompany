@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
         color: '#1E707D',
         fontSize: RFValue(20, 680),
         fontWeight: 'bold'
+    },
+    img:{
+        width: Dimensions.get('screen').width,
+        height: Dimensions.get('screen').height / 10,
+        paddingHorizontal: 10
     }
 })
 

@@ -76,6 +76,12 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         </CardSimples>
     );
 
+    /* const ListFooterComponent = () => (
+        <View>
+            <ActivityIndicator />
+        </View>
+    ); */
+
     return (
         <View style={styles.container}>
             {dataSourceQT ? (
@@ -92,6 +98,9 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                         setRefreshing(false);
                     }}
                     ListEmptyComponent={renderItemEmpty}
+                    //onEndReached={() => console.log('teste')}
+                    //onEndReachedThreshold={0.5}
+                    //ListFooterComponent={ListFooterComponent}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)

@@ -159,7 +159,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         await Api.get(
             `AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,${moment().format(
                 'YYYY-MM-DD',
-            )},${moment().format('YYYY-MM-DD')}?pagina=1`,
+            )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`,
         )
             .then((response) => {
                 const { result }: { result: IconsultaQT[] } = response.data;

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -32,21 +32,35 @@ const OncologiaSinaisVitais = () => {
         continue: true,
     });
 
+    const clearSetTimeout = useRef<NodeJS.Timeout | null>(null);
+
     const Search = async (name: string) => {
-        const SeachResult = consultasQT.filter((item) =>
-            item.nM_PESSOA_FISICA
-                .toLocaleLowerCase()
-                .includes(name.toLocaleLowerCase()),
-        );
-        if (SeachResult.length > 0) {
-            setState((old) => {
-                return { ...old, query: name, dataSource: SeachResult };
-            });
-        } else {
-            setState((old) => {
-                return { ...old, query: name };
-            });
+        setState({ ...state, spinnerVisibility: true, query: name });
+
+        if (clearSetTimeout.current) {
+            clearTimeout(clearSetTimeout.current);
         }
+        clearSetTimeout.current = setTimeout(() => {
+            const SeachResult = consultasQT.filter((item) =>
+                item.nM_PESSOA_FISICA
+                    .toLocaleLowerCase()
+                    .includes(name.toLocaleLowerCase()),
+            );
+            if (SeachResult.length > 0) {
+                setState((old) => {
+                    return {
+                        ...old,
+                        query: name,
+                        dataSource: SeachResult,
+                        spinnerVisibility: false,
+                    };
+                });
+            } else {
+                setState((old) => {
+                    return { ...old, query: name, spinnerVisibility: false };
+                });
+            }
+        }, 2000);
     };
 
     const Onclean = () => {
