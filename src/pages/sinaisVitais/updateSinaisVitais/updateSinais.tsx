@@ -5,7 +5,7 @@ import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
 import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
 import Loading from '../../../components/Loading/Loading';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import moment from 'moment';
@@ -16,6 +16,7 @@ interface Props {
 }
 
 const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
+    const navigation = useNavigation();
     const { AddSinaisVitais } = useContext(SinaisVitaisContext);
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
@@ -77,6 +78,7 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
             qT_TEMP: temperatura,
         });
         setActiveModal(false);
+        navigation.goBack();
     };
 
     return (
@@ -156,7 +158,7 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions
                 activeModal={activeModalOptions}
-                message={'Deseja atualizar o Sinal Vital ?'}
+                message={'Deseja atualizar os Sinais Vitais ?'}
                 onpress={() => PostSinaisVitais()}
                 setActiveModal={setActiveModalOptions}
             />

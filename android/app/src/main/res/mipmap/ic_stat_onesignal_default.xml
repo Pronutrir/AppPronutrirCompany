@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+  <group android:scaleX="0.04416"
+      android:scaleY="0.04416"
+      android:translateX="0.96"
+      android:translateY="1.88736">
+    <path
+        android:strokeWidth="1"
+        android:pathData="M357.051,210.277C394.685,185.809 398.412,114.005 367.439,82.063C323.972,37.237 251.777,92.359 293.163,148.81C328.139,187.276 351.653,192.755 357.051,210.277Z"
+        android:fillColor="#B4DFDF"
+        android:strokeColor="#BABAC0"/>
+    <path
+        android:strokeWidth="1"
+        android:pathData="M363.474,78.108C389.787,93.02 416.286,136.756 426.607,172.781C452.774,264.11 406.476,375.181 334.04,393.396C308.185,399.898 265.82,393.501 245.582,366.804C219.87,332.887 226.792,298.037 241.23,275.604C266.253,236.72 309.126,243.768 361.2,206.364C369.013,200.752 379.68,187.687 384.834,171.345C390.533,153.271 390.11,131.437 385.349,116.725C381.614,105.183 375.174,92.139 363.474,78.108Z"
+        android:fillColor="#049494"
+        android:strokeColor="#BABAC0"/>
+    <path
+        android:strokeWidth="1"
+        android:pathData="M149.439,249.817C109.534,275.988 108.079,346.09 139.052,378.031C182.519,422.857 254.714,372.633 212.715,310.672C177.739,272.206 154.837,267.339 149.439,249.817Z"
+        android:fillColor="#B4DFDF"
+        android:strokeColor="#83BBBB"/>
+    <path
+        android:strokeWidth="1"
+        android:pathData="M145.986,384.001C118.97,370.403 97.082,332.314 84.998,296.842C54.36,206.913 94.938,95.04 165.963,71.93C206.774,58.651 237.156,70.3 258.686,95.966C286.038,128.574 279.006,170.458 263.243,188.679C232.99,223.648 195.161,219.536 146.221,253.951C138.351,259.485 124.397,275.353 120.055,291.929C115.254,310.262 116.753,332.05 122.234,346.509C126.533,357.852 133.608,370.564 145.986,384.001Z"
+        android:fillColor="#049494"
+        android:strokeColor="#BABAC0"/>
+  </group>
+</vector>

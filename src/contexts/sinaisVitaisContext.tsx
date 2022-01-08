@@ -121,7 +121,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             iE_MEMBRO: sinaisVitaisDefault.iE_MEMBRO,
             iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
             iE_APARELHO_PA: sinaisVitaisDefault.iE_APARELHO_PA,
-            cD_PACIENTE: 159969,
+            cD_PACIENTE: atendimento.cD_PACIENTE,
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             qT_SATURACAO_O2: atendimento.qT_SATURACAO_O2,
             iE_COND_SAT_O2: sinaisVitaisDefault.iE_COND_SAT_O2,
@@ -137,15 +137,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             dT_LIBERACAO: moment().format(),
             nM_USUARIO: usertasy.nM_USUARIO,
         })
-            .then((response) => {
-                console.log(response);
+            .then(() => {
                 addAlert({
                     message: 'Dados atualizados com sucesso!',
                     status: 'sucess',
                 });
             })
-            .catch((error) => {
-                console.log(error);
+            .catch(() => {
                 addAlert({
                     message:
                         'Falha ao enviar os sinais vitais tente mais tarde!',
@@ -163,7 +161,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         )
             .then((response) => {
                 const { result }: { result: IconsultaQT[] } = response.data;
-                if (result.length > 0) {
+                if (result) {
                     dispatchConsultasQT({
                         type: 'setConsultasQT',
                         payload: { flagQT: true, consultasQT: result },
@@ -211,7 +209,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             )
                 .then((response) => {
                     const { result }: { result: IConsultas[] } = response.data;
-                    if (result.length > 0) {
+                    if (result) {
                         dispatchConsultas({
                             type: 'setConsultas',
                             payload: {

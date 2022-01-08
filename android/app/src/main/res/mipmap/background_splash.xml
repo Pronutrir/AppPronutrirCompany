@@ -4,7 +4,7 @@
     <item 
         android:width="200dp"
         android:height="200dp"
-        android:drawable="@drawable/logoscreen"
+        android:drawable="@mipmap/logoscreen"
         android:gravity="fill"
     />
 </layer-list>
