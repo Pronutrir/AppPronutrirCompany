@@ -53,6 +53,12 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                             {moment(item.dT_NASCIMENTO).format('DD-MM-YYYY')}
                         </Text>
                     </View>
+                    <View style={styles.item}>
+                        <Text style={styles.textLabel}>Hora da agenda: </Text>
+                        <Text style={styles.text}>
+                            {moment(item.dT_REAL).format('hh:mm')}
+                        </Text>
+                    </View>
                 </View>
             </TouchableOpacity>
         );

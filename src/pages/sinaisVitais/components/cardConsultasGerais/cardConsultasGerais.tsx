@@ -1,35 +1,75 @@
-import React, { memo, useState, useContext } from 'react';
+import React, { memo, useContext } from 'react';
 import {
     View,
     FlatList,
     Text,
     StyleSheet,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 import HistorySvg from '../../../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
+import { IParamConsulta } from '../../sinaisVItaisGerais/sinaisVitaisGerais';
 import moment from 'moment';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, {
+    IPFSinaisVitais,
+} from '../../../../contexts/sinaisVitaisContext';
 
 interface Props {
-    dataSourceConsultas?: IConsultas[] | null;
+    dataSourcePFsinaisVitais?: IPFSinaisVitais[] | null;
+    setState: React.Dispatch<React.SetStateAction<IParamConsulta>>;
+    state: IParamConsulta;
 }
 
-const CardConsultasComponent: React.FC<Props> = ({
-    dataSourceConsultas,
+const CardConsultasGerais: React.FC<Props> = ({
+    dataSourcePFsinaisVitais,
+    setState,
+    state,
 }: Props) => {
-    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
+    //const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
 
-    const { GetConsultas, GetMedicosConsultas } =
-        useContext(SinaisVitaisContext);
+    const LoadingSearch = async () => {
+        if (state.continue && state.dataSource.length >= 10) {
+            setState({ ...state, loadingScrow: true });
 
-    const Item = ({ item }: { item: IConsultas; index: number }) => {
+            const PFSinaisVitais = await SearchPFSinaisVitais(
+                state.query,
+                state.page,
+            );
+
+            if (PFSinaisVitais && PFSinaisVitais?.length) {
+                setState((prevState) => {
+                    return {
+                        ...prevState,
+                        loadingScrow: false,
+                        dataSource: [
+                            ...prevState.dataSource,
+                            ...PFSinaisVitais,
+                        ],
+                        page: prevState.page + 1,
+                        continue: true,
+                    };
+                });
+            } else {
+                setState((prevState) => {
+                    return {
+                        ...prevState,
+                        loadingScrow: false,
+                        continue: false,
+                        page: 2,
+                    };
+                });
+            }
+        }
+    };
+
+    const Item = ({ item }: { item: IPFSinaisVitais; index: number }) => {
         return (
             <TouchableOpacity
                 onPress={() =>
@@ -49,30 +89,12 @@ const CardConsultasComponent: React.FC<Props> = ({
                         <Text
                             style={
                                 styles.text
-                            }>{`${item?.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
+                            }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
                     </View>
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Data Nascimento: </Text>
                         <Text style={styles.text}>
-                            {moment(item?.dT_NASCIMENTO).format('DD-MM-YYYY')}
-                        </Text>
-                    </View>
-                    <View style={styles.item}>
-                        <Text style={styles.textLabel}>Médico: </Text>
-                        <Text style={styles.text}>{item?.nM_GUERRA}</Text>
-                    </View>
-                    <View style={styles.item}>
-                        <Text style={styles.textLabel}>Especialidade: </Text>
-                        <Text style={styles.text}>
-                            {item?.dS_ESPECIALIDADE}
-                        </Text>
-                    </View>
-                    <View style={styles.item}>
-                        <Text style={styles.textLabel}>
-                            Horário da Agenda:{' '}
-                        </Text>
-                        <Text style={styles.text}>
-                            {moment(item?.dT_AGENDA).format('hh:mm')}
+                            {moment(item.dT_NASCIMENTO).format('DD-MM-YYYY')}
                         </Text>
                     </View>
                 </View>
@@ -84,7 +106,7 @@ const CardConsultasComponent: React.FC<Props> = ({
         item,
         index,
     }: {
-        item: IConsultas;
+        item: IPFSinaisVitais;
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
@@ -98,23 +120,36 @@ const CardConsultasComponent: React.FC<Props> = ({
         </CardSimples>
     );
 
+    const renderFooter = () => {
+        if (!state.loadingScrow) {
+            return null;
+        }
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size={'small'} color={'#08948A'} />
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
-            {dataSourceConsultas ? (
+            {dataSourcePFsinaisVitais ? (
                 <FlatList
-                    data={dataSourceConsultas}
+                    data={dataSourcePFsinaisVitais}
                     renderItem={({ item, index }) =>
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={refreshing}
-                    onRefresh={async () => {
+                    //refreshing={refreshing}
+                    /*  onRefresh={async () => {
                         setRefreshing(true);
-                        await GetConsultas();
-                        await GetMedicosConsultas();
+                        await GetConsultasQT();
                         setRefreshing(false);
-                    }}
+                    }} */
                     ListEmptyComponent={renderItemEmpty}
+                    onEndReached={LoadingSearch}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={renderFooter}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
@@ -126,7 +161,6 @@ const CardConsultasComponent: React.FC<Props> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        //backgroundColor: '#fff',
         marginTop: 10,
     },
     cardStyle: {
@@ -169,6 +203,11 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         margin: 3,
     },
+    loading: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#fff',
+    },
 });
 
-export default memo(CardConsultasComponent);
+export default memo(CardConsultasGerais);

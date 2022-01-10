@@ -9,7 +9,7 @@ export interface IstateConsultasQT {
 }
 export interface IconsultaQT {
     //DT_PREVISTA: string;
-    //DT_REAL: string;
+    dT_REAL: string;
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO: string;

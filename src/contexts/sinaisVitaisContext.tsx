@@ -23,7 +23,7 @@ import {
     IMedico,
     ConsultasAction,
 } from '../reducers/ConsultasReducer';
-import axios, { CancelTokenSource } from 'axios';
+import axios, { AxiosResponse, CancelTokenSource } from 'axios';
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
     stateConsultas: IstateConsultas;
@@ -32,6 +32,10 @@ interface AuthContextData {
     GetConsultas(filter?: IFilterConsultas): Promise<void>;
     GetMedicosConsultas(): Promise<void>;
     dispatchConsultas: React.Dispatch<ConsultasAction>;
+    SearchPFSinaisVitais(
+        nome: string,
+        page?: number,
+    ): Promise<IPFSinaisVitais[] | null>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -94,6 +98,18 @@ const sinaisVitaisDefault: SinaisVitais = {
     nM_USUARIO: '',
 };
 
+interface ResponsePFdados {
+    result: IPFSinaisVitais[];
+}
+export interface IPFSinaisVitais {
+    cD_PESSOA_FISICA: string;
+    dT_ATUALIZACAO: string;
+    dT_CADASTRO_ORIGINAL: string;
+    dT_NASCIMENTO: string;
+    iE_TIPO_PESSOA: number;
+    nM_PESSOA_FISICA: string;
+}
+
 const SinaisVitaisContext = createContext({} as AuthContextData);
 
 export const SinaisVitaisProvider: React.FC = ({ children }) => {
@@ -103,7 +119,8 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const { addAlert } = useContext(NotificationGlobalContext);
 
-    const axiosSource = useRef<CancelTokenSource | null>(null);
+    const axiosSourceConsultas = useRef<CancelTokenSource | null>(null);
+    const axiosSourcePFSinaisVitais = useRef<CancelTokenSource | null>(null);
 
     const [consultasQT, dispatchConsultasQT] = useReducer(
         ConsultasQTReducer,
@@ -185,13 +202,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     const GetConsultas = useCallback(
         async (filter?: IFilterConsultas) => {
             //Check if there are any previous pending requests
-            if (axiosSource != null) {
-                axiosSource.current?.cancel(
+            if (axiosSourceConsultas != null) {
+                axiosSourceConsultas.current?.cancel(
                     'Operação cancelada por uma nova requisição!',
                 );
             }
 
-            axiosSource.current = axios.CancelToken.source();
+            axiosSourceConsultas.current = axios.CancelToken.source();
 
             await Api.get(
                 `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
@@ -204,7 +221,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                         : ''
                 }`,
                 {
-                    cancelToken: axiosSource.current.token,
+                    cancelToken: axiosSourceConsultas.current.token,
                 },
             )
                 .then((response) => {
@@ -270,6 +287,48 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     }, []);
 
+    const SearchPFSinaisVitais = async (
+        query: string,
+        page?: number,
+    ): Promise<IPFSinaisVitais[] | null> => {
+        //Check if there are any previous pending requests
+        if (axiosSourcePFSinaisVitais != null) {
+            axiosSourcePFSinaisVitais.current?.cancel(
+                'Operação cancelada por uma nova requisição!',
+            );
+        }
+
+        axiosSourcePFSinaisVitais.current = axios.CancelToken.source();
+
+        const listPFsinaisVitais = await Api.get<
+            any,
+            AxiosResponse<ResponsePFdados>
+        >(
+            `PessoaFisica/FiltrarPFdadosReduzidos/${query}?${
+                page ? `pagina=${page}` : ''
+            }&rows=10`,
+            {
+                cancelToken: axiosSourcePFSinaisVitais.current.token,
+            },
+        )
+            .then((response) => {
+                const { result } = response.data;
+                return result;
+            })
+            .catch((error) => {
+                if (axios.isCancel(error)) {
+                    return null;
+                }
+                addAlert({
+                    message:
+                        'Não foi possivel realizar a consulta, tente mais tarde!',
+                    status: 'error',
+                });
+                return null;
+            });
+        return listPFsinaisVitais;
+    };
+
     /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
         Api.put<sinaisVitaisUpdate>(
@@ -310,6 +369,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 GetConsultas,
                 GetMedicosConsultas,
                 dispatchConsultas,
+                SearchPFSinaisVitais,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

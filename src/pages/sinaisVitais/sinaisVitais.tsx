@@ -17,6 +17,7 @@ import {
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
 import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais';
+import SinaisVitaisGerais from './sinaisVItaisGerais/sinaisVitaisGerais';
 import styles from './style';
 interface PagesSinaisVitais {
     Name: string;
@@ -33,6 +34,7 @@ const SinaisVitais: React.FC = () => {
     const refFlatlist = useRef<FlatList>(null);
     const refView1 = useRef<TouchableOpacity>(null);
     const refView2 = useRef<TouchableOpacity>(null);
+    const refView3 = useRef<TouchableOpacity>(null);
     const deviceWidth = useWindowDimensions();
     //const {getEvolucoesPepVinculados} = useContext(ExamesContext);
     const [pages] = useState<PagesSinaisVitais[]>([
@@ -41,6 +43,9 @@ const SinaisVitais: React.FC = () => {
         },
         {
             Name: 'Oncologia',
+        },
+        {
+            Name: 'Gerais',
         },
     ]);
     //const [refresh, setRefresh] = useState(false);
@@ -68,9 +73,17 @@ const SinaisVitais: React.FC = () => {
         if (index === 0) {
             refView1.current?.setNativeProps({ style: styles.btnSelected });
             refView2.current?.setNativeProps({ style: styles.btn });
-        } else {
+            refView3.current?.setNativeProps({ style: styles.btn });
+        }
+        if (index === 1) {
             refView1.current?.setNativeProps({ style: styles.btn });
             refView2.current?.setNativeProps({ style: styles.btnSelected });
+            refView3.current?.setNativeProps({ style: styles.btn });
+        }
+        if (index === 2) {
+            refView1.current?.setNativeProps({ style: styles.btn });
+            refView2.current?.setNativeProps({ style: styles.btn });
+            refView3.current?.setNativeProps({ style: styles.btnSelected });
         }
     }, []);
 
@@ -82,6 +95,7 @@ const SinaisVitais: React.FC = () => {
                 const { key } = changed[0];
                 key === 'Consultas' && selected(0);
                 key === 'Oncologia' && selected(1);
+                key === 'Gerais' && selected(2);
             }
         },
         [selected],
@@ -92,8 +106,14 @@ const SinaisVitais: React.FC = () => {
     }) => {
         if (Name === 'Consultas') {
             return <ConsultasSinaisVitais />;
-        } else {
+        }
+        if (Name === 'Oncologia') {
             return <OncologiaSinaisVitais />;
+        }
+        if (Name === 'Gerais') {
+            return <SinaisVitaisGerais />;
+        } else {
+            return null;
         }
     };
 
@@ -142,6 +162,12 @@ const SinaisVitais: React.FC = () => {
                     onPress={() => selected(1)}>
                     <Text style={styles.textBtn}>Oncologia</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    ref={refView3}
+                    style={styles.btn}
+                    onPress={() => selected(2)}>
+                    <Text style={styles.textBtn}>Gerais</Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.box2}>
                 <FlatList
@@ -150,11 +176,11 @@ const SinaisVitais: React.FC = () => {
                     keyExtractor={(item) => item.Name}
                     renderItem={renderPagesItem}
                     horizontal={true}
-                    pagingEnabled={true}
+                    //pagingEnabled={true}
                     showsHorizontalScrollIndicator={false}
                     onViewableItemsChanged={onViewableItemsChanged}
                     viewabilityConfig={viewabilityConfig.current}
-                    initialNumToRender={2}
+                    initialNumToRender={3}
                     ListEmptyComponent={EmptyComponent}
                     getItemLayout={getItemLayout}
                     //refreshing={refresh}
