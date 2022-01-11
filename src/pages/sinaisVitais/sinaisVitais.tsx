@@ -166,7 +166,7 @@ const SinaisVitais: React.FC = () => {
                     ref={refView3}
                     style={styles.btn}
                     onPress={() => selected(2)}>
-                    <Text style={styles.textBtn}>Gerais</Text>
+                    <Text style={styles.textBtn}>Geral</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.box2}>
