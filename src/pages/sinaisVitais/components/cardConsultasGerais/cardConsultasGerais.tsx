@@ -43,6 +43,10 @@ const CardConsultasGerais: React.FC<Props> = ({
                 state.page,
             );
 
+            if (PFSinaisVitais === undefined) {
+                return;
+            }
+
             if (PFSinaisVitais && PFSinaisVitais?.length) {
                 setState((prevState) => {
                     return {
@@ -148,7 +152,7 @@ const CardConsultasGerais: React.FC<Props> = ({
                     }} */
                     ListEmptyComponent={renderItemEmpty}
                     onEndReached={LoadingSearch}
-                    onEndReachedThreshold={0.5}
+                    onEndReachedThreshold={0.3}
                     ListFooterComponent={renderFooter}
                 />
             ) : (
@@ -204,6 +208,7 @@ const styles = StyleSheet.create({
         margin: 3,
     },
     loading: {
+        margin: 10,
         width: '100%',
         height: '100%',
         backgroundColor: '#fff',

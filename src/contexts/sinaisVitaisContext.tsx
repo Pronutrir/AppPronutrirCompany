@@ -35,7 +35,7 @@ interface AuthContextData {
     SearchPFSinaisVitais(
         nome: string,
         page?: number,
-    ): Promise<IPFSinaisVitais[] | null>;
+    ): Promise<IPFSinaisVitais[] | null | undefined>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -290,7 +290,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     const SearchPFSinaisVitais = async (
         query: string,
         page?: number,
-    ): Promise<IPFSinaisVitais[] | null> => {
+    ): Promise<IPFSinaisVitais[] | null | undefined> => {
         //Check if there are any previous pending requests
         if (axiosSourcePFSinaisVitais != null) {
             axiosSourcePFSinaisVitais.current?.cancel(
@@ -317,7 +317,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             })
             .catch((error) => {
                 if (axios.isCancel(error)) {
-                    return null;
+                    return;
                 }
                 addAlert({
                     message:

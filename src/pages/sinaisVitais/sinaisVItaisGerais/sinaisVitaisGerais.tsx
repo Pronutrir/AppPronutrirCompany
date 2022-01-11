@@ -53,13 +53,15 @@ const SinaisVitaisGerais = () => {
                 };
             });
         } else {
-            setState((prevState) => {
-                return {
-                    ...prevState,
-                    spinnerVisibility: false,
-                    dataSource: [],
-                };
-            });
+            if (PFSinaisVitais === null) {
+                setState((prevState) => {
+                    return {
+                        ...prevState,
+                        spinnerVisibility: false,
+                        dataSource: [],
+                    };
+                });
+            }
         }
     };
 
