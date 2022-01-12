@@ -84,6 +84,8 @@ const MyCarousel = () => {
                 hasParallaxImages={true}
                 autoplay={true}
                 enableMomentum={false}
+                lockScrollWhileSnapping={true}
+                loop={true}
             />
             {
                 post &&
