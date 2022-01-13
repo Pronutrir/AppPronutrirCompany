@@ -15,6 +15,7 @@
 		2472EA89513F9497CE86D9FC /* libPods-AppPronutrirCompany-AppPronutrirCompanyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3274BBDF09B4A5F48B542389 /* libPods-AppPronutrirCompany-AppPronutrirCompanyTests.a */; };
 		5855BA1C268E006D009D6551 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5855BA1B268E006D009D6551 /* NotificationService.swift */; };
 		5855BA20268E006D009D6551 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5855BA19268E006D009D6551 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		586D6E41279061FA00843EE0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586D6E40279061FA00843EE0 /* File.swift */; };
 		58C07148267A8C980035F227 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58C07147267A8C980035F227 /* GoogleService-Info.plist */; };
 		73B5555B2840B51ADEAB4AB2 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D3FB0A4855DF2A29D0CDAA7 /* libPods-OneSignalNotificationServiceExtension.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -70,6 +71,8 @@
 		5855BA1B268E006D009D6551 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		5855BA1D268E006D009D6551 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5855BA25268E067B009D6551 /* OneSignalNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneSignalNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
+		586D6E3F279061FA00843EE0 /* AppPronutrirCompany-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppPronutrirCompany-Bridging-Header.h"; sourceTree = "<group>"; };
+		586D6E40279061FA00843EE0 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		58C07147267A8C980035F227 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6D3FB0A4855DF2A29D0CDAA7 /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AppPronutrirCompany/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -183,6 +186,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				586D6E40279061FA00843EE0 /* File.swift */,
 				58C07147267A8C980035F227 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* AppPronutrirCompany */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -191,6 +195,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				7AAF3C1DBFADD5201D6D68C2 /* Pods */,
+				586D6E3F279061FA00843EE0 /* AppPronutrirCompany-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -288,7 +293,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1220;
 					};
 					5855BA18268E006D009D6551 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -539,6 +544,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				586D6E41279061FA00843EE0 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -571,6 +577,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4B3926BDBC1B06AE10BFA23B /* Pods-AppPronutrirCompany-AppPronutrirCompanyTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -598,6 +605,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 025838ABBC82F4D44D80A61A /* Pods-AppPronutrirCompany-AppPronutrirCompanyTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = AppPronutrirCompanyTests/Info.plist;
@@ -641,6 +649,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.AppPronutrirCompany;
 				PRODUCT_NAME = AppPronutrirCompany;
+				SWIFT_OBJC_BRIDGING_HEADER = "AppPronutrirCompany-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -669,6 +678,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.AppPronutrirCompany;
 				PRODUCT_NAME = AppPronutrirCompany;
+				SWIFT_OBJC_BRIDGING_HEADER = "AppPronutrirCompany-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

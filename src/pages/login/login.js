@@ -12,11 +12,10 @@ import firestore from '@react-native-firebase/firestore';
 import AuthContext from '../../contexts/auth';
 import VisaoPassword from '../../componentes/visaoPassword';
 import Notification from '../../componentes/Notification';
-import ErrorContext from '../../contexts/errorNotification';
-
+import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 export default function login({ navigation }) {
 
-    const { addNotification } = useContext(ErrorContext);
+    const { addAlert } = useContext(NotificationGlobalContext);
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);
@@ -94,31 +93,31 @@ export default function login({ navigation }) {
             if (code) {
                 switch (code) {
                     case 'auth/invalid-email':
-                        addNotification({ message: "Formato Inválido de E-mail!", status: 'error' });
+                        addAlert({ message: "Formato Inválido de E-mail!", status: 'error' });
                         break;
                     case 'auth/user-not-found':
-                        addNotification({ message: "Usuário não encontrado!", status: 'error' });
+                        addAlert({ message: "Usuário não encontrado!", status: 'error' });
                         break;
                     case 'auth/wrong-password':
-                        addNotification({ message: "A senha é inválida!", status: 'error' });
+                        addAlert({ message: "A senha é inválida!", status: 'error' });
                         break;
                     case 'auth/network-request-failed':
-                        addNotification({ message: "Verifique sua conexão com a Internet!", status: 'error' });
+                        addAlert({ message: "Verifique sua conexão com a Internet!", status: 'error' });
                         break;
                     case 'auth/too-many-requests':
-                        addNotification({ message: "Aguarde!, muitas tentativas de acesso!", status: 'error' });
+                        addAlert({ message: "Aguarde!, muitas tentativas de acesso!", status: 'error' });
                         break;
                     case 'auth/email-already-in-use':
-                        addNotification({ message: "Email já está sendo utilizado!", status: 'error' });
+                        addAlert({ message: "Email já está sendo utilizado!", status: 'error' });
                         break;
                     default:
-                        addNotification({ message: error.code, status: 'error' });
+                        addAlert({ message: error.code, status: 'error' });
                         break;
                 }
             } else {
                 switch (message) {
                     default:
-                        addNotification({ message: error.message, status: 'error' });
+                        addAlert({ message: error.message, status: 'error' });
                         break;
                 }
             }

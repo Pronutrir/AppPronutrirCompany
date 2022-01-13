@@ -5,8 +5,8 @@ import React, {
     useRef,
     memo,
 } from 'react';
-import {StyleSheet, Text, View, Modal, Platform} from 'react-native';
-import {RFPercentage, RFValue} from 'react-native-responsive-fontsize';
+import { StyleSheet, Text, View, Modal, Platform } from 'react-native';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import BtnOptions from '../../components/buttons/BtnOptions';
 
 interface Notification {
@@ -21,7 +21,7 @@ export interface ModalHandles {
 }
 
 const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
-    ({message, onpress}: Notification, ref) => {
+    ({ message, onpress }: Notification, ref) => {
         const [active, setActive] = useState(false);
         const _view = useRef<any>(null);
 

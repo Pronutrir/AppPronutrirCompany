@@ -25,7 +25,7 @@ const NotificationCentralized: React.FC = () => {
             <Modal
                 animationType="fade"
                 transparent={true}
-                visible={!!notification}>
+                visible={Boolean(notification)}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <View style={styles.box}>

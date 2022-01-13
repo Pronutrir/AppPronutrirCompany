@@ -13,11 +13,11 @@ import * as Yup from 'yup';
 import firestore from '@react-native-firebase/firestore';
 import { Pressable } from 'react-native';
 import Notification from '../../componentes/Notification';
-import ErrorContext from '../../contexts/errorNotification';
+import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 
 export default function consultaCpf({ navigation }) {
 
-    const { addNotification } = useContext(ErrorContext);
+    const { addAlert, addNotification } = useContext(NotificationGlobalContext);
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const [modalActive, setModalActive] = useState(false);
     const [modalNotification, setModalNotification] = useState({
@@ -52,6 +52,7 @@ export default function consultaCpf({ navigation }) {
     const validacaoUsuario = async (values) => {
         let _Cpf = values.CPF.replace(/[.-]/g, "")
         setModalActive(true);
+
         try {
 
             let updateTasy = null;
@@ -61,6 +62,12 @@ export default function consultaCpf({ navigation }) {
 
             // consulta o cpf do cliente na api tasy
             const dadosTasy = await getCpf(_Cpf);
+
+            if(!dadosTasy){
+                setModalActive(false);
+                addAlert({ message: "Usuário não encontrado!", status: 'error' });
+                return;
+            }
 
             if (dadosTasy && dadosTasy.iE_FUNCIONARIO === "S") {
                 //guarda os dados do cliente no reducer
@@ -76,7 +83,7 @@ export default function consultaCpf({ navigation }) {
                 }
             } else {
                 setModalActive(false);
-                addNotification({ message: "Acesso disponível somente para funcionários!", status: 'error' });
+                addAlert({ message: "Acesso disponível somente para funcionários!", status: 'error' });
             }
 
         } catch (error) {

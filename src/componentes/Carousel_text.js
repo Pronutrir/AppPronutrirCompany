@@ -11,13 +11,13 @@ import {
 import MyModal from './MyModal';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import ErrorContext from '../contexts/errorNotification'; 
+import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function Carousel_text() {
 
-    const { addError } = useContext(ErrorContext);
+    const { addNotification } = useContext(NotificationGlobalContext);
     const [post, setPost] = useState(null);
     const [modalActive, setModalActive] = useState(false);
     const carouselRef = useRef(null);
@@ -39,7 +39,7 @@ export default function Carousel_text() {
                 setImagens(result);
             })
         }).catch(error => {
-            addError(`Não foi possivel acessar os posts do instram tente mais tarde! - ${error.message}`);
+            addNotification(`Não foi possivel acessar os posts do instram tente mais tarde! - ${error.message}`);
         })
     }
 

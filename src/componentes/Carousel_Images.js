@@ -12,13 +12,13 @@ import {
 
 import MyModal from './MyModal';
 import Api from '../services/api';
-import ErrorContext from '../contexts/errorNotification';
+import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 
 const { width: screenWidth } = Dimensions.get('screen');
 
 const MyCarousel = () => {
 
-    const { addError } = useContext(ErrorContext);
+    const { addNotification } = useContext(NotificationGlobalContext);
     const windowWidth = useWindowDimensions().width;
     const windowHeight = useWindowDimensions().height;
 
@@ -47,7 +47,7 @@ const MyCarousel = () => {
                 setPostagensInsta(data.filter(item => filterPostagens(item)));
             }
         }).catch(error =>{
-            addError(`Não foi possivel acessar os posts do instram tente mais tarde! - ${error.message}`);
+            addNotification(`Não foi possivel acessar os posts do instram tente mais tarde! - ${error.message}`);
         })
     }
 

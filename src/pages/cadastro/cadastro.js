@@ -13,7 +13,7 @@ import {
 import Api from '../../services/api';
 import { valicacaoCPF } from '../../services/validacaoCpf';
 import AuthContext from '../../contexts/auth';
-import ErrorContext from '../../contexts/errorNotification';
+import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 import { TextInputMask } from 'react-native-masked-text';
 import Loading from '../../components/Loading/Loading';
 import styles from './style';
@@ -30,7 +30,7 @@ import moment from 'moment';
 
 export default function cadastro({ navigation }) {
 
-    const { addError } = useContext(ErrorContext);
+    const { addNotification } = useContext(NotificationGlobalContext);
     const { stateAuth, token } = useContext(AuthContext);
     const [modalActive, setModalActive] = useState(false);
     const [msnModal, setMsnModal] = useState();

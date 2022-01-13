@@ -12,11 +12,11 @@ import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
 import moment from 'moment';
 import Api from '../../services/api';
-import ErrorContext from '../../contexts/errorNotification';
+import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 
 const EndSinaisVitais: React.FC = ({}) => {
-    const { addNotification } = useContext(ErrorContext);
+    const { addNotification } = useContext(NotificationGlobalContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [listSinaisVitais, setListSinaisVitais] = useState<
         sinaisVitais[] | null

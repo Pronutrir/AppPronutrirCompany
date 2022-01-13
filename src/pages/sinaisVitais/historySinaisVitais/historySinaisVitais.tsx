@@ -24,7 +24,7 @@ import EditarSvg from '../../../assets/svg/editar.svg';
 import ExcluirSvg from '../../../assets/svg/excluir.svg';
 import DisabledSvg from '../../../assets/svg/disable.svg';
 import AuthContext from '../../../contexts/auth';
-import ErrorContext from '../../../contexts/errorNotification';
+import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
 import Loading from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
@@ -85,7 +85,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
     const {
         stateAuth: { usertasy },
     } = useContext(AuthContext);
-    const { addNotification } = useContext(ErrorContext);
+    const { addNotification } = useContext(NotificationGlobalContext);
     const selected: PessoaSelected = route.params;
     const [listSinaisVitais, setListSinaisVitais] = useState<
         sinaisVitais[] | null

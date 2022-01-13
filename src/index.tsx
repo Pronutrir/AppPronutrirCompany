@@ -5,6 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
 import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';
 import { SinaisVitaisProvider } from './contexts/sinaisVitaisContext';
+import NotificationAlert from './components/Notification/NotificationAlert';
+import NotificationCentralized from './components/Notification/NotificationCentralized';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
@@ -67,6 +69,8 @@ const Index: React.FC = () => {
                 <AuthProvider>
                     <SinaisVitaisProvider>
                         <Routes />
+                        <NotificationCentralized />
+                        <NotificationAlert />
                     </SinaisVitaisProvider>
                 </AuthProvider>
             </NotificationGlobalProvider>
