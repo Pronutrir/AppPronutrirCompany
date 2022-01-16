@@ -6,11 +6,15 @@ platform :ios, '11.0'
 target 'AppPronutrirCompany' do
   config = use_native_modules!
 
+  #use_frameworks!
+
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
     :hermes_enabled => true
   )
+
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
 
   target 'AppPronutrirCompanyTests' do
     inherit! :complete
@@ -25,6 +29,7 @@ target 'AppPronutrirCompany' do
 
   #post_install do |installer|
   #  react_native_post_install(installer)
+  #  __apply_Xcode_12_5_M1_post_install_workaround(installer)
   #end
 end
 
