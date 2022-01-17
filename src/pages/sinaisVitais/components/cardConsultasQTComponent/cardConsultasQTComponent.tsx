@@ -56,7 +56,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Hora da agenda: </Text>
                         <Text style={styles.text}>
-                            {moment(item.dT_REAL).format('hh:mm')}
+                            {moment(item.dT_REAL).format('HH:mm')}
                         </Text>
                     </View>
                 </View>

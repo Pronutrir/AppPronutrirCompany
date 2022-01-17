@@ -72,7 +72,7 @@ const CardConsultasComponent: React.FC<Props> = ({
                             Horário da Agenda:{' '}
                         </Text>
                         <Text style={styles.text}>
-                            {moment(item?.dT_AGENDA).format('hh:mm')}
+                            {moment(item?.dT_AGENDA).format('HH:mm')}
                         </Text>
                     </View>
                 </View>
