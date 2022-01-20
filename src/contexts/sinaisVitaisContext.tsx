@@ -36,6 +36,7 @@ interface AuthContextData {
         nome: string,
         page?: number,
     ): Promise<IPFSinaisVitais[] | null | undefined>;
+    GetSinaisVitais(nR_SEQUENCIA: number,): Promise<SinaisVitais | null | undefined>
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -100,6 +101,10 @@ const sinaisVitaisDefault: SinaisVitais = {
 
 interface ResponsePFdados {
     result: IPFSinaisVitais[];
+}
+
+interface ResponseSVMG {
+    result: SinaisVitais;
 }
 export interface IPFSinaisVitais {
     cD_PESSOA_FISICA: string;
@@ -213,7 +218,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             await Api.get(
                 `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
                     'YYYY-MM-DD',
-                )},${moment().format('YYYY-MM-DD')}?pagina=1${
+                )},${moment().format('YYYY-MM-DD')}?pagina=1&statusAgenda=N${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
                 }${
                     filter?.dS_ESPECIALIDADE
@@ -329,6 +334,34 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         return listPFsinaisVitais;
     };
 
+    const GetSinaisVitais = async (
+        nR_SEQUENCIA: number,
+    ): Promise<SinaisVitais | null | undefined> => {
+        return Api.get<any, AxiosResponse<ResponseSVMG>>(
+            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${nR_SEQUENCIA}`,
+        )
+            .then((response) => {
+                const { result } = response.data;
+                if(result){
+                    return result;
+                }else{
+                    addAlert({
+                        message:
+                            'Paciente não possui sinais vitais cadastrados!',
+                        status: 'info',
+                    });
+                }
+            })
+            .catch(() => {
+                addAlert({
+                    message:
+                        'Não foi possivel consultar os sinais vitais, tente mais tarde!',
+                    status: 'error',
+                });
+                return null;
+            });
+    };
+
     /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
         setActiveModal(true);
         Api.put<sinaisVitaisUpdate>(
@@ -370,6 +403,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 GetMedicosConsultas,
                 dispatchConsultas,
                 SearchPFSinaisVitais,
+                GetSinaisVitais,
             }}>
             {children}
         </SinaisVitaisContext.Provider>
