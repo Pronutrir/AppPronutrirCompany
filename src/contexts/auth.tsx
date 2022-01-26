@@ -51,7 +51,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         return Api.post('Auth/login', credenciais_Mobile)
             .then((response) => {
                 const { token } = response.data;
-                console.log(token);
+                //console.log(token);
                 Api.defaults.headers.common.Authorization = `Bearer ${token}`;
                 return token;
             })

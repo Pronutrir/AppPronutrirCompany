@@ -213,12 +213,14 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 );
             }
 
+            console.log(filter);
+
             axiosSourceConsultas.current = axios.CancelToken.source();
 
             await Api.get(
                 `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
                     'YYYY-MM-DD',
-                )},${moment().format('YYYY-MM-DD')}?pagina=1&statusAgenda=N${
+                )},${moment().format('YYYY-MM-DD')}?pagina=1&semStatusAgenda='C'${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
                 }${
                     filter?.dS_ESPECIALIDADE

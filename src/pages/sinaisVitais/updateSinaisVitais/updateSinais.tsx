@@ -62,7 +62,6 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
     };
 
     useEffect(() => {
-        console.log(route.params.consultaQt.cD_PESSOA_FISICA)
         GetSinaisVitais(route.params.consultaQt.cD_PESSOA_FISICA)
             .then((response) => {
                 if (response?.qT_ALTURA_CM) {
