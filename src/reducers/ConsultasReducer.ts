@@ -26,7 +26,7 @@ export interface IConsultas {
     nM_GUERRA?: string;
     nR_TELEFONE?: string;
     nR_TELEFONE_CELULAR?: string;
-    dT_AGENDA?: string;
+    dT_AGENDA: string;
     nR_MINUTO_DURACAO?: number;
     iE_STATUS_AGENDA?: string;
     iE_CLASSIF_AGENDA?: string;

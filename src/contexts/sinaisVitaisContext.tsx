@@ -36,7 +36,9 @@ interface AuthContextData {
         nome: string,
         page?: number,
     ): Promise<IPFSinaisVitais[] | null | undefined>;
-    GetSinaisVitais(nR_SEQUENCIA: number,): Promise<SinaisVitais | null | undefined>
+    GetSinaisVitais(
+        nR_SEQUENCIA: number,
+    ): Promise<SinaisVitais | null | undefined>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -184,6 +186,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .then((response) => {
                 const { result }: { result: IconsultaQT[] } = response.data;
                 if (result) {
+                    const _result = result.sort((a, b) => {
+                        return a.dT_REAL < b.dT_REAL
+                            ? -1
+                            : a.dT_REAL > b.dT_REAL
+                            ? 1
+                            : 0;
+                    })
                     dispatchConsultasQT({
                         type: 'setConsultasQT',
                         payload: { flagQT: true, consultasQT: result },
@@ -213,14 +222,14 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 );
             }
 
-            console.log(filter);
-
             axiosSourceConsultas.current = axios.CancelToken.source();
 
             await Api.get(
                 `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
                     'YYYY-MM-DD',
-                )},${moment().format('YYYY-MM-DD')}?pagina=1&semStatusAgenda='C'${
+                )},${moment().format(
+                    'YYYY-MM-DD',
+                )}?pagina=1&semStatusAgenda='C'${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
                 }${
                     filter?.dS_ESPECIALIDADE
@@ -234,11 +243,18 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 .then((response) => {
                     const { result }: { result: IConsultas[] } = response.data;
                     if (result) {
+                        const _result = result.sort((a, b) => {
+                            return a.dT_AGENDA < b.dT_AGENDA
+                                ? -1
+                                : a.dT_AGENDA > b.dT_AGENDA
+                                ? 1
+                                : 0;
+                        })
                         dispatchConsultas({
                             type: 'setConsultas',
                             payload: {
                                 flag: true,
-                                consultas: result,
+                                consultas: _result,
                             },
                         });
                     }
@@ -344,9 +360,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         )
             .then((response) => {
                 const { result } = response.data;
-                if(result){
+                if (result) {
                     return result;
-                }else{
+                } else {
                     addAlert({
                         message:
                             'Paciente não possui sinais vitais cadastrados!',

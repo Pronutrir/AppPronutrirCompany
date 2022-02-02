@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import Carousel from '../../componentes/Carousel_Images';
+import CarouselInstagram from '../../components/carrosel/Carousel_Instagram';
 import styles from './style';
 import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
@@ -23,7 +23,7 @@ export default function dashBoard({ navigation }) {
                     <View style={styles.boxPost}>
                         <Text style={styles.textPost}> Nossas Postagens </Text>
                     </View>
-                    <Carousel />
+                    <CarouselInstagram />
                 </View>
                 <View style={styles.box2}>
                     <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("SinaisVitais")}>

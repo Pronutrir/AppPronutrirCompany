@@ -1,61 +1,74 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
+import Carousel, { ParallaxImage, AdditionalParallaxProps } from 'react-native-snap-carousel';
 import {
     View,
     Dimensions,
     StyleSheet,
     TouchableOpacity,
     Platform,
+    ListRenderItem
 } from 'react-native';
 
-import storage from '@react-native-firebase/storage';
+import storage, { FirebaseStorageTypes } from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import NotificationGlobalContext from '../contexts/notificationGlobalContext';
+import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-export default function Carousel_text() {
+interface ImagensFirebase {
+    title: string;
+    UrlImg: string;
+}
+
+const Carousel_text: React.FC = () => {
 
     const { addNotification } = useContext(NotificationGlobalContext);
     const [post, setPost] = useState(null);
     const [modalActive, setModalActive] = useState(false);
     const carouselRef = useRef(null);
-    const [imagens, setImagens] = useState([]);
-    const [postagens, setPostagens] = useState([]);
+    const [imagens, setImagens] = useState<ImagensFirebase[]>([]);
+    //const [postagens, setPostagens] = useState([]);
 
-    const getImgUrl = async (item) => {
+    const getImgUrl = async (item: any) => {
         const url = await storage().ref(item).getDownloadURL();
         return { title: item, UrlImg: url };
     }
 
-    const getImagens = async (ListItem) => {
-        return Promise.all(ListItem.map(async item => { return getImgUrl(item.fullPath) }))
+    const getImagens = async (ListItem: FirebaseStorageTypes.Reference[]) => {
+        return Promise.all(ListItem.map(async item => { return getImgUrl(item.fullPath)}))
     }
 
-    const listFilesAndDirectories = async (reference, pageToken) => {
-        storage().ref('postagemInicial').list({ pageToken }).then(result => {
+    const listFilesAndDirectories = async () => {
+        storage().ref('postagemInicial').list().then(result => {
             getImagens(result.items).then(result => {
                 setImagens(result);
             })
-        }).catch(error => {
-            addNotification(`Não foi possivel acessar os posts do instram tente mais tarde! - ${error.message}`);
+        }).catch(() => {
+            addNotification({
+                message:
+                    'Não foi possivel acessar os posts do instram tente mais tarde!',
+                status: 'error',
+            });
         })
     }
 
-    async function getPostagens() {
+    /* async function getPostagens() {
         firestore().collection('Postagens').get().then(querySnapshot => {
             querySnapshot.forEach(documentSnapshot => {
                 setPostagens(itens => [...itens, { post: documentSnapshot.id, item: documentSnapshot.data() }])
             })
         });
-    }
+    } */
 
     useEffect(() => {
-        getPostagens();
+        //getPostagens();
         listFilesAndDirectories();
     }, []);
 
-    const renderItem = ({ item, index }, parallaxProps) => {
+    const renderItem: ListRenderItem<any> = (
+        { item },
+        parallaxProps?: AdditionalParallaxProps,
+    ) => {
         return (
             <TouchableOpacity style={styles.item}>
                 <ParallaxImage
@@ -89,6 +102,8 @@ export default function Carousel_text() {
         </View>
     );
 }
+
+export default Carousel_text;
 
 const styles = StyleSheet.create({
     container: {

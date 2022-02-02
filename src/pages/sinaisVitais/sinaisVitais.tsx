@@ -42,7 +42,7 @@ const SinaisVitais: React.FC = () => {
             Name: 'Consultas',
         },
         {
-            Name: 'Oncologia',
+            Name: 'Tratamento',
         },
         {
             Name: 'Gerais',
@@ -94,7 +94,7 @@ const SinaisVitais: React.FC = () => {
             if (viewableItem) {
                 const { key } = changed[0];
                 key === 'Consultas' && selected(0);
-                key === 'Oncologia' && selected(1);
+                key === 'Tratamento' && selected(1);
                 key === 'Gerais' && selected(2);
             }
         },
@@ -107,7 +107,7 @@ const SinaisVitais: React.FC = () => {
         if (Name === 'Consultas') {
             return <ConsultasSinaisVitais />;
         }
-        if (Name === 'Oncologia') {
+        if (Name === 'Tratamento') {
             return <OncologiaSinaisVitais />;
         }
         if (Name === 'Gerais') {
@@ -160,7 +160,7 @@ const SinaisVitais: React.FC = () => {
                     ref={refView2}
                     style={styles.btn}
                     onPress={() => selected(1)}>
-                    <Text style={styles.textBtn}>Oncologia</Text>
+                    <Text style={styles.textBtn}>Tratamento</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     ref={refView3}

@@ -67,6 +67,7 @@ const IncrementDecrement: React.FC<Props> = ({
             setRangerValue(_value);
         } else {
             setRangerValue(0);
+            setInputValue('0');
         }
     }, []);
 
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     valueInput: {
-        width: Dimensions.get('screen').width / 7,
+        width: Dimensions.get('screen').width / 6,
         fontSize: RFValue(20, 680),
         textAlign: 'center',
         color: '#7C9292',
