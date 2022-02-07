@@ -235,7 +235,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     filter?.dS_ESPECIALIDADE
                         ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
                         : ''
-                }`,
+                }&codEstabelecimento=7`,
                 {
                     cancelToken: axiosSourceConsultas.current.token,
                 },
