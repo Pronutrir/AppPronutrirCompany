@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         margin: 3,
+        backgroundColor: 'red',
     },
     box2: {
         flex: 5,

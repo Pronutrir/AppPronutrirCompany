@@ -60,11 +60,12 @@ const IncrementDecrement: React.FC<Props> = ({
     };
 
     const setValue = useCallback((value: string) => {
-        if (value) {
+        if (value && value !== "0") {
             var _value: number = parseFloat(value);
             _value = _value < min ? min : _value;
             _value = _value > max ? max : _value;
             setRangerValue(_value);
+            setInputValue(_value.toString());
         } else {
             setRangerValue(0);
             setInputValue('0');
@@ -72,6 +73,7 @@ const IncrementDecrement: React.FC<Props> = ({
     }, []);
 
     useEffect(() => {
+
         setInputValue(RangerValue.toString());
     }, [RangerValue]);
 
@@ -113,7 +115,8 @@ const IncrementDecrement: React.FC<Props> = ({
                 style={styles.valueInput}
                 onChangeText={(text, rawText) => setInputValue(text)}
                 onBlur={() => setValue(inputValue.toString())}
-                //onEndEditing={(event) => setValue(event.nativeEvent.text)}
+                returnKeyType='next'
+                selectTextOnFocus={true}
             />
 
             <Text style={styles.text}>{medida && medida}</Text>
@@ -123,10 +126,6 @@ const IncrementDecrement: React.FC<Props> = ({
         </View>
     );
 };
-
-{
-    /* {Number.isInteger(RangerValue) ? RangerValue : RangerValue.toFixed(1)} */
-}
 
 const styles = StyleSheet.create({
     Container: {
