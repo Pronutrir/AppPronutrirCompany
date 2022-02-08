@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import styles from './style';
 import CardConsultasComponent from '../components/cardConsultasComponent/cardConsultasComponent';
@@ -98,6 +98,19 @@ const ConsultasSinaisVitais: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        if (consultas?.length === 0 && !flag) {
+            GetConsultas({
+                nM_GUERRA: selectFilter.current.nM_GUERRA
+                    ? selectFilter.current.nM_GUERRA
+                    : null,
+                dS_ESPECIALIDADE: selectFilter.current.dS_ESPECIALIDADE
+                    ? selectFilter.current.dS_ESPECIALIDADE
+                    : null,
+            });
+        }
+    }, [GetConsultas, consultas, flag]);
+
     return (
         <View style={styles.container}>
             <FilterConsultasComponent
@@ -106,6 +119,7 @@ const ConsultasSinaisVitais: React.FC = () => {
             />
             <CardConsultasComponent
                 dataSourceConsultas={flag ? consultas : null}
+                selectFilter={selectFilter}
             />
             <ModalBottom
                 activeModal={activeModal}

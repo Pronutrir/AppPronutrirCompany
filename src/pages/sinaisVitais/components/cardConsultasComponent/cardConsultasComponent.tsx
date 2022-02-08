@@ -13,15 +13,16 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 
 interface Props {
     dataSourceConsultas?: IConsultas[] | null;
+    selectFilter: React.MutableRefObject<IFilterConsultas>;
 }
 
 const CardConsultasComponent: React.FC<Props> = ({
-    dataSourceConsultas,
+    dataSourceConsultas, selectFilter
 }: Props) => {
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -98,7 +99,7 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const renderItemEmpty = () => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
+            <Text style={styles.text}>Nenhum consulta encontrada!</Text>
         </CardSimples>
     );
 
@@ -114,7 +115,14 @@ const CardConsultasComponent: React.FC<Props> = ({
                     refreshing={refreshing}
                     onRefresh={async () => {
                         setRefreshing(true);
-                        await GetConsultas();
+                        await GetConsultas({
+                            nM_GUERRA: selectFilter.current.nM_GUERRA
+                                ? selectFilter.current.nM_GUERRA
+                                : null,
+                            dS_ESPECIALIDADE: selectFilter.current.dS_ESPECIALIDADE
+                                ? selectFilter.current.dS_ESPECIALIDADE
+                                : null,
+                        });
                         await GetMedicosConsultas();
                         setRefreshing(false);
                     }}

@@ -48,7 +48,6 @@ const SinaisVitais: React.FC = () => {
             Name: 'Gerais',
         },
     ]);
-    //const [refresh, setRefresh] = useState(false);
 
     const getItemLayout = (data: any, index: any) => {
         return {
@@ -126,12 +125,6 @@ const SinaisVitais: React.FC = () => {
     );
 
     useEffect(() => {
-        if (consultas?.length === 0 && !flag) {
-            GetConsultas();
-        }
-    }, [GetConsultas, consultas, consultasQT, flag, flagQT]);
-
-    useEffect(() => {
         if (consultasQT.length === 0 && !flagQT) {
             GetConsultasQT();
         }
@@ -141,7 +134,7 @@ const SinaisVitais: React.FC = () => {
         if (medicos?.length === 0 && !flag) {
             GetMedicosConsultas();
         }
-    }, [GetMedicosConsultas, medicos, consultasQT, flag, flagQT]);
+    }, [GetMedicosConsultas, medicos, flag]);
 
     useEffect(() => {
         selected(0);
