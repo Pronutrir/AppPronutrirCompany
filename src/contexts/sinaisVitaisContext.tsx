@@ -4,6 +4,7 @@ import React, {
     useContext,
     useReducer,
     useRef,
+    useEffect
 } from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';
@@ -39,6 +40,7 @@ interface AuthContextData {
     GetSinaisVitais(
         nR_SEQUENCIA: number,
     ): Promise<SinaisVitais | null | undefined>;
+    GetAllSinaisVitais(): Promise<void>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -108,6 +110,10 @@ interface ResponsePFdados {
 interface ResponseSVMG {
     result: SinaisVitais;
 }
+
+interface ResponseSVMGAll {
+    result: SinaisVitais[];
+}
 export interface IPFSinaisVitais {
     cD_PESSOA_FISICA: string;
     dT_ATUALIZACAO: string;
@@ -166,6 +172,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     message: 'Dados atualizados com sucesso!',
                     status: 'sucess',
                 });
+                GetAllSinaisVitais();
             })
             .catch(() => {
                 addAlert({
@@ -192,7 +199,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                             : a.dT_REAL > b.dT_REAL
                             ? 1
                             : 0;
-                    })
+                    });
                     dispatchConsultasQT({
                         type: 'setConsultasQT',
                         payload: { flagQT: true, consultasQT: result },
@@ -249,7 +256,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                                 : a.dT_AGENDA > b.dT_AGENDA
                                 ? 1
                                 : 0;
-                        })
+                        });
                         dispatchConsultas({
                             type: 'setConsultas',
                             payload: {
@@ -380,35 +387,37 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
-    /* const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
-        setActiveModal(true);
-        Api.put<sinaisVitaisUpdate>(
-            `SinaisVitaisMonitoracaoGeral/PutSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
-            {
-                nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO,
-                cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
-                qT_TEMP: sinaisUpdate.qT_TEMP,
-                qT_PESO: sinaisUpdate.qT_PESO,
-                qT_SATURACAO_O2: sinaisUpdate.qT_SATURACAO_O2,
-                qT_ALTURA_CM: sinaisUpdate.qT_ALTURA_CM,
-            },
+    const GetAllSinaisVitais = async (): Promise<void> => {
+        Api.get(
+            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
+                'YYYY-MM-DD',
+            )},${moment().format('YYYY-MM-DD')}`,
         )
-            .then(() => {
-                setActiveModal(false);
-                //Onclean();
-                addNotification({
-                    message: 'Dados atualizados com sucesso!',
-                    status: 'sucess',
-                });
+            .then((response) => {
+                const { result } = response.data;
+                if (result) {
+                    dispatchConsultas({ type: 'setSinaisVitais', payload: result });
+                } else {
+                    addAlert({
+                        message:
+                            'Não foi possivel consultar os sinais vitais, tente mais tarde!',
+                        status: 'info',
+                    });
+                }
             })
             .catch(() => {
-                setActiveModal(false);
-                addNotification({
-                    message: 'Não foi possivel atualizar tente mais tarde!',
+                addAlert({
+                    message:
+                        'Não foi possivel consultar os sinais vitais, tente mais tarde!',
                     status: 'error',
                 });
+                return null;
             });
-    }; */
+    };
+
+    useEffect(() => {
+        GetAllSinaisVitais();
+    }, []);
 
     return (
         <SinaisVitaisContext.Provider
@@ -422,6 +431,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 dispatchConsultas,
                 SearchPFSinaisVitais,
                 GetSinaisVitais,
+                GetAllSinaisVitais,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

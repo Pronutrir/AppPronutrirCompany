@@ -4,7 +4,6 @@ import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
 import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';
-import { SinaisVitaisProvider } from './contexts/sinaisVitaisContext';
 import NotificationAlert from './components/Notification/NotificationAlert';
 import NotificationCentralized from './components/Notification/NotificationCentralized';
 
@@ -67,11 +66,9 @@ const Index: React.FC = () => {
             {/* contexto disponível para toda aplicação */}
             <NotificationGlobalProvider>
                 <AuthProvider>
-                    <SinaisVitaisProvider>
-                        <Routes />
-                        <NotificationCentralized />
-                        <NotificationAlert />
-                    </SinaisVitaisProvider>
+                    <Routes />
+                    <NotificationCentralized />
+                    <NotificationAlert />
                 </AuthProvider>
             </NotificationGlobalProvider>
         </NavigationContainer>

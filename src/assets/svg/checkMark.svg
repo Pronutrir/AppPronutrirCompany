@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
+<desc>Created with Fabric.js 1.7.22</desc>
+<defs>
+</defs>
+<g transform="translate(128 128) scale(0.72 0.72)" style="">
+	<g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(-175.05 -175.05000000000004) scale(3.89 3.89)" >
+	<circle cx="45" cy="45" r="45" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(32,196,203); fill-rule: nonzero; opacity: 1;" transform="  matrix(1 0 0 1 0 0) "/>
+	<path d="M 33.069 70.284 c -0.836 0 -1.636 -0.35 -2.205 -0.966 L 12.295 49.195 c -1.124 -1.218 -1.047 -3.115 0.17 -4.239 c 1.22 -1.124 3.117 -1.047 4.239 0.17 l 16.258 17.619 l 29.947 -35.666 c 1.065 -1.268 2.959 -1.434 4.227 -0.368 c 1.27 1.065 1.435 2.958 0.369 4.227 L 35.366 69.213 c -0.554 0.66 -1.366 1.051 -2.227 1.07 C 33.116 70.284 33.092 70.284 33.069 70.284 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(27,167,173); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+	<path d="M 36.362 66.991 c -0.836 0 -1.636 -0.35 -2.205 -0.966 L 15.588 45.903 c -1.124 -1.218 -1.047 -3.116 0.17 -4.239 c 1.22 -1.124 3.117 -1.046 4.239 0.17 l 16.258 17.618 l 29.947 -35.666 c 1.065 -1.268 2.958 -1.435 4.227 -0.368 c 1.27 1.065 1.435 2.958 0.369 4.227 L 38.659 65.92 c -0.554 0.66 -1.365 1.051 -2.227 1.07 C 36.409 66.991 36.385 66.991 36.362 66.991 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+</g>
+</g>
+</svg>

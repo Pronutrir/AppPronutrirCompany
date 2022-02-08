@@ -5,6 +5,7 @@ import AuthContext from '../contexts/auth';
 import RouteDrawer from './routeDrawer';
 import Inicial from '../pages/inicial/inicial';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SinaisVitaisProvider } from '../contexts/sinaisVitaisContext';
 
 const Index: React.FC = () => {
     const { signed, loading } = useContext(AuthContext);
@@ -30,7 +31,9 @@ const Index: React.FC = () => {
                     barStyle="dark-content"
                     translucent={true}
                 />
-                <RouteDrawer />
+                <SinaisVitaisProvider>
+                    <RouteDrawer />
+                </SinaisVitaisProvider>
             </SafeAreaView>
         </>
     ) : (
@@ -42,6 +45,7 @@ const Index: React.FC = () => {
                     barStyle="dark-content"
                     translucent={true}
                 />
+
                 <RouteApp />
             </SafeAreaView>
         </>

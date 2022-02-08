@@ -17,6 +17,7 @@ import moment from 'moment';
 import SinaisVitaisContext, {
     IPFSinaisVitais,
 } from '../../../../contexts/sinaisVitaisContext';
+import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 
 interface Props {
     dataSourcePFsinaisVitais?: IPFSinaisVitais[] | null;
@@ -102,6 +103,7 @@ const CardConsultasGerais: React.FC<Props> = ({
                         </Text>
                     </View>
                 </View>
+                <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
             </TouchableOpacity>
         );
     };

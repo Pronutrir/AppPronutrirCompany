@@ -14,6 +14,7 @@ import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 
 interface Props {
     dataSourceConsultas?: IConsultas[] | null;
@@ -26,8 +27,10 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const navigation = useNavigation();
 
-    const { GetConsultas, GetMedicosConsultas } =
-        useContext(SinaisVitaisContext);
+    const {
+        GetConsultas,
+        GetMedicosConsultas,
+    } = useContext(SinaisVitaisContext);
 
     const Item = ({ item }: { item: IConsultas; index: number }) => {
         return (
@@ -76,6 +79,7 @@ const CardConsultasComponent: React.FC<Props> = ({
                         </Text>
                     </View>
                 </View>
+                <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
             </TouchableOpacity>
         );
     };
@@ -162,7 +166,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         margin: 3,
-        backgroundColor: 'red',
     },
     box2: {
         flex: 5,

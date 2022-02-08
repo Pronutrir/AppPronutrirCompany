@@ -4,14 +4,22 @@ import React, {
     useCallback,
     useImperativeHandle,
 } from 'react';
-import { View, StyleSheet, SafeAreaView, Modal, ViewStyle } from 'react-native';
+import {
+    View,
+    StyleSheet,
+    SafeAreaView,
+    Modal,
+    ViewStyle,
+    TouchableOpacity,
+    Text,
+} from 'react-native';
 import Animated, {
     withTiming,
     useAnimatedStyle,
     interpolateColor,
     useDerivedValue,
 } from 'react-native-reanimated';
-import { RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 interface Props {
     activeModal?: boolean;
     children: any;
@@ -89,6 +97,11 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
                             style={[styles.modalView, style && { ...style }]}>
                             {children}
                         </SafeAreaView>
+                        <TouchableOpacity
+                            onPress={() => closeModal()}
+                            style={[styles.modalView, styles.btnCloser]}>
+                            <Text style={styles.cancelTextStyle}>Fechar</Text>
+                        </TouchableOpacity>
                     </Animated.View>
                 </Modal>
             </View>
@@ -110,10 +123,20 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         flexGrow: 0,
         backgroundColor: '#fff',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
         justifyContent: 'flex-end',
         width: '100%',
         paddingBottom: RFPercentage(3),
+    },
+    btnCloser: {
+        marginTop: RFPercentage(1.5),
+        padding: 5,
+    },
+    cancelTextStyle: {
+        color: '#08948A',
+        fontSize: RFValue(18, 680),
+        textAlign: 'center',
+        fontWeight: 'bold',
     },
 });

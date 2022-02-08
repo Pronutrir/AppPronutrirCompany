@@ -52,10 +52,10 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
         setActiveModal(true);
         await AddSinaisVitais({
             cD_PACIENTE: route.params.consultaQt.cD_PESSOA_FISICA,
-            qT_ALTURA_CM: Altura,
-            qT_PESO: Peso,
-            qT_SATURACAO_O2: oxigenacao,
-            qT_TEMP: temperatura,
+            qT_ALTURA_CM: Altura <= 0 ? null : Altura,
+            qT_PESO: Peso <= 0 ? null : Peso,
+            qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
+            qT_TEMP: temperatura <= 30 ? null : temperatura,
         });
         setActiveModal(false);
         navigation.goBack();

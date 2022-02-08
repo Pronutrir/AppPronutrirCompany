@@ -14,6 +14,7 @@ import { IconsultaQT } from '../../../../reducers/ConsultasQTReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 
 interface Props {
     dataSourceQT?: IconsultaQT[] | null;
@@ -60,6 +61,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                         </Text>
                     </View>
                 </View>
+                <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
             </TouchableOpacity>
         );
     };
