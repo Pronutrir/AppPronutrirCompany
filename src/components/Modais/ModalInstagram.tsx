@@ -185,7 +185,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                             sliderWidth={screenWidth}
                                             sliderHeight={screenWidth}
                                             itemWidth={
-                                                (windowHeight / 100) * 45
+                                                windowWidth
                                             }
                                             data={imagensInsta}
                                             renderItem={renderItem}
@@ -198,12 +198,6 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                             lockScrollWhileSnapping={true}
                                             loop={true}
                                         />
-                                        {/* <Image
-                                            style={styles.img}
-                                            source={{
-                                                uri: postagem?.media_url,
-                                            }}
-                                        /> */}
                                     </View>
                                 </View>
                                 <ScrollView style={styles.box2}>

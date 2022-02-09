@@ -294,7 +294,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 'YYYY-MM-DD',
             )},${moment().format(
                 'YYYY-MM-DD',
-            )}?nomeMedico=true&descEspecialidade=true`,
+            )}?nomeMedico=true&descEspecialidade=true&codEstabelecimento=7`,
         )
             .then((response) => {
                 const { result }: { result: IMedico[] } = response.data;

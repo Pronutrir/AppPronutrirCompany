@@ -26,9 +26,8 @@ interface PagesSinaisVitais {
 const SinaisVitais: React.FC = () => {
     const {
         GetConsultasQT,
-        GetConsultas,
         GetMedicosConsultas,
-        stateConsultas: { consultas, flag, medicos },
+        stateConsultas: { flag, medicos },
         stateConsultasQT: { consultasQT, flagQT },
     } = useContext(SinaisVitaisContext);
     const refFlatlist = useRef<FlatList>(null);
@@ -169,7 +168,7 @@ const SinaisVitais: React.FC = () => {
                     keyExtractor={(item) => item.Name}
                     renderItem={renderPagesItem}
                     horizontal={true}
-                    //pagingEnabled={true}
+                    pagingEnabled={true}
                     showsHorizontalScrollIndicator={false}
                     onViewableItemsChanged={onViewableItemsChanged}
                     viewabilityConfig={viewabilityConfig.current}

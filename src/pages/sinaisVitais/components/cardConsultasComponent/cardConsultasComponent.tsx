@@ -13,7 +13,9 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext, { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, {
+    IFilterConsultas,
+} from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 
 interface Props {
@@ -22,16 +24,15 @@ interface Props {
 }
 
 const CardConsultasComponent: React.FC<Props> = ({
-    dataSourceConsultas, selectFilter
+    dataSourceConsultas,
+    selectFilter,
 }: Props) => {
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
 
-    const {
-        GetConsultas,
-        GetMedicosConsultas,
-    } = useContext(SinaisVitaisContext);
+    const { GetConsultas, GetMedicosConsultas } =
+        useContext(SinaisVitaisContext);
 
     const Item = ({ item }: { item: IConsultas; index: number }) => {
         return (
@@ -119,7 +120,8 @@ const CardConsultasComponent: React.FC<Props> = ({
                             nM_GUERRA: selectFilter.current.nM_GUERRA
                                 ? selectFilter.current.nM_GUERRA
                                 : null,
-                            dS_ESPECIALIDADE: selectFilter.current.dS_ESPECIALIDADE
+                            dS_ESPECIALIDADE: selectFilter.current
+                                .dS_ESPECIALIDADE
                                 ? selectFilter.current.dS_ESPECIALIDADE
                                 : null,
                         });

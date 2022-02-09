@@ -8,7 +8,6 @@ import {
     Platform,
 } from 'react-native';
 
-import MyModal from './MyModal';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
@@ -87,7 +86,6 @@ export default function Carousel_text() {
                 autoplay={true}
                 enableMomentum={false}
             />
-            {post && <MyModal modalActive={modalActive} mudarState={setModalActive} postagem={post} />}
         </View>
     );
 }

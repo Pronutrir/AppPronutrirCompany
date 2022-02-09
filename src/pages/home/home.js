@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, ImageBackground } from 'react-native';
-import CarouselText from '../../componentes/Carousel_text';
+import CarouselText from '../../components/carrosel/Carousel_text';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import BtnCentered from '../../components/buttons/BtnCentered';
 import LogoNameSvg from '../../assets/svg/logoName.svg';

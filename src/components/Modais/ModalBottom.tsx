@@ -97,11 +97,15 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
                             style={[styles.modalView, style && { ...style }]}>
                             {children}
                         </SafeAreaView>
-                        <TouchableOpacity
-                            onPress={() => closeModal()}
-                            style={[styles.modalView, styles.btnCloser]}>
-                            <Text style={styles.cancelTextStyle}>Fechar</Text>
-                        </TouchableOpacity>
+                        <SafeAreaView>
+                            <TouchableOpacity
+                                onPress={() => closeModal()}
+                                style={[styles.modalView, styles.btnCloser]}>
+                                <Text style={styles.cancelTextStyle}>
+                                    Fechar
+                                </Text>
+                            </TouchableOpacity>
+                        </SafeAreaView>
                     </Animated.View>
                 </Modal>
             </View>
@@ -115,7 +119,6 @@ const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: 'flex-end',
-        alignItems: 'center',
         paddingTop: RFPercentage(10),
     },
     modalView: {
@@ -127,11 +130,10 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
         justifyContent: 'flex-end',
         width: '100%',
-        paddingBottom: RFPercentage(3),
     },
     btnCloser: {
         marginTop: RFPercentage(1.5),
-        padding: 5,
+        paddingVertical: 10,
     },
     cancelTextStyle: {
         color: '#08948A',
