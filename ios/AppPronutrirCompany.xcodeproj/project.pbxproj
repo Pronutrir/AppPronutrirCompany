@@ -629,7 +629,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NN4H9B2Q2B;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=*]" = "";
 				INFOPLIST_FILE = AppPronutrirCompany/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -659,7 +661,9 @@
 				CODE_SIGN_ENTITLEMENTS = AppPronutrirCompany/AppPronutrirCompany.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NN4H9B2Q2B;
+				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = AppPronutrirCompany/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",

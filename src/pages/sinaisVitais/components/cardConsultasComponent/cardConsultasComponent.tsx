@@ -17,6 +17,7 @@ import SinaisVitaisContext, {
     IFilterConsultas,
 } from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
+import CheckPVSinaisVitaisComponent from '../checkPVSinaisVitaisComponent/checkPVSinaisVitaisComponent';
 
 interface Props {
     dataSourceConsultas?: IConsultas[] | null;
@@ -42,6 +43,9 @@ const CardConsultasComponent: React.FC<Props> = ({
                 }
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
+                    <CheckPVSinaisVitaisComponent
+                        Item={item?.iE_CLASSIF_AGENDA}
+                    />
                     <HistorySvg
                         width={RFPercentage(5)}
                         height={RFPercentage(5)}>

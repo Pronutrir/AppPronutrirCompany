@@ -3,36 +3,34 @@ import { StyleSheet, Text, View } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CheckMark from '../../../../assets/svg/checkMark.svg';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
-import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 
 interface Props {
     Item: string;
 }
 
-const checkSinaisVitaisComponent: React.FC<Props> = ({ Item }: Props) => {
+const CheckSinaisVitaisComponent: React.FC<Props> = ({ Item }: Props) => {
     const {
         stateConsultas: { sinaisVitais },
     } = useContext(SinaisVitaisContext);
 
-    if(sinaisVitais?.some(
-        (element) => element.cD_PACIENTE === Item,
-    )){
+    if (sinaisVitais?.some((element) => element.cD_PACIENTE === Item)) {
         return (
             <View style={styles.container}>
                 <CheckMark
                     style={styles.img}
                     width={RFPercentage(3.5)}
                     height={RFPercentage(3.5)}
+                    fill={'red'}
                 />
                 <Text style={styles.text}>Enviado</Text>
             </View>
         );
-    }else{
+    } else {
         return null;
     }
 };
 
-export default checkSinaisVitaisComponent;
+export default CheckSinaisVitaisComponent;
 
 const styles = StyleSheet.create({
     container: {
