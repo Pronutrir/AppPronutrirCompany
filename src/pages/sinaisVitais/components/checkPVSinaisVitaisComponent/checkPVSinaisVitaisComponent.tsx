@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Platform, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 interface Props {
     Item?: string;
@@ -44,19 +44,6 @@ const styles = StyleSheet.create({
         borderRadius: 60,
         justifyContent: 'center',
         alignItems: 'center',
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
     },
     options1Text: {
         fontSize: RFValue(18, 680),

@@ -32,7 +32,7 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const navigation = useNavigation();
 
-    const { GetConsultas, GetMedicosConsultas } =
+    const { FilterConsultas, GetConsultas } =
         useContext(SinaisVitaisContext);
 
     const Item = ({ item }: { item: IConsultas; index: number }) => {
@@ -120,16 +120,22 @@ const CardConsultasComponent: React.FC<Props> = ({
                     refreshing={refreshing}
                     onRefresh={async () => {
                         setRefreshing(true);
-                        await GetConsultas({
-                            nM_GUERRA: selectFilter.current.nM_GUERRA
-                                ? selectFilter.current.nM_GUERRA
-                                : null,
-                            dS_ESPECIALIDADE: selectFilter.current
-                                .dS_ESPECIALIDADE
-                                ? selectFilter.current.dS_ESPECIALIDADE
-                                : null,
-                        });
-                        await GetMedicosConsultas();
+                        if (
+                            selectFilter.current.nM_GUERRA ||
+                            selectFilter.current.dS_ESPECIALIDADE
+                        ) {
+                            FilterConsultas({
+                                nM_GUERRA: selectFilter.current.nM_GUERRA
+                                    ? selectFilter.current.nM_GUERRA
+                                    : null,
+                                dS_ESPECIALIDADE: selectFilter.current
+                                    .dS_ESPECIALIDADE
+                                    ? selectFilter.current.dS_ESPECIALIDADE
+                                    : null,
+                            });
+                        }else{
+                            await GetConsultas();
+                        }
                         setRefreshing(false);
                     }}
                     ListEmptyComponent={renderItemEmpty}

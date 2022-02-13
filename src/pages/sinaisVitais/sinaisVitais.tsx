@@ -26,7 +26,7 @@ interface PagesSinaisVitais {
 const SinaisVitais: React.FC = () => {
     const {
         GetConsultasQT,
-        GetMedicosConsultas,
+        //GetMedicosConsultas,
         stateConsultas: { flag, medicos },
         stateConsultasQT: { consultasQT, flagQT },
     } = useContext(SinaisVitaisContext);
@@ -129,11 +129,11 @@ const SinaisVitais: React.FC = () => {
         }
     }, [GetConsultasQT, flagQT, consultasQT]);
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (medicos?.length === 0 && !flag) {
             GetMedicosConsultas();
         }
-    }, [GetMedicosConsultas, medicos, flag]);
+    }, [GetMedicosConsultas, medicos, flag]); */
 
     useEffect(() => {
         selected(0);

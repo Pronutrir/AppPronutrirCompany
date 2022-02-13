@@ -1,19 +1,18 @@
 export const initialStateConsultas: IstateConsultas = {
     flag: false,
-    consultas: [],
+    consultas: null,
     medicos: [],
     sinaisVitais: [],
 };
 export interface IstateConsultas {
     flag?: boolean;
-    consultas?: IConsultas[];
+    consultas?: IConsultas[] | null;
     medicos?: IMedico[] | null;
     sinaisVitais?: ISinaisVitais[] | null;
 }
 export interface IMedico {
     cD_ESPECIALIDADE: number;
     dS_ESPECIALIDADE: string;
-    cD_PESSOA_FISICA: string;
     nM_GUERRA: string;
 }
 export interface IConsultas {
@@ -23,9 +22,9 @@ export interface IConsultas {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO?: string;
-    cD_ESPECIALIDADE?: number;
-    dS_ESPECIALIDADE?: string;
-    nM_GUERRA?: string;
+    cD_ESPECIALIDADE: number;
+    dS_ESPECIALIDADE: string;
+    nM_GUERRA: string;
     nR_TELEFONE?: string;
     nR_TELEFONE_CELULAR?: string;
     dT_AGENDA: string;
@@ -85,7 +84,27 @@ export const ConsultasReducer = (
 ): IstateConsultas => {
     switch (action.type) {
         case 'setConsultas':
-            return { ...state, ...action.payload };
+            // capturar as lista de médicos das consultas
+            const result = action.payload.consultas?.map(
+                (item, index, array) => {
+                    return {
+                        nM_GUERRA: item?.nM_GUERRA,
+                        dS_ESPECIALIDADE: item?.dS_ESPECIALIDADE,
+                        cD_ESPECIALIDADE: item.cD_ESPECIALIDADE,
+                    };
+                },
+            );
+            // remover itens duplicados das listagem
+            const resultSemDuplicados = result?.filter(
+                (item, index, array) =>
+                    array.findIndex((t) => t.nM_GUERRA === item.nM_GUERRA) ===
+                    index,
+            );
+            return {
+                ...state,
+                consultas: action.payload.consultas,
+                medicos: resultSemDuplicados,
+            };
         case 'setMedicos':
             return { ...state, ...action.payload };
         case 'setSinaisVitais':

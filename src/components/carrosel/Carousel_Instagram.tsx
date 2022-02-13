@@ -54,7 +54,7 @@ const MyCarousel: React.FC = () => {
     };
 
     const filterPostagens = (post: IInstagram) => {
-        return post.caption.includes('#pronutrironcologia');
+        return post.caption.includes('#pronutrirparceiros');
     };
 
     const getPostagemInsta = () => {
@@ -62,7 +62,7 @@ const MyCarousel: React.FC = () => {
             .then((response) => {
                 const { data } = response;
                 if (data) {
-                    setPostagensInsta(data);
+                    setPostagensInsta(data.filter(filterPostagens));
                 }
             })
             .catch(() => {

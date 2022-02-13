@@ -49,7 +49,7 @@ const EspecialidadeConsultasComponent: React.FC<Props> = ({
                             ? styles.selectTextStyleActive
                             : styles.selectTextStyle,
                     ]}>
-                    {item.dS_ESPECIALIDADE}
+                    {item.dS_ESPECIALIDADE.toLocaleUpperCase()}
                 </Text>
             </TouchableOpacity>
         </View>

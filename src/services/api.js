@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
+import perf from '@react-native-firebase/perf';
 
 const api = axios.create({
     //producao
@@ -14,12 +15,26 @@ const api = axios.create({
     }
 })
 
-api.interceptors.response.use(
-    response => {
+axios.interceptors.response.use(
+    async function (response) {
+      try {
+        // Request was successful, e.g. HTTP code 200
+  
+        const { httpMetric } = response.config.metadata;
+  
+        // add any extra metric attributes if needed
+        // httpMetric.putAttribute('userId', '12345678');
+  
+        httpMetric.setHttpResponseCode(response.status);
+        httpMetric.setResponseContentType(response.headers['content-type']);
+        await httpMetric.stop();
+      } finally {
         return response;
+      }
     },
-    error => {
-        let flag = true;
+    async function (error) {
+      try {
+
         if(axios.isCancel(error)){
             return Promise.reject(error)
         }
@@ -85,82 +100,37 @@ api.interceptors.response.use(
                 )
                 return Promise.reject({ message:  'Não foi possível conectar ao banco de dados. tente mais tarde!'})
             }
-            return Promise.reject(error)
         }
-        if(error.response.status == 400){
-            flag = false;
-                Alert.alert(
-                    'Aviso',
-                    `codigo error : ${error.response.status} Error ao processar sua solicitação! ${error.response.data}`,
-                    [{ text: 'OK' }],
-                    { cancelable: false },
-                )
-                return Promise.reject({ message:  'Error ao processar sua solicitação!'})
-        }
-        if (error.response.status == 401) {
-            flag = false;
-            Alert.alert(
-                'Aviso',
-                `codigo error : ${error.response.status} token Expirado! ${error.response.data}`,
-                [{ text: 'OK' }],
-                { cancelable: false },
-            )
-            //const requestConfig = error.config
-            // O token JWT expirou
-            /*  async function GetAuth(){
-                 getUser().then(dados => {
-                     console.log(dados)
-                     if (dados == null) {
-                         Api.post('Auth/login', credenciais).then(dados => {
-                             const { token } = dados.data
-                             saveUser(token);
-                             console.log(dados);
-                         }).catch(error => {
-                             console.log(error)
-                         })
-                     }
-                 })
-             } */
-            /* deleteUser().then(() => {
-                GetAuth();
-            })
-            return axios(requestConfig) */
-            //return error
-        }
-        /* if(flag){
-            const { data } = error.response;
-            if(data){
-                error.message = data;
-                Alert.alert(error.message);
-            } else{
-                Alert.alert(error.message);
-            }
-        } */
+        // Request failed, e.g. HTTP code 500
+  
+        const { httpMetric } = error.config.metadata;
+  
+        // add any extra metric attributes if needed
+        // httpMetric.putAttribute('userId', '12345678');
+  
+        httpMetric.setHttpResponseCode(error.response.status);
+        httpMetric.setResponseContentType(error.response.headers['content-type']);
+        await httpMetric.stop();
+      } finally {
+        // Ensure failed requests throw after interception
         return Promise.reject(error);
+      }
     },
-)
+  );
 
-api.interceptors.request.use(
-    config => {
-        return config;
-    },
-
-    //console,log(config)
-
-    //return config
-    /* return getUser().then(token => {
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-            return Promise.resolve(config)
-        }
-    }).catch(error => {
-        console.log(error)
-        return Promise.reject(error)
-    }) */
-    //}, 
-    /* function (error) {
-        return Promise.reject(error);
-    } */
-)
+axios.interceptors.request.use(async function (config) {
+    try {
+      const httpMetric = perf().newHttpMetric(config.url, config.method);
+      config.metadata = { httpMetric };
+  
+      // add any extra metric attributes, if required
+      // httpMetric.putAttribute('userId', '12345678');
+  
+      await httpMetric.start();
+    } finally {
+      return config;
+    }
+    
+  });
 
 export default api;

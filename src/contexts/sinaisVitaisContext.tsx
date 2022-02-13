@@ -4,7 +4,7 @@ import React, {
     useContext,
     useReducer,
     useRef,
-    useEffect
+    useEffect,
 } from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';
@@ -31,7 +31,7 @@ interface AuthContextData {
     AddSinaisVitais(atendimento: SinaisVitaisPost): Promise<void>;
     GetConsultasQT(): Promise<void>;
     GetConsultas(filter?: IFilterConsultas): Promise<void>;
-    GetMedicosConsultas(): Promise<void>;
+    //GetMedicosConsultas(): Promise<void>;
     dispatchConsultas: React.Dispatch<ConsultasAction>;
     SearchPFSinaisVitais(
         nome: string,
@@ -41,6 +41,7 @@ interface AuthContextData {
         nR_SEQUENCIA: number,
     ): Promise<SinaisVitais | null | undefined>;
     GetAllSinaisVitais(): Promise<void>;
+    FilterConsultas({ dS_ESPECIALIDADE, nM_GUERRA }: IFilterConsultas): IConsultas[] | undefined;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -202,7 +203,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     });
                     dispatchConsultasQT({
                         type: 'setConsultasQT',
-                        payload: { flagQT: true, consultasQT: result },
+                        payload: { flagQT: true, consultasQT: _result },
                     });
                 }
             })
@@ -232,9 +233,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             axiosSourceConsultas.current = axios.CancelToken.source();
 
             await Api.get(
-                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                `AgendaConsultas/FilterAgendamentosGeral/${moment('2022-02-14').format(
                     'YYYY-MM-DD',
-                )},${moment().format(
+                )},${moment('2022-02-14').format(
                     'YYYY-MM-DD',
                 )}?pagina=1&semStatusAgenda='C'${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
@@ -242,7 +243,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     filter?.dS_ESPECIALIDADE
                         ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
                         : ''
-                }&codEstabelecimento=7`,
+                }&codEstabelecimento=7&rows=200`,
                 {
                     cancelToken: axiosSourceConsultas.current.token,
                 },
@@ -288,11 +289,19 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         [addAlert],
     );
 
+    const FilterConsultas = ({ dS_ESPECIALIDADE, nM_GUERRA }: IFilterConsultas): IConsultas[] | undefined => {
+        if(stateConsultas.consultas && dS_ESPECIALIDADE){
+            return stateConsultas.consultas?.filter(item => item.dS_ESPECIALIDADE === dS_ESPECIALIDADE);
+        }if(stateConsultas.consultas && nM_GUERRA){
+            return stateConsultas.consultas?.filter(item => item.nM_GUERRA === nM_GUERRA);
+        }
+    }
+
     const GetMedicosConsultas = useCallback(async () => {
         await Api.get(
-            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultasGeral/${moment().format(
+            `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultasGeral/${moment('2022-02-14').format(
                 'YYYY-MM-DD',
-            )},${moment().format(
+            )},${moment('2022-02-14').format(
                 'YYYY-MM-DD',
             )}?nomeMedico=true&descEspecialidade=true&codEstabelecimento=7`,
         )
@@ -387,7 +396,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
-    const GetAllSinaisVitais = async (): Promise<void> => {
+    const GetAllSinaisVitais = useCallback(async (): Promise<void> => {
         Api.get(
             `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
                 'YYYY-MM-DD',
@@ -396,7 +405,10 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .then((response) => {
                 const { result } = response.data;
                 if (result) {
-                    dispatchConsultas({ type: 'setSinaisVitais', payload: result });
+                    dispatchConsultas({
+                        type: 'setSinaisVitais',
+                        payload: result,
+                    });
                 } else {
                     addAlert({
                         message:
@@ -413,11 +425,11 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 });
                 return null;
             });
-    };
+    }, [addAlert]);
 
     useEffect(() => {
         GetAllSinaisVitais();
-    }, []);
+    }, [GetAllSinaisVitais]);
 
     return (
         <SinaisVitaisContext.Provider
@@ -427,11 +439,12 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 AddSinaisVitais,
                 GetConsultasQT,
                 GetConsultas,
-                GetMedicosConsultas,
+                //GetMedicosConsultas,
                 dispatchConsultas,
                 SearchPFSinaisVitais,
                 GetSinaisVitais,
                 GetAllSinaisVitais,
+                FilterConsultas,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

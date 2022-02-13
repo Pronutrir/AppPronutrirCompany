@@ -10,12 +10,14 @@ import ModalBottom, {
 } from '../../../components/Modais/ModalBottom';
 import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
+import { IConsultas } from '../../../reducers/ConsultasReducer';
 
 const ConsultasSinaisVitais: React.FC = () => {
     const {
         stateConsultas: { consultas, flag },
         GetConsultas,
         dispatchConsultas,
+        FilterConsultas,
     } = useContext(SinaisVitaisContext);
     const refModalBottom = useRef<ModalHandles>(null);
     const [selectedModal, setSelectedModal] = useState<string | null>(null);
@@ -29,8 +31,9 @@ const ConsultasSinaisVitais: React.FC = () => {
         nM_GUERRA: null,
         dS_ESPECIALIDADE: null,
     });
+    const [listConsultas, setListConsutas] = useState<IConsultas[] | null | undefined>(null);
 
-    const FilterConsultas = async (item?: IFilterConsultas | null) => {
+    const _FilterConsultas = async (item?: IFilterConsultas | null) => {
         if (item) {
             if (item.nM_GUERRA) {
                 selectFilter.current = {
@@ -44,30 +47,18 @@ const ConsultasSinaisVitais: React.FC = () => {
                     nM_GUERRA: null,
                 };
             }
-            dispatchConsultas({
-                type: 'setConsultas',
-                payload: {
-                    flag: false,
-                },
-            });
             setActiveModal(false);
             selectFilter.current = { ...selectFilter.current, ...item };
             refModalBottom.current?.closeModal();
-            GetConsultas(item);
+            setListConsutas(FilterConsultas(item))
         } else {
-            dispatchConsultas({
-                type: 'setConsultas',
-                payload: {
-                    flag: false,
-                },
-            });
             selectFilter.current = {
                 ...selectFilter.current,
                 dS_ESPECIALIDADE: null,
                 nM_GUERRA: null,
             };
             refModalBottom.current?.closeModal();
-            GetConsultas();
+            setListConsutas(consultas);
         }
     };
 
@@ -82,14 +73,14 @@ const ConsultasSinaisVitais: React.FC = () => {
             case 'Especialidade':
                 return (
                     <EspecialidadeConsultasComponent
-                        onPress={(value) => FilterConsultas(value)}
+                        onPress={(value) => _FilterConsultas(value)}
                         selectedFilter={selectFilter.current}
                     />
                 );
             case 'Médico':
                 return (
                     <MedicosConsultasComponent
-                        onPress={(value) => FilterConsultas(value)}
+                        onPress={(value) => _FilterConsultas(value)}
                         selectedFilter={selectFilter.current}
                     />
                 );
@@ -99,17 +90,14 @@ const ConsultasSinaisVitais: React.FC = () => {
     };
 
     useEffect(() => {
-        if (consultas?.length === 0 && !flag) {
-            GetConsultas({
-                nM_GUERRA: selectFilter.current.nM_GUERRA
-                    ? selectFilter.current.nM_GUERRA
-                    : null,
-                dS_ESPECIALIDADE: selectFilter.current.dS_ESPECIALIDADE
-                    ? selectFilter.current.dS_ESPECIALIDADE
-                    : null,
-            });
+        if (!consultas && !flag) {
+            GetConsultas();
         }
     }, [GetConsultas, consultas, flag]);
+
+    useEffect(() => {
+        setListConsutas(consultas);
+    }, [consultas]);
 
     return (
         <View style={styles.container}>
@@ -118,7 +106,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                 selectedFilter={selectFilter.current}
             />
             <CardConsultasComponent
-                dataSourceConsultas={flag ? consultas : null}
+                dataSourceConsultas={listConsultas}
                 selectFilter={selectFilter}
             />
             <ModalBottom
