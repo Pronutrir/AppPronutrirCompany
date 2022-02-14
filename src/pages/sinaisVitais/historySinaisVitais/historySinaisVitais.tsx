@@ -1,9 +1,9 @@
 import React, {
-    useEffect,
     useState,
     useContext,
     useCallback,
     memo,
+    useEffect,
 } from 'react';
 import {
     Text,
@@ -12,12 +12,10 @@ import {
     Platform,
     StyleSheet,
     TouchableOpacity,
+    Dimensions,
 } from 'react-native';
-import Api from '../../../services/api';
-import { StackScreenProps } from '@react-navigation/stack';
 import LoadingBall from '../../../components/Loading/LoadingBall';
 import CardSimples from '../../../components/Cards/CardSimples';
-import sinaisVitais, { PessoaSelected, SinaisVitais } from '../sinaisVitais';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
 import EditarSvg from '../../../assets/svg/editar.svg';
@@ -29,37 +27,13 @@ import ModalCentralizedOptions from '../../../components/Modais/ModalCentralized
 import Loading from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
+import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 
-export interface sinaisVitais {
-    nR_SEQUENCIA: number;
-    nR_ATENDIMENTO: 0;
-    dT_SINAL_VITAL: string;
-    dT_ATUALIZACAO: string;
-    iE_PRESSAO: string;
-    iE_MEMBRO: string;
-    iE_MANGUITO: string;
-    iE_APARELHO_PA: string;
-    cD_PACIENTE: string;
-    nM_PESSOA_FISICA: string;
+export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
-    qT_SATURACAO_O2: number;
-    iE_COND_SAT_O2: string;
-    iE_MEMBRO_SAT_O2: string;
-    iE_RITMO_ECG: string;
-    iE_DECUBITO: string;
-    qT_TEMP: number;
-    qT_PESO: number;
-    iE_UNID_MED_PESO: string;
-    qT_ALTURA_CM: number;
-    iE_UNID_MED_ALTURA: string;
-    qT_SUPERF_CORPORIA: number;
-    qT_IMC: number;
-    dS_UTC: string;
-    dS_UTC_ATUALIZACAO: string;
-    dT_LIBERACAO: string;
-    iE_SITUACAO: string;
-    cD_ESTABELECIMENTO: number;
-    nM_USUARIO: string;
+    nM_PESSOA_FISICA: string;
+    dT_NASCIMENTO: string;
 }
 
 interface sinaisVitaisUpdate {
@@ -74,134 +48,54 @@ type RootStackParamList = {
 };
 
 interface Parms {
-    item: sinaisVitais;
+    item: ISinaisVitais;
     index: number;
 }
 
-type Props = StackScreenProps<RootStackParamList, 'Profile'>;
+//type Props = StackScreenProps<RootStackParamList, 'Profile'>;
 
-const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
+const HistorySinaisVitais: React.FC = () => {
     const navigation = useNavigation();
     const {
         stateAuth: { usertasy },
     } = useContext(AuthContext);
+    const {
+        stateConsultas: { sinaisVitais },
+        GetAllSinaisVitais,
+    } = useContext(SinaisVitaisContext);
     const { addNotification } = useContext(NotificationGlobalContext);
-    const selected: PessoaSelected = route.params;
-    const [listSinaisVitais, setListSinaisVitais] = useState<
-        sinaisVitais[] | null
-    >(null);
+    const selected: PessoaSelected = {
+        cD_PESSOA_FISICA: '159969',
+        dT_NASCIMENTO: '19-08-1985',
+        nM_PESSOA_FISICA: 'WILLIAME CORREIA',
+    };
     const [selectedSinais, setSelectedSinais] = useState<sinaisVitaisUpdate>({
         iE_SITUACAO: '',
         nR_SEQUENCIA: 0,
         cD_PACIENTE: '',
     });
 
-    const [activeBall, setActiveBall] = useState<boolean>(false);
+    const [listSinaisVitais, setListSinaisVitais] = useState<
+        ISinaisVitais[] | null
+    >(null);
+
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] =
         useState<boolean>(false);
     const [activeModalDel, setActiveModalDel] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
-    const GetSinaisVitais = async () => {
-        setListSinaisVitais(null);
-        try {
-            const sinaisVitais: sinaisVitais[] = await Api.get(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${selected.nM_PESSOA_FISICA}`,
-            ).then((response) => {
-                const { result } = response.data;
-                if (result) {
-                    const order_result = result.sort(function (
-                        a: sinaisVitais,
-                        b: sinaisVitais,
-                    ) {
-                        return a.nR_SEQUENCIA > b.nR_SEQUENCIA
-                            ? -1
-                            : a.nR_SEQUENCIA < b.nR_SEQUENCIA
-                            ? 1
-                            : 0;
-                    });
-                    return result;
-                }
-            });
-            setListSinaisVitais(sinaisVitais);
-            setRefreshing(false);
-        } catch (error) {
-            setRefreshing(false);
-            addNotification({
-                message: 'Não foi possivel atualizar tente mais tarde!',
-                status: 'error',
-            });
-        }
-    };
-
-    const UpdateSinaisVitais = async (sinaisUpdate: sinaisVitaisUpdate) => {
-        setActiveModal(true);
-        sinaisUpdate.iE_SITUACAO = 'I';
-        Api.put<sinaisVitais>(
-            `SinaisVitaisMonitoracaoGeral/PutAtivarInativarSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
-            {
-                iE_SITUACAO: sinaisUpdate?.iE_SITUACAO,
-                nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO,
-                cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
-            },
-        )
-            .then((response) => {
-                GetSinaisVitais();
-                setActiveModal(false);
-                //Onclean();
-                addNotification({
-                    message: 'Dado inativado com sucesso!',
-                    status: 'sucess',
-                });
-            })
-            .catch((error) => {
-                setActiveModal(false);
-                addNotification({
-                    message: 'Não foi possivel inativar tente mais tarde!',
-                    status: 'error',
-                });
-            });
-    };
-
-    const DeleteSinaisVitais = async (id: number) => {
-        setActiveModal(true);
-        Api.delete(`SinaisVitaisMonitoracaoGeral/DeleteSVMG/${id}`)
-            .then((response) => {
-                GetSinaisVitais();
-                setActiveModal(false);
-                //Onclean();
-                addNotification({
-                    message: 'Dado excluir com sucesso!',
-                    status: 'sucess',
-                });
-            })
-            .catch((error) => {
-                setActiveModal(false);
-                addNotification({
-                    message: 'Não foi possivel excluir tente mais tarde!',
-                    status: 'error',
-                });
-            });
-    };
-
-    const setSelectedSinaisInativar = (item: sinaisVitaisUpdate) => {
+    /* const setSelectedSinaisInativar = (item: sinaisVitaisUpdate) => {
         setActiveModalOptions(true);
         setSelectedSinais(item);
-    };
+    }; */
 
-    const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
+    /* const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
         setActiveModalDel(true);
         setSelectedSinais(item);
-    };
+    }; */
 
-    useEffect(() => {
-        if (selected) {
-            GetSinaisVitais();
-        }
-    }, []);
-
-    const Item = memo<Parms>(({ item, index }) => {
+    const Item = memo<Parms>(({ item }) => {
         return (
             <View style={{ flexDirection: 'row' }}>
                 <View style={styles.box1}>
@@ -219,6 +113,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                                 styles.text
                             }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
                     </View>
+
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Data: </Text>
                         <Text style={styles.text}>{`${moment(
@@ -254,39 +149,22 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                         </View>
                     </View>
                 </View>
-                <View style={[styles.box3, { justifyContent: 'flex-end' }]}>
-                    {index === 0 ? (
-                        <View
-                            style={{
-                                flex: 1,
-                                justifyContent: 'space-between',
-                            }}>
-                            <TouchableOpacity
-                                style={styles.btn}
-                                onPress={() =>
-                                    navigation.navigate('updateSinais', {
-                                        sinaisVitais: item,
-                                        pessoaSelected: selected,
-                                    })
-                                }>
-                                <EditarSvg
-                                    fill={'#748080'}
-                                    width={RFPercentage(4)}
-                                    height={RFPercentage(4)}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.btn}
-                                onPress={() => setSelectedSinaisDeletar(item)}>
-                                <ExcluirSvg
-                                    fill={'#748080'}
-                                    width={RFPercentage(4)}
-                                    height={RFPercentage(4)}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <TouchableOpacity
+                <View style={styles.box3}>
+                    <TouchableOpacity
+                        style={styles.btn}
+                        onPress={() =>
+                            navigation.navigate('updateSinais', {
+                                SinaisVitais: item,
+                                PessoaFisica: item,
+                            })
+                        }>
+                        <EditarSvg
+                            fill={'#748080'}
+                            width={RFPercentage(4)}
+                            height={RFPercentage(4)}
+                        />
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity
                             style={styles.btn}
                             onPress={() => setSelectedSinaisInativar(item)}>
                             <DisabledSvg
@@ -295,22 +173,21 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                                 height={RFPercentage(4)}>
                                 Botão
                             </DisabledSvg>
-                        </TouchableOpacity>
-                    )}
+                        </TouchableOpacity> */}
                 </View>
             </View>
         );
     });
 
     const renderItem = useCallback(
-        ({ item, index }: { item: sinaisVitais; index: number }) => {
+        ({ item, index }: { item: ISinaisVitais; index: number }) => {
             return (
                 <CardSimples styleCardContainer={styles.cardStyle}>
-                    <Item key={item.nR_SEQUENCIA} item={item} index={index} />
+                    <Item key={item.nM_USUARIO} item={item} index={index} />
                 </CardSimples>
             );
         },
-        [listSinaisVitais],
+        [],
     );
 
     const renderItemEmpty = () => (
@@ -324,6 +201,17 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
         [],
     );
 
+    useEffect(() => {
+        if (sinaisVitais) {
+            setListSinaisVitais(
+                sinaisVitais.filter(
+                    (element) =>
+                        element.cD_PESSOA_FISICA === usertasy.cD_PESSOA_FISICA,
+                ),
+            );
+        }
+    }, [sinaisVitais]);
+
     return (
         <View style={styles.container}>
             {listSinaisVitais ? (
@@ -332,9 +220,10 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                     renderItem={renderItemCall}
                     keyExtractor={(item, index) => index.toString()}
                     refreshing={refreshing}
-                    onRefresh={() => {
+                    onRefresh={async () => {
                         setRefreshing(true);
-                        GetSinaisVitais();
+                        await GetAllSinaisVitais();
+                        setRefreshing(false);
                     }}
                     ListEmptyComponent={renderItemEmpty}
                 />
@@ -342,7 +231,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                 <LoadingBall active={true} />
             )}
             <Loading activeModal={activeModal} />
-            <ModalCentralizedOptions
+            {/* <ModalCentralizedOptions
                 activeModal={activeModalOptions}
                 message={'Deseja inativar este Sinal Vital ?'}
                 onpress={() => UpdateSinaisVitais(selectedSinais)}
@@ -353,7 +242,7 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
                 message={'Deseja deletar este Sinal Vital ?'}
                 onpress={() => DeleteSinaisVitais(selectedSinais.nR_SEQUENCIA)}
                 setActiveModal={setActiveModalDel}
-            />
+            /> */}
         </View>
     );
 };
@@ -361,10 +250,10 @@ const historySinaisVitais: React.FC<Props> = ({ route }: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        width: Dimensions.get('screen').width,
+        paddingVertical: 10,
         alignItems: 'center',
         backgroundColor: '#fff',
-        paddingTop: RFPercentage(2),
     },
     cardStyle: {
         flex: 1,
@@ -402,12 +291,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     box3: {
-        flex: 0.8,
-        margin: 10,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        alignSelf: 'flex-start',
+        marginVertical: 5,
     },
     btn: {
+        width: RFPercentage(5),
+        height: RFPercentage(5),
         padding: 5,
         marginHorizontal: 5,
         backgroundColor: '#fff',
@@ -428,4 +317,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export { historySinaisVitais };
+export { HistorySinaisVitais };

@@ -78,7 +78,7 @@ const CardConsultasGerais: React.FC<Props> = ({
         return (
             <TouchableOpacity
                 onPress={() =>
-                    navigation.navigate('updateSinais', { consultaQt: item })
+                    navigation.navigate('updateSinais', { PessoaFisica: item })
                 }
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>

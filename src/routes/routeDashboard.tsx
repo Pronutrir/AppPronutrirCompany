@@ -15,9 +15,10 @@ import RecuperarSenha from '../pages/recuperarSenha/recuperarSenha';
 import SinaisVitais from '../pages/sinaisVitais/sinaisVitais';
 import CameraPerson from '../pages/cameraPerson/cameraPerson';
 import RouteBottom from './routeBottom';
-import { historySinaisVitais } from '../pages/sinaisVitais/historySinaisVitais/historySinaisVitais';
+import { HistorySinaisVitais } from '../pages/sinaisVitais/historySinaisVitais/historySinaisVitais';
 import UpdateSinais from '../pages/sinaisVitais/updateSinaisVitais/updateSinais';
-import { consultaQT } from '../contexts/sinaisVitaisContext';
+import { IPFSinaisVitais } from '../contexts/sinaisVitaisContext';
+import { ISinaisVitais } from '../reducers/ConsultasReducer';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -45,7 +46,8 @@ export type RootStackParamList = {
     SinaisVitais: undefined;
     historySinaisVitais: undefined;
     updateSinais: {
-        consultaQt: consultaQT;
+        PessoaFisica: IPFSinaisVitais;
+        SinaisVitais: ISinaisVitais;
     };
     /*  ExamePepImgs: {
         Files: IExamePep;
@@ -125,7 +127,7 @@ const InitialStackNavigator = () => {
             />
             <Stack.Screen
                 name="historySinaisVitais"
-                component={historySinaisVitais}
+                component={HistorySinaisVitais}
                 options={{ title: 'Historico Sinais Vitais' }}
             />
             <Stack.Screen

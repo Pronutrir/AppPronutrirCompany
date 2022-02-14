@@ -43,7 +43,7 @@ export interface IConsultas {
     eNDERECO?: string;
 }
 
-interface ISinaisVitais {
+export interface ISinaisVitais {
     nR_SEQUENCIA: number;
     nR_ATENDIMENTO: number;
     dT_SINAL_VITAL: string;
@@ -56,6 +56,8 @@ interface ISinaisVitais {
     nM_PESSOA_FISICA: string;
     cD_PESSOA_FISICA: string;
     qT_SATURACAO_O2: number;
+    qT_TEMP: number;
+    qT_PESO: number;
     iE_COND_SAT_O2: string;
     iE_MEMBRO_SAT_O2: string;
     iE_RITMO_ECG: string;

@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E6ECEC',
     },
     box1: {
+        backgroundColor: '#E6ECEC',
         width: Dimensions.get('screen').width,
         height: RFPercentage(8),
         flexDirection: 'row',

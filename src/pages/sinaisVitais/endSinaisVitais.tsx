@@ -5,8 +5,8 @@ import React, {
     useContext,
     useCallback,
 } from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { sinaisVitais } from './historySinaisVitais/historySinaisVitais';
+import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
+import { ISinaisVitais } from '../../reducers/ConsultasReducer';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
@@ -19,19 +19,19 @@ const EndSinaisVitais: React.FC = ({}) => {
     const { addNotification } = useContext(NotificationGlobalContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [listSinaisVitais, setListSinaisVitais] = useState<
-        sinaisVitais[] | null
+    ISinaisVitais[] | null
     >(null);
 
     const GetSinaisVitais = useCallback(async () => {
         try {
-            const _sinaisVitais: sinaisVitais[] = await Api.get(
+            const _sinaisVitais: ISinaisVitais[] = await Api.get(
                 `SinaisVitaisMonitoracaoGeral/ListarTodosSVMG?pagina=${1}&rows=${5}`,
             ).then((response) => {
                 const { result } = response.data;
                 if (result) {
                     /* const order_result = */ result.sort(function (
-                        a: sinaisVitais,
-                        b: sinaisVitais,
+                        a: ISinaisVitais,
+                        b: ISinaisVitais,
                     ) {
                         return a.nR_SEQUENCIA > b.nR_SEQUENCIA
                             ? -1
@@ -54,7 +54,7 @@ const EndSinaisVitais: React.FC = ({}) => {
         }
     }, [addNotification]);
 
-    const Item = ({ item }: { item: sinaisVitais; index: number }) => {
+    const Item = ({ item }: { item: ISinaisVitais; index: number }) => {
         return (
             <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
@@ -115,7 +115,7 @@ const EndSinaisVitais: React.FC = ({}) => {
         item,
         index,
     }: {
-        item: sinaisVitais;
+        item: ISinaisVitais;
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
@@ -162,9 +162,10 @@ const EndSinaisVitais: React.FC = ({}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        width: Dimensions.get('screen').width,
+        paddingVertical: 10,
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: '#fff'
     },
     cardStyle: {
         flex: 1,

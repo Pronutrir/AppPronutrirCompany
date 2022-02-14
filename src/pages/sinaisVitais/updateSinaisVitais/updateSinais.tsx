@@ -23,9 +23,13 @@ interface Params {
     oxigenacao: number;
 }
 
-const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
+const UpdateSinais: React.FC<Props> = ({
+    route: {
+        params: { PessoaFisica, SinaisVitais },
+    },
+}: Props) => {
     const navigation = useNavigation();
-    const { AddSinaisVitais, GetSinaisVitais } =
+    const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais, GetAllSinaisVitais } =
         useContext(SinaisVitaisContext);
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
@@ -48,10 +52,25 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
         return x;
     };
 
+    const SinaisVitaisUpdate = async () => {
+        setActiveModal(true);
+        await UpdateSinaisVitais({
+            cD_PACIENTE: SinaisVitais.cD_PACIENTE,
+            nR_SEQUENCIA: SinaisVitais.nR_SEQUENCIA,
+            qT_ALTURA_CM: Altura <= 0 ? null : Altura,
+            qT_PESO: Peso <= 0 ? null : Peso,
+            qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
+            qT_TEMP: temperatura <= 30 ? null : temperatura,
+        });
+        await GetAllSinaisVitais();
+        setActiveModal(false);
+        navigation.goBack();
+    };
+
     const PostSinaisVitais = async () => {
         setActiveModal(true);
         await AddSinaisVitais({
-            cD_PACIENTE: route.params.consultaQt.cD_PESSOA_FISICA,
+            cD_PACIENTE: PessoaFisica.cD_PESSOA_FISICA,
             qT_ALTURA_CM: Altura <= 0 ? null : Altura,
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
@@ -62,16 +81,24 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
     };
 
     useEffect(() => {
-        GetSinaisVitais(route.params.consultaQt.cD_PESSOA_FISICA)
-            .then((response) => {
-                if (response?.qT_ALTURA_CM) {
-                    setAltura(response.qT_ALTURA_CM);
-                }
-                setActiveShimmer(true);
-            })
-            .catch(() => {
-                setActiveShimmer(true);
-            });
+        if (SinaisVitais) {
+            setAltura(SinaisVitais.qT_ALTURA_CM);
+            setPeso(SinaisVitais.qT_PESO);
+            setTemperatura(SinaisVitais.qT_TEMP);
+            setOxigenacao(SinaisVitais.qT_SATURACAO_O2);
+            setActiveShimmer(true);
+        } else {
+            GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)
+                .then((response) => {
+                    if (response?.qT_ALTURA_CM) {
+                        setAltura(response.qT_ALTURA_CM);
+                    }
+                    setActiveShimmer(true);
+                })
+                .catch(() => {
+                    setActiveShimmer(true);
+                });
+        }
     }, []);
 
     return (
@@ -81,15 +108,15 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nome: </Text>
                         <Text style={styles.text}>
-                            {route.params.consultaQt.nM_PESSOA_FISICA}
+                            {PessoaFisica.nM_PESSOA_FISICA}
                         </Text>
                     </View>
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nascimento: </Text>
                         <Text style={styles.text}>
-                            {moment(
-                                route.params.consultaQt.dT_NASCIMENTO,
-                            ).format('DD-MM-YYYY')}
+                            {moment(PessoaFisica.dT_NASCIMENTO).format(
+                                'DD-MM-YYYY',
+                            )}
                         </Text>
                     </View>
                 </View>
@@ -147,7 +174,9 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
                             <View style={styles.item3}>
                                 <BtnCentered
                                     SizeText={18}
-                                    labelBtn={'Adicionar'}
+                                    labelBtn={
+                                        SinaisVitais ? 'Atualizar' : 'Adicionar'
+                                    }
                                     onPress={() => setActiveModalOptions(true)}
                                     enabled={ChangerProperty()}
                                 />
@@ -161,8 +190,12 @@ const UpdateSinais: React.FC<Props> = ({ route }: Props) => {
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions
                 activeModal={activeModalOptions}
-                message={'Deseja atualizar os Sinais Vitais ?'}
-                onpress={() => PostSinaisVitais()}
+                message={
+                    SinaisVitais
+                        ? 'Deseja atualizar os Sinais Vitais ?'
+                        : 'Deseja inserir os Sinais Vitais ?'
+                }
+                onpress={() => SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()}
                 setActiveModal={setActiveModalOptions}
             />
         </View>
