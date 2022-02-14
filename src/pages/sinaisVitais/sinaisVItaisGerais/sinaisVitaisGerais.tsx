@@ -7,7 +7,8 @@ import styles from './style';
 import SinaisVitaisContext, {
     IPFSinaisVitais,
 } from '../../../contexts/sinaisVitaisContext';
-
+import FilterPFGerais from '../components/filterPFGerais/filterPFGerais';
+import { ScrollView } from 'react-native-gesture-handler';
 export interface IParamConsulta {
     query: string;
     isLoading: boolean;
@@ -21,6 +22,7 @@ export interface IParamConsulta {
 
 const SinaisVitaisGerais = () => {
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
+    const [selectedFilter, setSelectedFilter] = useState<string | undefined>();
     const [state, setState] = useState<IParamConsulta>({
         query: '',
         isLoading: true,
@@ -77,24 +79,9 @@ const SinaisVitaisGerais = () => {
         });
     };
 
-    //const Item = ({ title }: { title: any }) => {
-    //    return (
-    //        <Pressable
-    //            key={title.nM_PESSOA_FISICA}
-    //            style={styles.item}
-    //           onPress={() => {} /* SearchAtendimentos(title) */}>
-    //           <Text
-    //               style={
-    //                   styles.descricao
-    //               }>{`${title.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
-    //       </Pressable>
-    //   );
-    //};
-
-    //const renderItem = ({ item }: { item: any }) => <Item title={item} />;
-
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
+            <FilterPFGerais onpress={(item) => setSelectedFilter(item.prop)} selectedFilter={selectedFilter}/>
             <SearchBar
                 darkMode
                 placeholder="Pesquise o nome do paciente"
@@ -121,24 +108,12 @@ const SinaisVitaisGerais = () => {
                 selectionColor="#fff"
                 value={state.query}
             />
-            {/* {state.dataSource.length > 0 && state.query.length > 4 && (
-                <View style={styles.containerAutoComplete}>
-                    <FlatList
-                        data={state.dataSource}
-                        renderItem={renderItem}
-                        keyExtractor={(item, index) => index.toString()}
-                        onEndReached={LoadingSearch}
-                        onEndReachedThreshold={0.5}
-                        ListFooterComponent={renderFooter}
-                    />
-                </View>
-            )} */}
             <CardConsultasGerais
                 dataSourcePFsinaisVitais={state.dataSource}
                 setState={setState}
                 state={state}
             />
-        </View>
+        </ScrollView>
     );
 };
 

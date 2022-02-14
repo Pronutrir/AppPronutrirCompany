@@ -11,6 +11,7 @@ import ModalBottom, {
 import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
 import { IConsultas } from '../../../reducers/ConsultasReducer';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const ConsultasSinaisVitais: React.FC = () => {
     const {
@@ -100,7 +101,7 @@ const ConsultasSinaisVitais: React.FC = () => {
     }, [consultas]);
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
                 selectedFilter={selectFilter.current}
@@ -115,7 +116,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                 animationType={'slide'}>
                 <SelectedModal item={selectedModal} />
             </ModalBottom>
-        </View>
+        </ScrollView>
     );
 };
 

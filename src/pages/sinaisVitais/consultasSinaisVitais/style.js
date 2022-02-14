@@ -4,8 +4,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: Dimensions.get('screen').width,
-        justifyContent: 'center',
-        alignItems: 'center',
+        //justifyContent: 'center',
+        //alignItems: 'center',
     },
 });
 
