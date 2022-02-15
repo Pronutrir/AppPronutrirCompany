@@ -1,16 +1,22 @@
-import React, { useState, useContext } from 'react';
-import { View } from 'react-native';
+import React, { useState, useContext, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Keyboard } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import { RFValue } from 'react-native-responsive-fontsize';
 import CardConsultasGerais from '../components/cardConsultasGerais/cardConsultasGerais';
 import styles from './style';
 import SinaisVitaisContext, {
+    IFilterPF,
     IPFSinaisVitais,
 } from '../../../contexts/sinaisVitaisContext';
-import FilterPFGerais from '../components/filterPFGerais/filterPFGerais';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import BtnOptionsFilter from '../../../components/buttons/BtnOptionsFilter';
+import ModalBottom, {
+    ModalHandles,
+} from '../../../components/Modais/ModalBottom';
+import { DateMask } from '../../../services/validacoes';
+import moment, { Moment } from 'moment';
 export interface IParamConsulta {
-    query: string;
+    query: string | null | undefined;
     isLoading: boolean;
     refreshing: boolean;
     dataSource: IPFSinaisVitais[];
@@ -20,9 +26,25 @@ export interface IParamConsulta {
     continue: boolean;
 }
 
+interface Ifilter {
+    filter: string;
+    placeHolder: string;
+}
+
+const filterDefault = [
+    {
+        filter: 'DATA DE NASCIMENTO',
+        placeHolder: 'Pesquise a data de nascimento',
+    },
+    { filter: 'NOME PACIENTE', placeHolder: 'Pesquise o nome do paciente' },
+];
+
 const SinaisVitaisGerais = () => {
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
-    const [selectedFilter, setSelectedFilter] = useState<string | undefined>();
+    const refModalBotom = useRef<ModalHandles>(null);
+    const [filterSelected, setFilterSelected] = useState<Ifilter>(
+        filterDefault[0],
+    );
     const [state, setState] = useState<IParamConsulta>({
         query: '',
         isLoading: true,
@@ -34,17 +56,19 @@ const SinaisVitaisGerais = () => {
         continue: true,
     });
 
-    const Search = async (nome: string) => {
+    const Search = async (filter: IFilterPF) => {
+        let query = filter.queryDate ? filter.queryDate : filter.queryNome;
+
         setState((prevState) => {
             return {
                 ...prevState,
                 spinnerVisibility: true,
-                query: nome,
+                query: query,
                 dataSource: [],
             };
         });
 
-        const PFSinaisVitais = await SearchPFSinaisVitais(nome, 1);
+        const PFSinaisVitais = await SearchPFSinaisVitais(filter);
 
         if (PFSinaisVitais) {
             setState((prevState) => {
@@ -79,35 +103,116 @@ const SinaisVitaisGerais = () => {
         });
     };
 
+    const filter = (item: Ifilter) => {
+        Onclean();
+        setFilterSelected(item);
+        refModalBotom.current?.closeModal();
+    };
+
+    const filterTextSelected = (item: string) => {
+        return item;
+    };
+
+    const onChangeTextSearch = (text: string) => {
+        if (text.length === 0) {
+            setState((prevState) => {
+                return { ...prevState, spinnerVisibility: false, query: text, };
+            });
+            return;
+        }
+        text.length > 4
+            ? Search({ queryNome: text })
+            : setState((prevState) => {
+                  return {
+                      ...prevState,
+                      spinnerVisibility: false,
+                      query: text,
+                      dataSource: [],
+                      continue: true,
+                  };
+              });
+    };
+
+    const onChangeDateSearch = (text: string) => {
+        let textDate = DateMask(text);
+        if (textDate.length === 0) {
+            setState((prevState) => {
+                return { ...prevState, spinnerVisibility: false, query: textDate, };
+            });
+            return;
+        }
+        text.length >= 9
+            ? Search({ queryDate: textDate })
+            : setState((prevState) => {
+                  return {
+                      ...prevState,
+                      query: textDate,
+                      dataSource: [],
+                  };
+              });
+    };
+
+    useEffect(() => {
+        setFilterSelected(filterDefault[0]);
+    }, []);
+
     return (
         <ScrollView style={styles.container}>
-            <FilterPFGerais onpress={(item) => setSelectedFilter(item.prop)} selectedFilter={selectedFilter}/>
-            <SearchBar
-                darkMode
-                placeholder="Pesquise o nome do paciente"
-                spinnerVisibility={state.spinnerVisibility}
-                style={styles.SearchBarStyle}
-                textInputStyle={styles.textInputStyle}
-                spinnerSize={RFValue(20, 680)}
-                clearIconImageStyle={styles.clearIconImageStyle}
-                searchIconImageStyle={styles.searchIconImageStyle}
-                onChangeText={(text) =>
-                    text.length > 4
-                        ? Search(text)
-                        : setState((prevState) => {
-                              return {
-                                  ...prevState,
-                                  spinnerVisibility: false,
-                                  query: text,
-                                  dataSource: [],
-                                  continue: true,
-                              };
-                          })
-                }
-                onClearPress={() => Onclean()}
-                selectionColor="#fff"
-                value={state.query}
-            />
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                <SearchBar
+                    darkMode
+                    placeholder={filterTextSelected(filterSelected.placeHolder)}
+                    spinnerVisibility={state.spinnerVisibility}
+                    style={styles.SearchBarStyle}
+                    textInputStyle={styles.textInputStyle}
+                    spinnerSize={RFValue(20, 680)}
+                    clearIconImageStyle={styles.clearIconImageStyle}
+                    searchIconImageStyle={styles.searchIconImageStyle}
+                    onChangeText={(text) =>
+                        filterSelected.filter === 'DATA DE NASCIMENTO'
+                            ? onChangeDateSearch(text)
+                            : onChangeTextSearch(text)
+                    }
+                    onClearPress={() => Onclean()}
+                    selectionColor="#fff"
+                    value={state.query?.toString()}
+                    keyboardType={
+                        filterSelected.filter === 'DATA DE NASCIMENTO'
+                            ? 'number-pad'
+                            : 'default'
+                    }
+                    returnKeyType={'next'}
+                />
+                <TextInput />
+                <BtnOptionsFilter
+                    onPress={() => {
+                        refModalBotom.current?.openModal();
+                    }}
+                />
+                <ModalBottom animationType={'slide'} ref={refModalBotom}>
+                    <View style={{ paddingVertical: 10 }}>
+                        <TouchableOpacity
+                            onPress={() => filter(filterDefault[1])}
+                            style={{ paddingVertical: 10 }}>
+                            <Text style={styles.selectTextStyle}>
+                                NOME PACIENTE
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => filter(filterDefault[0])}
+                            style={{ paddingVertical: 10 }}>
+                            <Text style={styles.selectTextStyle}>
+                                DATA DE NASCIMENTO
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ModalBottom>
+            </View>
             <CardConsultasGerais
                 dataSourcePFsinaisVitais={state.dataSource}
                 setState={setState}

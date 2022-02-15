@@ -17,7 +17,6 @@ const ConsultasSinaisVitais: React.FC = () => {
     const {
         stateConsultas: { consultas, flag },
         GetConsultas,
-        dispatchConsultas,
         FilterConsultas,
     } = useContext(SinaisVitaisContext);
     const refModalBottom = useRef<ModalHandles>(null);

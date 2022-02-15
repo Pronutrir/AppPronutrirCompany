@@ -39,10 +39,7 @@ const CardConsultasGerais: React.FC<Props> = ({
         if (state.continue && state.dataSource.length >= 10) {
             setState({ ...state, loadingScrow: true });
 
-            const PFSinaisVitais = await SearchPFSinaisVitais(
-                state.query,
-                state.page,
-            );
+            const PFSinaisVitais = await SearchPFSinaisVitais({page: state.page, queryNome: state.query});
 
             if (PFSinaisVitais === undefined) {
                 return;

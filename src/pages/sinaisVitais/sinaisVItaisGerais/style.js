@@ -6,10 +6,12 @@ const styles = StyleSheet.create({
         flex: 1,
         width: Dimensions.get('screen').width,
         paddingVertical: 10,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     SearchBarStyle: {
-        height: Dimensions.get('screen').height / 16,
+        paddingHorizontal: 10,
+        width: '85%',
+        height: Dimensions.get('screen').height / 20,
         backgroundColor: '#08948A',
     },
     textInputStyle: {
@@ -18,6 +20,7 @@ const styles = StyleSheet.create({
     clearIconImageStyle: {
         width: RFPercentage(2),
         height: RFPercentage(2),
+        marginRight: -10
     },
     searchIconImageStyle: {
         width: RFPercentage(2),
@@ -64,6 +67,11 @@ const styles = StyleSheet.create({
         color: '#1E707D',
         fontSize: RFValue(16, 680)
       },
+      selectTextStyle: {
+        color: '#08948A',
+        textAlign: 'center',
+        fontSize: RFValue(18, 680),
+    },
 });
 
 export default styles;

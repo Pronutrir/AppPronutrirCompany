@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import NotificationGlobalContext from './notificationGlobalContext';
 import {
     ConsultasQTReducer,
@@ -26,6 +26,7 @@ import {
     ISinaisVitais,
 } from '../reducers/ConsultasReducer';
 import axios, { AxiosResponse, CancelTokenSource } from 'axios';
+
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
     stateConsultas: IstateConsultas;
@@ -35,8 +36,7 @@ interface AuthContextData {
     //GetMedicosConsultas(): Promise<void>;
     dispatchConsultas: React.Dispatch<ConsultasAction>;
     SearchPFSinaisVitais(
-        nome: string,
-        page?: number,
+        filter: IFilterPF,
     ): Promise<IPFSinaisVitais[] | null | undefined>;
     GetSinaisVitais(
         nR_SEQUENCIA: string,
@@ -56,6 +56,12 @@ export interface IFilterConsultas {
     dataInicio?: string | null;
     dataFinal?: string | null;
     pagina?: number | null;
+}
+
+export interface IFilterPF {
+    queryNome?: string | null;
+    queryDate?: string | null;
+    page?: number | null;
 }
 export interface SinaisVitais {
     iE_PRESSAO: string;
@@ -116,7 +122,6 @@ const sinaisVitaisDefault: SinaisVitais = {
     dT_LIBERACAO: '',
     nM_USUARIO: '',
 };
-
 interface ResponsePFdados {
     result: IPFSinaisVitais[];
 }
@@ -309,8 +314,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     }, []);
 
     const SearchPFSinaisVitais = async (
-        query: string,
-        page?: number,
+        filter: IFilterPF,
     ): Promise<IPFSinaisVitais[] | null | undefined> => {
         //Check if there are any previous pending requests
         if (axiosSourcePFSinaisVitais != null) {
@@ -325,7 +329,16 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             any,
             AxiosResponse<ResponsePFdados>
         >(
-            `PessoaFisica/FiltrarPFdadosReduzidos?nomePessoaFisica=${query}&pagina=1&rows=100`,
+            `PessoaFisica/FiltrarPFdadosReduzidos?${
+                filter.queryDate
+                    ? `&dataNascimento=${moment(
+                          filter.queryDate,
+                          'DD/MM/YYYY',
+                      ).format('YYYY-MM-DD')}`
+                    : ''
+            }${
+                filter.queryNome ? `&nomePessoaFisica=${filter.queryNome}` : ''
+            }&pagina=1&rows=100`,
             {
                 cancelToken: axiosSourcePFSinaisVitais.current.token,
             },

@@ -81,6 +81,12 @@ const cepMask = (cep) => {
     .replace(/(\d)(\d{3})$/,"$1-$2")   //Coloca hífen entre o quinto e o sexto dígitos
 }
 
+const DateMask = (date) => {
+    return date.replace(/\D/g, '') //substitui qualquer caractere que não seja número por nada.
+    .replace(/(\d{2})(\d)/, '$1/$2')
+    .replace(/(\d{2})(\d)/, '$1/$2')// captura 2 grupos de numero o primeiro de 3 números 
+}
+
 const FormatText = (text) => {
     let loweredText = text.toLowerCase();
     let wordsArray = loweredText.split(" ");
@@ -98,4 +104,4 @@ const FormatText = (text) => {
     return words.join(" ");
 }
 
-export { cpfMask, valicacaoCPF, foneMask, precoMask, foneResidencialMask, FormatText, cepMask }
+export { cpfMask, valicacaoCPF, foneMask, precoMask, foneResidencialMask, FormatText, cepMask, DateMask }
