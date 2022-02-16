@@ -166,8 +166,7 @@ const SinaisVitaisGerais = () => {
             <View
                 style={{
                     flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    marginHorizontal: 5,
                 }}>
                 <SearchBar
                     darkMode
@@ -193,7 +192,6 @@ const SinaisVitaisGerais = () => {
                     }
                     returnKeyType={'next'}
                 />
-                <TextInput />
                 <BtnOptionsFilter
                     onPress={() => {
                         refModalBotom.current?.openModal();

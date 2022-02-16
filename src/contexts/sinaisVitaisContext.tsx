@@ -473,7 +473,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         )
             .then(() => {
                 addAlert({
-                    message: 'Dado Atualizado com sucesso!',
+                    message: 'Dados Atualizado com sucesso!',
                     status: 'sucess',
                 });
             })
@@ -490,7 +490,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .then(() => {
                 GetAllSinaisVitais();
                 addAlert({
-                    message: 'Dado excluir com sucesso!',
+                    message: 'Dados excluir com sucesso!',
                     status: 'sucess',
                 });
             })

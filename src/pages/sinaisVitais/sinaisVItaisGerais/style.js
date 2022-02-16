@@ -10,9 +10,8 @@ const styles = StyleSheet.create({
     },
     SearchBarStyle: {
         width: '85%',
-        height: Dimensions.get('screen').height / 20,
+        height: Dimensions.get('screen').height / 16,
         backgroundColor: '#08948A',
-        marginLeft: 5
     },
     textInputStyle: {
         fontSize: RFValue(16, 680),
@@ -20,10 +19,8 @@ const styles = StyleSheet.create({
     clearIconImageStyle: {
         width: RFPercentage(2),
         height: RFPercentage(2),
-        //marginRight: -10
     },
     searchIconImageStyle: {
-        //marginLeft: -10,
         width: RFPercentage(2),
         height: RFPercentage(2),
     },

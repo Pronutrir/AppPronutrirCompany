@@ -14,8 +14,8 @@ const BtnOptionsFilter: React.FC<Props> = ({ onPress }: Props) => {
             <TouchableOpacity style={styles.btn} onPress={onPress}>
                 <ConfigSvg
                     fill={'#fff'}
-                    width={RFPercentage(3.5)}
-                    height={RFPercentage(3.5)}
+                    width={RFPercentage(5)}
+                    height={RFPercentage(5)}
                 />
             </TouchableOpacity>
         </View>
@@ -24,12 +24,11 @@ const BtnOptionsFilter: React.FC<Props> = ({ onPress }: Props) => {
 
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+
     },
     btn: {
-        width: RFPercentage(5.5),
-        height: Dimensions.get('screen').height / 20,
+        width: RFPercentage(7),
+        height: Dimensions.get('screen').height / 16,
         margin: 5,
         padding: 5,
         backgroundColor: '#08948A',

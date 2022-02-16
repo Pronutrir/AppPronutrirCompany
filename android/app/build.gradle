@@ -12,7 +12,7 @@ apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
 // Apply the Performance Monitoring plugin
-apply plugin: 'com.google.firebase.firebase-perf'
+//apply plugin: 'com.google.firebase.firebase-perf'
 
 import com.android.build.OutputFile
 
@@ -242,7 +242,7 @@ dependencies {
 
     // Declare the dependency for the Performance Monitoring library
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation 'com.google.firebase:firebase-perf'
+    //implementation 'com.google.firebase:firebase-perf'
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
