@@ -100,7 +100,7 @@ const ConsultasSinaisVitais: React.FC = () => {
     }, [consultas]);
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
                 selectedFilter={selectFilter.current}
@@ -115,7 +115,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                 animationType={'slide'}>
                 <SelectedModal item={selectedModal} />
             </ModalBottom>
-        </ScrollView>
+        </View>
     );
 };
 

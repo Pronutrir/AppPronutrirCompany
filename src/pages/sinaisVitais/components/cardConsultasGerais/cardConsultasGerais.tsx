@@ -39,7 +39,10 @@ const CardConsultasGerais: React.FC<Props> = ({
         if (state.continue && state.dataSource.length >= 10) {
             setState({ ...state, loadingScrow: true });
 
-            const PFSinaisVitais = await SearchPFSinaisVitais({page: state.page, queryNome: state.query});
+            const PFSinaisVitais = await SearchPFSinaisVitais({
+                page: state.page,
+                queryNome: state.query,
+            });
 
             if (PFSinaisVitais === undefined) {
                 return;
@@ -117,11 +120,19 @@ const CardConsultasGerais: React.FC<Props> = ({
         </CardSimples>
     );
 
-    const renderItemEmpty = () => (
-        <CardSimples styleCardContainer={styles.cardStyle}>
-            <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
-        </CardSimples>
-    );
+    const renderItemEmpty = () => {
+        if (state.showRequest) {
+            return (
+                <CardSimples styleCardContainer={styles.cardStyle}>
+                    <Text style={styles.text}>
+                        Nenhum sinal vital encontrado
+                    </Text>
+                </CardSimples>
+            );
+        } else {
+            return null;
+        }
+    };
 
     const renderFooter = () => {
         if (!state.loadingScrow) {
@@ -136,7 +147,7 @@ const CardConsultasGerais: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
-            {dataSourcePFsinaisVitais ? (
+            {!state.spinnerVisibility ? (
                 <FlatList
                     data={dataSourcePFsinaisVitais}
                     renderItem={({ item, index }) =>

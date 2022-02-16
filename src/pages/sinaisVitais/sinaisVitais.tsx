@@ -57,7 +57,7 @@ const SinaisVitais: React.FC = () => {
         },
         {
             Index: 2,
-            Name: 'Gerais',
+            Name: 'Geral',
             Ref: refView2,
         },
         {
@@ -96,9 +96,9 @@ const SinaisVitais: React.FC = () => {
         if (type === 'scrollToIndex') {
             scrollToIndex(index);
         }
-        if (type === 'scrollToIndexMenu') {
+        //if (type === 'scrollToIndexMenu') {
             scrollToIndexMenu(index);
-        }
+        //}
 
         if (index === 0) {
             refView0.current?.setNativeProps({ style: styles.btnSelected });
@@ -126,6 +126,18 @@ const SinaisVitais: React.FC = () => {
         }
     }, []);
 
+    const onViewableItemsChangedMenu = React.useCallback(
+        (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
+            const { changed } = info;
+            const [viewableItem] = changed;
+            const { index, isViewable } = viewableItem;
+            if (index) {
+                selected(index, 'scrollToIndexMenu');
+            }
+        },
+        [selected],
+    );
+
     /* const onViewableItemsChanged = React.useCallback(
         (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
             const { changed } = info;
@@ -147,7 +159,7 @@ const SinaisVitais: React.FC = () => {
         if (Name === 'Tratamento') {
             return <OncologiaSinaisVitais />;
         }
-        if (Name === 'Gerais') {
+        if (Name === 'Geral') {
             return <SinaisVitaisGerais />;
         }
         if (Name === 'Histórico') {
@@ -197,7 +209,7 @@ const SinaisVitais: React.FC = () => {
                     horizontal={true}
                     // pagingEnabled={true}
                     showsHorizontalScrollIndicator={false}
-                    //onViewableItemsChanged={onViewableItemsChanged}
+                    onViewableItemsChanged={onViewableItemsChangedMenu}
                     // viewabilityConfig={viewabilityConfig.current}
                     // initialNumToRender={3}
                     // ListEmptyComponent={EmptyComponent}
@@ -218,6 +230,7 @@ const SinaisVitais: React.FC = () => {
                     initialNumToRender={3}
                     ListEmptyComponent={EmptyComponent}
                     getItemLayout={getItemLayout}
+                    scrollEnabled={false}
                     //refreshing={refresh}
                     /* onRefresh={() => {
                         setRefresh(true);

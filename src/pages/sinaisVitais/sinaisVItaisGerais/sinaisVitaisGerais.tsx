@@ -14,7 +14,6 @@ import ModalBottom, {
     ModalHandles,
 } from '../../../components/Modais/ModalBottom';
 import { DateMask } from '../../../services/validacoes';
-import moment, { Moment } from 'moment';
 export interface IParamConsulta {
     query: string | null | undefined;
     isLoading: boolean;
@@ -24,6 +23,7 @@ export interface IParamConsulta {
     page: number;
     loadingScrow: boolean;
     continue: boolean;
+    showRequest: boolean
 }
 
 interface Ifilter {
@@ -54,6 +54,7 @@ const SinaisVitaisGerais = () => {
         page: 2,
         loadingScrow: false,
         continue: true,
+        showRequest: false
     });
 
     const Search = async (filter: IFilterPF) => {
@@ -76,6 +77,7 @@ const SinaisVitaisGerais = () => {
                     ...prevState,
                     spinnerVisibility: false,
                     dataSource: PFSinaisVitais,
+                    showRequest: true,
                 };
             });
         } else {
@@ -85,6 +87,7 @@ const SinaisVitaisGerais = () => {
                         ...prevState,
                         spinnerVisibility: false,
                         dataSource: [],
+                        showRequest: true,
                     };
                 });
             }
@@ -99,6 +102,7 @@ const SinaisVitaisGerais = () => {
                 dataSource: [],
                 query: '',
                 continue: true,
+                showRequest: false,
             };
         });
     };
@@ -137,7 +141,7 @@ const SinaisVitaisGerais = () => {
         let textDate = DateMask(text);
         if (textDate.length === 0) {
             setState((prevState) => {
-                return { ...prevState, spinnerVisibility: false, query: textDate, };
+                return { ...prevState, spinnerVisibility: false, query: textDate, showRequest: false };
             });
             return;
         }
@@ -148,6 +152,7 @@ const SinaisVitaisGerais = () => {
                       ...prevState,
                       query: textDate,
                       dataSource: [],
+                      showRequest: false,
                   };
               });
     };

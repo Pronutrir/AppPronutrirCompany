@@ -29,6 +29,7 @@ import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
+import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
@@ -192,7 +193,7 @@ const HistorySinaisVitais: React.FC = () => {
 
     const renderItemEmpty = () => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
+            <Text style={styles.text}>Nenhum Histórico encontrado!</Text>
         </CardSimples>
     );
 
@@ -222,13 +223,14 @@ const HistorySinaisVitais: React.FC = () => {
                     refreshing={refreshing}
                     onRefresh={async () => {
                         setRefreshing(true);
+                        setListSinaisVitais(null);
                         await GetAllSinaisVitais();
                         setRefreshing(false);
                     }}
                     ListEmptyComponent={renderItemEmpty}
                 />
             ) : (
-                <LoadingBall active={true} />
+                Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
             <Loading activeModal={activeModal} />
             {/* <ModalCentralizedOptions

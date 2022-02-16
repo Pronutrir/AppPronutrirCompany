@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E6ECEC',
     },
     box1: {
-        backgroundColor: '#E6ECEC',
+        backgroundColor: '#fff',
         width: Dimensions.get('screen').width,
         height: RFPercentage(8),
         flexDirection: 'row',
@@ -22,6 +22,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderBottomWidth: 5,
         borderColor: '#20c4cb',
+        margin: 5,
+        borderRadius: 5,
+        paddingHorizontal: 5
     },
     btnSelected: {
         borderColor: '#08948A',
