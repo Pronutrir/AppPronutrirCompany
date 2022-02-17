@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import NotificationGlobalContext from './notificationGlobalContext';
 import {
     ConsultasQTReducer,

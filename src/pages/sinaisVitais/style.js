@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderBottomWidth: 5,
         borderColor: '#20c4cb',
-        margin: 5,
+        margin: RFPercentage(1),
         borderRadius: 5,
         paddingHorizontal: 5
     },
@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: RFValue(16, 680),
         fontWeight: 'bold',
-        padding: 10,
+        padding: RFPercentage(1),
+        paddingHorizontal: RFPercentage(2)
     },
     ContainerModal: {
         justifyContent: 'center',

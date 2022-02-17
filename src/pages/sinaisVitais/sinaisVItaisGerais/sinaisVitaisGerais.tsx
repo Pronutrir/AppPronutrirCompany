@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Keyboard } from 'react-native';
-import SearchBar from 'react-native-dynamic-search-bar';
+import { View, Text, TouchableOpacity } from 'react-native';
+import SearchBar, { ISource } from 'react-native-dynamic-search-bar';
 import { RFValue } from 'react-native-responsive-fontsize';
 import CardConsultasGerais from '../components/cardConsultasGerais/cardConsultasGerais';
 import styles from './style';
@@ -8,7 +8,7 @@ import SinaisVitaisContext, {
     IFilterPF,
     IPFSinaisVitais,
 } from '../../../contexts/sinaisVitaisContext';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import BtnOptionsFilter from '../../../components/buttons/BtnOptionsFilter';
 import ModalBottom, {
     ModalHandles,
@@ -145,16 +145,22 @@ const SinaisVitaisGerais = () => {
             });
             return;
         }
-        text.length >= 9
-            ? Search({ queryDate: textDate })
-            : setState((prevState) => {
-                  return {
-                      ...prevState,
-                      query: textDate,
-                      dataSource: [],
-                      showRequest: false,
-                  };
-              });
+
+        if(text.length >= 9 && text.length <= 10){
+            Search({ queryDate: textDate })
+        }
+        if (text.length > 10) {
+            return;
+        } else {
+            setState((prevState) => {
+                return {
+                    ...prevState,
+                    query: textDate,
+                    dataSource: [],
+                    showRequest: false,
+                };
+            });
+        }
     };
 
     useEffect(() => {
@@ -167,6 +173,7 @@ const SinaisVitaisGerais = () => {
                 style={{
                     flexDirection: 'row',
                     marginHorizontal: 5,
+                    justifyContent: 'center'
                 }}>
                 <SearchBar
                     darkMode

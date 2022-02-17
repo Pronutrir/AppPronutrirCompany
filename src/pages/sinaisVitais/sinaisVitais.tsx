@@ -209,7 +209,7 @@ const SinaisVitais: React.FC = () => {
                     horizontal={true}
                     // pagingEnabled={true}
                     showsHorizontalScrollIndicator={false}
-                    onViewableItemsChanged={onViewableItemsChangedMenu}
+                    //onViewableItemsChanged={onViewableItemsChangedMenu}
                     // viewabilityConfig={viewabilityConfig.current}
                     // initialNumToRender={3}
                     // ListEmptyComponent={EmptyComponent}
