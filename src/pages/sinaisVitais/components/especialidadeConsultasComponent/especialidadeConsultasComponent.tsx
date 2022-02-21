@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
     StyleSheet,
     FlatList,
@@ -54,15 +54,29 @@ const EspecialidadeConsultasComponent: React.FC<Props> = ({
             </TouchableOpacity>
         </View>
     );
+
+    const refactoryEspecialidades = useCallback(() => {
+        const medicosDuplicates = medicos?.filter(
+            (item, index, array) =>
+                array.findIndex(
+                    (t) => t.cD_ESPECIALIDADE === item.cD_ESPECIALIDADE,
+                ) === index,
+        )
+        const medicosOrderBy = medicosDuplicates?.sort((a, b) => {
+            return a.dS_ESPECIALIDADE < b.dS_ESPECIALIDADE
+                ? -1
+                : a.dS_ESPECIALIDADE > b.dS_ESPECIALIDADE
+                ? 1
+                : 0;
+        })
+
+        return medicosOrderBy;
+    }, [])
+
     return (
         <View style={styles.container}>
             <FlatList
-                data={medicos?.filter(
-                    (item, index, array) =>
-                        array.findIndex(
-                            (t) => t.cD_ESPECIALIDADE === item.cD_ESPECIALIDADE,
-                        ) === index,
-                )}
+                data={refactoryEspecialidades()}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
             />

@@ -102,10 +102,19 @@ export const ConsultasReducer = (
                     array.findIndex((t) => t.nM_GUERRA === item.nM_GUERRA) ===
                     index,
             );
+
+            // ordenar alfabeticamente
+            const resultOrdenar = resultSemDuplicados?.sort((a, b) => {
+                return a.nM_GUERRA < b.nM_GUERRA
+                    ? -1
+                    : a.nM_GUERRA > b.nM_GUERRA
+                    ? 1
+                    : 0;
+            });
             return {
                 ...state,
                 consultas: action.payload.consultas,
-                medicos: resultSemDuplicados,
+                medicos: resultOrdenar,
             };
         case 'setMedicos':
             return { ...state, ...action.payload };
