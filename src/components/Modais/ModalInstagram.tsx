@@ -16,7 +16,6 @@ import {
     Dimensions,
     Platform,
     ViewStyle,
-    useWindowDimensions,
     ListRenderItem,
 } from 'react-native';
 import Cancel from '../../assets/svg/cancel.svg';
@@ -30,21 +29,17 @@ import Carousel, {
 import Api from '../../services/api';
 import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 
-const width = Dimensions.get('screen').width;
-
+const width = Dimensions.get('window').width;
 interface Props {
     postagem: IInstagram;
     activeModal?: boolean;
     style?: ViewStyle;
     animationType?: 'none' | 'slide' | 'fade';
 }
-
 export interface ModalHandles {
     openModal(): void;
     closeModal(): void;
 }
-
-type ThemeOpacity = 'light' | 'dark';
 
 const { width: screenWidth } = Dimensions.get('screen');
 
@@ -54,9 +49,6 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
 
         const { addNotification } = useContext(NotificationGlobalContext);
         const [imagensInsta, setImagensInsta] = useState<IInstagram[]>([]);
-
-        //const windowWidth = useWindowDimensions().width;
-        const windowHeight = useWindowDimensions().height;
 
         const closeModal = useCallback(() => {
             setActive(false);
@@ -123,7 +115,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
             <View>
                 <Modal
                     animationType={animationType}
-                    //transparent={true}
+                    transparent={true}
                     visible={active}>
                     <View style={styles.centeredView}>
                         <SafeAreaView style={styles.centeredView}>
@@ -146,7 +138,10 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                             sliderWidth={screenWidth}
                                             sliderHeight={screenWidth}
                                             itemWidth={
-                                                (windowHeight / 100) * 45
+                                                (Dimensions.get('window')
+                                                    .width /
+                                                    100) *
+                                                95
                                             }
                                             data={imagensInsta}
                                             renderItem={renderItem}
@@ -212,10 +207,10 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        //elevation: 3,
+        elevation: 3,
     },
     box1: {
-        flex: width > 500 ? 1.8 : 1,
+        flex: width > 500 ? 1.5 : 1,
     },
     box2: {
         flex: 1,
