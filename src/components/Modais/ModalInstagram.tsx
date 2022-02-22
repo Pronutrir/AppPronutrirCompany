@@ -1,10 +1,9 @@
 import React, {
-    useRef,
     useState,
     useCallback,
     useImperativeHandle,
     useEffect,
-    useContext
+    useContext,
 } from 'react';
 import {
     StyleSheet,
@@ -12,7 +11,6 @@ import {
     View,
     Modal,
     TouchableOpacity,
-    Image,
     ScrollView,
     SafeAreaView,
     Dimensions,
@@ -21,12 +19,6 @@ import {
     useWindowDimensions,
     ListRenderItem,
 } from 'react-native';
-import Animated, {
-    withTiming,
-    useAnimatedStyle,
-    interpolateColor,
-    useDerivedValue,
-} from 'react-native-reanimated';
 import Cancel from '../../assets/svg/cancel.svg';
 import { RFValue } from 'react-native-responsive-fontsize';
 import moment from 'moment';
@@ -58,18 +50,15 @@ const { width: screenWidth } = Dimensions.get('screen');
 
 const ModalInstagram = React.forwardRef<ModalHandles, Props>(
     ({ animationType = 'none', activeModal = false, postagem }: Props, ref) => {
-        const _view = useRef<any>(null);
         const [active, setActive] = useState(activeModal);
-        const [theme, setTheme] = useState<ThemeOpacity>('light');
 
         const { addNotification } = useContext(NotificationGlobalContext);
         const [imagensInsta, setImagensInsta] = useState<IInstagram[]>([]);
 
-        const windowWidth = useWindowDimensions().width;
+        //const windowWidth = useWindowDimensions().width;
         const windowHeight = useWindowDimensions().height;
 
         const closeModal = useCallback(() => {
-            setTheme('light');
             setActive(false);
             setImagensInsta([]);
         }, []);
@@ -85,45 +74,30 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
             };
         });
 
-        const progress = useDerivedValue(() => {
-            return theme === 'dark' ? withTiming(0, { duration: 500 }) : 1;
-        }, [theme]);
-
-        const animatedStyles = useAnimatedStyle(() => {
-            const backgroundColor = interpolateColor(
-                progress.value,
-                [0, 1],
-                ['rgba(0,0,0,.8)', 'rgba(0,0,0,.0)'],
-            );
-            return {
-                backgroundColor,
-            };
-        });
-
-        const getPostagemInsta = () => {
-            if(postagem.children?.data){
+        const getPostagemInsta = useCallback(() => {
+            if (postagem.children?.data) {
                 Api.post('Social/GetChildresInst', postagem.children.data)
-                .then((response) => {
-                    const { data } = response;
-                    if (data) {
-                        setImagensInsta(data);
-                    }
-                })
-                .catch(() => {
-                    addNotification({
-                        message:
-                            'Não foi possivel acessar os posts do instram tente mais tarde!',
-                        status: 'error',
+                    .then((response) => {
+                        const { data } = response;
+                        if (data) {
+                            setImagensInsta(data);
+                        }
+                    })
+                    .catch(() => {
+                        addNotification({
+                            message:
+                                'Não foi possivel acessar os posts do instram tente mais tarde!',
+                            status: 'error',
+                        });
                     });
-                });
-            }else{
+            } else {
                 setImagensInsta([postagem]);
             }
-        };
-    
+        }, [setImagensInsta, addNotification, postagem]);
+
         useEffect(() => {
             getPostagemInsta();
-        }, [postagem]);
+        }, [postagem, getPostagemInsta]);
 
         const renderItem: ListRenderItem<IInstagram> = (
             { item },
@@ -149,22 +123,9 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
             <View>
                 <Modal
                     animationType={animationType}
-                    transparent={true}
-                    visible={active}
-                    onShow={() => setTheme('dark')}>
-                    <Animated.View
-                        style={[styles.centeredView, animatedStyles]}
-                        ref={_view}
-                        onStartShouldSetResponder={(evt) => {
-                            evt.persist();
-                            if (
-                                evt.nativeEvent.target ===
-                                _view.current?._nativeTag
-                            ) {
-                                closeModal();
-                            }
-                            return true;
-                        }}>
+                    //transparent={true}
+                    visible={active}>
+                    <View style={styles.centeredView}>
                         <SafeAreaView style={styles.centeredView}>
                             <View style={styles.modalView}>
                                 <View style={styles.box1}>
@@ -185,7 +146,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                             sliderWidth={screenWidth}
                                             sliderHeight={screenWidth}
                                             itemWidth={
-                                                windowWidth
+                                                (windowHeight / 100) * 45
                                             }
                                             data={imagensInsta}
                                             renderItem={renderItem}
@@ -195,7 +156,6 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                             hasParallaxImages={true}
                                             autoplay={true}
                                             enableMomentum={false}
-                                            lockScrollWhileSnapping={true}
                                             loop={true}
                                         />
                                     </View>
@@ -227,7 +187,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                 </ScrollView>
                             </View>
                         </SafeAreaView>
-                    </Animated.View>
+                    </View>
                 </Modal>
             </View>
         );
@@ -252,7 +212,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 3,
+        //elevation: 3,
     },
     box1: {
         flex: width > 500 ? 1.8 : 1,
