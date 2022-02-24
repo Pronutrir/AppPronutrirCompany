@@ -17,6 +17,7 @@ import {
     LoginAction,
 } from '../reducers/UserReducer';
 import { deleteUserTasy } from '../utils';
+import OneSignal from 'react-native-onesignal';
 
 interface AuthContextData {
     signed: boolean;
@@ -120,6 +121,10 @@ export const AuthProvider: React.FC = ({ children }) => {
                                 payload: result,
                             });
                         }
+                        //registra o dispositivo no onesignal inclui um id externo para notificações!
+                        OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
+                        //Adiciona uma tag para diferenciar as aplicações mobile
+                        OneSignal.sendTag('NameApp','pronutrirCompany');
                     }
                 } else {
                     deleteUserTasy();
