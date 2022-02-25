@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Home from '../pages/home/home';
 import ConsultaCpf from '../pages/consultaCPF/consultaCpf';
-import MyHeader from '../componentes/MyHeader';
+import Header from '../components/header/Header';
 import Login from '../pages/login/login';
 import Cadastro from '../pages/cadastro/cadastro';
 import ConsultaNome from '../pages/consultarNome/consultarNome';
@@ -30,7 +30,7 @@ const RouteApp: React.FC = () => {
                 headerShown: false,
                 header: ({ navigation }) => {
                     return (
-                        <MyHeader
+                        <Header
                             transparent={true}
                             onPress={() => navigation.goBack()}
                         />

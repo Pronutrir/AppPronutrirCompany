@@ -19,6 +19,7 @@ import { HistorySinaisVitais } from '../pages/sinaisVitais/historySinaisVitais/h
 import UpdateSinais from '../pages/sinaisVitais/updateSinaisVitais/updateSinais';
 import { IPFSinaisVitais } from '../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../reducers/ConsultasReducer';
+import UpdateSinaisVitaisEnfermagem from '../pages/sinaisVitais/updateSinaisVitaisEnfermagem/updateSinaisVitaisEnfermagem';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -45,7 +46,11 @@ export type RootStackParamList = {
     AlterarSenha: undefined;
     SinaisVitais: undefined;
     historySinaisVitais: undefined;
-    updateSinais: {
+    UpdateSinais: {
+        PessoaFisica: IPFSinaisVitais;
+        SinaisVitais: ISinaisVitais;
+    };
+    UpdateSinaisVitaisEnfermagem: {
         PessoaFisica: IPFSinaisVitais;
         SinaisVitais: ISinaisVitais;
     };
@@ -131,9 +136,14 @@ const InitialStackNavigator = () => {
                 options={{ title: 'Historico Sinais Vitais' }}
             />
             <Stack.Screen
-                name="updateSinais"
+                name="UpdateSinais"
                 component={UpdateSinais}
-                options={{ title: 'Atualizar Sinais Vitais' }}
+                options={{ title: 'Sinais Vitais Triagem' }}
+            />
+            <Stack.Screen
+                name="UpdateSinaisVitaisEnfermagem"
+                component={UpdateSinaisVitaisEnfermagem}
+                options={{ title: 'Sinais Vitais Enfermagem' }}
             />
         </Stack.Navigator>
     );

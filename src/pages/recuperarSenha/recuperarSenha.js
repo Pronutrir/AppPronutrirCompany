@@ -6,7 +6,7 @@ import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
 import AuthContext from '../../contexts/auth';
-import MybackButton from '../../componentes/MyBackButton';
+import MybackButton from '../../components/buttons/BackButton';
 import auth from '@react-native-firebase/auth';
 import MyModalSimples from '../../componentes/MyModalSimples';
 

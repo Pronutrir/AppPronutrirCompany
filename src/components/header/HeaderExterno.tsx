@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Dimensions} from 'react-native';
-import ExitButtom from '../buttons/ExitButtom';
+//import ExitButtom from '../buttons/ExitButtom';
 import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
 import AgendarConsultaImg from '../../assets/svg/AgendarConsulta.svg';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -39,7 +39,7 @@ const HeaderExterno: React.FC<Props> = ({title}: Props) => {
             <View style={styles.container}>
                 <View style={styles.box2}>
                     <View style={styles.item1}>
-                        <ExitButtom />
+                       {/*  <ExitButtom /> */}
                         <SetIcone />
                     </View>
                 </View>

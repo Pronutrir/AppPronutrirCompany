@@ -1,8 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import BackButton from '../components/buttons/BackButton';
+import BackButton from '../../components/buttons/BackButton';
 
-const MyHeader = ({ onPress, transparent }) => {
+interface Props {
+    onPress: any;
+    transparent: any
+}
+
+const Header: React.FC<Props>  = ({ onPress, transparent }: Props) => {
     return (
         <View style={transparent ? styles.container2 : styles.container}>
             <View style={[styles.box1, transparent && { backgroundColor: 'transparent' }]}/>
@@ -30,4 +35,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default MyHeader
+export default Header

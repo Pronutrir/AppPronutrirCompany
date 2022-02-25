@@ -19,6 +19,7 @@ export const initialState: LoginState = {
         nR_Senha: '',
         ImgPerfil: '', //base64
         usuariO_FUNCIONARIO: [],
+        usuariO_FUNCIONARIO_PERFIL: [],
     },
 };
 
@@ -48,6 +49,7 @@ export interface UserTasy {
     nR_Senha: string;
     ImgPerfil: string;
     usuariO_FUNCIONARIO: UsuarioFuncionario[];
+    usuariO_FUNCIONARIO_PERFIL: IPerfis[];
 }
 
 export interface UsuarioFuncionario {
@@ -55,6 +57,20 @@ export interface UsuarioFuncionario {
     cD_SETOR_ATENDIMENTO: number;
     dS_SETOR_ATENDIMENTO: string;
     cD_ESTABELECIMENTO: number;
+}
+
+interface IPerfis {
+    cD_PESSOA_FISICA: string;
+    nM_USUARIO: string;
+    cD_PERFIL: number;
+    dS_PERFIL: string;
+    dT_ATUALIZACAO: string;
+    nM_USUARIO_ATUAL: string;
+    dT_LIBERACAO: string;
+    nR_SEQUENCIA: number;
+    dS_UTC_ATUALIZACAO: string;
+    dS_UTC: string;
+    iE_HORARIO_VERAO: string;
 }
 
 export type LoginAction =
@@ -105,6 +121,7 @@ export const UserReducer = (
                     nR_Senha: '',
                     ImgPerfil: '',
                     usuariO_FUNCIONARIO: [],
+                    usuariO_FUNCIONARIO_PERFIL: [],
                 },
             };
 

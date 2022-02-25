@@ -4,9 +4,9 @@ import perf from '@react-native-firebase/perf';
 
 const api = axios.create({
     //producao
-    baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
+    //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
     //teste
-    //baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
+    baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
     //ngrok
     //baseURL: 'https://247a-177-37-254-1.ngrok.io/api/v1/',
     headers: {

@@ -11,7 +11,6 @@ import ModalBottom, {
 import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
 import { IConsultas } from '../../../reducers/ConsultasReducer';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const ConsultasSinaisVitais: React.FC = () => {
     const {

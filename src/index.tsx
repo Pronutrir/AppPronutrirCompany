@@ -7,9 +7,13 @@ import { NotificationGlobalProvider } from './contexts/notificationGlobalContext
 import NotificationAlert from './components/Notification/NotificationAlert';
 import NotificationCentralized from './components/Notification/NotificationCentralized';
 import OneSignal from 'react-native-onesignal';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
+
+// Create a client
+const queryClient = new QueryClient();
 
 const Index: React.FC = () => {
     /*  async function registerAppWithFCM() {
@@ -77,6 +81,7 @@ const Index: React.FC = () => {
     return (
         <NavigationContainer>
             {/* contexto disponível para toda aplicação */}
+            <QueryClientProvider client={queryClient}>
             <NotificationGlobalProvider>
                 <AuthProvider>
                     <Routes />
@@ -84,6 +89,7 @@ const Index: React.FC = () => {
                     <NotificationAlert />
                 </AuthProvider>
             </NotificationGlobalProvider>
+            </QueryClientProvider>
         </NavigationContainer>
     );
 };

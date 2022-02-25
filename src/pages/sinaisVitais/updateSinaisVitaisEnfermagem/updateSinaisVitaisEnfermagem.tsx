@@ -15,7 +15,6 @@ type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
     route: ProfileScreenRouteProp;
 }
-
 interface Params {
     peso: number;
     altura: number;
@@ -23,14 +22,18 @@ interface Params {
     oxigenacao: number;
 }
 
-const UpdateSinais: React.FC<Props> = ({
+const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     route: {
         params: { PessoaFisica, SinaisVitais },
     },
 }: Props) => {
     const navigation = useNavigation();
-    const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais, GetAllSinaisVitais } =
-        useContext(SinaisVitaisContext);
+    const {
+        AddSinaisVitais,
+        GetSinaisVitais,
+        UpdateSinaisVitais,
+        GetAllSinaisVitais,
+    } = useContext(SinaisVitaisContext);
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
@@ -171,6 +174,54 @@ const UpdateSinais: React.FC<Props> = ({
                                     }
                                 />
                             </View>
+                            <View style={styles.item2}>
+                                <SlideRanger
+                                    label={'Altura'}
+                                    medida={'cm'}
+                                    step={1}
+                                    valueMin={0}
+                                    valueMax={300}
+                                    valueRanger={Altura}
+                                    setValueRanger={(value) => setAltura(value)}
+                                />
+                            </View>
+                            <View style={styles.item2}>
+                                <SlideRanger
+                                    label={'Peso'}
+                                    medida={'kg'}
+                                    step={0.1}
+                                    valueMin={0}
+                                    valueMax={200}
+                                    valueRanger={Peso}
+                                    setValueRanger={(value) => setPeso(value)}
+                                />
+                            </View>
+                            <View style={styles.item2}>
+                                <SlideRanger
+                                    label={'Temperatura'}
+                                    medida={'°C'}
+                                    step={0.1}
+                                    valueMin={30}
+                                    valueMax={42}
+                                    valueRanger={temperatura}
+                                    setValueRanger={(value) =>
+                                        setTemperatura(value)
+                                    }
+                                />
+                            </View>
+                            <View style={styles.item2}>
+                                <SlideRanger
+                                    label={'Oximetria'}
+                                    medida={'SpO²'}
+                                    step={1}
+                                    valueMin={50}
+                                    valueMax={100}
+                                    valueRanger={oxigenacao}
+                                    setValueRanger={(value) =>
+                                        setOxigenacao(value)
+                                    }
+                                />
+                            </View>
                             <View style={styles.item3}>
                                 <BtnCentered
                                     SizeText={18}
@@ -195,11 +246,13 @@ const UpdateSinais: React.FC<Props> = ({
                         ? 'Deseja atualizar os Sinais Vitais ?'
                         : 'Deseja inserir os Sinais Vitais ?'
                 }
-                onpress={() => SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()}
+                onpress={() =>
+                    SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
+                }
                 setActiveModal={setActiveModalOptions}
             />
         </View>
     );
 };
 
-export default UpdateSinais;
+export default UpdateSinaisVitaisEnfermagem;

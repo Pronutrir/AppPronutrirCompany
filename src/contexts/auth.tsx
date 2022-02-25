@@ -18,12 +18,14 @@ import {
 } from '../reducers/UserReducer';
 import { deleteUserTasy } from '../utils';
 import OneSignal from 'react-native-onesignal';
+import { useQuery, useQueries, UseQueryResult } from 'react-query';
 
 interface AuthContextData {
     signed: boolean;
     stateAuth: LoginState;
     dispatchAuth: React.Dispatch<LoginAction>;
     loading: boolean;
+    getPerfis(nomeUsuario: string): UseQueryResult<IPerfis[], Error>;
 }
 
 interface IFirebaseLogin {
@@ -37,6 +39,23 @@ interface IFirestone {
     nM_USUARIO: string;
     nome: string;
     token: string;
+}
+
+interface ReponsePerfis {
+    result: IPerfis[];
+}
+interface IPerfis {
+    cD_PESSOA_FISICA: string;
+    nM_USUARIO: string;
+    cD_PERFIL: number;
+    dS_PERFIL: string;
+    dT_ATUALIZACAO: string;
+    nM_USUARIO_ATUAL: string;
+    dT_LIBERACAO: string;
+    nR_SEQUENCIA: number;
+    dS_UTC_ATUALIZACAO: string;
+    dS_UTC: string;
+    iE_HORARIO_VERAO: string;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -124,7 +143,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                         //registra o dispositivo no onesignal inclui um id externo para notificações!
                         OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
                         //Adiciona uma tag para diferenciar as aplicações mobile
-                        OneSignal.sendTag('NameApp','pronutrirCompany');
+                        OneSignal.sendTag('NameApp', 'pronutrirCompany');
                     }
                 } else {
                     deleteUserTasy();
@@ -136,6 +155,17 @@ export const AuthProvider: React.FC = ({ children }) => {
             }
         }, 3000);
     }, []);
+
+    const getPerfis = () => {
+        return useQuery<IPerfis[], Error>('perfis', async () => {
+            const {
+                data: { result },
+            } = await Api.get<ReponsePerfis>(
+                `UsuarioPerfil/FiltrarUsuarioPerfisCodUsuarioNumSeqGeral?nomeUsuario=${stateAuth.usertasy.usuariO_FUNCIONARIO[0].nM_USUARIO}&pagina=1`,
+            );
+            return result;
+        });
+    };
 
     useEffect(() => {
         (async () => {
@@ -153,6 +183,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 loading,
                 stateAuth,
                 dispatchAuth,
+                getPerfis,
             }}>
             {children}
         </AuthContext.Provider>

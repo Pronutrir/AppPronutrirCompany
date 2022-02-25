@@ -15,12 +15,15 @@ import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
-
+import AuthContext from '../../../../contexts/auth';
 interface Props {
     dataSourceQT?: IconsultaQT[] | null;
 }
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
+    const {
+        stateAuth: { usertasy: { usuariO_FUNCIONARIO_PERFIL } },
+    } = useContext(AuthContext);
     const { GetConsultasQT } = useContext(SinaisVitaisContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -29,9 +32,13 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     const Item = ({ item }: { item: IconsultaQT; index: number }) => {
         return (
             <TouchableOpacity
-                onPress={() =>
-                    navigation.navigate('updateSinais', { PessoaFisica: item })
-                }
+                onPress={() => {
+                    if(false){
+                        navigation.navigate('updateSinais', { PessoaFisica: item }); 
+                    }else{
+                        navigation.navigate('UpdateSinaisVitaisEnfermagem', { PessoaFisica: item }); 
+                    }
+                }}
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
                     <HistorySvg
