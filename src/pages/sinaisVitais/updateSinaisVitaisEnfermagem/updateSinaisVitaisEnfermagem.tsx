@@ -11,7 +11,7 @@ import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
 
-type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinaisVitaisEnfermagem'>;
 interface Props {
     route: ProfileScreenRouteProp;
 }

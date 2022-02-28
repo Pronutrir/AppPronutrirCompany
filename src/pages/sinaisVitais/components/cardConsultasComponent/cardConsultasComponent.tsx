@@ -39,7 +39,7 @@ const CardConsultasComponent: React.FC<Props> = ({
         return (
             <TouchableOpacity
                 onPress={() =>
-                    navigation.navigate('updateSinais', { PessoaFisica: item })
+                    navigation.navigate('UpdateSinais', { PessoaFisica: item })
                 }
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>

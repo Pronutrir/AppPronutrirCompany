@@ -41,6 +41,7 @@
         "react-native-camera": "^3.44.1",
         "react-native-date-picker": "^3.3.1",
         "react-native-dynamic-search-bar": "^2.0.1",
+        "react-native-element-dropdown": "^1.7.1",
         "react-native-gesture-handler": "^1.10.3",
         "react-native-image-picker": "^4.0.3",
         "react-native-linear-gradient": "^2.5.6",

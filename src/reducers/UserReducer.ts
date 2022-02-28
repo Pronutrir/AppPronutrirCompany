@@ -21,6 +21,7 @@ export const initialState: LoginState = {
         usuariO_FUNCIONARIO: [],
         usuariO_FUNCIONARIO_PERFIL: [],
     },
+    PerfilSelected: null,
 };
 
 export interface UsuarioFirebase {
@@ -31,6 +32,7 @@ export interface UsuarioFirebase {
 export interface LoginState {
     Usuario: UsuarioFirebase;
     usertasy: UserTasy;
+    PerfilSelected: IPerfis | null;
 }
 
 export interface UserTasy {
@@ -59,7 +61,7 @@ export interface UsuarioFuncionario {
     cD_ESTABELECIMENTO: number;
 }
 
-interface IPerfis {
+export interface IPerfis {
     cD_PESSOA_FISICA: string;
     nM_USUARIO: string;
     cD_PERFIL: number;
@@ -88,6 +90,7 @@ export type LoginAction =
               | 'setImgPerfil';
           payload: string;
       }
+    | { type: 'setPerfilApp'; payload: IPerfis }
     | { type: 'setUserTasy'; payload: UserTasy }
     | { type: 'setUser'; payload: UsuarioFirebase };
 
@@ -123,6 +126,7 @@ export const UserReducer = (
                     usuariO_FUNCIONARIO: [],
                     usuariO_FUNCIONARIO_PERFIL: [],
                 },
+                PerfilSelected: null,
             };
 
         case 'setUserTasy':
@@ -180,6 +184,11 @@ export const UserReducer = (
             return {
                 ...state,
                 usertasy: { ...state.usertasy, ImgPerfil: action.payload },
+            };
+        case 'setPerfilApp':
+            return {
+                ...state,
+                PerfilSelected: action.payload,
             };
 
         default:

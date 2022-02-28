@@ -7263,6 +7263,11 @@ react-native-dynamic-search-bar@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-native-dynamic-search-bar/-/react-native-dynamic-search-bar-2.0.2.tgz#946326df34c853da1655aec7bdaacaa04b01e39c"
   integrity sha512-VOJf43hwfA5TRmYPTmPd5+unosruKXxVL41vP/AaofMrYM90hen0LOgGxUkZquqjg/nQidv/PsQhzOx02orE7w==
 
+react-native-element-dropdown@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-element-dropdown/-/react-native-element-dropdown-1.7.1.tgz#06a2aaeb5bf3d35e154db258c738871d36179bd1"
+  integrity sha512-uYc1FK1TEhNaxwFNinHlRBAopWeMNtRdETPHxg7tzzf/dQI0+/Io8IyTM3gBinQxM1/UzZm8/sXdIxaIBgZOMA==
+
 react-native-gesture-handler@^1.10.3:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz#942bbf2963bbf49fa79593600ee9d7b5dab3cfc0"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import MyDrawerContent from '../componentes/MyDrawerContent';
+import DrawerContent from '../components/drawerContent/DrawerContent';
 import { InitialStackNavigator } from './routeDashboard';
 
 const Drawer = createDrawerNavigator();
@@ -9,7 +9,7 @@ const RouteDrawer: React.FC = () => {
     return (
         <Drawer.Navigator
             drawerContent={({ navigation }) => (
-                <MyDrawerContent navigation={navigation} />
+                <DrawerContent navigation={navigation} />
             )}
             drawerStyle={{
                 flex: 1,
