@@ -11,7 +11,7 @@ const RouteDrawer: React.FC = () => {
             drawerContent={({ navigation }) => (
                 <DrawerContent navigation={navigation} />
             )}
-            drawerStyle={{
+            drawerStyle={{ 
                 flex: 1,
             }}>
             <Drawer.Screen name="dashborad" component={InitialStackNavigator} />

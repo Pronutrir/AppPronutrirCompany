@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     },
     textPost: {
         fontSize: RFValue(16, 680),
+        fontFamily: 'Roboto-Medium',
         color: '#748080',
         borderRadius: 5,
         padding: 2,

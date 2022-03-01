@@ -26,6 +26,7 @@ import {
     ISinaisVitais,
 } from '../reducers/ConsultasReducer';
 import axios, { AxiosResponse, CancelTokenSource } from 'axios';
+import { TestRendererOptions } from 'react-test-renderer';
 
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
@@ -40,7 +41,7 @@ interface AuthContextData {
     ): Promise<IPFSinaisVitais[] | null | undefined>;
     GetSinaisVitais(
         nR_SEQUENCIA: string,
-    ): Promise<SinaisVitais | null | undefined>;
+    ): Promise<ISinaisVitais | null | undefined>;
     GetAllSinaisVitais(): Promise<void>;
     FilterConsultas({
         dS_ESPECIALIDADE,
@@ -63,28 +64,6 @@ export interface IFilterPF {
     queryDate?: string | null;
     page?: number | null;
 }
-export interface SinaisVitais {
-    iE_PRESSAO: string;
-    iE_MEMBRO: string;
-    iE_MANGUITO: string;
-    iE_APARELHO_PA: string;
-    iE_COND_SAT_O2: string;
-    iE_MEMBRO_SAT_O2: string;
-    iE_RITMO_ECG: string;
-    iE_DECUBITO: string;
-    iE_UNID_MED_PESO: string;
-    iE_UNID_MED_ALTURA: string;
-    cD_PACIENTE: string;
-    cD_PESSOA_FISICA: string;
-    qT_SATURACAO_O2: number | null;
-    qT_TEMP: number | null;
-    qT_PESO: number | null;
-    qT_ALTURA_CM: number | null;
-    iE_SITUACAO: string;
-    dT_LIBERACAO: string;
-    nM_USUARIO: string;
-}
-
 export interface SinaisVitaisPost {
     cD_PACIENTE: string;
     qT_SATURACAO_O2: number | null;
@@ -101,7 +80,7 @@ export interface SinaisVitaisPut {
     qT_ALTURA_CM: number | null;
 }
 
-const sinaisVitaisDefault: SinaisVitais = {
+interface ISinaisVitaisDefault {
     iE_PRESSAO: 'D',
     iE_MEMBRO: 'MSE',
     iE_MANGUITO: 'C',
@@ -112,26 +91,32 @@ const sinaisVitaisDefault: SinaisVitais = {
     iE_DECUBITO: 'DDH',
     iE_UNID_MED_PESO: 'Kg',
     iE_UNID_MED_ALTURA: 'cm',
-    cD_PACIENTE: '',
-    cD_PESSOA_FISICA: '',
-    qT_SATURACAO_O2: 0,
-    qT_TEMP: 0,
-    qT_PESO: 0,
-    qT_ALTURA_CM: 0,
     iE_SITUACAO: 'A',
-    dT_LIBERACAO: '',
-    nM_USUARIO: '',
+}
+
+const sinaisVitaisDefault: ISinaisVitaisDefault = {
+    iE_PRESSAO: 'D',
+    iE_MEMBRO: 'MSE',
+    iE_MANGUITO: 'C',
+    iE_APARELHO_PA: 'C',
+    iE_COND_SAT_O2: 'AA',
+    iE_MEMBRO_SAT_O2: 'MSE',
+    iE_RITMO_ECG: '1',
+    iE_DECUBITO: 'DDH',
+    iE_UNID_MED_PESO: 'Kg',
+    iE_UNID_MED_ALTURA: 'cm',
+    iE_SITUACAO: 'A',
 };
 interface ResponsePFdados {
     result: IPFSinaisVitais[];
 }
 
 interface ResponseSVMG {
-    result: SinaisVitais;
+    result: ISinaisVitais;
 }
 
 interface ResponseSVMGAll {
-    result: SinaisVitais[];
+    result: ISinaisVitais[];
 }
 export interface IPFSinaisVitais {
     cD_PESSOA_FISICA: string;
@@ -363,7 +348,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetSinaisVitais = async (
         nR_SEQUENCIA: string,
-    ): Promise<SinaisVitais | null | undefined> => {
+    ): Promise<ISinaisVitais | null | undefined> => {
         return Api.get<any, AxiosResponse<ResponseSVMG>>(
             `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${nR_SEQUENCIA}`,
         )
@@ -421,7 +406,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     }, [addAlert]);
 
     const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
-        await Api.post<SinaisVitais>('SinaisVitaisMonitoracaoGeral', {
+        await Api.post<ISinaisVitais>('SinaisVitaisMonitoracaoGeral', {
             iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
             iE_MEMBRO: sinaisVitaisDefault.iE_MEMBRO,
             iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
@@ -463,7 +448,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         await Api.put<ISinaisVitais>(
             `SinaisVitaisMonitoracaoGeral/PutSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
             {
-                nM_USUARIO: usertasy.usuariO_FUNCIONARIO[0]?.nM_USUARIO,
+                nM_USUARIO: usertasy.usuariO_FUNCIONARIO_SETOR[0]?.nM_USUARIO,
                 cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
                 qT_TEMP: sinaisUpdate.qT_TEMP,
                 qT_PESO: sinaisUpdate.qT_PESO,

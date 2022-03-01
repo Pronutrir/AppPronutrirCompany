@@ -45,7 +45,7 @@ interface sinaisVitaisUpdate {
 
 type RootStackParamList = {
     Profile: PessoaSelected;
-    Feed: { sort: 'updateSinais' } | undefined;
+    Feed: { sort: 'UpdateSinais' } | undefined;
 };
 
 interface Parms {
@@ -154,7 +154,7 @@ const HistorySinaisVitais: React.FC = () => {
                     <TouchableOpacity
                         style={styles.btn}
                         onPress={() =>
-                            navigation.navigate('updateSinais', {
+                            navigation.navigate('UpdateSinais', {
                                 SinaisVitais: item,
                                 PessoaFisica: item,
                             })

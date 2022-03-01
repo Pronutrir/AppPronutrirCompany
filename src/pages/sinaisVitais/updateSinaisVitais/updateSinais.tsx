@@ -83,9 +83,9 @@ const UpdateSinais: React.FC<Props> = ({
     useEffect(() => {
         if (SinaisVitais) {
             setAltura(SinaisVitais.qT_ALTURA_CM);
-            setPeso(SinaisVitais.qT_PESO);
-            setTemperatura(SinaisVitais.qT_TEMP);
-            setOxigenacao(SinaisVitais.qT_SATURACAO_O2);
+            setPeso(SinaisVitais.qT_PESO ? SinaisVitais.qT_PESO : 0);
+            setTemperatura(SinaisVitais.qT_TEMP ? SinaisVitais.qT_TEMP : 0);
+            setOxigenacao(SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0);
             setActiveShimmer(true);
         } else {
             GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)

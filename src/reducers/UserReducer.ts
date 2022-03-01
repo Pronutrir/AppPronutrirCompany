@@ -18,7 +18,7 @@ export const initialState: LoginState = {
         dS_EMAIL: '', // williame_lima@hotmail.com
         nR_Senha: '',
         ImgPerfil: '', //base64
-        usuariO_FUNCIONARIO: [],
+        usuariO_FUNCIONARIO_SETOR: [],
         usuariO_FUNCIONARIO_PERFIL: [],
     },
     PerfilSelected: null,
@@ -50,7 +50,7 @@ export interface UserTasy {
     dS_EMAIL: string;
     nR_Senha: string;
     ImgPerfil: string;
-    usuariO_FUNCIONARIO: UsuarioFuncionario[];
+    usuariO_FUNCIONARIO_SETOR: UsuarioFuncionario[];
     usuariO_FUNCIONARIO_PERFIL: IPerfis[];
 }
 
@@ -123,7 +123,7 @@ export const UserReducer = (
                     dS_EMAIL: '',
                     nR_Senha: '',
                     ImgPerfil: '',
-                    usuariO_FUNCIONARIO: [],
+                    usuariO_FUNCIONARIO_SETOR: [],
                     usuariO_FUNCIONARIO_PERFIL: [],
                 },
                 PerfilSelected: null,
