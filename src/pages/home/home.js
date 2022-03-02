@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, ImageBackground } from 'react-native';
+import { View, Image, ImageBackground, useColorScheme } from 'react-native';
 import CarouselText from '../../components/carrosel/Carousel_text';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import BtnCentered from '../../components/buttons/BtnCentered';
@@ -10,6 +10,10 @@ import styles from './style';
 export default function home({ navigation }) {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
+
+    const theme = useColorScheme();
+
+    console.log('tema do sistema operacional => ', theme);
 
     const on_handleDynamicLink = (link) => {
         if (link) {

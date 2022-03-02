@@ -8,6 +8,7 @@ import NotificationAlert from './components/Notification/NotificationAlert';
 import NotificationCentralized from './components/Notification/NotificationCentralized';
 import OneSignal from 'react-native-onesignal';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ThemeProvider } from './contexts/themeContext';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
@@ -81,15 +82,17 @@ const Index: React.FC = () => {
     return (
         <NavigationContainer>
             {/* contexto disponível para toda aplicação */}
-            <QueryClientProvider client={queryClient}>
-            <NotificationGlobalProvider>
-                <AuthProvider>
-                    <Routes />
-                    <NotificationCentralized />
-                    <NotificationAlert />
-                </AuthProvider>
-            </NotificationGlobalProvider>
-            </QueryClientProvider>
+            <ThemeProvider>
+                <QueryClientProvider client={queryClient}>
+                    <NotificationGlobalProvider>
+                        <AuthProvider>
+                            <Routes />
+                            <NotificationCentralized />
+                            <NotificationAlert />
+                        </AuthProvider>
+                    </NotificationGlobalProvider>
+                </QueryClientProvider>
+            </ThemeProvider>
         </NavigationContainer>
     );
 };

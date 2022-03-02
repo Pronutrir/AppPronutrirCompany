@@ -1,10 +1,11 @@
 import { StyleSheet, Dimensions, Platform, PixelRatio } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { ThemeContextData } from '../../contexts/themeContext';
 
-const styles = StyleSheet.create({
+const styles = (theme: ThemeContextData) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#E6ECEC',
+        backgroundColor: theme.colors.BACKGROUND_2,
     },
     box1: {
         width: (Dimensions.get('screen').width),
@@ -28,7 +29,6 @@ const styles = StyleSheet.create({
     },
     btnHorizontal:{
         flex: 1
-        //paddingVertical: 5
     },
     imgBtnHorizoltal:{
          width: '100%',
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         elevation: 3
     },
     box4_2_img:{
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         padding: 8,
         borderRadius: 30,
         elevation: 5,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         paddingTop: 3,
         paddingBottom: 3,
         flexDirection: 'row',
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         borderTopRightRadius: 10,
         borderBottomEndRadius: 10,
     },
@@ -98,26 +98,27 @@ const styles = StyleSheet.create({
     },
     boxPost:{
         borderBottomWidth: 1,
-        borderBottomColor: '#748080',
+        borderBottomColor: theme.colors.BROWNDARK,
         borderBottomEndRadius: 5,
         alignSelf: 'flex-start',
         margin: 15,
     },
     textPost: {
-        fontSize: RFValue(16, 680),
-        fontFamily: 'Roboto-Medium',
-        color: '#748080',
+        fontSize: theme.typography.SIZE.fontysize16,
+        fontFamily: theme.typography.FONTES.Bold,
+        color: theme.colors.TEXT_SECONDARY,
         borderRadius: 5,
         padding: 2,
     },
     text:{
         flex: 1,
-        fontSize: RFValue(14, 680),
-        color: '#748080',
+        fontSize: theme.typography.SIZE.fontysize14,
+        fontFamily: theme.typography.FONTES.Bold,
+        color: theme.colors.TEXT_SECONDARY,
     },
     btn: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         margin: 5,
         paddingVertical: PixelRatio.get() < 2 ? 10 : 15,
         borderRadius: 10,
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     },
     btnDisabled: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         margin: 5,
         paddingVertical: PixelRatio.get() < 2 ? 10 : 15,
         borderRadius: 10,
@@ -176,12 +177,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5
     },
     text_btnHorizontal:{
-        fontSize: RFValue(10, 680),
-        color: '#748080',
+        fontSize: theme.typography.SIZE.fontysize10,
+        fontFamily: theme.typography.FONTES.Light,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_SECONDARY,
         textAlign: 'center',
     },
     box4_text:{
-        fontSize: RFValue(10, 680)
+        fontSize: theme.typography.SIZE.fontysize10,
     }
 })
 

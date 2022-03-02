@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import CarouselInstagram from '../../components/carrosel/Carousel_Instagram';
-import styles from './style';
+import _styles from './style';
 import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import LembreteImg from '../../assets/svg/lembrete.svg';
@@ -11,9 +11,13 @@ import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
 import HospitalLocationSvg from '../../assets/svg/hospitalLocation.svg';
 import BatePapoImg from '../../assets/svg/batePapo.svg';
 import MedicoColorimg from '../../assets/svg/medicoColor.svg';
+import useTheme from '../../hooks/useTheme';
+import useThemedStyles from '../../hooks/useThemedStyles';
 
 export default function dashBoard({ navigation }) {
 
+    const theme = useTheme();
+    const styles = useThemedStyles(_styles);
     const size = Dimensions.get('screen').width / 10
 
     return (
@@ -28,7 +32,7 @@ export default function dashBoard({ navigation }) {
                 <View style={styles.box2}>
                     <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("SinaisVitais")}>
                         <View style={styles.img_btnHotrizontal}>
-                            <SinaisVitaisSvg fill={'#748080'} width={size + 10} height={size + 10} />
+                            <SinaisVitaisSvg fill={theme.colors.TEXT_SECONDARY} width={size + 10} height={size + 10} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Sinais Vitais</Text>
@@ -36,7 +40,7 @@ export default function dashBoard({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
                         <View style={styles.img_btnHotrizontal}>
-                            <ConsultaMarcadasImg fill={'#748080'} width={size} height={size} />
+                            <ConsultaMarcadasImg fill={theme.colors.TEXT_SECONDARY} width={size} height={size} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Consultas Marcadas</Text>
@@ -44,7 +48,7 @@ export default function dashBoard({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
                         <View style={styles.img_btnHotrizontal}>
-                            <LembreteImg fill={'#748080'} width={size} height={size} />
+                            <LembreteImg fill={theme.colors.TEXT_SECONDARY} width={size} height={size} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Lembrete Notificações</Text>
@@ -54,7 +58,7 @@ export default function dashBoard({ navigation }) {
                 <View style={styles.box2}>
                     <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
                         <View style={styles.img_btnHotrizontal}>
-                            <MedicoImg fill={'#748080'} width={size} height={size} />
+                            <MedicoImg fill={theme.colors.TEXT_SECONDARY} width={size} height={size} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Equipe Medica</Text>
@@ -62,7 +66,7 @@ export default function dashBoard({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
                         <View style={styles.img_btnHotrizontal}>
-                            <HospitalLocationSvg fill={'#748080'} width={size} height={size} />
+                            <HospitalLocationSvg fill={theme.colors.TEXT_SECONDARY} width={size} height={size} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Nossas Unidades</Text>
@@ -70,7 +74,7 @@ export default function dashBoard({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDisabled} onPress={() => {}}>
                         <View style={styles.img_btnHotrizontal}>
-                            <PilulaComprimidoImg fill={'#748080'} width={size} height={size} />
+                            <PilulaComprimidoImg fill={theme.colors.TEXT_SECONDARY} width={size} height={size} />
                         </View>
                         <View style={styles.box_btnHorizontal}>
                             <Text style={styles.text_btnHorizontal}>Medicamentos</Text>
