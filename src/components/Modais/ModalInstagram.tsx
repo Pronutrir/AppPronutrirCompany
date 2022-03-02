@@ -19,7 +19,7 @@ import {
     ListRenderItem,
 } from 'react-native';
 import Cancel from '../../assets/svg/cancel.svg';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import moment from 'moment';
 import { IInstagram } from '../carrosel/Carousel_Instagram';
 import Carousel, {
@@ -28,6 +28,9 @@ import Carousel, {
 } from 'react-native-snap-carousel';
 import Api from '../../services/api';
 import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
+import useTheme from '../../hooks/useTheme';
+import useThemedStyles from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
 
 const width = Dimensions.get('window').width;
 interface Props {
@@ -45,6 +48,8 @@ const { width: screenWidth } = Dimensions.get('screen');
 
 const ModalInstagram = React.forwardRef<ModalHandles, Props>(
     ({ animationType = 'none', activeModal = false, postagem }: Props, ref) => {
+        const theme = useTheme();
+        const styles = useThemedStyles(_styles);
         const [active, setActive] = useState(activeModal);
 
         const { addNotification } = useContext(NotificationGlobalContext);
@@ -126,7 +131,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                             style={{ ...styles.openButton }}
                                             onPress={() => closeModal()}>
                                             <Cancel
-                                                fill={'#748080'}
+                                                fill={theme.colors.BROWNPRIMARY}
                                                 width={15}
                                                 height={15}
                                             />
@@ -191,16 +196,16 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
 
 export default ModalInstagram;
 
-const styles = StyleSheet.create({
+const _styles = (theme: ThemeContextData) => StyleSheet.create({
     centeredView: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
     },
     modalView: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         paddingBottom: 0,
-        shadowColor: '#000',
+        shadowColor: theme.colors.BROWNDARK,
         shadowOffset: {
             width: 0,
             height: 2,
@@ -218,28 +223,29 @@ const styles = StyleSheet.create({
     },
     modalText: {
         textAlign: 'left',
-        fontSize: RFValue(12, 680),
+        fontSize: theme.typography.SIZE.fontysize12,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_SECONDARY,
         margin: 0.1,
         padding: 5,
     },
     modalTextTitulo: {
-        fontSize: RFValue(15, 680),
-        fontWeight: 'bold',
-    },
-    modalTextItem: {
-        fontSize: RFValue(15, 680),
-    },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontSize: RFValue(20, 680),
+        fontSize: theme.typography.SIZE.fontysize18,
+        fontFamily: theme.typography.FONTES.Bold,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_SECONDARY,
     },
     boxBtn: {
         backgroundColor: 'transparent',
         position: 'absolute',
+        right: RFPercentage(1),
         zIndex: 1,
         alignSelf: 'flex-end',
+        
+    },
+    openButton: {
+        backgroundColor: theme.colors.BACKGROUND_1,
         ...Platform.select({
             ios: {
                 shadowOffset: {
@@ -253,9 +259,6 @@ const styles = StyleSheet.create({
                 elevation: 3,
             },
         }),
-    },
-    openButton: {
-        backgroundColor: '#fff',
         padding: 10,
         margin: 10,
         borderRadius: 30,
@@ -277,7 +280,10 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         paddingHorizontal: 10,
         paddingBottom: 10,
-        fontSize: RFValue(10, 680),
+        fontSize: theme.typography.SIZE.fontysize10,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_SECONDARY,
     },
     item: {
         alignItems: 'center',
@@ -286,7 +292,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
-        backgroundColor: 'white',
+        backgroundColor: theme.colors.BACKGROUND_1,
     },
     image: {
         resizeMode: 'stretch',

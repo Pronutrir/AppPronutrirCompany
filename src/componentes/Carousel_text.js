@@ -7,7 +7,6 @@ import {
     TouchableOpacity,
     Platform,
 } from 'react-native';
-
 import MyModal from './MyModal';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';

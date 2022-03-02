@@ -25,7 +25,7 @@ export default function Notification() {
                 return '#388e3c';
 
             case 'error':
-                return '#d32f2f';
+                return '#dc2c2c';
 
             case 'warning':
                 return '#f57c00';
