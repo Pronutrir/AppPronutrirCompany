@@ -9,8 +9,9 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import moment from 'moment';
-import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
+import ShimerPlaceHolderMenu from '../../../components/shimmerPlaceHolder/shimerPlaceHolderMenu';
 import TouchableShowHide from '../../../components/TouchableShowHide/TouchableShowHide';
+import EscalaDorComponent from '../components/escalaDorComponent/escalaDorComponent';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -55,7 +56,6 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     const [fr, setFr] = useState(0);
     const [dor, setDor] = useState(0);
 
-
     const ChangerProperty = () => {
         let x = false;
         x =
@@ -99,7 +99,9 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             setAltura(SinaisVitais.qT_ALTURA_CM);
             setPeso(SinaisVitais.qT_PESO ? SinaisVitais.qT_PESO : 0);
             setTemperatura(SinaisVitais.qT_TEMP ? SinaisVitais.qT_TEMP : 0);
-            setOxigenacao(SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0);
+            setOxigenacao(
+                SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
+            );
             setActiveShimmer(true);
         } else {
             GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)
@@ -216,9 +218,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         valueMin={0}
                                         valueMax={100}
                                         valueRanger={fc}
-                                        setValueRanger={(value) =>
-                                            setFc(value)
-                                        }
+                                        setValueRanger={(value) => setFc(value)}
                                     />
                                 </View>
                                 <View style={styles.item2}>
@@ -229,9 +229,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         valueMin={0}
                                         valueMax={100}
                                         valueRanger={fr}
-                                        setValueRanger={(value) =>
-                                            setFr(value)
-                                        }
+                                        setValueRanger={(value) => setFr(value)}
                                     />
                                 </View>
                                 <View style={styles.item2}>
@@ -250,6 +248,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Registro de dor'}>
                                 <View style={styles.item2}>
+                                    <EscalaDorComponent onpress={(item) => {setDor(item)}} />
                                     <SlideRanger
                                         label={'Escala de dor'}
                                         medida={'SpO²'}
@@ -291,7 +290,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </View>
                         </>
                     ) : (
-                        Array(4).fill(<ShimmerPaceHolderSNMG />)
+                        Array(4).fill(<ShimerPlaceHolderMenu />)
                     )}
                 </View>
             </ScrollView>

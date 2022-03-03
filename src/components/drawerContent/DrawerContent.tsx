@@ -18,12 +18,17 @@ import AvatarImg from '../../assets/svg/avatar.svg';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SelectedDropdown from '../selectedDropdown/SelectedDropdown';
 import { Idata } from '../../components/selectedDropdown/SelectedDropdown';
+import useTheme from '../../hooks/useTheme';
+import useThemedStyles from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
 
 interface Props {
     navigation: any;
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
+    const theme = useTheme();
+    const styles = useThemedStyles(_styles);
     const size = Dimensions.get('screen').width / 15;
 
     const {
@@ -108,7 +113,6 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                 <TouchableOpacity
                     style={styles.btnSair}
                     onPress={() => logout()}>
-                    <ArrowBackImg fill={'#748080'} width={size} height={size} />
                     <Text style={styles.text3}>Sair</Text>
                 </TouchableOpacity>
                 <Text style={styles.text2}>Versão 1.5</Text>
@@ -120,7 +124,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
 export default DrawerContent;
 
-const styles = StyleSheet.create({
+const _styles = (theme: ThemeContextData) => StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -144,25 +148,31 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').width / 5,
     },
     text1: {
-        fontSize: RFValue(25, 680),
-        color: '#1E707D',
+        fontSize: theme.typography.SIZE.fontysize22,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_PRIMARY,
     },
     text2: {
-        fontSize: RFValue(15, 680),
-        color: '#7A8B8E',
+        fontSize: theme.typography.SIZE.fontysize14,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_SECONDARY,
         padding: 15,
         textAlign: 'center',
     },
     text3: {
-        fontSize: RFValue(21, 680),
-        color: '#7A8B8E',
+        fontSize: theme.typography.SIZE.fontysize18,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        color: theme.colors.TEXT_SECONDARY,
         marginHorizontal: 10,
     },
     btn: {
         width: '100%',
         height: '55%',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         ...Platform.select({
             ios: {
                 shadowOffset: {
@@ -184,7 +194,7 @@ const styles = StyleSheet.create({
         width: '50%',
         height: '45%',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.BACKGROUND_1,
         ...Platform.select({
             ios: {
                 shadowOffset: {

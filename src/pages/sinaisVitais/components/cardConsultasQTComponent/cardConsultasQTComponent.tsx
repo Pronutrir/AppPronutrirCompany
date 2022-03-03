@@ -131,12 +131,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         </CardSimples>
     );
 
-    /* const ListFooterComponent = () => (
-        <View>
-            <ActivityIndicator />
-        </View>
-    ); */
-
     return (
         <View style={styles.container}>
             {dataSourceQT ? (

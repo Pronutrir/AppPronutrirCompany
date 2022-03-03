@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { ThemeContextData } from '../../contexts/themeContext';
+import useTheme from '../../hooks/useTheme';
+import useThemedStyles from '../../hooks/useThemedStyles';
 //import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const _data = [
@@ -28,6 +32,8 @@ interface Props {
 
 const SelectedDropdown: React.FC<Props> = ({ data = _data, onChange, value, placeholder }:Props) => {
     
+    const theme = useTheme();
+    const styles = useThemedStyles(_styles);
     const [_value, setValue] = useState(null);
 
     const renderItem = (item: any) => {
@@ -76,10 +82,10 @@ const SelectedDropdown: React.FC<Props> = ({ data = _data, onChange, value, plac
 
 export default SelectedDropdown;
 
-const styles = StyleSheet.create({
+const _styles = (theme: ThemeContextData) =>  StyleSheet.create({
     dropdown: {
         marginVertical: 20,
-        height: 50,
+        height: RFPercentage(6),
         backgroundColor: 'white',
         borderRadius: 10,
         paddingHorizontal: 12,
@@ -108,23 +114,29 @@ const styles = StyleSheet.create({
     },
     textItem: {
         flex: 1,
-        fontSize: 16,
-        color: '#7A8B8E',
+        color: theme.colors.TEXT_SECONDARY,
+        fontSize: theme.typography.SIZE.fontysize16,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
     },
     placeholderStyle: {
-        fontSize: 16,
-        color: '#7A8B8E',
+        color: theme.colors.TEXT_SECONDARY,
+        fontSize: theme.typography.SIZE.fontysize16,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
     },
     selectedTextStyle: {
-        fontSize: 16,
-        color: '#7A8B8E',
+        color: theme.colors.TEXT_SECONDARY,
+        fontSize: theme.typography.SIZE.fontysize16,
+        fontFamily: theme.typography.FONTES.Regular,
+        letterSpacing: theme.typography.LETTERSPACING.S,
+        textAlign: 'center',
     },
     iconStyle: {
         width: 20,
         height: 20,
     },
     inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
+        fontSize: theme.typography.SIZE.fontysize16,
     },
 });

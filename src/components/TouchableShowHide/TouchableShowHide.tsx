@@ -7,11 +7,9 @@ import {
     StyleSheet,
     Platform,
     UIManager,
-    Dimensions,
     Text,
 } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
-import MedicoColorImg from '../../assets/svg/medicoColor.svg';
 
 interface Props {
     children: React.ReactNode;
@@ -108,9 +106,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 2,
-        paddingVertical: 10,
-        marginVertical: 5,
+        padding: RFPercentage(1),
+        paddingVertical: RFPercentage(2),
+        marginVertical: RFPercentage(1),
     },
     button: {
         flexDirection: 'row',
