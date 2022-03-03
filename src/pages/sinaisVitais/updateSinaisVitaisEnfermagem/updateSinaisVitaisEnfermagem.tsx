@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, ScrollView, Text } from 'react-native';
+import { View, ScrollView, Text, Switch } from 'react-native';
 import styles from './style';
 import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
@@ -12,6 +12,7 @@ import moment from 'moment';
 import ShimerPlaceHolderMenu from '../../../components/shimmerPlaceHolder/shimerPlaceHolderMenu';
 import TouchableShowHide from '../../../components/TouchableShowHide/TouchableShowHide';
 import EscalaDorComponent from '../components/escalaDorComponent/escalaDorComponent';
+import ToggleSwitch from '../../../components/Switch/Switch';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -144,6 +145,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                         <>
                             <TouchableShowHide TextHeader={'Antropometria'}>
                                 <View style={styles.item2}>
+                                    <ToggleSwitch />
                                     <SlideRanger
                                         label={'Altura'}
                                         medida={'cm'}
@@ -172,9 +174,10 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Sinais vitais'}>
                                 <View style={styles.item2}>
+                                    <ToggleSwitch />
                                     <SlideRanger
                                         label={'PAS(mmHG)'}
-                                        medida={'cm'}
+                                        medida={'mmHg'}
                                         step={1}
                                         valueMin={0}
                                         valueMax={200}
@@ -187,7 +190,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                 <View style={styles.item2}>
                                     <SlideRanger
                                         label={'PAD(mmHg)'}
-                                        medida={'kg'}
+                                        medida={'mmHg'}
                                         step={0.1}
                                         valueMin={0}
                                         valueMax={200}
@@ -200,7 +203,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                 <View style={styles.item2}>
                                     <SlideRanger
                                         label={'PAM(mmHg)'}
-                                        medida={'°C'}
+                                        medida={'mmHg'}
                                         step={0.1}
                                         valueMin={0}
                                         valueMax={200}
@@ -213,7 +216,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                 <View style={styles.item2}>
                                     <SlideRanger
                                         label={'FC(bpm)'}
-                                        medida={'SpO²'}
+                                        medida={'bpm'}
                                         step={1}
                                         valueMin={0}
                                         valueMax={100}
@@ -224,7 +227,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                 <View style={styles.item2}>
                                     <SlideRanger
                                         label={'FR(mm)'}
-                                        medida={'SpO²'}
+                                        medida={'mrm'}
                                         step={1}
                                         valueMin={0}
                                         valueMax={100}
@@ -248,10 +251,15 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Registro de dor'}>
                                 <View style={styles.item2}>
-                                    <EscalaDorComponent onpress={(item) => {setDor(item)}} />
+                                    <ToggleSwitch />
+                                    <EscalaDorComponent
+                                        onpress={(item) => {
+                                            setDor(item);
+                                        }}
+                                    />
                                     <SlideRanger
                                         label={'Escala de dor'}
-                                        medida={'SpO²'}
+                                        medida={'nº'}
                                         step={1}
                                         valueMin={0}
                                         valueMax={10}
@@ -265,9 +273,10 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             <TouchableShowHide
                                 TextHeader={'Monitorização geral'}>
                                 <View style={styles.item2}>
+                                    <ToggleSwitch />
                                     <SlideRanger
                                         label={'Oximetria'}
-                                        medida={'SpO²'}
+                                        medida={'%'}
                                         step={1}
                                         valueMin={50}
                                         valueMax={100}
