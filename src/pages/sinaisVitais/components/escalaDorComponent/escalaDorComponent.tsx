@@ -16,6 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
     onpress(value: number): void;
+    disabled?: boolean;
 }
 
 interface IEscalaDor {
@@ -64,7 +65,7 @@ const escalaDeDor: IEscalaDor[] = [
     },
 ];
 
-const EscalaDorComponent: React.FC<Props> = ({ onpress }: Props) => {
+const EscalaDorComponent: React.FC<Props> = ({ onpress, disabled = false }: Props) => {
     const styles = useThemedStyles(_styles);
 
     const CardEscalaDor = ({ item }: { item: IEscalaDor }) => {
@@ -85,7 +86,7 @@ const EscalaDorComponent: React.FC<Props> = ({ onpress }: Props) => {
                 <View style={styles.box2}>
                     {item.btn.map((element) => {
                         return (
-                            <TouchableOpacity style={styles.btn} onPress={() => onpress(element)}>
+                            <TouchableOpacity disabled={disabled} style={styles.btn} onPress={() => onpress(element)}>
                                 <Text style={styles.number}>{element}</Text>
                             </TouchableOpacity>
                         );
@@ -116,6 +117,7 @@ const _styles = (theme: ThemeContextData) =>
             //justifyContent: 'space-around',
             flexWrap: 'wrap',
             justifyContent: 'center',
+            marginTop: RFPercentage(1),
         },
         card: {
             backgroundColor: 'green',

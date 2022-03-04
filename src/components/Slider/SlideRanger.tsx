@@ -18,6 +18,8 @@ interface Props {
     valueMax: number;
     valueRanger: number;
     setValueRanger(value: number): void;
+    disabled?: boolean;
+    disabledIncrement?: boolean;
 }
 
 const SlideReanger: React.FC<Props> = ({
@@ -28,6 +30,8 @@ const SlideReanger: React.FC<Props> = ({
     valueMax = 10,
     valueRanger = 1.0,
     setValueRanger,
+    disabled= false,
+    disabledIncrement= false,
 }: Props) => {
     const renderThumb = useCallback(() => <Thumb />, []);
     const renderRail = useCallback(() => <Rail />, []);
@@ -55,10 +59,11 @@ const SlideReanger: React.FC<Props> = ({
                     medida={medida}
                     max={valueMax}
                     min={valueMin}
+                    disabled={disabled || disabledIncrement}
                 />
             </View>
             <RangeSlider
-                style={styles.RangeSlider}
+                style={disabled ? styles.RangeSliderDisabled : styles.RangeSlider}
                 low={valueRanger}
                 min={valueMin}
                 max={valueMax}
@@ -71,6 +76,7 @@ const SlideReanger: React.FC<Props> = ({
                 renderNotch={renderNotch}
                 onValueChanged={handleValueChange}
                 disableRange={true}
+                disabled={disabled}
             />
         </View>
     );
@@ -93,6 +99,11 @@ const styles = StyleSheet.create({
     },
     RangeSlider: {
         paddingVertical: RFPercentage(1),
+        opacity: 1,
+    },
+    RangeSliderDisabled: {
+        paddingVertical: RFPercentage(1),
+        opacity: 0.1,
     },
     textLabel: {
         fontSize: RFValue(16, 680),

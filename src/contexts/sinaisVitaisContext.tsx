@@ -70,6 +70,13 @@ export interface SinaisVitaisPost {
     qT_TEMP: number | null;
     qT_PESO: number | null;
     qT_ALTURA_CM: number | null;
+    qT_PA_SISTOLICA?: number | null;
+    qT_PA_DIASTOLICA?: number | null;
+    qT_PAM?: number | null;
+    qT_FREQ_CARDIACA?: number | null;
+    qT_FREQ_RESP?: number | null;
+    cD_ESCALA_DOR?: 'string';
+    qT_ESCALA_DOR?: number | null;
 }
 export interface SinaisVitaisPut {
     nR_SEQUENCIA: number;
@@ -81,17 +88,17 @@ export interface SinaisVitaisPut {
 }
 
 interface ISinaisVitaisDefault {
-    iE_PRESSAO: 'D',
-    iE_MEMBRO: 'MSE',
-    iE_MANGUITO: 'C',
-    iE_APARELHO_PA: 'C',
-    iE_COND_SAT_O2: 'AA',
-    iE_MEMBRO_SAT_O2: 'MSE',
-    iE_RITMO_ECG: '1',
-    iE_DECUBITO: 'DDH',
-    iE_UNID_MED_PESO: 'Kg',
-    iE_UNID_MED_ALTURA: 'cm',
-    iE_SITUACAO: 'A',
+    iE_PRESSAO: 'D';
+    iE_MEMBRO: 'MSE';
+    iE_MANGUITO: 'C';
+    iE_APARELHO_PA: 'C';
+    iE_COND_SAT_O2: 'AA';
+    iE_MEMBRO_SAT_O2: 'MSE';
+    iE_RITMO_ECG: '1';
+    iE_DECUBITO: 'DDH';
+    iE_UNID_MED_PESO: 'Kg';
+    iE_UNID_MED_ALTURA: 'cm';
+    iE_SITUACAO: 'A';
 }
 
 const sinaisVitaisDefault: ISinaisVitaisDefault = {
@@ -429,7 +436,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         })
             .then(() => {
                 addAlert({
-                    message: 'Dados atualizados com sucesso!',
+                    message: 'Dados enviado com sucesso!',
                     status: 'sucess',
                 });
                 GetAllSinaisVitais();

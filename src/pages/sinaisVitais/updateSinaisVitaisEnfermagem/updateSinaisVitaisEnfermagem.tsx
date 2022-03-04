@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, ScrollView, Text, Switch } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
 import styles from './style';
 import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
@@ -12,7 +12,7 @@ import moment from 'moment';
 import ShimerPlaceHolderMenu from '../../../components/shimmerPlaceHolder/shimerPlaceHolderMenu';
 import TouchableShowHide from '../../../components/TouchableShowHide/TouchableShowHide';
 import EscalaDorComponent from '../components/escalaDorComponent/escalaDorComponent';
-import ToggleSwitch from '../../../components/Switch/Switch';
+import ToggleSwitch from '../../../components/Switch/ToggleSwitch';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -45,6 +45,11 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
     const [activeModalOptions, setActiveModalOptions] =
         useState<boolean>(false);
+
+    const [disabledAntropometria, setDisabledAntropometria] = useState(true);
+    const [disabledSinaisVitais, setDisabledSinaisVitais] = useState(false);
+    const [disabledRegistroDor, setDisabledRegistroDor] = useState(false);
+    const [disabledMonitorizacao, setDisabledMonitorizacao] = useState(true);
 
     const [Peso, setPeso] = useState(0);
     const [Altura, setAltura] = useState(0);
@@ -94,6 +99,15 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
         setActiveModal(false);
         navigation.goBack();
     };
+
+    const pressaoArterialMedia = (): number => {
+        if(pas !== 40 && pad !== 40){
+            let pam: number = (pas+(pad * 2))/3
+            return parseInt(pam.toFixed());
+        }else{
+            return 0;
+        }
+    }
 
     useEffect(() => {
         if (SinaisVitais) {
@@ -145,7 +159,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                         <>
                             <TouchableShowHide TextHeader={'Antropometria'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch />
+                                    <ToggleSwitch onpress={() => setDisabledAntropometria(!disabledAntropometria)} />
                                     <SlideRanger
                                         label={'Altura'}
                                         medida={'cm'}
@@ -156,6 +170,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setAltura(value)
                                         }
+                                        disabled={disabledAntropometria}
                                     />
                                 </View>
                                 <View style={styles.item2}>
@@ -169,48 +184,53 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setPeso(value)
                                         }
+                                        disabled={disabledAntropometria}
                                     />
                                 </View>
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Sinais vitais'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch />
+                                    <ToggleSwitch onpress={() => setDisabledSinaisVitais(!disabledSinaisVitais)} />
                                     <SlideRanger
                                         label={'PAS(mmHG)'}
                                         medida={'mmHg'}
                                         step={1}
-                                        valueMin={0}
-                                        valueMax={200}
+                                        valueMin={40}
+                                        valueMax={280}
                                         valueRanger={pas}
                                         setValueRanger={(value) =>
                                             setPas(value)
                                         }
+                                        disabled={disabledSinaisVitais}
                                     />
                                 </View>
                                 <View style={styles.item2}>
                                     <SlideRanger
                                         label={'PAD(mmHg)'}
                                         medida={'mmHg'}
-                                        step={0.1}
-                                        valueMin={0}
-                                        valueMax={200}
+                                        step={1}
+                                        valueMin={40}
+                                        valueMax={150}
                                         valueRanger={pad}
                                         setValueRanger={(value) =>
                                             setPad(value)
                                         }
+                                        disabled={disabledSinaisVitais}
                                     />
                                 </View>
                                 <View style={styles.item2}>
                                     <SlideRanger
                                         label={'PAM(mmHg)'}
                                         medida={'mmHg'}
-                                        step={0.1}
+                                        step={1}
                                         valueMin={0}
                                         valueMax={200}
-                                        valueRanger={pam}
+                                        valueRanger={pressaoArterialMedia()}
                                         setValueRanger={(value) =>
                                             setPam(value)
                                         }
+                                        disabled={disabledSinaisVitais}
+                                        disabledIncrement={true}
                                     />
                                 </View>
                                 <View style={styles.item2}>
@@ -219,9 +239,10 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         medida={'bpm'}
                                         step={1}
                                         valueMin={0}
-                                        valueMax={100}
+                                        valueMax={300}
                                         valueRanger={fc}
                                         setValueRanger={(value) => setFc(value)}
+                                        disabled={disabledSinaisVitais}
                                     />
                                 </View>
                                 <View style={styles.item2}>
@@ -229,10 +250,11 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         label={'FR(mm)'}
                                         medida={'mrm'}
                                         step={1}
-                                        valueMin={0}
-                                        valueMax={100}
+                                        valueMin={12}
+                                        valueMax={80}
                                         valueRanger={fr}
                                         setValueRanger={(value) => setFr(value)}
+                                        disabled={disabledSinaisVitais}
                                     />
                                 </View>
                                 <View style={styles.item2}>
@@ -246,16 +268,18 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setTemperatura(value)
                                         }
+                                        disabled={disabledSinaisVitais}
                                     />
                                 </View>
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Registro de dor'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch />
+                                    <ToggleSwitch onpress={() => setDisabledRegistroDor(!disabledRegistroDor)} />
                                     <EscalaDorComponent
                                         onpress={(item) => {
                                             setDor(item);
                                         }}
+                                        disabled={disabledRegistroDor}
                                     />
                                     <SlideRanger
                                         label={'Escala de dor'}
@@ -267,13 +291,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setDor(value)
                                         }
+                                        disabled={disabledRegistroDor}
                                     />
                                 </View>
                             </TouchableShowHide>
                             <TouchableShowHide
                                 TextHeader={'Monitorização geral'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch />
+                                    <ToggleSwitch onpress={() => setDisabledMonitorizacao(!disabledMonitorizacao)} />
                                     <SlideRanger
                                         label={'Oximetria'}
                                         medida={'%'}
@@ -284,6 +309,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setOxigenacao(value)
                                         }
+                                        disabled={disabledMonitorizacao}
                                     />
                                 </View>
                             </TouchableShowHide>

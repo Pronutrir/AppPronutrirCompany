@@ -176,7 +176,7 @@ export default function cadastro({ navigation }) {
                         }}
                         validationSchema={FormSchema}
                     >
-                        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
+                        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => (
                             <View style={styles.box2item1}>
                                 <View style={styles.SectionStyle}>
                                     <View style={styles.Icon}>

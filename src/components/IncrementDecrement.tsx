@@ -10,6 +10,7 @@ interface Props {
     min: number;
     max: number;
     setRangerValue(value: number): void;
+    disabled?: boolean;
 }
 
 const IncrementDecrement: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const IncrementDecrement: React.FC<Props> = ({
     medida,
     min = 0,
     max = 100,
+    disabled = false,
 }: Props) => {
     const [inputValue, setInputValue] = useState(RangerValue.toString());
 
@@ -60,7 +62,7 @@ const IncrementDecrement: React.FC<Props> = ({
     };
 
     const setValue = useCallback((value: string) => {
-        if (value && value !== "0") {
+        if (value && value !== '0') {
             var _value: number = parseFloat(value);
             _value = _value < min ? min : _value;
             _value = _value > max ? max : _value;
@@ -73,7 +75,6 @@ const IncrementDecrement: React.FC<Props> = ({
     }, []);
 
     useEffect(() => {
-
         setInputValue(RangerValue.toString());
     }, [RangerValue]);
 
@@ -83,10 +84,10 @@ const IncrementDecrement: React.FC<Props> = ({
                 return '99.9';
                 break;
             case 'kg':
-                if(inputValue.length > 3){
+                if (inputValue.length > 3) {
                     return '999.9';
-                }else{
-                    return '99.9';     
+                } else {
+                    return '99.9';
                 }
                 break;
             case 'SpO²':
@@ -96,13 +97,14 @@ const IncrementDecrement: React.FC<Props> = ({
                 return '999';
                 break;
             default:
-                return '[9999]';
+                return '999';
         }
     };
 
     return (
         <View style={styles.Container}>
             <Pressable
+                disabled={disabled}
                 style={styles.btnInc}
                 onPress={() => inc_Dec('subtracao')}>
                 <Subtracao fill={'#748080'} width={size} height={size} />
@@ -115,12 +117,15 @@ const IncrementDecrement: React.FC<Props> = ({
                 style={styles.valueInput}
                 onChangeText={(text, rawText) => setInputValue(text)}
                 onBlur={() => setValue(inputValue.toString())}
-                returnKeyType='next'
+                returnKeyType="next"
                 selectTextOnFocus={true}
+                editable={!disabled}
             />
-
             <Text style={styles.text}>{medida && medida}</Text>
-            <Pressable style={styles.btnInc} onPress={() => inc_Dec('soma')}>
+            <Pressable
+                disabled={disabled}
+                style={styles.btnInc}
+                onPress={() => inc_Dec('soma')}>
                 <Adicao fill={'#748080'} width={size} height={size} />
             </Pressable>
         </View>
