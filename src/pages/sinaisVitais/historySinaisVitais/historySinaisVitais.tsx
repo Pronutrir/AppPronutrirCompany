@@ -65,17 +65,7 @@ const HistorySinaisVitais: React.FC = () => {
         GetAllSinaisVitais,
     } = useContext(SinaisVitaisContext);
     const { addNotification } = useContext(NotificationGlobalContext);
-    const selected: PessoaSelected = {
-        cD_PESSOA_FISICA: '159969',
-        dT_NASCIMENTO: '19-08-1985',
-        nM_PESSOA_FISICA: 'WILLIAME CORREIA',
-    };
-    const [selectedSinais, setSelectedSinais] = useState<sinaisVitaisUpdate>({
-        iE_SITUACAO: '',
-        nR_SEQUENCIA: 0,
-        cD_PACIENTE: '',
-    });
-
+    
     const [listSinaisVitais, setListSinaisVitais] = useState<
         ISinaisVitais[] | null
     >(null);
@@ -96,6 +86,49 @@ const HistorySinaisVitais: React.FC = () => {
         setSelectedSinais(item);
     }; */
 
+    const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
+        return (
+            <>
+                <View style={styles.item}>
+                    <View style={styles.SubItem}>
+                        <Text style={styles.textLabel}>Pressão arterial sistólica: </Text>
+                        <Text style={styles.text}>{item.qT_PA_SISTOLICA}</Text>
+                    </View>
+                </View>
+                <View style={styles.item}>
+                    <View style={styles.SubItem}>
+                        <Text style={styles.textLabel}>Pressão arterial diastólica: </Text>
+                        <Text style={styles.text}>{item.qT_PA_DIASTOLICA}</Text>
+                    </View>
+                </View>
+                <View style={styles.item}>
+                    <View style={styles.SubItem}>
+                        <Text style={styles.textLabel}>Pressão arterial média : </Text>
+                        <Text style={styles.text}>{item.qT_PAM}</Text>
+                    </View>
+                </View>
+                <View style={styles.item}>
+                    <View style={styles.SubItem}>
+                        <Text style={styles.textLabel}>Frequência cardíaca: </Text>
+                        <Text style={styles.text}>{item.qT_FREQ_CARDIACA}</Text>
+                    </View>
+                </View>
+                <View style={styles.item}>
+                    <View style={styles.SubItem}>
+                        <Text style={styles.textLabel}>Frequência respiratória: </Text>
+                        <Text style={styles.text}>{item.qT_FREQ_RESP}</Text>
+                    </View>
+                </View>
+                <View style={styles.item}>
+                    <View style={styles.SubItem}>
+                        <Text style={styles.textLabel}>Escala de dor: </Text>
+                        <Text style={styles.text}>{item.qT_ESCALA_DOR}</Text>
+                    </View>
+                </View>
+            </>
+        );
+    };
+
     const Item = memo<Parms>(({ item }) => {
         return (
             <View style={{ flexDirection: 'row' }}>
@@ -114,7 +147,6 @@ const HistorySinaisVitais: React.FC = () => {
                                 styles.text
                             }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
                     </View>
-
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Data: </Text>
                         <Text style={styles.text}>{`${moment(
@@ -129,17 +161,17 @@ const HistorySinaisVitais: React.FC = () => {
                             }`}</Text>
                         </View>
                         <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Peso: </Text>
+                            <Text style={styles.textLabel}>Oxigenação: </Text>
                             <Text style={styles.text}>{`${
-                                item?.qT_PESO ?? ''
+                                item?.qT_SATURACAO_O2 ?? ''
                             }`}</Text>
                         </View>
                     </View>
                     <View style={styles.item}>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Oxigenação: </Text>
+                    <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>Peso: </Text>
                             <Text style={styles.text}>{`${
-                                item?.qT_SATURACAO_O2 ?? ''
+                                item?.qT_PESO ?? ''
                             }`}</Text>
                         </View>
                         <View style={styles.SubItem}>
@@ -149,6 +181,7 @@ const HistorySinaisVitais: React.FC = () => {
                             }`}</Text>
                         </View>
                     </View>
+                    <ComplementoEnfermagem item={item} />
                 </View>
                 <View style={styles.box3}>
                     <TouchableOpacity
@@ -273,6 +306,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
+        marginVertical: RFPercentage(0.5),
     },
     SubItem: {
         flex: 1,
@@ -281,9 +315,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     box1: {
-        flex: 0.5,
-        padding: 0.5,
-        justifyContent: 'center',
+        flex: 0.7,
+        paddingTop: 10,
+        justifyContent: 'flex-start',
         alignItems: 'flex-start',
     },
     box2: {

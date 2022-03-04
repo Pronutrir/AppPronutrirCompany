@@ -75,7 +75,6 @@ export interface SinaisVitaisPost {
     qT_PAM?: number | null;
     qT_FREQ_CARDIACA?: number | null;
     qT_FREQ_RESP?: number | null;
-    cD_ESCALA_DOR?: 'string';
     qT_ESCALA_DOR?: number | null;
 }
 export interface SinaisVitaisPut {
@@ -88,17 +87,18 @@ export interface SinaisVitaisPut {
 }
 
 interface ISinaisVitaisDefault {
-    iE_PRESSAO: 'D';
-    iE_MEMBRO: 'MSE';
-    iE_MANGUITO: 'C';
-    iE_APARELHO_PA: 'C';
-    iE_COND_SAT_O2: 'AA';
-    iE_MEMBRO_SAT_O2: 'MSE';
-    iE_RITMO_ECG: '1';
-    iE_DECUBITO: 'DDH';
-    iE_UNID_MED_PESO: 'Kg';
-    iE_UNID_MED_ALTURA: 'cm';
-    iE_SITUACAO: 'A';
+    iE_PRESSAO: string;
+    iE_MEMBRO: string;
+    iE_MANGUITO: string;
+    iE_APARELHO_PA: string;
+    iE_COND_SAT_O2: string;
+    iE_MEMBRO_SAT_O2: string;
+    iE_RITMO_ECG: string;
+    iE_DECUBITO: string;
+    iE_UNID_MED_PESO: string;
+    iE_UNID_MED_ALTURA: string;
+    iE_SITUACAO: string;
+    cD_ESCALA_DOR: string;
 }
 
 const sinaisVitaisDefault: ISinaisVitaisDefault = {
@@ -113,6 +113,7 @@ const sinaisVitaisDefault: ISinaisVitaisDefault = {
     iE_UNID_MED_PESO: 'Kg',
     iE_UNID_MED_ALTURA: 'cm',
     iE_SITUACAO: 'A',
+    cD_ESCALA_DOR: 'FEVA',
 };
 interface ResponsePFdados {
     result: IPFSinaisVitais[];
@@ -429,6 +430,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             qT_PESO: atendimento.qT_PESO,
             iE_UNID_MED_PESO: sinaisVitaisDefault.iE_UNID_MED_PESO,
             qT_ALTURA_CM: atendimento.qT_ALTURA_CM,
+            qT_PA_SISTOLICA: atendimento.qT_PA_SISTOLICA,
+            qT_PA_DIASTOLICA: atendimento.qT_PA_DIASTOLICA,
+            qT_PAM: atendimento.qT_PAM,
+            qT_FREQ_CARDIACA: atendimento.qT_FREQ_CARDIACA,
+            qT_FREQ_RESP: atendimento.qT_FREQ_CARDIACA,
+            cD_ESCALA_DOR: sinaisVitaisDefault.cD_ESCALA_DOR,
+            qT_ESCALA_DOR: atendimento.qT_ESCALA_DOR,
             iE_UNID_MED_ALTURA: sinaisVitaisDefault.iE_UNID_MED_ALTURA,
             iE_SITUACAO: sinaisVitaisDefault.iE_SITUACAO,
             dT_LIBERACAO: moment().format(),

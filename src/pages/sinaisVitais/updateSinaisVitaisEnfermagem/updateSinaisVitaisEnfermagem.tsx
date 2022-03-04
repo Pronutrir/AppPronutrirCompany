@@ -95,6 +95,12 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
+            qT_ESCALA_DOR: dor,
+            qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
+            qT_FREQ_RESP: fr <= 0 ? null : fr,
+            qT_PAM: pam <= 0 ? null : pam,
+            qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
+            qT_PA_SISTOLICA: pas <= 40 ? null : pas,
         });
         setActiveModal(false);
         navigation.goBack();
@@ -117,6 +123,11 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             setOxigenacao(
                 SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
             );
+            setPas(SinaisVitais.qT_PA_SISTOLICA ? SinaisVitais.qT_PA_SISTOLICA : 0);
+            setPad(SinaisVitais.qT_PA_DIASTOLICA ? SinaisVitais.qT_PA_DIASTOLICA : 0);
+            setFc(SinaisVitais.qT_FREQ_CARDIACA ? SinaisVitais.qT_FREQ_CARDIACA : 0);
+            setFr(SinaisVitais.qT_FREQ_RESP ? SinaisVitais.qT_FREQ_RESP : 0);
+            setDor(SinaisVitais.qT_ESCALA_DOR ? SinaisVitais.qT_ESCALA_DOR : 0);
             setActiveShimmer(true);
         } else {
             GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)

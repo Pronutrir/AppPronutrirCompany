@@ -58,6 +58,12 @@ export interface ISinaisVitais {
     qT_SATURACAO_O2: number;
     qT_TEMP: number;
     qT_PESO: number;
+    qT_PA_SISTOLICA: number;
+    qT_PA_DIASTOLICA: number;
+    qT_PAM: number;
+    qT_FREQ_CARDIACA: number;
+    qT_FREQ_RESP: number;
+    qT_ESCALA_DOR: number;
     iE_COND_SAT_O2: string;
     iE_MEMBRO_SAT_O2: string;
     iE_RITMO_ECG: string;
