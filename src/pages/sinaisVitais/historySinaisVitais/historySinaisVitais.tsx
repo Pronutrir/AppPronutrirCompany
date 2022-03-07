@@ -27,7 +27,7 @@ import ModalCentralizedOptions from '../../../components/Modais/ModalCentralized
 import Loading from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, { IInativarSinaisVitais } from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 
@@ -35,12 +35,6 @@ export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO: string;
-}
-
-interface sinaisVitaisUpdate {
-    nR_SEQUENCIA: number;
-    iE_SITUACAO: string;
-    cD_PACIENTE: string;
 }
 
 type RootStackParamList = {
@@ -62,7 +56,7 @@ const HistorySinaisVitais: React.FC = () => {
     } = useContext(AuthContext);
     const {
         stateConsultas: { sinaisVitais },
-        GetAllSinaisVitais, ValidationAutorize,
+        GetAllSinaisVitais, ValidationAutorize, InativarSinaisVitais
     } = useContext(SinaisVitaisContext);
     const { addNotification } = useContext(NotificationGlobalContext);
     
@@ -75,10 +69,11 @@ const HistorySinaisVitais: React.FC = () => {
         useState<boolean>(false);
     const [activeModalDel, setActiveModalDel] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [ selectedSinais , setSelectedSinais] = useState<IInativarSinaisVitais>();
 
-    const setSelectedSinaisInativar = (item: sinaisVitaisUpdate) => {
+    const setSelectedSinaisInativar = (item: IInativarSinaisVitais) => {
         setActiveModalOptions(true);
-       // setSelectedSinais(item);
+        setSelectedSinais(item);
     };
 
     /* const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
@@ -98,7 +93,15 @@ const HistorySinaisVitais: React.FC = () => {
                 PessoaFisica: item,
             })
         }
-        
+    }
+
+    const InativarSinalVital = async () => {
+        if(selectedSinais){
+            setActiveModal(true);
+            await InativarSinaisVitais(selectedSinais);
+            await GetAllSinaisVitais();
+            setActiveModal(false);
+        } 
     }
 
     const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
@@ -279,8 +282,7 @@ const HistorySinaisVitais: React.FC = () => {
             <ModalCentralizedOptions
                 activeModal={activeModalOptions}
                 message={'Deseja inativar este Sinal Vital ?'}
-                onpress={()=>{}}
-                //onpress={() => UpdateSinaisVitais(selectedSinais)}
+                onpress={() => InativarSinalVital()}
                 setActiveModal={setActiveModalOptions}
             />
             {/* <ModalCentralizedOptions
@@ -347,6 +349,8 @@ const styles = StyleSheet.create({
         padding: 5,
         marginHorizontal: 5,
         backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 30,
         ...Platform.select({
             ios: {

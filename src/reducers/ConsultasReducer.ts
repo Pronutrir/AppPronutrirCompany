@@ -125,7 +125,7 @@ export const ConsultasReducer = (
         case 'setMedicos':
             return { ...state, ...action.payload };
         case 'setSinaisVitais':
-            return { ...state, sinaisVitais: action.payload };
+            return { ...state, sinaisVitais: action.payload.filter(item => item.iE_SITUACAO !== 'I') };
         default:
             return state;
     }

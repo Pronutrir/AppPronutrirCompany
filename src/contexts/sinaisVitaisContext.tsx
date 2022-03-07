@@ -53,6 +53,7 @@ interface AuthContextData {
     }: IFilterConsultas): IConsultas[] | undefined;
     UpdateSinaisVitais(sinaisUpdate: SinaisVitaisPut): Promise<void>;
     ValidationAutorize: () => boolean | undefined;
+    InativarSinaisVitais: (sinaisUpdate: IInativarSinaisVitais) => Promise<void>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -63,7 +64,6 @@ export interface IFilterConsultas {
     dataFinal?: string | null;
     pagina?: number | null;
 }
-
 export interface IFilterPF {
     queryNome?: string | null;
     queryDate?: string | null;
@@ -80,6 +80,7 @@ export interface SinaisVitaisPost {
     qT_PAM?: number | null;
     qT_FREQ_CARDIACA?: number | null;
     qT_FREQ_RESP?: number | null;
+    cD_ESCALA_DOR: string | null;
     qT_ESCALA_DOR?: number | null;
 }
 export interface SinaisVitaisPut {
@@ -94,9 +95,9 @@ export interface SinaisVitaisPut {
     qT_PAM?: number | null;
     qT_FREQ_CARDIACA?: number | null;
     qT_FREQ_RESP?: number | null;
+    cD_ESCALA_DOR: string | null;
     qT_ESCALA_DOR?: number | null;
 }
-
 interface ISinaisVitaisDefault {
     iE_PRESSAO: string;
     iE_MEMBRO: string;
@@ -109,7 +110,6 @@ interface ISinaisVitaisDefault {
     iE_UNID_MED_PESO: string;
     iE_UNID_MED_ALTURA: string;
     iE_SITUACAO: string;
-    cD_ESCALA_DOR: string;
 }
 
 const sinaisVitaisDefault: ISinaisVitaisDefault = {
@@ -124,16 +124,13 @@ const sinaisVitaisDefault: ISinaisVitaisDefault = {
     iE_UNID_MED_PESO: 'Kg',
     iE_UNID_MED_ALTURA: 'cm',
     iE_SITUACAO: 'A',
-    cD_ESCALA_DOR: 'FEVA',
 };
 interface ResponsePFdados {
     result: IPFSinaisVitais[];
 }
-
 interface ResponseSVMG {
     result: ISinaisVitais;
 }
-
 interface ResponseSVMGAll {
     result: ISinaisVitais[];
 }
@@ -145,10 +142,15 @@ export interface IPFSinaisVitais {
     iE_TIPO_PESSOA: number;
     nM_PESSOA_FISICA: string;
 }
-
 export interface IPerfisLiberados {
     cD_PERFIL: number;
     dS_PERFIL: string;
+}
+export interface IInativarSinaisVitais {
+    nR_SEQUENCIA: number;
+    iE_SITUACAO: string,
+    nM_USUARIO: string,
+    cD_PACIENTE: string,
 }
 
 const SinaisVitaisContext = createContext({} as AuthContextData);
@@ -452,7 +454,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             qT_PAM: atendimento.qT_PAM,
             qT_FREQ_CARDIACA: atendimento.qT_FREQ_CARDIACA,
             qT_FREQ_RESP: atendimento.qT_FREQ_CARDIACA,
-            cD_ESCALA_DOR: sinaisVitaisDefault.cD_ESCALA_DOR,
+            cD_ESCALA_DOR: atendimento.cD_ESCALA_DOR,
             qT_ESCALA_DOR: atendimento.qT_ESCALA_DOR,
             iE_UNID_MED_ALTURA: sinaisVitaisDefault.iE_UNID_MED_ALTURA,
             iE_SITUACAO: sinaisVitaisDefault.iE_SITUACAO,
@@ -491,12 +493,37 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 qT_PAM: sinaisUpdate.qT_PAM,
                 qT_FREQ_CARDIACA: sinaisUpdate.qT_FREQ_CARDIACA,
                 qT_FREQ_RESP: sinaisUpdate.qT_FREQ_RESP,
+                cD_ESCALA_DOR: sinaisUpdate.cD_ESCALA_DOR,
                 qT_ESCALA_DOR: sinaisUpdate.qT_ESCALA_DOR,
             },
         )
             .then(() => {
                 addAlert({
                     message: 'Dados Atualizado com sucesso!',
+                    status: 'sucess',
+                });
+            })
+            .catch(() => {
+                addAlert({
+                    message: 'Não foi possivel inativar tente mais tarde!',
+                    status: 'error',
+                });
+            });
+    };
+
+    const InativarSinaisVitais = async (sinaisUpdate: IInativarSinaisVitais) => {
+        sinaisUpdate.iE_SITUACAO = 'I';
+        Api.put<ISinaisVitais>(
+            `SinaisVitaisMonitoracaoGeral/PutAtivarInativarSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
+            {
+                iE_SITUACAO: sinaisUpdate?.iE_SITUACAO,
+                nM_USUARIO: usertasy.usuariO_FUNCIONARIO_SETOR[0]?.nM_USUARIO,
+                cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
+            },
+        )
+            .then(() => {
+                addAlert({
+                    message: 'Sinal vital Inativado com sucesso!',
                     status: 'sucess',
                 });
             })
@@ -572,6 +599,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 FilterConsultas,
                 UpdateSinaisVitais,
                 ValidationAutorize,
+                InativarSinaisVitais,
             }}>
             {children}
         </SinaisVitaisContext.Provider>
