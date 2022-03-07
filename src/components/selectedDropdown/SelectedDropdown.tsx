@@ -64,7 +64,7 @@ const SelectedDropdown: React.FC<Props> = ({ data = _data, onChange, value, plac
             labelField="label"
             valueField="value"
             placeholder= {placeholder ? placeholder : "Selecione" }
-            value={value ? value: _value}
+            value={value ? value : _value}
             onChange={(item) => {
                 if(onChange){
                     onChange(item);
@@ -84,11 +84,11 @@ export default SelectedDropdown;
 
 const _styles = (theme: ThemeContextData) =>  StyleSheet.create({
     dropdown: {
-        marginVertical: 20,
+        marginVertical: RFPercentage(2),
         height: RFPercentage(6),
         backgroundColor: 'white',
         borderRadius: 10,
-        paddingHorizontal: 12,
+        paddingHorizontal: RFPercentage(1),
         ...Platform.select({
             ios: {
                 shadowOffset: {
@@ -107,7 +107,7 @@ const _styles = (theme: ThemeContextData) =>  StyleSheet.create({
         marginRight: 5,
     },
     item: {
-        padding: 17,
+        padding: RFPercentage(1),
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -133,8 +133,8 @@ const _styles = (theme: ThemeContextData) =>  StyleSheet.create({
         textAlign: 'center',
     },
     iconStyle: {
-        width: 20,
-        height: 20,
+        width: RFPercentage(4),
+        height: RFPercentage(4),
     },
     inputSearchStyle: {
         fontSize: theme.typography.SIZE.fontysize16,

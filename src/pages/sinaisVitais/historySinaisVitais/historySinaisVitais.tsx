@@ -62,7 +62,7 @@ const HistorySinaisVitais: React.FC = () => {
     } = useContext(AuthContext);
     const {
         stateConsultas: { sinaisVitais },
-        GetAllSinaisVitais,
+        GetAllSinaisVitais, ValidationAutorize,
     } = useContext(SinaisVitaisContext);
     const { addNotification } = useContext(NotificationGlobalContext);
     
@@ -76,15 +76,30 @@ const HistorySinaisVitais: React.FC = () => {
     const [activeModalDel, setActiveModalDel] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
-    /* const setSelectedSinaisInativar = (item: sinaisVitaisUpdate) => {
+    const setSelectedSinaisInativar = (item: sinaisVitaisUpdate) => {
         setActiveModalOptions(true);
-        setSelectedSinais(item);
-    }; */
+       // setSelectedSinais(item);
+    };
 
     /* const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
         setActiveModalDel(true);
         setSelectedSinais(item);
     }; */
+
+    const RedirectNavigation = (item: ISinaisVitais) => {
+        if(ValidationAutorize()){
+            navigation.navigate('UpdateSinaisVitaisEnfermagem', {
+                SinaisVitais: item,
+                PessoaFisica: item,
+            })
+        }else{
+            navigation.navigate('UpdateSinais', {
+                SinaisVitais: item,
+                PessoaFisica: item,
+            })
+        }
+        
+    }
 
     const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
         return (
@@ -186,19 +201,14 @@ const HistorySinaisVitais: React.FC = () => {
                 <View style={styles.box3}>
                     <TouchableOpacity
                         style={styles.btn}
-                        onPress={() =>
-                            navigation.navigate('UpdateSinais', {
-                                SinaisVitais: item,
-                                PessoaFisica: item,
-                            })
-                        }>
+                        onPress={() => RedirectNavigation(item) }>
                         <EditarSvg
                             fill={'#748080'}
                             width={RFPercentage(4)}
                             height={RFPercentage(4)}
                         />
                     </TouchableOpacity>
-                    {/* <TouchableOpacity
+                    <TouchableOpacity
                             style={styles.btn}
                             onPress={() => setSelectedSinaisInativar(item)}>
                             <DisabledSvg
@@ -207,7 +217,7 @@ const HistorySinaisVitais: React.FC = () => {
                                 height={RFPercentage(4)}>
                                 Botão
                             </DisabledSvg>
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                 </View>
             </View>
         );
@@ -266,13 +276,14 @@ const HistorySinaisVitais: React.FC = () => {
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
             <Loading activeModal={activeModal} />
-            {/* <ModalCentralizedOptions
+            <ModalCentralizedOptions
                 activeModal={activeModalOptions}
                 message={'Deseja inativar este Sinal Vital ?'}
-                onpress={() => UpdateSinaisVitais(selectedSinais)}
+                onpress={()=>{}}
+                //onpress={() => UpdateSinaisVitais(selectedSinais)}
                 setActiveModal={setActiveModalOptions}
             />
-            <ModalCentralizedOptions
+            {/* <ModalCentralizedOptions
                 activeModal={activeModalDel}
                 message={'Deseja deletar este Sinal Vital ?'}
                 onpress={() => DeleteSinaisVitais(selectedSinais.nR_SEQUENCIA)}
@@ -327,8 +338,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     box3: {
-        alignSelf: 'flex-start',
         marginVertical: 5,
+        justifyContent: 'space-between'
     },
     btn: {
         width: RFPercentage(5),

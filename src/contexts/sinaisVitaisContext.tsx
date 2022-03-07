@@ -27,6 +27,10 @@ import {
 } from '../reducers/ConsultasReducer';
 import axios, { AxiosResponse, CancelTokenSource } from 'axios';
 import { TestRendererOptions } from 'react-test-renderer';
+import { useQuery } from 'react-query';
+import firestore from '@react-native-firebase/firestore';
+import { IPerfis } from '../reducers/UserReducer';
+import { State } from 'react-native-gesture-handler';
 
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
@@ -48,6 +52,7 @@ interface AuthContextData {
         nM_GUERRA,
     }: IFilterConsultas): IConsultas[] | undefined;
     UpdateSinaisVitais(sinaisUpdate: SinaisVitaisPut): Promise<void>;
+    ValidationAutorize: () => boolean | undefined;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -84,6 +89,12 @@ export interface SinaisVitaisPut {
     qT_TEMP: number | null;
     qT_PESO: number | null;
     qT_ALTURA_CM: number | null;
+    qT_PA_SISTOLICA?: number | null;
+    qT_PA_DIASTOLICA?: number | null;
+    qT_PAM?: number | null;
+    qT_FREQ_CARDIACA?: number | null;
+    qT_FREQ_RESP?: number | null;
+    qT_ESCALA_DOR?: number | null;
 }
 
 interface ISinaisVitaisDefault {
@@ -135,11 +146,17 @@ export interface IPFSinaisVitais {
     nM_PESSOA_FISICA: string;
 }
 
+export interface IPerfisLiberados {
+    cD_PERFIL: number;
+    dS_PERFIL: string;
+}
+
 const SinaisVitaisContext = createContext({} as AuthContextData);
 
 export const SinaisVitaisProvider: React.FC = ({ children }) => {
     const {
         stateAuth: { usertasy },
+        stateAuth,
     } = useContext(AuthContext);
 
     const { addAlert } = useContext(NotificationGlobalContext);
@@ -469,6 +486,12 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 qT_PESO: sinaisUpdate.qT_PESO,
                 qT_SATURACAO_O2: sinaisUpdate.qT_SATURACAO_O2,
                 qT_ALTURA_CM: sinaisUpdate.qT_ALTURA_CM,
+                qT_PA_SISTOLICA: sinaisUpdate.qT_PA_SISTOLICA,
+                qT_PA_DIASTOLICA: sinaisUpdate.qT_PA_DIASTOLICA,
+                qT_PAM: sinaisUpdate.qT_PAM,
+                qT_FREQ_CARDIACA: sinaisUpdate.qT_FREQ_CARDIACA,
+                qT_FREQ_RESP: sinaisUpdate.qT_FREQ_RESP,
+                qT_ESCALA_DOR: sinaisUpdate.qT_ESCALA_DOR,
             },
         )
             .then(() => {
@@ -502,6 +525,33 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
+    const getPerfilAutorize = async () => {
+        const useRef = firestore()
+            .doc('FunctionsApp/SinaisVitaisEnfermagem')
+            .collection('Perfis');
+
+        var resultPerfis: IPerfisLiberados[] = [];
+
+        await useRef.get().then((querySnapshot) => {
+            return querySnapshot.forEach((item) => {
+                resultPerfis.push({
+                    cD_PERFIL: item.get('cD_PERFIL'),
+                    dS_PERFIL: item.get('dS_PERFIL'),
+                });
+            });
+        });
+
+        return resultPerfis;
+    };
+
+    const { data: PerfisSinaisVitais } = useQuery('Perfis', getPerfilAutorize);
+
+    const ValidationAutorize = () => {
+        return PerfisSinaisVitais?.some((element: IPerfisLiberados) => {
+            return element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL;
+        });
+    };
+
     useEffect(() => {
         GetAllSinaisVitais();
     }, [GetAllSinaisVitais]);
@@ -521,6 +571,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 GetAllSinaisVitais,
                 FilterConsultas,
                 UpdateSinaisVitais,
+                ValidationAutorize,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

@@ -6,13 +6,15 @@ import useThemedStyles from '../../hooks/useThemedStyles';
 
 type Props = {
     onpress?(): void;
+    Enabled?: boolean;
 };
 
-const ToggleSwitch: React.FC<Props> = ({ onpress }: Props) => {
+const ToggleSwitch: React.FC<Props> = ({ onpress, Enabled = false }: Props) => {
     const theme = useTheme();
     const styles = useThemedStyles(_styles);
 
-    const [isEnabled, setIsEnabled] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(Enabled);
+
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState);
         if(onpress){

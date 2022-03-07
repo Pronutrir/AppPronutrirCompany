@@ -21,12 +21,6 @@ type ProfileScreenRouteProp = RouteProp<
 interface Props {
     route: ProfileScreenRouteProp;
 }
-interface Params {
-    peso: number;
-    altura: number;
-    temperatura: number;
-    oxigenacao: number;
-}
 
 const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     route: {
@@ -81,6 +75,12 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
+            qT_ESCALA_DOR: dor,
+            qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
+            qT_FREQ_RESP: fr <= 12 ? null : fr,
+            qT_PAM: pam <= 0 ? null : pam,
+            qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
+            qT_PA_SISTOLICA: pas <= 40 ? null : pas,
         });
         await GetAllSinaisVitais();
         setActiveModal(false);
@@ -201,7 +201,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Sinais vitais'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch onpress={() => setDisabledSinaisVitais(!disabledSinaisVitais)} />
+                                    <ToggleSwitch onpress={() => setDisabledSinaisVitais(!disabledSinaisVitais)} Enabled={!disabledSinaisVitais} />
                                     <SlideRanger
                                         label={'PAS(mmHG)'}
                                         medida={'mmHg'}
@@ -285,7 +285,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Registro de dor'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch onpress={() => setDisabledRegistroDor(!disabledRegistroDor)} />
+                                    <ToggleSwitch onpress={() => setDisabledRegistroDor(!disabledRegistroDor)} Enabled={!disabledRegistroDor} />
                                     <EscalaDorComponent
                                         onpress={(item) => {
                                             setDor(item);

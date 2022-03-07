@@ -16,10 +16,9 @@ import {
     LoginState,
     LoginAction,
 } from '../reducers/UserReducer';
-import { deleteUserTasy } from '../utils';
 import OneSignal from 'react-native-onesignal';
 import { useQuery, useQueries, UseQueryResult } from 'react-query';
-
+import { getPerfil } from '../utils';
 interface AuthContextData {
     signed: boolean;
     stateAuth: LoginState;
@@ -146,7 +145,6 @@ export const AuthProvider: React.FC = ({ children }) => {
                         OneSignal.sendTag('NameApp', 'pronutrirCompany');
                     }
                 } else {
-                    deleteUserTasy();
                     setLoading(false);
                     setUsuario(null);
                 }
@@ -161,7 +159,7 @@ export const AuthProvider: React.FC = ({ children }) => {
             const {
                 data: { result },
             } = await Api.get<ReponsePerfis>(
-                `UsuarioPerfil/FiltrarUsuarioPerfisCodUsuarioNumSeqGeral?nomeUsuario=${stateAuth.usertasy.usuariO_FUNCIONARIO[0].nM_USUARIO}&pagina=1`,
+                `UsuarioPerfil/FiltrarUsuarioPerfisCodUsuarioNumSeqGeral?nomeUsuario=${stateAuth.usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&pagina=1`,
             );
             return result;
         });
@@ -175,6 +173,17 @@ export const AuthProvider: React.FC = ({ children }) => {
             }
         })();
     }, [singIn]);
+
+    useEffect(() => {
+        (async () => {
+            const result = await getPerfil();
+            if (
+                result.cD_PESSOA_FISICA === stateAuth.usertasy.cD_PESSOA_FISICA
+            ) {
+                dispatchAuth({ type: 'setPerfilApp', payload: result });
+            }
+        })();
+    }, [stateAuth.usertasy]);
 
     return (
         <AuthContext.Provider

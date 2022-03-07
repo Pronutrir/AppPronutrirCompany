@@ -13,63 +13,25 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IconsultaQT } from '../../../../reducers/ConsultasQTReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, { IPerfisLiberados } from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import AuthContext from '../../../../contexts/auth';
 interface Props {
     dataSourceQT?: IconsultaQT[] | null;
 }
 
-interface IPerfisLiberados {
-    cD_PERFIL: number;
-    dS_PERFIL: string;
-}
-
-const perfisLiberados = [
-    {
-        cD_PERFIL: 2105,
-        dS_PERFIL: 'Oncologia - Técnico de Enfermagem',
-    },
-    {
-        cD_PERFIL: 2148,
-        dS_PERFIL: 'Enfermagem Pronutrir',
-    },
-    {
-        cD_PERFIL: 2149,
-        dS_PERFIL: 'Enfermagem - Tecnico',
-    },
-    {
-        cD_PERFIL: 1997,
-        dS_PERFIL: 'Oncologia - Enfermagem',
-    },
-    {
-        cD_PERFIL: 2088,
-        dS_PERFIL: 'Ambulatorial - Enfermagem',
-    },
-];
-
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
-    const {
-        stateAuth: { PerfilSelected },
-    } = useContext(AuthContext);
-    const { GetConsultasQT } = useContext(SinaisVitaisContext);
+
+    const { GetConsultasQT, ValidationAutorize } = useContext(SinaisVitaisContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
-
-    const validationPremission = (
-        element: IPerfisLiberados,
-        index: number,
-        array: IPerfisLiberados[],
-    ) => {
-        return element.cD_PERFIL === PerfilSelected?.cD_PERFIL;
-    };
 
     const Item = ({ item }: { item: IconsultaQT; index: number }) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    if (perfisLiberados.some(validationPremission)) {
+                    if (ValidationAutorize()) {
                         navigation.navigate('UpdateSinaisVitaisEnfermagem', {
                             PessoaFisica: item,
                         });

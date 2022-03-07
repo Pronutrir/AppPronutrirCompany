@@ -18,16 +18,15 @@ import AvatarImg from '../../assets/svg/avatar.svg';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SelectedDropdown from '../selectedDropdown/SelectedDropdown';
 import { Idata } from '../../components/selectedDropdown/SelectedDropdown';
-import useTheme from '../../hooks/useTheme';
 import useThemedStyles from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
-
+import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
+import { savePerfil } from '../../utils';
 interface Props {
-    navigation: any;
+    navigation: DrawerNavigationHelpers;
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
-    const theme = useTheme();
     const styles = useThemedStyles(_styles);
     const size = Dimensions.get('screen').width / 15;
 
@@ -35,7 +34,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         stateAuth: {
             usertasy,
             usertasy: { usuariO_FUNCIONARIO_PERFIL },
-            PerfilSelected
+            PerfilSelected,
         },
         dispatchAuth,
     } = useContext(AuthContext);
@@ -79,8 +78,14 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     };
 
     const SelectedPerfilApp = (item: Idata) => {
-        dispatchAuth({type: 'setPerfilApp', payload: item.value})
-    }
+        setLoading(true);
+        dispatchAuth({ type: 'setPerfilApp', payload: item.value });
+        savePerfil(item.value)
+        setTimeout(() => {
+            setLoading(false);
+            navigation.closeDrawer();
+        }, 1000);
+    };
 
     return (
         <View style={styles.container}>
@@ -103,7 +108,12 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                 </Text>
             </View>
             <View style={styles.box2}>
-                <SelectedDropdown data={RefactoryData()} onChange={SelectedPerfilApp} value={PerfilSelected} placeholder={'Perfil do App'} />
+                <SelectedDropdown
+                    data={RefactoryData()}
+                    onChange={SelectedPerfilApp}
+                    value={PerfilSelected}
+                    placeholder={'Perfil do App'}
+                />
                 {/* <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Perfil')}>
                     <AvatarImg fill={'#748080'} width={size} height={size} />
                     <Text style={styles.text3}>Perfil</Text>
@@ -124,92 +134,93 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
 export default DrawerContent;
 
-const _styles = (theme: ThemeContextData) => StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    box1: {
-        flex: 1.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    box2: {
-        flex: 1,
-        paddingHorizontal: 35,
-    },
-    box3: {
-        flex: 1,
-        paddingHorizontal: 35,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    imgLogo: {
-        width: Dimensions.get('screen').width / 5,
-        height: Dimensions.get('screen').width / 5,
-    },
-    text1: {
-        fontSize: theme.typography.SIZE.fontysize22,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        color: theme.colors.TEXT_PRIMARY,
-    },
-    text2: {
-        fontSize: theme.typography.SIZE.fontysize14,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        color: theme.colors.TEXT_SECONDARY,
-        padding: 15,
-        textAlign: 'center',
-    },
-    text3: {
-        fontSize: theme.typography.SIZE.fontysize18,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        color: theme.colors.TEXT_SECONDARY,
-        marginHorizontal: 10,
-    },
-    btn: {
-        width: '100%',
-        height: '55%',
-        alignItems: 'center',
-        backgroundColor: theme.colors.BACKGROUND_1,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const _styles = (theme: ThemeContextData) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        box1: {
+            flex: 1.5,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        box2: {
+            flex: 1,
+            paddingHorizontal: 35,
+        },
+        box3: {
+            flex: 1,
+            paddingHorizontal: 35,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        imgLogo: {
+            width: Dimensions.get('screen').width / 5,
+            height: Dimensions.get('screen').width / 5,
+        },
+        text1: {
+            fontSize: theme.typography.SIZE.fontysize22,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+        },
+        text2: {
+            fontSize: theme.typography.SIZE.fontysize14,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            padding: 15,
+            textAlign: 'center',
+        },
+        text3: {
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            marginHorizontal: 10,
+        },
+        btn: {
+            width: '100%',
+            height: '55%',
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        flexDirection: 'row',
-        paddingHorizontal: 10,
-        borderRadius: 5,
-    },
-    btnSair: {
-        width: '50%',
-        height: '45%',
-        alignItems: 'center',
-        backgroundColor: theme.colors.BACKGROUND_1,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+                android: {
+                    elevation: 3,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        flexDirection: 'row',
-        paddingHorizontal: 10,
-        borderRadius: 5,
-    },
-});
+            }),
+            flexDirection: 'row',
+            paddingHorizontal: 10,
+            borderRadius: 5,
+        },
+        btnSair: {
+            width: '50%',
+            height: '45%',
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
+            flexDirection: 'row',
+            paddingHorizontal: 10,
+            borderRadius: 5,
+        },
+    });
