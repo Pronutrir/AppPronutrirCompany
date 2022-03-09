@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useImperativeHandle } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Menu, MenuItem } from 'react-native-material-menu';
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
@@ -79,13 +79,15 @@ export default MenuPopUp;
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
-            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
         },
         boxItem: {
             marginVertical: RFPercentage(0.5),
             paddingVertical: RFPercentage(0.5),
         },
         text: {
+            width: '100%',
             fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,

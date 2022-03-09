@@ -14,6 +14,7 @@ import ModalBottom, {
     ModalHandles,
 } from '../../../components/Modais/ModalBottom';
 import { DateMask } from '../../../services/validacoes';
+import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 export interface IParamConsulta {
     query: string | null | undefined;
     isLoading: boolean;
@@ -23,7 +24,7 @@ export interface IParamConsulta {
     page: number;
     loadingScrow: boolean;
     continue: boolean;
-    showRequest: boolean
+    showRequest: boolean;
 }
 
 interface Ifilter {
@@ -54,7 +55,7 @@ const SinaisVitaisGerais = () => {
         page: 2,
         loadingScrow: false,
         continue: true,
-        showRequest: false
+        showRequest: false,
     });
 
     const Search = async (filter: IFilterPF) => {
@@ -120,7 +121,7 @@ const SinaisVitaisGerais = () => {
     const onChangeTextSearch = (text: string) => {
         if (text.length === 0) {
             setState((prevState) => {
-                return { ...prevState, spinnerVisibility: false, query: text, };
+                return { ...prevState, spinnerVisibility: false, query: text };
             });
             return;
         }
@@ -141,13 +142,18 @@ const SinaisVitaisGerais = () => {
         let textDate = DateMask(text);
         if (textDate.length === 0) {
             setState((prevState) => {
-                return { ...prevState, spinnerVisibility: false, query: textDate, showRequest: false };
+                return {
+                    ...prevState,
+                    spinnerVisibility: false,
+                    query: textDate,
+                    showRequest: false,
+                };
             });
             return;
         }
 
-        if(text.length >= 9 && text.length <= 10){
-            Search({ queryDate: textDate })
+        if (text.length >= 9 && text.length <= 10) {
+            Search({ queryDate: textDate });
         }
         if (text.length > 10) {
             return;
@@ -173,7 +179,7 @@ const SinaisVitaisGerais = () => {
                 style={{
                     flexDirection: 'row',
                     marginHorizontal: 5,
-                    justifyContent: 'center'
+                    justifyContent: 'space-around',
                 }}>
                 <SearchBar
                     darkMode
@@ -199,29 +205,21 @@ const SinaisVitaisGerais = () => {
                     }
                     returnKeyType={'next'}
                 />
-                <BtnOptionsFilter
-                    onPress={() => {
-                        refModalBotom.current?.openModal();
+                <MenuPopUp
+                    btnLabels={['Nome paciente', 'Data de nascimento']}
+                    onpress={(label) => {
+                        switch (label) {
+                            case 'Nome paciente':
+                                filter(filterDefault[1]);
+                                break;
+                            case 'Data de nascimento':
+                                filter(filterDefault[0]);
+                                break;
+                            default:
+                                break;
+                        }
                     }}
                 />
-                <ModalBottom animationType={'slide'} ref={refModalBotom}>
-                    <View style={{ paddingVertical: 10 }}>
-                        <TouchableOpacity
-                            onPress={() => filter(filterDefault[1])}
-                            style={{ paddingVertical: 10 }}>
-                            <Text style={styles.selectTextStyle}>
-                                NOME PACIENTE
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => filter(filterDefault[0])}
-                            style={{ paddingVertical: 10 }}>
-                            <Text style={styles.selectTextStyle}>
-                                DATA DE NASCIMENTO
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </ModalBottom>
             </View>
             <CardConsultasGerais
                 dataSourcePFsinaisVitais={state.dataSource}

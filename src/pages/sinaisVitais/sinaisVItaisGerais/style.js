@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     SearchBarStyle: {
-        width: '85%',
+        width: '90%',
         height: Dimensions.get('screen').height / 16,
         backgroundColor: '#08948A',
     },
