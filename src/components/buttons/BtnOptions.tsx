@@ -14,6 +14,9 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
+import useTheme from '../../hooks/useTheme';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -21,17 +24,18 @@ const screenHeight = Dimensions.get('screen').height;
 interface Props {
     valueText: string;
     onPress(): void;
-    arrayColors?: string[];
     disable?: boolean;
 }
 
 const BtnOptions: React.FC<Props> = ({
     valueText,
     onPress,
-    arrayColors = ['#20c4cb', '#20b3cb'],
     disable,
 }: Props) => {
     const styleOpacity = useSharedValue(1);
+
+    const theme = useTheme();
+    const styles = useThemeAwareObject(createStyles);
 
     const animatedStyles = useAnimatedStyle(() => {
         return {
@@ -53,7 +57,7 @@ const BtnOptions: React.FC<Props> = ({
                 <Animated.View style={[styles.viewBtn, animatedStyles]}>
                     <LinearGradient
                         style={styles.linearGradient}
-                        colors={arrayColors}>
+                        colors={[theme.colors.GREENPRIMARY, theme.colors.GREENLIGHT]}>
                         <Text style={styles.text}>{valueText}</Text>
                     </LinearGradient>
                 </Animated.View>
@@ -62,52 +66,56 @@ const BtnOptions: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    text: {
-        fontSize: RFValue(14, 680),
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    linearGradient: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-    },
-    btn: {
-        width: screenWidth / 4,
-        height: screenHeight / 20,
-        borderRadius: 10,
-        marginVertical: 5,
-        ...Platform.select({
-            android: {
-                elevation: 3,
-            },
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            padding: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        text: {
+            fontSize: theme.typography.SIZE.fontysize14,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_TERTIARY,
+        },
+        linearGradient: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10,
+        },
+        btn: {
+            width: screenWidth / 4,
+            height: screenHeight / 20,
+            borderRadius: 10,
+            marginVertical: 5,
+            ...Platform.select({
+                android: {
+                    elevation: 3,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 2,
-            },
-            default: {
-                elevation: 3,
-            },
-        }),
-        backgroundColor: '#fff',
-    },
-    viewBtn: {
-        flex: 1,
-    },
-    disabledBtn: {
-        opacity: 0.4,
-    },
-});
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 2,
+                },
+                default: {
+                    elevation: 3,
+                },
+            }),
+            backgroundColor: '#fff',
+        },
+        viewBtn: {
+            flex: 1,
+        },
+        disabledBtn: {
+            opacity: 0.4,
+        },
+    });
+    return styles;
+}
 
 export default memo(BtnOptions);

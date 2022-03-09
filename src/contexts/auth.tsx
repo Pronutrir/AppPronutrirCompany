@@ -178,7 +178,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         (async () => {
             const result = await getPerfil();
             if (
-                result.cD_PESSOA_FISICA === stateAuth.usertasy.cD_PESSOA_FISICA
+                result?.cD_PESSOA_FISICA === stateAuth?.usertasy?.cD_PESSOA_FISICA
             ) {
                 dispatchAuth({ type: 'setPerfilApp', payload: result });
             }

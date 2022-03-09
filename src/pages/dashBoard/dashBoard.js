@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import CarouselInstagram from '../../components/carrosel/Carousel_Instagram';
-import _styles from './style';
+import createStyles from './style';
 import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import LembreteImg from '../../assets/svg/lembrete.svg';
@@ -12,12 +12,12 @@ import HospitalLocationSvg from '../../assets/svg/hospitalLocation.svg';
 import BatePapoImg from '../../assets/svg/batePapo.svg';
 import MedicoColorimg from '../../assets/svg/medicoColor.svg';
 import useTheme from '../../hooks/useTheme';
-import useThemedStyles from '../../hooks/useThemedStyles';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
 export default function dashBoard({ navigation }) {
 
     const theme = useTheme();
-    const styles = useThemedStyles(_styles);
+    const styles = useThemeAwareObject(createStyles);
     const size = Dimensions.get('screen').width / 10
 
     return (

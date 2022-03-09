@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Switch } from 'react-native';
 import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
-import useThemedStyles from '../../hooks/useThemedStyles';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
 type Props = {
     onpress?(): void;
@@ -11,13 +11,13 @@ type Props = {
 
 const ToggleSwitch: React.FC<Props> = ({ onpress, Enabled = false }: Props) => {
     const theme = useTheme();
-    const styles = useThemedStyles(_styles);
+    const styles = useThemeAwareObject(createStyles);
 
     const [isEnabled, setIsEnabled] = useState(Enabled);
 
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState);
-        if(onpress){
+        if (onpress) {
             onpress();
         }
     };
@@ -41,11 +41,13 @@ const ToggleSwitch: React.FC<Props> = ({ onpress, Enabled = false }: Props) => {
 
 export default ToggleSwitch;
 
-const _styles = (theme: ThemeContextData) =>
-    StyleSheet.create({
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
         container: {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
         },
     });
+    return styles;
+};

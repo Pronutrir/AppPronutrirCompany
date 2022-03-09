@@ -10,7 +10,7 @@ import React from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import AnimatedLottieView from 'lottie-react-native';
 import useTheme from '../../../../hooks/useTheme';
-import useThemedStyles from '../../../../hooks/useThemedStyles';
+import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -65,8 +65,11 @@ const escalaDeDor: IEscalaDor[] = [
     },
 ];
 
-const EscalaDorComponent: React.FC<Props> = ({ onpress, disabled = false }: Props) => {
-    const styles = useThemedStyles(_styles);
+const EscalaDorComponent: React.FC<Props> = ({
+    onpress,
+    disabled = false,
+}: Props) => {
+    const styles = useThemeAwareObject(createStyles);
 
     const CardEscalaDor = ({ item }: { item: IEscalaDor }) => {
         return (
@@ -86,7 +89,10 @@ const EscalaDorComponent: React.FC<Props> = ({ onpress, disabled = false }: Prop
                 <View style={styles.box2}>
                     {item.btn.map((element) => {
                         return (
-                            <TouchableOpacity disabled={disabled} style={styles.btn} onPress={() => onpress(element)}>
+                            <TouchableOpacity
+                                disabled={disabled}
+                                style={styles.btn}
+                                onPress={() => onpress(element)}>
                                 <Text style={styles.number}>{element}</Text>
                             </TouchableOpacity>
                         );
@@ -110,8 +116,8 @@ const EscalaDorComponent: React.FC<Props> = ({ onpress, disabled = false }: Prop
 
 export default EscalaDorComponent;
 
-const _styles = (theme: ThemeContextData) =>
-    StyleSheet.create({
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
         container: {
             flexDirection: 'row',
             //justifyContent: 'space-around',
@@ -164,3 +170,5 @@ const _styles = (theme: ThemeContextData) =>
             color: theme.colors.BLACK,
         },
     });
+    return styles;
+};

@@ -7,9 +7,15 @@ import InfoSvg from '../../assets/svg/informacoes.svg';
 import AlertSvg from '../../assets/svg/alerta.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import notificationGlobalContext from '../../contexts/notificationGlobalContext';
+import useTheme from '../../hooks/useTheme';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
 
 export default function NotificationAlert() {
     const { alert, removeAlert } = useContext(notificationGlobalContext);
+
+    const theme = useTheme();
+    const styles = useThemeAwareObject(createStyles);
 
     const size = Dimensions.get('screen').width / 20;
 
@@ -20,30 +26,60 @@ export default function NotificationAlert() {
     const buttomType = () => {
         switch (alert?.status) {
             case 'sucess':
-                return '#6ecb20';
+                return theme.colors.SUCCESS;
             case 'error':
-                return '#cb2720';
+                return theme.colors.ERROR;
             case 'warning':
-                return '#f57c00';
+                return theme.colors.WARNING;
             case 'info':
-                return '#1976d2';
+                return theme.colors.INFOR;
             default:
-                return '#648dae';
+                return theme.colors.SUCCESS;
         }
     };
 
     const ImgType = () => {
         switch (alert?.status) {
             case 'sucess':
-                return <OkImg fill={'#fff'} width={size} height={size} />;
+                return (
+                    <OkImg
+                        fill={theme.colors.WHITE}
+                        width={size}
+                        height={size}
+                    />
+                );
             case 'error':
-                return <Cancel fill={'#fff'} width={size} height={size} />;
+                return (
+                    <Cancel
+                        fill={theme.colors.WHITE}
+                        width={size}
+                        height={size}
+                    />
+                );
             case 'warning':
-                return <AlertSvg fill={'#fff'} width={size} height={size} />;
+                return (
+                    <AlertSvg
+                        fill={theme.colors.WHITE}
+                        width={size}
+                        height={size}
+                    />
+                );
             case 'info':
-                return <InfoSvg fill={'#fff'} width={size} height={size} />;
+                return (
+                    <InfoSvg
+                        fill={theme.colors.WHITE}
+                        width={size}
+                        height={size}
+                    />
+                );
             default:
-                return <OkImg fill={'#fff'} width={size} height={size} />;
+                return (
+                    <OkImg
+                        fill={theme.colors.WHITE}
+                        width={size}
+                        height={size}
+                    />
+                );
         }
     };
 
@@ -85,63 +121,67 @@ export default function NotificationAlert() {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        width: Dimensions.get('screen').width,
-        height: Dimensions.get('screen').height / 12,
-        flexDirection: 'row',
-        alignSelf: 'flex-end',
-        position: 'absolute',
-        zIndex: 100,
-        bottom: RFPercentage(5),
-    },
-    box1: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    box2: {
-        width: '20%',
-        height: '100%',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingRight: 10,
-        elevation: 3,
-    },
-    Animatable: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            width: Dimensions.get('screen').width,
+            height: Dimensions.get('screen').height / 12,
+            flexDirection: 'row',
+            alignSelf: 'flex-end',
+            position: 'absolute',
+            zIndex: 100,
+            bottom: RFPercentage(5),
+        },
+        box1: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        box2: {
+            width: '20%',
+            height: '100%',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            paddingRight: 10,
+            elevation: 3,
+        },
+        Animatable: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        paddingStart: 10,
-        paddingTop: 3,
-        paddingBottom: 3,
-        flexDirection: 'row',
-        borderTopRightRadius: 10,
-        borderBottomEndRadius: 10,
-    },
-    item1: {
-        width: '10%',
-    },
-    item2: {
-        width: '90%',
-    },
-    text: {
-        color: '#ffF',
-        fontSize: RFValue(14, 680),
-        padding: 5,
-        fontWeight: 'bold',
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+            paddingStart: 10,
+            paddingTop: 3,
+            paddingBottom: 3,
+            flexDirection: 'row',
+            borderTopRightRadius: 10,
+            borderBottomEndRadius: 10,
+        },
+        item1: {
+            width: '10%',
+        },
+        item2: {
+            width: '90%',
+        },
+        text: {
+            fontSize: theme.typography.SIZE.fontysize14,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.WHITE,
+            padding: 5,
+        },
+    });
+    return styles;
+};

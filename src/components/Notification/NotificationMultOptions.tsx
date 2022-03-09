@@ -8,6 +8,9 @@ import React, {
 import { StyleSheet, Text, View, Modal, Platform } from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import BtnOptions from '../../components/buttons/BtnOptions';
+import { ThemeContextData } from '../../contexts/themeContext';
+import useTheme from '../../hooks/useTheme';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
 interface Notification {
     message: string;
@@ -24,6 +27,9 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
     ({ message, onpress }: Notification, ref) => {
         const [active, setActive] = useState(false);
         const _view = useRef<any>(null);
+
+        const theme = useTheme();
+        const styles = useThemeAwareObject(createStyles);
 
         const closeNotification = useCallback(() => {
             setActive(false);
@@ -71,7 +77,6 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
                                 <BtnOptions
                                     onPress={() => closeNotification()}
                                     valueText={'Cancelar'}
-                                    arrayColors={['#cb2720', '#cb20c4']}
                                 />
                             </View>
                         </View>
@@ -84,78 +89,46 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
 
 export default memo(NotificationMultOptions);
 
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        paddingHorizontal: RFPercentage(3),
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,.8)',
-    },
-    modalView: {
-        backgroundColor: '#ffff',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 10,
-        marginHorizontal: 20,
-    },
-    box: {
-        margin: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    btn: {
-        width: RFPercentage(15),
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        marginHorizontal: 10,
-        backgroundColor: '#ef4063',
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        alignItems: 'center',
-        borderRadius: 10,
-        justifyContent: 'center',
-        flexDirection: 'row',
-    },
-    btnOk: {
-        backgroundColor: '#20c4cb',
-    },
-    btnCancelar: {
-        backgroundColor: '#cb2720',
-    },
-    boxBtn: {
-        marginVertical: 10,
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    textMsn: {
-        color: '#7C9292',
-        fontSize: RFValue(16, 680),
-        textAlign: 'justify',
-        margin: 5,
-    },
-    text: {
-        color: '#fff',
-        fontSize: RFValue(16, 680),
-        textAlign: 'justify',
-        margin: 5,
-        fontWeight: 'bold',
-    },
-    Titulo: {
-        color: '#137276',
-        fontWeight: 'bold',
-        fontSize: RFValue(18, 680),
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        centeredView: {
+            flex: 1,
+            paddingHorizontal: RFPercentage(3),
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKDROP,
+        },
+        modalView: {
+            backgroundColor: theme.colors.BACKGROUND_1,
+            borderRadius: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 10,
+            marginHorizontal: 20,
+        },
+        box: {
+            margin: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        boxBtn:{
+
+        },
+        textMsn: {
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            textAlign: 'justify',
+            margin: 5,
+        },
+        Titulo: {
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+        },
+    });
+
+    return styles;
+};

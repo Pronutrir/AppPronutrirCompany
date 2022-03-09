@@ -10,11 +10,17 @@ import {
 import OkImg from '../../assets/svg/ok.svg';
 import { RFValue } from 'react-native-responsive-fontsize';
 import notificationGlobalContext from '../../contexts/notificationGlobalContext';
+import { ThemeContextData } from '../../contexts/themeContext';
+import useTheme from '../../hooks/useTheme';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
 const NotificationCentralized: React.FC = () => {
     const { notification, removeNotification } = useContext(
         notificationGlobalContext,
     );
+
+    const theme = useTheme();
+    const styles = useThemeAwareObject(createStyles);
 
     const disabled = () => {
         removeNotification();
@@ -57,80 +63,94 @@ const NotificationCentralized: React.FC = () => {
 
 export default NotificationCentralized;
 
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,.8)',
-    },
-    modalView: {
-        backgroundColor: '#ffff',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 10,
-        marginHorizontal: 20,
-    },
-    box: {
-        margin: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    btn: {
-        padding: 10,
-        backgroundColor: '#fff',
-        opacity: 0.9,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        centeredView: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKDROP,
+        },
+        modalView: {
+            backgroundColor: theme.colors.BACKGROUND_1,
+            borderRadius: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 10,
+            marginHorizontal: 20,
+        },
+        box: {
+            margin: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        btn: {
+            padding: 10,
+            backgroundColor: theme.colors.BACKGROUND_1,
+            opacity: 0.9,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        alignItems: 'center',
-        borderRadius: 10,
-        justifyContent: 'center',
-        flexDirection: 'row',
-    },
-    boxBtn: {
-        marginVertical: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    text: {
-        color: '#7C9292',
-        fontSize: RFValue(16, 680),
-        textAlign: 'justify',
-        margin: 5,
-    },
-    Titulo: {
-        color: '#08948A',
-        fontWeight: 'bold',
-        fontSize: RFValue(18, 680),
-    },
-    textOk: {
-        color: '#08948A',
-        fontWeight: 'bold',
-        paddingHorizontal: 10,
-    },
-    box1: {
-        flexDirection: 'row',
-        marginVertical: 20,
-        alignSelf: 'flex-start',
-    },
-    labelDescription: {
-        fontSize: RFValue(16, 680),
-        color: '#08948A',
-    },
-    description: {
-        fontSize: RFValue(16, 680),
-        color: '#08948A',
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+            alignItems: 'center',
+            borderRadius: 10,
+            justifyContent: 'center',
+            flexDirection: 'row',
+        },
+        boxBtn: {
+            marginVertical: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+        },
+        text: {
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            textAlign: 'justify',
+            margin: 5,
+        },
+        Titulo: {
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+        },
+        textOk: {
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            paddingHorizontal: 10,
+        },
+        box1: {
+            flexDirection: 'row',
+            marginVertical: 20,
+            alignSelf: 'flex-start',
+        },
+        labelDescription: {
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            paddingHorizontal: 10,
+        },
+        description: {
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            paddingHorizontal: 10,
+        },
+    });
+    return styles;
+};

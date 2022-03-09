@@ -403,7 +403,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetAllSinaisVitais = useCallback(async (): Promise<void> => {
         await Api.get(
-            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
+            `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${usertasy.cD_PESSOA_FISICA},${moment().format(
                 'YYYY-MM-DD',
             )},${moment().format('YYYY-MM-DD')}`,
         )
@@ -430,7 +430,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 });
                 return null;
             });
-    }, [addAlert]);
+    }, [addAlert, usertasy]);
 
     const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
         await Api.post<ISinaisVitais>('SinaisVitaisMonitoracaoGeral', {
@@ -580,8 +580,10 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     };
 
     useEffect(() => {
-        GetAllSinaisVitais();
-    }, [GetAllSinaisVitais]);
+        if(usertasy.cD_PESSOA_FISICA){
+            GetAllSinaisVitais();
+        }
+    }, [GetAllSinaisVitais, usertasy]);
 
     return (
         <SinaisVitaisContext.Provider

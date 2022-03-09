@@ -11,14 +11,10 @@ import { Image } from 'react-native-animatable';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Loading from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
-import { IPerfis } from '../../reducers/UserReducer';
 import auth from '@react-native-firebase/auth';
-import ArrowBackImg from '../../assets/svg/arrowBack.svg';
-import AvatarImg from '../../assets/svg/avatar.svg';
-import { RFValue } from 'react-native-responsive-fontsize';
 import SelectedDropdown from '../selectedDropdown/SelectedDropdown';
 import { Idata } from '../../components/selectedDropdown/SelectedDropdown';
-import useThemedStyles from '../../hooks/useThemedStyles';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
 import { savePerfil } from '../../utils';
@@ -27,7 +23,7 @@ interface Props {
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
-    const styles = useThemedStyles(_styles);
+    const styles = useThemeAwareObject(createStyles);
     const size = Dimensions.get('screen').width / 15;
 
     const {
@@ -80,7 +76,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     const SelectedPerfilApp = (item: Idata) => {
         setLoading(true);
         dispatchAuth({ type: 'setPerfilApp', payload: item.value });
-        savePerfil(item.value)
+        savePerfil(item.value);
         setTimeout(() => {
             setLoading(false);
             navigation.closeDrawer();
@@ -114,10 +110,6 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     value={PerfilSelected}
                     placeholder={'Perfil do App'}
                 />
-                {/* <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Perfil')}>
-                    <AvatarImg fill={'#748080'} width={size} height={size} />
-                    <Text style={styles.text3}>Perfil</Text>
-                </TouchableOpacity> */}
             </View>
             <View style={styles.box3}>
                 <TouchableOpacity
@@ -134,8 +126,8 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
 export default DrawerContent;
 
-const _styles = (theme: ThemeContextData) =>
-    StyleSheet.create({
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
         container: {
             flex: 1,
         },
@@ -224,3 +216,6 @@ const _styles = (theme: ThemeContextData) =>
             borderRadius: 5,
         },
     });
+
+    return styles;
+};

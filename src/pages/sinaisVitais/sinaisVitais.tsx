@@ -32,7 +32,7 @@ type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 const SinaisVitais: React.FC = () => {
     const {
         GetConsultasQT,
-        //GetMedicosConsultas,
+        GetAllSinaisVitais,
         stateConsultas: { flag, medicos },
         stateConsultasQT: { consultasQT, flagQT },
     } = useContext(SinaisVitaisContext);

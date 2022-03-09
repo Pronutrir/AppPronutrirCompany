@@ -29,7 +29,7 @@ import Carousel, {
 import Api from '../../services/api';
 import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 import useTheme from '../../hooks/useTheme';
-import useThemedStyles from '../../hooks/useThemedStyles';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 
 const width = Dimensions.get('window').width;
@@ -49,7 +49,7 @@ const { width: screenWidth } = Dimensions.get('screen');
 const ModalInstagram = React.forwardRef<ModalHandles, Props>(
     ({ animationType = 'none', activeModal = false, postagem }: Props, ref) => {
         const theme = useTheme();
-        const styles = useThemedStyles(_styles);
+        const styles = useThemeAwareObject(createStyles);
         const [active, setActive] = useState(activeModal);
 
         const { addNotification } = useContext(NotificationGlobalContext);
@@ -196,107 +196,109 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
 
 export default ModalInstagram;
 
-const _styles = (theme: ThemeContextData) => StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        backgroundColor: theme.colors.BACKGROUND_1,
-    },
-    modalView: {
-        flex: 1,
-        backgroundColor: theme.colors.BACKGROUND_1,
-        paddingBottom: 0,
-        shadowColor: theme.colors.BROWNDARK,
-        shadowOffset: {
-            width: 0,
-            height: 2,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        centeredView: {
+            flex: 1,
+            backgroundColor: theme.colors.BACKGROUND_1,
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 3,
-    },
-    box1: {
-        flex: width > 500 ? 1.5 : 1,
-    },
-    box2: {
-        flex: 1,
-        margin: 10,
-    },
-    modalText: {
-        textAlign: 'left',
-        fontSize: theme.typography.SIZE.fontysize12,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        color: theme.colors.TEXT_SECONDARY,
-        margin: 0.1,
-        padding: 5,
-    },
-    modalTextTitulo: {
-        fontSize: theme.typography.SIZE.fontysize18,
-        fontFamily: theme.typography.FONTES.Bold,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        color: theme.colors.TEXT_SECONDARY,
-    },
-    boxBtn: {
-        backgroundColor: 'transparent',
-        position: 'absolute',
-        right: RFPercentage(1),
-        zIndex: 1,
-        alignSelf: 'flex-end',
-        
-    },
-    openButton: {
-        backgroundColor: theme.colors.BACKGROUND_1,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+        modalView: {
+            flex: 1,
+            backgroundColor: theme.colors.BACKGROUND_1,
+            paddingBottom: 0,
+            shadowColor: theme.colors.BROWNDARK,
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 3,
+        },
+        box1: {
+            flex: width > 500 ? 1.5 : 1,
+        },
+        box2: {
+            flex: 1,
+            margin: 10,
+        },
+        modalText: {
+            textAlign: 'left',
+            fontSize: theme.typography.SIZE.fontysize12,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            margin: 0.1,
+            padding: 5,
+        },
+        modalTextTitulo: {
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+        },
+        boxBtn: {
+            backgroundColor: 'transparent',
+            position: 'absolute',
+            right: RFPercentage(1),
+            zIndex: 1,
+            alignSelf: 'flex-end',
+        },
+        openButton: {
+            backgroundColor: theme.colors.BACKGROUND_1,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        padding: 10,
-        margin: 10,
-        borderRadius: 30,
-    },
-    imgView: {
-        flex: 1,
-    },
-    img: {
-        flex: 1,
-        resizeMode: 'stretch',
-    },
-    BoxMedico: {
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-    },
-    textPublicacao: {
-        alignSelf: 'flex-end',
-        paddingHorizontal: 10,
-        paddingBottom: 10,
-        fontSize: theme.typography.SIZE.fontysize10,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        color: theme.colors.TEXT_SECONDARY,
-    },
-    item: {
-        alignItems: 'center',
-    },
-    imageContainer: {
-        width: '100%',
-        height: '100%',
-        marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
-        backgroundColor: theme.colors.BACKGROUND_1,
-    },
-    image: {
-        resizeMode: 'stretch',
-        transform: [{ scale: 0.55 }],
-        ...StyleSheet.absoluteFillObject,
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+            padding: 10,
+            margin: 10,
+            borderRadius: 30,
+        },
+        imgView: {
+            flex: 1,
+        },
+        img: {
+            flex: 1,
+            resizeMode: 'stretch',
+        },
+        BoxMedico: {
+            width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+        },
+        textPublicacao: {
+            alignSelf: 'flex-end',
+            paddingHorizontal: 10,
+            paddingBottom: 10,
+            fontSize: theme.typography.SIZE.fontysize10,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+        },
+        item: {
+            alignItems: 'center',
+        },
+        imageContainer: {
+            width: '100%',
+            height: '100%',
+            marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
+            backgroundColor: theme.colors.BACKGROUND_1,
+        },
+        image: {
+            resizeMode: 'stretch',
+            transform: [{ scale: 0.55 }],
+            ...StyleSheet.absoluteFillObject,
+        },
+    });
+    return styles;
+};

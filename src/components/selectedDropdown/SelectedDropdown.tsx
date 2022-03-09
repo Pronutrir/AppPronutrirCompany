@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
-import useThemedStyles from '../../hooks/useThemedStyles';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 //import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const _data = [
@@ -30,10 +30,14 @@ interface Props {
     onChange?(item: Idata): void;
 }
 
-const SelectedDropdown: React.FC<Props> = ({ data = _data, onChange, value, placeholder }:Props) => {
-    
+const SelectedDropdown: React.FC<Props> = ({
+    data = _data,
+    onChange,
+    value,
+    placeholder,
+}: Props) => {
     const theme = useTheme();
-    const styles = useThemedStyles(_styles);
+    const styles = useThemeAwareObject(createStyles);
     const [_value, setValue] = useState(null);
 
     const renderItem = (item: any) => {
@@ -63,12 +67,12 @@ const SelectedDropdown: React.FC<Props> = ({ data = _data, onChange, value, plac
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder= {placeholder ? placeholder : "Selecione" }
+            placeholder={placeholder ? placeholder : 'Selecione'}
             value={value ? value : _value}
             onChange={(item) => {
-                if(onChange){
+                if (onChange) {
                     onChange(item);
-                }else{
+                } else {
                     setValue(item.value);
                 }
             }}
@@ -82,61 +86,64 @@ const SelectedDropdown: React.FC<Props> = ({ data = _data, onChange, value, plac
 
 export default SelectedDropdown;
 
-const _styles = (theme: ThemeContextData) =>  StyleSheet.create({
-    dropdown: {
-        marginVertical: RFPercentage(2),
-        height: RFPercentage(6),
-        backgroundColor: 'white',
-        borderRadius: 10,
-        paddingHorizontal: RFPercentage(1),
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        dropdown: {
+            marginVertical: RFPercentage(2),
+            height: RFPercentage(6),
+            backgroundColor: 'white',
+            borderRadius: 10,
+            paddingHorizontal: RFPercentage(1),
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-    },
-    icon: {
-        marginRight: 5,
-    },
-    item: {
-        padding: RFPercentage(1),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    textItem: {
-        flex: 1,
-        color: theme.colors.TEXT_SECONDARY,
-        fontSize: theme.typography.SIZE.fontysize16,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-    },
-    placeholderStyle: {
-        color: theme.colors.TEXT_SECONDARY,
-        fontSize: theme.typography.SIZE.fontysize16,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-    },
-    selectedTextStyle: {
-        color: theme.colors.TEXT_SECONDARY,
-        fontSize: theme.typography.SIZE.fontysize16,
-        fontFamily: theme.typography.FONTES.Regular,
-        letterSpacing: theme.typography.LETTERSPACING.S,
-        textAlign: 'center',
-    },
-    iconStyle: {
-        width: RFPercentage(4),
-        height: RFPercentage(4),
-    },
-    inputSearchStyle: {
-        fontSize: theme.typography.SIZE.fontysize16,
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+        },
+        icon: {
+            marginRight: 5,
+        },
+        item: {
+            padding: RFPercentage(1),
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        textItem: {
+            flex: 1,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+        },
+        placeholderStyle: {
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+        },
+        selectedTextStyle: {
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            textAlign: 'center',
+        },
+        iconStyle: {
+            width: RFPercentage(4),
+            height: RFPercentage(4),
+        },
+        inputSearchStyle: {
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+    });
+    return styles;
+};

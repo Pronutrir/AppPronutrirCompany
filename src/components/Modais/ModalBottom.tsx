@@ -20,6 +20,9 @@ import Animated, {
     useDerivedValue,
 } from 'react-native-reanimated';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { ThemeContextData } from '../../contexts/themeContext';
+import useTheme from '../../hooks/useTheme';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     activeModal?: boolean;
     children: any;
@@ -38,6 +41,9 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
         { animationType = 'none', children, style, activeModal = false }: Props,
         ref,
     ) => {
+        const themed = useTheme();
+        const styles = useThemeAwareObject(createStyles);
+
         const _view = useRef<any>(null);
         const [active, setActive] = useState(activeModal);
         const [theme, setTheme] = useState<ThemeOpacity>('light');
@@ -115,30 +121,33 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
 
 export default ModalBottom;
 
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        paddingTop: RFPercentage(10),
-    },
-    modalView: {
-        flexBasis: 'auto',
-        flexShrink: 1,
-        flexGrow: 0,
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        justifyContent: 'flex-end',
-        width: '100%',
-    },
-    btnCloser: {
-        marginTop: RFPercentage(1.5),
-        paddingVertical: 10,
-    },
-    cancelTextStyle: {
-        color: '#08948A',
-        fontSize: RFValue(18, 680),
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        centeredView: {
+            flex: 1,
+            justifyContent: 'flex-end',
+            paddingTop: RFPercentage(10),
+        },
+        modalView: {
+            flexBasis: 'auto',
+            flexShrink: 1,
+            flexGrow: 0,
+            backgroundColor: '#fff',
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            justifyContent: 'flex-end',
+            width: '100%',
+        },
+        btnCloser: {
+            marginTop: RFPercentage(1.5),
+            paddingVertical: 10,
+        },
+        cancelTextStyle: {
+            color: '#08948A',
+            fontSize: RFValue(18, 680),
+            textAlign: 'center',
+            fontWeight: 'bold',
+        },
+    });
+    return styles;
+};

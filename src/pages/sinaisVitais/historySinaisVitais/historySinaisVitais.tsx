@@ -4,6 +4,7 @@ import React, {
     useCallback,
     memo,
     useEffect,
+    useRef,
 } from 'react';
 import {
     Text,
@@ -14,7 +15,6 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
-import LoadingBall from '../../../components/Loading/LoadingBall';
 import CardSimples from '../../../components/Cards/CardSimples';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
@@ -23,14 +23,18 @@ import ExcluirSvg from '../../../assets/svg/excluir.svg';
 import DisabledSvg from '../../../assets/svg/disable.svg';
 import AuthContext from '../../../contexts/auth';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
-import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
+import ModalCentralizedOptions, {
+    ModalHandles,
+} from '../../../components/Modais/ModalCentralizedOptions';
+import MenuPopUp, { ModalHandlesMenu } from '../../../components/menuPopUp/menuPopUp';
 import Loading from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext, { IInativarSinaisVitais } from '../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, {
+    IInativarSinaisVitais,
+} from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -56,23 +60,30 @@ const HistorySinaisVitais: React.FC = () => {
     } = useContext(AuthContext);
     const {
         stateConsultas: { sinaisVitais },
-        GetAllSinaisVitais, ValidationAutorize, InativarSinaisVitais
+        GetAllSinaisVitais,
+        ValidationAutorize,
+        InativarSinaisVitais,
     } = useContext(SinaisVitaisContext);
     const { addNotification } = useContext(NotificationGlobalContext);
-    
+
+    const [visible, setVisible] = useState(false);
+
+    const refModalBotom = useRef<ModalHandles>(null);
+    const refMenuBotom = useRef<ModalHandlesMenu>(null);
+
     const [listSinaisVitais, setListSinaisVitais] = useState<
         ISinaisVitais[] | null
     >(null);
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
-    const [activeModalOptions, setActiveModalOptions] =
-        useState<boolean>(false);
+
     const [activeModalDel, setActiveModalDel] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
-    const [ selectedSinais , setSelectedSinais] = useState<IInativarSinaisVitais>();
+    const [selectedSinais, setSelectedSinais] =
+        useState<IInativarSinaisVitais>();
 
     const setSelectedSinaisInativar = (item: IInativarSinaisVitais) => {
-        setActiveModalOptions(true);
+        refModalBotom.current?.openModal();
         setSelectedSinais(item);
     };
 
@@ -82,69 +93,106 @@ const HistorySinaisVitais: React.FC = () => {
     }; */
 
     const RedirectNavigation = (item: ISinaisVitais) => {
-        if(ValidationAutorize()){
+        if (ValidationAutorize()) {
             navigation.navigate('UpdateSinaisVitaisEnfermagem', {
                 SinaisVitais: item,
                 PessoaFisica: item,
-            })
-        }else{
+            });
+        } else {
             navigation.navigate('UpdateSinais', {
                 SinaisVitais: item,
                 PessoaFisica: item,
-            })
+            });
         }
-    }
+    };
 
     const InativarSinalVital = async () => {
-        if(selectedSinais){
+        if (selectedSinais) {
             setActiveModal(true);
             await InativarSinaisVitais(selectedSinais);
             await GetAllSinaisVitais();
             setActiveModal(false);
-        } 
-    }
+        }
+    };
+
+    const MenuPopUpOptions = (itemSelected: string, item: ISinaisVitais) => {
+        switch (itemSelected) {
+            case 'Editar':
+                RedirectNavigation(item);
+                break;
+            case 'Excluir':
+                setSelectedSinaisInativar(item);
+                break;
+            default:
+                break;
+        }
+    };
 
     const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
-        return (
-            <>
-                <View style={styles.item}>
-                    <View style={styles.SubItem}>
-                        <Text style={styles.textLabel}>Pressão arterial sistólica: </Text>
-                        <Text style={styles.text}>{item.qT_PA_SISTOLICA}</Text>
+        if (ValidationAutorize()) {
+            return (
+                <>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Pressão arterial sistólica:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_PA_SISTOLICA}
+                            </Text>
+                        </View>
                     </View>
-                </View>
-                <View style={styles.item}>
-                    <View style={styles.SubItem}>
-                        <Text style={styles.textLabel}>Pressão arterial diastólica: </Text>
-                        <Text style={styles.text}>{item.qT_PA_DIASTOLICA}</Text>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Pressão arterial diastólica:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_PA_DIASTOLICA}
+                            </Text>
+                        </View>
                     </View>
-                </View>
-                <View style={styles.item}>
-                    <View style={styles.SubItem}>
-                        <Text style={styles.textLabel}>Pressão arterial média : </Text>
-                        <Text style={styles.text}>{item.qT_PAM}</Text>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Pressão arterial média :{' '}
+                            </Text>
+                            <Text style={styles.text}>{item.qT_PAM}</Text>
+                        </View>
                     </View>
-                </View>
-                <View style={styles.item}>
-                    <View style={styles.SubItem}>
-                        <Text style={styles.textLabel}>Frequência cardíaca: </Text>
-                        <Text style={styles.text}>{item.qT_FREQ_CARDIACA}</Text>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Frequência cardíaca:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_FREQ_CARDIACA}
+                            </Text>
+                        </View>
                     </View>
-                </View>
-                <View style={styles.item}>
-                    <View style={styles.SubItem}>
-                        <Text style={styles.textLabel}>Frequência respiratória: </Text>
-                        <Text style={styles.text}>{item.qT_FREQ_RESP}</Text>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Frequência respiratória:{' '}
+                            </Text>
+                            <Text style={styles.text}>{item.qT_FREQ_RESP}</Text>
+                        </View>
                     </View>
-                </View>
-                <View style={styles.item}>
-                    <View style={styles.SubItem}>
-                        <Text style={styles.textLabel}>Escala de dor: </Text>
-                        <Text style={styles.text}>{item.qT_ESCALA_DOR}</Text>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Escala de dor:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_ESCALA_DOR}
+                            </Text>
+                        </View>
                     </View>
-                </View>
-            </>
-        );
+                </>
+            );
+        } else {
+            return null;
+        }
     };
 
     const Item = memo<Parms>(({ item }) => {
@@ -186,7 +234,7 @@ const HistorySinaisVitais: React.FC = () => {
                         </View>
                     </View>
                     <View style={styles.item}>
-                    <View style={styles.SubItem}>
+                        <View style={styles.SubItem}>
                             <Text style={styles.textLabel}>Peso: </Text>
                             <Text style={styles.text}>{`${
                                 item?.qT_PESO ?? ''
@@ -202,25 +250,11 @@ const HistorySinaisVitais: React.FC = () => {
                     <ComplementoEnfermagem item={item} />
                 </View>
                 <View style={styles.box3}>
-                    <TouchableOpacity
-                        style={styles.btn}
-                        onPress={() => RedirectNavigation(item) }>
-                        <EditarSvg
-                            fill={'#748080'}
-                            width={RFPercentage(4)}
-                            height={RFPercentage(4)}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                            style={styles.btn}
-                            onPress={() => setSelectedSinaisInativar(item)}>
-                            <DisabledSvg
-                                fill={'#748080'}
-                                width={RFPercentage(4)}
-                                height={RFPercentage(4)}>
-                                Botão
-                            </DisabledSvg>
-                        </TouchableOpacity>
+                    <MenuPopUp
+                        ref={refMenuBotom}
+                        btnLabels={['Editar', 'Excluir']}
+                        onpress={(label) => {refMenuBotom.current?.hideMenu(), MenuPopUpOptions(label, item)}}
+                    />
                 </View>
             </View>
         );
@@ -280,10 +314,10 @@ const HistorySinaisVitais: React.FC = () => {
             )}
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions
-                activeModal={activeModalOptions}
+                animationType={'slide'}
+                ref={refModalBotom}
                 message={'Deseja inativar este Sinal Vital ?'}
                 onpress={() => InativarSinalVital()}
-                setActiveModal={setActiveModalOptions}
             />
             {/* <ModalCentralizedOptions
                 activeModal={activeModalDel}
@@ -341,13 +375,14 @@ const styles = StyleSheet.create({
     },
     box3: {
         marginVertical: 5,
-        justifyContent: 'space-between'
+        justifyContent: 'flex-start',
     },
     btn: {
         width: RFPercentage(5),
         height: RFPercentage(5),
         padding: 5,
         marginHorizontal: 5,
+        marginVertical: RFPercentage(2),
         backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
