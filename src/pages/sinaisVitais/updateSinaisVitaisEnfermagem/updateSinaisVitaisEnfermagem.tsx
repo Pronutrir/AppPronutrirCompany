@@ -345,6 +345,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             <Loading activeModal={activeModal} />
             <ModalCentralizedOptions
                 activeModal={activeModalOptions}
+                setActiveModal={setActiveModalOptions}
                 message={
                     SinaisVitais
                         ? 'Deseja atualizar os Sinais Vitais ?'
@@ -353,7 +354,6 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                 onpress={() =>
                     SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
                 }
-                setActiveModal={setActiveModalOptions}
             />
         </View>
     );

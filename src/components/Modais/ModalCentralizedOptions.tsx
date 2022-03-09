@@ -3,6 +3,7 @@ import React, {
     useState,
     useCallback,
     useImperativeHandle,
+    useEffect,
 } from 'react';
 import {
     View,
@@ -58,6 +59,9 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
         const closeModal = useCallback(() => {
             setTheme('light');
             setActive(false);
+            if(setActiveModal){
+                setActiveModal(false);
+            }
         }, []);
 
         const openModal = useCallback(() => {
@@ -77,6 +81,10 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                 closeModal,
             };
         });
+
+        useEffect(() => {
+            setActive(activeModal)
+        }, [activeModal]);
 
         const progress = useDerivedValue(() => {
             return theme === 'dark' ? withTiming(0, { duration: 500 }) : 1;

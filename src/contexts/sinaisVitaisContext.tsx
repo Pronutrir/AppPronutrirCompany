@@ -80,7 +80,7 @@ export interface SinaisVitaisPost {
     qT_PAM?: number | null;
     qT_FREQ_CARDIACA?: number | null;
     qT_FREQ_RESP?: number | null;
-    cD_ESCALA_DOR: string | null;
+    cD_ESCALA_DOR?: string | null;
     qT_ESCALA_DOR?: number | null;
 }
 export interface SinaisVitaisPut {
@@ -95,7 +95,7 @@ export interface SinaisVitaisPut {
     qT_PAM?: number | null;
     qT_FREQ_CARDIACA?: number | null;
     qT_FREQ_RESP?: number | null;
-    cD_ESCALA_DOR: string | null;
+    cD_ESCALA_DOR?: string | null;
     qT_ESCALA_DOR?: number | null;
 }
 interface ISinaisVitaisDefault {
