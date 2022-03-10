@@ -69,9 +69,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
         }, []);
 
         const Ok = () => {
-            if(setActiveModal){
-                setActiveModal(false);
-            }
+            closeModal();
             onpress();
         };
 

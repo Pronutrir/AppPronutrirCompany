@@ -523,13 +523,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         )
             .then(() => {
                 addAlert({
-                    message: 'Sinal vital Inativado com sucesso!',
+                    message: 'Sinal vital excluído com sucesso!',
                     status: 'sucess',
                 });
             })
             .catch(() => {
                 addAlert({
-                    message: 'Não foi possivel inativar tente mais tarde!',
+                    message: 'Não foi possivel excluído tente mais tarde!',
                     status: 'error',
                 });
             });
