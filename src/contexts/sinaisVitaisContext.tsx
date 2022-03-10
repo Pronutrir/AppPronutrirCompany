@@ -26,19 +26,14 @@ import {
     ISinaisVitais,
 } from '../reducers/ConsultasReducer';
 import axios, { AxiosResponse, CancelTokenSource } from 'axios';
-import { TestRendererOptions } from 'react-test-renderer';
 import { useQuery } from 'react-query';
 import firestore from '@react-native-firebase/firestore';
-import { IPerfis } from '../reducers/UserReducer';
-import { State } from 'react-native-gesture-handler';
-
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
     stateConsultas: IstateConsultas;
     AddSinaisVitais(atendimento: SinaisVitaisPost): Promise<void>;
     GetConsultasQT(): Promise<void>;
     GetConsultas(filter?: IFilterConsultas): Promise<void>;
-    //GetMedicosConsultas(): Promise<void>;
     dispatchConsultas: React.Dispatch<ConsultasAction>;
     SearchPFSinaisVitais(
         filter: IFilterPF,
@@ -52,8 +47,11 @@ interface AuthContextData {
         nM_GUERRA,
     }: IFilterConsultas): IConsultas[] | undefined;
     UpdateSinaisVitais(sinaisUpdate: SinaisVitaisPut): Promise<void>;
-    ValidationAutorize: () => boolean | undefined;
-    InativarSinaisVitais: (sinaisUpdate: IInativarSinaisVitais) => Promise<void>;
+    ValidationAutorizeEnfermagem: () => boolean | undefined;
+    ValidationAutorizeTriagem: () => boolean;
+    InativarSinaisVitais: (
+        sinaisUpdate: IInativarSinaisVitais,
+    ) => Promise<void>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -148,9 +146,9 @@ export interface IPerfisLiberados {
 }
 export interface IInativarSinaisVitais {
     nR_SEQUENCIA: number;
-    iE_SITUACAO: string,
-    nM_USUARIO: string,
-    cD_PACIENTE: string,
+    iE_SITUACAO: string;
+    nM_USUARIO: string;
+    cD_PACIENTE: string;
 }
 
 const SinaisVitaisContext = createContext({} as AuthContextData);
@@ -403,9 +401,11 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetAllSinaisVitais = useCallback(async (): Promise<void> => {
         await Api.get(
-            `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${usertasy.cD_PESSOA_FISICA},${moment().format(
+            `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${
+                usertasy.cD_PESSOA_FISICA
+            },${moment().format('YYYY-MM-DD')},${moment().format(
                 'YYYY-MM-DD',
-            )},${moment().format('YYYY-MM-DD')}`,
+            )}`,
         )
             .then((response) => {
                 const { result } = response.data;
@@ -511,7 +511,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
-    const InativarSinaisVitais = async (sinaisUpdate: IInativarSinaisVitais) => {
+    const InativarSinaisVitais = async (
+        sinaisUpdate: IInativarSinaisVitais,
+    ) => {
         sinaisUpdate.iE_SITUACAO = 'I';
         Api.put<ISinaisVitais>(
             `SinaisVitaisMonitoracaoGeral/PutAtivarInativarSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
@@ -552,7 +554,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
-    const getPerfilAutorize = async () => {
+    const getPerfilAutorizeEnfermagem = async () => {
         const useRef = firestore()
             .doc('FunctionsApp/SinaisVitaisEnfermagem')
             .collection('Perfis');
@@ -571,16 +573,63 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         return resultPerfis;
     };
 
-    const { data: PerfisSinaisVitais } = useQuery('Perfis', getPerfilAutorize);
+    const { data: PerfisSinaisVitaisEnfermagem } = useQuery(
+        'PerfisEnfermagem',
+        getPerfilAutorizeEnfermagem,
+    );
 
-    const ValidationAutorize = () => {
-        return PerfisSinaisVitais?.some((element: IPerfisLiberados) => {
-            return element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL;
+    const getPerfilAutorizeTriagem = async () => {
+        const useRef = firestore()
+            .doc('FunctionsApp/SinaisVitaisTriagem')
+            .collection('Perfis');
+
+        var resultPerfis: IPerfisLiberados[] = [];
+
+        await useRef.get().then((querySnapshot) => {
+            return querySnapshot.forEach((item) => {
+                resultPerfis.push({
+                    cD_PERFIL: item.get('cD_PERFIL'),
+                    dS_PERFIL: item.get('dS_PERFIL'),
+                });
+            });
         });
+
+        return resultPerfis;
     };
 
+    const { data: PerfisSinaisVitaisTriagem } = useQuery(
+        'PerfisTriagem',
+        getPerfilAutorizeTriagem,
+    );
+
+    const ValidationAutorizeEnfermagem = useCallback(() => {
+        return PerfisSinaisVitaisEnfermagem?.some(
+            (element: IPerfisLiberados) => {
+                return (
+                    element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL
+                );
+            },
+        );
+    }, [PerfisSinaisVitaisEnfermagem, stateAuth.PerfilSelected]);
+
+    const ValidationAutorizeTriagem = useCallback(() => {
+        const result = PerfisSinaisVitaisTriagem?.some(
+            (element: IPerfisLiberados) => {
+                return (
+                    element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL
+                );
+            },
+        );
+
+        if (result) {
+            return result;
+        } else {
+            return false;
+        }
+    }, [PerfisSinaisVitaisTriagem, stateAuth.PerfilSelected]);
+
     useEffect(() => {
-        if(usertasy.cD_PESSOA_FISICA){
+        if (usertasy.cD_PESSOA_FISICA) {
             GetAllSinaisVitais();
         }
     }, [GetAllSinaisVitais, usertasy]);
@@ -600,8 +649,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 GetAllSinaisVitais,
                 FilterConsultas,
                 UpdateSinaisVitais,
-                ValidationAutorize,
+                ValidationAutorizeEnfermagem,
                 InativarSinaisVitais,
+                ValidationAutorizeTriagem,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

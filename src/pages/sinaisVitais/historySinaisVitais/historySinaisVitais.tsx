@@ -42,7 +42,7 @@ const HistorySinaisVitais: React.FC = () => {
     const navigation = useNavigation();
     const {
         GetAllSinaisVitais,
-        ValidationAutorize,
+        ValidationAutorizeEnfermagem,
         InativarSinaisVitais,
         stateConsultas: { sinaisVitais },
         dispatchConsultas,
@@ -68,7 +68,7 @@ const HistorySinaisVitais: React.FC = () => {
     }; */
 
     const RedirectNavigation = (item: ISinaisVitais) => {
-        if (ValidationAutorize()) {
+        if (ValidationAutorizeEnfermagem()) {
             navigation.navigate('UpdateSinaisVitaisEnfermagem', {
                 SinaisVitais: item,
                 PessoaFisica: item,
@@ -104,7 +104,7 @@ const HistorySinaisVitais: React.FC = () => {
     };
 
     const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
-        if (ValidationAutorize()) {
+        if (ValidationAutorizeEnfermagem()) {
             return (
                 <>
                     <View style={styles.item}>

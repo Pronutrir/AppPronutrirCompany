@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
-import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-//import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const _data = [
     { label: 'Item 1', value: '1' },
@@ -17,12 +15,10 @@ const _data = [
     { label: 'Item 7', value: '7' },
     { label: 'Item 8', value: '8' },
 ];
-
 export interface Idata {
     label: string;
     value: any;
 }
-
 interface Props {
     placeholder?: string;
     data?: Idata[];
@@ -36,7 +32,7 @@ const SelectedDropdown: React.FC<Props> = ({
     value,
     placeholder,
 }: Props) => {
-    const theme = useTheme();
+    
     const styles = useThemeAwareObject(createStyles);
     const [_value, setValue] = useState(null);
 
@@ -58,13 +54,14 @@ const SelectedDropdown: React.FC<Props> = ({
 
     return (
         <Dropdown
+            search={data.length > 20 ? true : false}
             style={styles.dropdown}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             data={data}
-            maxHeight={300}
+            maxHeight={500}
             labelField="label"
             valueField="value"
             placeholder={placeholder ? placeholder : 'Selecione'}
@@ -131,6 +128,7 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
         },
         selectedTextStyle: {
+            height: RFPercentage(3),
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
             fontFamily: theme.typography.FONTES.Regular,
@@ -142,7 +140,11 @@ const createStyles = (theme: ThemeContextData) => {
             height: RFPercentage(4),
         },
         inputSearchStyle: {
+            color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            height: RFPercentage(6),
         },
     });
     return styles;

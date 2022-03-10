@@ -13,16 +13,15 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IconsultaQT } from '../../../../reducers/ConsultasQTReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext, { IPerfisLiberados } from '../../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
-import AuthContext from '../../../../contexts/auth';
 interface Props {
     dataSourceQT?: IconsultaQT[] | null;
 }
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
-    const { GetConsultasQT, ValidationAutorize } = useContext(SinaisVitaisContext);
+    const { GetConsultasQT, ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
@@ -31,7 +30,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    if (ValidationAutorize()) {
+                    if (ValidationAutorizeEnfermagem()) {
                         navigation.navigate('UpdateSinaisVitaisEnfermagem', {
                             PessoaFisica: item,
                         });

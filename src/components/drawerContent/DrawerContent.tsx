@@ -23,8 +23,8 @@ interface Props {
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
+    
     const styles = useThemeAwareObject(createStyles);
-    const size = Dimensions.get('screen').width / 15;
 
     const {
         stateAuth: {

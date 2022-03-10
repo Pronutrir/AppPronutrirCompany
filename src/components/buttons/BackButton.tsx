@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import ArrowBack from '../../assets/svg/arrowBack.svg';
-
 interface Props {
     onPress(): void;
 }
