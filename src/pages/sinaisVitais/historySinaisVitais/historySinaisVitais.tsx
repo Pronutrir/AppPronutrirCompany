@@ -3,7 +3,6 @@ import React, {
     useContext,
     useCallback,
     memo,
-    useEffect,
     useRef,
 } from 'react';
 import {
@@ -12,17 +11,11 @@ import {
     FlatList,
     Platform,
     StyleSheet,
-    TouchableOpacity,
     Dimensions,
 } from 'react-native';
 import CardSimples from '../../../components/Cards/CardSimples';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
-import EditarSvg from '../../../assets/svg/editar.svg';
-import ExcluirSvg from '../../../assets/svg/excluir.svg';
-import DisabledSvg from '../../../assets/svg/disable.svg';
-import AuthContext from '../../../contexts/auth';
-import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 import ModalCentralizedOptions, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralizedOptions';
@@ -40,44 +33,26 @@ export interface PessoaSelected {
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO: string;
 }
-
-type RootStackParamList = {
-    Profile: PessoaSelected;
-    Feed: { sort: 'UpdateSinais' } | undefined;
-};
-
 interface Parms {
     item: ISinaisVitais;
     index: number;
 }
 
-//type Props = StackScreenProps<RootStackParamList, 'Profile'>;
-
 const HistorySinaisVitais: React.FC = () => {
     const navigation = useNavigation();
     const {
-        stateAuth: { usertasy },
-    } = useContext(AuthContext);
-    const {
-        stateConsultas: { sinaisVitais },
         GetAllSinaisVitais,
         ValidationAutorize,
         InativarSinaisVitais,
+        stateConsultas: { sinaisVitais },
+        dispatchConsultas,
     } = useContext(SinaisVitaisContext);
-    const { addNotification } = useContext(NotificationGlobalContext);
-
-    const [visible, setVisible] = useState(false);
-
+    
     const refModalBotom = useRef<ModalHandles>(null);
     const refMenuBotom = useRef<ModalHandlesMenu>(null);
 
-    const [listSinaisVitais, setListSinaisVitais] = useState<
-        ISinaisVitais[] | null
-    >(null);
-
     const [activeModal, setActiveModal] = useState<boolean>(false);
 
-    const [activeModalDel, setActiveModalDel] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [selectedSinais, setSelectedSinais] =
         useState<IInativarSinaisVitais>();
@@ -217,7 +192,7 @@ const HistorySinaisVitais: React.FC = () => {
                         <Text style={styles.textLabel}>Data: </Text>
                         <Text style={styles.text}>{`${moment(
                             item.dT_SINAL_VITAL,
-                        ).format('DD-MM-YYYY')}`}</Text>
+                        ).format('DD-MM-YYYY [às] hh:mm')}`}</Text>
                     </View>
                     <View style={styles.item}>
                         <View style={styles.SubItem}>
@@ -282,28 +257,17 @@ const HistorySinaisVitais: React.FC = () => {
         [],
     );
 
-    useEffect(() => {
-        if (sinaisVitais) {
-            setListSinaisVitais(
-                sinaisVitais.filter(
-                    (element) =>
-                        element.cD_PESSOA_FISICA === usertasy.cD_PESSOA_FISICA,
-                ),
-            );
-        }
-    }, [sinaisVitais]);
-
     return (
         <View style={styles.container}>
-            {listSinaisVitais ? (
+            {sinaisVitais ? (
                 <FlatList
-                    data={listSinaisVitais}
+                    data={sinaisVitais}
                     renderItem={renderItemCall}
                     keyExtractor={(item, index) => index.toString()}
                     refreshing={refreshing}
                     onRefresh={async () => {
                         setRefreshing(true);
-                        setListSinaisVitais(null);
+                        dispatchConsultas({type: 'delSinaisVitais'});
                         await GetAllSinaisVitais();
                         setRefreshing(false);
                     }}

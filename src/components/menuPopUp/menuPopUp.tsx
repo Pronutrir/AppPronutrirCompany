@@ -6,13 +6,10 @@ import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import OptionsSvg from '../../assets/svg/options.svg';
-import { Text } from 'react-native-svg';
-
 interface Props {
     btnLabels?: string[];
     onpress?(item: string): void;
 }
-
 export interface ModalHandlesMenu {
     showMenu(): void;
     hideMenu(): void;

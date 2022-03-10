@@ -84,7 +84,8 @@ export type ConsultasAction =
           payload: IstateConsultas;
       }
     | { type: 'setMedicos'; payload: IstateConsultas }
-    | { type: 'setSinaisVitais'; payload: ISinaisVitais[] };
+    | { type: 'setSinaisVitais'; payload: ISinaisVitais[] }
+    | { type: 'delSinaisVitais'; };
 
 export const ConsultasReducer = (
     state: IstateConsultas,
@@ -124,8 +125,21 @@ export const ConsultasReducer = (
             };
         case 'setMedicos':
             return { ...state, ...action.payload };
+        case 'delSinaisVitais':
+            return { ...state, sinaisVitais: null };
         case 'setSinaisVitais':
-            return { ...state, sinaisVitais: action.payload.filter(item => item.iE_SITUACAO !== 'I') };
+            return {
+                ...state,
+                sinaisVitais: action.payload.filter(
+                    (item) => item.iE_SITUACAO !== 'I',
+                ).sort((a, b) => {
+                    return a.dT_ATUALIZACAO > b.dT_ATUALIZACAO
+                        ? -1
+                        : a.dT_ATUALIZACAO < b.dT_ATUALIZACAO
+                        ? 1
+                        : 0;
+                }),
+            };
         default:
             return state;
     }
