@@ -97,11 +97,10 @@ export default function consultarConfimarSenha({ navigation }) {
             const { cD_PESSOA_FISICA } = usertasy;
             let updateTasy = null;
             let cd_tasy = null;
-
             if (cD_PESSOA_FISICA) {
                 updateTasy = await UpdateCadastroTasy(usertasy);
             } else {
-                cd_tasy = await cadastroTasy(usertasy)
+                cd_tasy = await cadastroTasy(usertasy);
             }
 
             if (cd_tasy || updateTasy) {

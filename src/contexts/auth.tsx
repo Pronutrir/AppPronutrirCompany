@@ -17,7 +17,7 @@ import {
     LoginAction,
 } from '../reducers/UserReducer';
 import OneSignal from 'react-native-onesignal';
-import { useQuery, useQueries, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import { getPerfil } from '../utils';
 interface AuthContextData {
     signed: boolean;

@@ -1,6 +1,5 @@
 import React, { useRef, useState, useContext } from 'react';
-import { Text, View, Pressable, Keyboard, TextInput, ImageBackground, KeyboardAvoidingView, Dimensions } from 'react-native';
-
+import { Text, View, Pressable, Keyboard, TextInput, ImageBackground, KeyboardAvoidingView } from 'react-native';
 import styles from './style';
 import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
@@ -20,7 +19,7 @@ export default function consultarNome({ navigation }) {
         Nome: Yup
             .string()
             .required('Nome é obrigatório!')
-            .matches(/(\w.+\s).+/, 'Insira seu nome e sobrenome'),
+            .matches(/(\w.+\s).+/, 'Insira seu nome completo'),
     })
 
     const setNome = (value) => {
