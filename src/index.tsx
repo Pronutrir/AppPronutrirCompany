@@ -45,12 +45,14 @@ const Index: React.FC = () => {
         //OneSignal Init Code
         OneSignal.setLogLevel(6, 0);
         OneSignal.setAppId('2c990bbc-f7ab-404f-9b95-ef981885ff18');
+        OneSignal.setLogLevel(6, 0);
+        OneSignal.setRequiresUserPrivacyConsent(false);
         //END OneSignal Init Code
 
-        OneSignal.setRequiresUserPrivacyConsent(false);
+        /* OneSignal.setRequiresUserPrivacyConsent(false);
         OneSignal.getDeviceState().then((response) => {
             console.log(response);
-        });
+        }); */
 
         //Prompt for push on iOS
         OneSignal.promptForPushNotificationsWithUserResponse((response) => {
@@ -58,7 +60,7 @@ const Index: React.FC = () => {
         });
 
         //Method for handling notifications received while app in foreground
-        OneSignal.setNotificationWillShowInForegroundHandler(
+        /* OneSignal.setNotificationWillShowInForegroundHandler(
             (notificationReceivedEvent) => {
                 console.log(
                     'OneSignal: notification will show in foreground:',
@@ -71,12 +73,12 @@ const Index: React.FC = () => {
                 // Complete with null means don't show a notification.
                 notificationReceivedEvent.complete(notification);
             },
-        );
+        ); */
 
         //Method for handling notifications opened
-        OneSignal.setNotificationOpenedHandler((notification) => {
+       /*  OneSignal.setNotificationOpenedHandler((notification) => {
             console.log('OneSignal: notification opened:', notification);
-        });
+        }); */
     }, []);
 
     return (
