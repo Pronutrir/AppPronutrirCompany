@@ -1,7 +1,9 @@
 name: Build Android
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - develop
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +23,7 @@ jobs:
         run: cd android && ./gradlew assembleRelease
 
       - name: Build Android Release-AAB
-        run: cd cd android && ./gradlew bundleRelease
+        run: cd android && ./gradlew bundleRelease
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
