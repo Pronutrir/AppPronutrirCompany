@@ -59,4 +59,4 @@ jobs:
           --app $firebaseAppId \
           --release-notes "$notes" \
           --groups "$firebaseGroups" \
-          --token "$firebaseToken"
+          --token "1//0hu3GVEa98A6TCgYIARAAGBESNwF-L9Irdh8k4RAmjVjRWTCn-7_q2EYU7O4JVTN8FFeD2t-j1Zpo1H2hkp3W69RNJyWnVATLqzA"
