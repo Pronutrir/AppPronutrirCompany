@@ -5,7 +5,7 @@ name: Test reminder
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch
-    pull_request:
+    push:
       branches: 
         - main
         - develop
