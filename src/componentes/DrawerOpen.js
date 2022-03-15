@@ -16,7 +16,7 @@ export default function DrawerOpen() {
                     <BotaoMenu fill={'#8E8E8F'} width={RFPercentage(3, 680)} height={RFPercentage(3, 680)} />
                 </View>
                 <View style={styles.btnItem}>
-                    <Text style={styles.text}>Menu</Text>
+                    <Text style={styles.text}>teste</Text>
                 </View>
             </TouchableOpacity>
     )
