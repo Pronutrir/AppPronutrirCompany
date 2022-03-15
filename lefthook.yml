@@ -22,9 +22,9 @@ pre-push:
 pre-commit:
   parallel: true
   commands:
-    type-check:
-      glob: '*.{ts,tsx}'
-      run: yarn typecheck
+#    type-check:
+#      glob: '*.{ts,tsx}'
+#      run: yarn typecheck
     eslint:
       glob: '*.{js,ts,jsx,tsx}'
       run: yarn lint:eslint:fix {staged_files}
