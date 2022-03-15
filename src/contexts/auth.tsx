@@ -74,7 +74,6 @@ export const AuthProvider: React.FC = ({ children }) => {
                 Api.defaults.headers.common.Authorization = `Bearer ${token}`;
                 return token;
             })
-            .catch(() => {});
     };
 
     //consulta e retorna o usuário da api tasy

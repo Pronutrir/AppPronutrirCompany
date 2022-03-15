@@ -147,6 +147,8 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
     },
 );
 
+ModalCentralizedOptions.displayName = 'ModalCentralizedOptions';
+
 export default ModalCentralizedOptions;
 
 const createStyles = (theme: ThemeContextData) => {

@@ -36,6 +36,7 @@ const FilterPFGerais: React.FC<Props> = ({
             {ItensButton.map((element) => {
                 return (
                     <BtnFiilter
+                        key={element.name}
                         name={element.name}
                         onPress={() => {
                             onpress(element);

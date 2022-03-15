@@ -36,10 +36,10 @@ const Index: React.FC = () => {
     }, []) */
 
     useEffect(() => {
-        //@ts-ignore
+        // @ts-expect-error: Unreachable code error
         Text.defaultProps = Text.defaultProps || {};
         // Ignore dynamic type scaling on iOS
-        //@ts-ignore
+        // @ts-expect-error: Unreachable code error
         Text.defaultProps.allowFontScaling = false;
 
         //OneSignal Init Code

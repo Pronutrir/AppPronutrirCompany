@@ -119,6 +119,8 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
     },
 );
 
+ModalBottom.displayName = "ModalBottom";
+
 export default ModalBottom;
 
 const createStyles = (theme: ThemeContextData) => {
@@ -132,7 +134,7 @@ const createStyles = (theme: ThemeContextData) => {
             flexBasis: 'auto',
             flexShrink: 1,
             flexGrow: 0,
-            backgroundColor: '#fff',
+            backgroundColor: theme.colors.BACKGROUND_2,
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
             justifyContent: 'flex-end',

@@ -41,31 +41,31 @@ const DashBoard: React.FC = () => {
                     />
                      <BtnDashboardComponent
                         disabled={true}
-                        onpress={() => {}}
+                        onpress={() => {''}}
                         ImgSVG={ConsultaMarcadasImg}
                         label={'Consultas Marcadas'}
                     />
                      <BtnDashboardComponent
                         disabled={true}
-                        onpress={() => {}}
+                        onpress={() => {''}}
                         ImgSVG={LembreteImg}
                         label={'Alertas'}
                     />
                      <BtnDashboardComponent
                         disabled={true}
-                        onpress={() => {}}
+                        onpress={() => {''}}
                         ImgSVG={MedicoImg}
                         label={'Médicos'}
                     />
                      <BtnDashboardComponent
                         disabled={true}
-                        onpress={() => {}}
+                        onpress={() => {''}}
                         ImgSVG={HospitalLocationSvg}
                         label={'Unidades'}
                     />
                      <BtnDashboardComponent
                         disabled={true}
-                        onpress={() => {}}
+                        onpress={() => {''}}
                         ImgSVG={PilulaComprimidoImg}
                         label={'Medicamentos'}
                     />

@@ -1,8 +1,7 @@
 import React, { useCallback, memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-// @ts-ignore
+// @ts-expect-error: Unreachable code error
 import RangeSlider from 'rn-range-slider';
-//import Label from './Label';
 import Notch from './Notch';
 import Rail from './Rail';
 import RailSelected from './RailSelected';

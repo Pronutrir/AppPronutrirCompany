@@ -110,7 +110,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
 
     const pressaoArterialMedia = (): number => {
         if(pas !== 40 && pad !== 40){
-            let pam: number = (pas+(pad * 2))/3
+            const pam: number = (pas+(pad * 2))/3
             return parseInt(pam.toFixed());
         }else{
             return 0;

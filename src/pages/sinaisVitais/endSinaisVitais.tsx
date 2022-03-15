@@ -15,7 +15,7 @@ import Api from '../../services/api';
 import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 
-const EndSinaisVitais: React.FC = ({}) => {
+const EndSinaisVitais: React.FC = () => {
     const { addNotification } = useContext(NotificationGlobalContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [listSinaisVitais, setListSinaisVitais] = useState<

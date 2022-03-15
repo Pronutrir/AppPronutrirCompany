@@ -116,7 +116,7 @@ const CardConsultasGerais: React.FC<Props> = ({
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={item.cD_PESSOA_FISICA} item={item} index={index} />
+            <Item key={index} item={item} index={index} />
         </CardSimples>
     );
 

@@ -87,6 +87,8 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
     },
 );
 
+NotificationMultOptions.displayName = 'NotificationMultOptions';
+
 export default memo(NotificationMultOptions);
 
 const createStyles = (theme: ThemeContextData) => {

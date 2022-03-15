@@ -36,7 +36,7 @@ const RouteBottom: React.FC = () => {
             }}
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ color }) => {
-                    let size = RFPercentage(3);
+                    const size = RFPercentage(3);
                     switch (route.name) {
                         case 'Inicio':
                             return (

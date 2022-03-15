@@ -87,9 +87,10 @@ const EscalaDorComponent: React.FC<Props> = ({
                     />
                 </View>
                 <View style={styles.box2}>
-                    {item.btn.map((element) => {
+                    {item.btn.map((element, index) => {
                         return (
                             <TouchableOpacity
+                                key={index}
                                 disabled={disabled}
                                 style={styles.btn}
                                 onPress={() => onpress(element)}>
@@ -108,7 +109,7 @@ const EscalaDorComponent: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             {escalaDeDor.map((item) => {
-                return <CardEscalaDor item={item} />;
+                return <CardEscalaDor key={item.id} item={item} />;
             })}
         </View>
     );

@@ -129,9 +129,6 @@ interface ResponsePFdados {
 interface ResponseSVMG {
     result: ISinaisVitais;
 }
-interface ResponseSVMGAll {
-    result: ISinaisVitais[];
-}
 export interface IPFSinaisVitais {
     cD_PESSOA_FISICA: string;
     dT_ATUALIZACAO: string;
@@ -559,7 +556,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .doc('FunctionsApp/SinaisVitaisEnfermagem')
             .collection('Perfis');
 
-        var resultPerfis: IPerfisLiberados[] = [];
+        const resultPerfis: IPerfisLiberados[] = [];
 
         await useRef.get().then((querySnapshot) => {
             return querySnapshot.forEach((item) => {
@@ -583,7 +580,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             .doc('FunctionsApp/SinaisVitaisTriagem')
             .collection('Perfis');
 
-        var resultPerfis: IPerfisLiberados[] = [];
+        const resultPerfis: IPerfisLiberados[] = [];
 
         await useRef.get().then((querySnapshot) => {
             return querySnapshot.forEach((item) => {
