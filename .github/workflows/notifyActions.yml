@@ -20,8 +20,9 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: Webhook
+      id: hello-world
       uses: distributhor/workflow-webhook@v2
       env:        
         webhook_url: "https://5eaeb1fe123c9304c67575f587067772.m.pipedream.net"
         webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-        data: '{ "repository": "${{github.event.repository.full_name}}", "number": "${{github.event.number}}", "created_at": "${{github.event.pull_request.created_at}}", "updated_at": "${{github.event.pull_request.updated_at}}" }'
+        data: '{ "repository": "${{github.event.repository.full_name}}", "number": "${{steps.id.outputs}}", "created_at": "${{github.event.pull_request.created_at}}", "updated_at": "${{github.event.pull_request.updated_at}}" }'

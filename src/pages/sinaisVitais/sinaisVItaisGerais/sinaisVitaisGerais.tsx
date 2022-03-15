@@ -37,7 +37,7 @@ const filterDefault = [
     { filter: 'NOME PACIENTE', placeHolder: 'Pesquise o nome do paciente' },
 ];
 
-const SinaisVitaisGerais = () => {
+const SinaisVitaisGerais: React.FC = () => {
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
     const refModalBotom = useRef<ModalHandles>(null);
     const [filterSelected, setFilterSelected] = useState<Ifilter>(
