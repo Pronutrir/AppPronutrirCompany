@@ -92,6 +92,8 @@ const ModalCentralize = React.forwardRef<ModalHandles, Props>(
     },
 );
 
+ModalCentralize.displayName = 'ModalCentralize';
+
 export default ModalCentralize;
 
 const styles = StyleSheet.create({

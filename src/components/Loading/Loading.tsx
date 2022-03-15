@@ -64,6 +64,10 @@ const Loading = React.forwardRef<LoadHandles, modalProps>(
     },
 );
 
+Loading.displayName = "Loading";
+
+export default memo(Loading);
+
 const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
@@ -91,5 +95,3 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').width / 10,
     },
 });
-
-export default memo(Loading);

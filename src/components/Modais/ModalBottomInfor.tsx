@@ -14,7 +14,7 @@ import {
     Text,
     TextStyle,
     Dimensions,
-    Platform
+    Platform,
 } from 'react-native';
 import Animated, {
     withTiming,
@@ -22,7 +22,7 @@ import Animated, {
     interpolateColor,
     useDerivedValue,
 } from 'react-native-reanimated';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import Credencial from '../../assets/svg/carteira-de-identidade.svg';
 import OkImg from '../../assets/svg/ok.svg';
 
@@ -46,7 +46,6 @@ const ModalBottomInfor = React.forwardRef<ModalHandles, Props>(
     (
         {
             activeModal,
-            setActiveModal,
             ContainerStyle,
             animationType = 'none',
             message = 'Adicione seu texto',
@@ -151,6 +150,8 @@ const ModalBottomInfor = React.forwardRef<ModalHandles, Props>(
         );
     },
 );
+
+ModalBottomInfor.displayName = 'ModalBottomInfor';
 
 export default ModalBottomInfor;
 

@@ -85,7 +85,7 @@ export type ConsultasAction =
       }
     | { type: 'setMedicos'; payload: IstateConsultas }
     | { type: 'setSinaisVitais'; payload: ISinaisVitais[] }
-    | { type: 'delSinaisVitais'; };
+    | { type: 'delSinaisVitais' };
 
 export const ConsultasReducer = (
     state: IstateConsultas,
@@ -93,35 +93,30 @@ export const ConsultasReducer = (
 ): IstateConsultas => {
     switch (action.type) {
         case 'setConsultas':
-            // capturar as lista de médicos das consultas
-            const result = action.payload.consultas?.map(
-                (item, index, array) => {
-                    return {
-                        nM_GUERRA: item?.nM_GUERRA,
-                        dS_ESPECIALIDADE: item?.dS_ESPECIALIDADE,
-                        cD_ESPECIALIDADE: item.cD_ESPECIALIDADE,
-                    };
-                },
-            );
-            // remover itens duplicados das listagem
-            const resultSemDuplicados = result?.filter(
-                (item, index, array) =>
-                    array.findIndex((t) => t.nM_GUERRA === item.nM_GUERRA) ===
-                    index,
-            );
-
-            // ordenar alfabeticamente
-            const resultOrdenar = resultSemDuplicados?.sort((a, b) => {
-                return a.nM_GUERRA < b.nM_GUERRA
-                    ? -1
-                    : a.nM_GUERRA > b.nM_GUERRA
-                    ? 1
-                    : 0;
-            });
             return {
                 ...state,
                 consultas: action.payload.consultas,
-                medicos: resultOrdenar,
+                medicos: action.payload.consultas
+                    ?.map((item) => {
+                        return {
+                            nM_GUERRA: item?.nM_GUERRA,
+                            dS_ESPECIALIDADE: item?.dS_ESPECIALIDADE,
+                            cD_ESPECIALIDADE: item.cD_ESPECIALIDADE,
+                        };
+                    })
+                    .filter(
+                        (item, index, array) =>
+                            array.findIndex(
+                                (t) => t.nM_GUERRA === item.nM_GUERRA,
+                            ) === index,
+                    )
+                    .sort((a, b) => {
+                        return a.nM_GUERRA < b.nM_GUERRA
+                            ? -1
+                            : a.nM_GUERRA > b.nM_GUERRA
+                            ? 1
+                            : 0;
+                    }),
             };
         case 'setMedicos':
             return { ...state, ...action.payload };
@@ -130,15 +125,15 @@ export const ConsultasReducer = (
         case 'setSinaisVitais':
             return {
                 ...state,
-                sinaisVitais: action.payload.filter(
-                    (item) => item.iE_SITUACAO !== 'I',
-                ).sort((a, b) => {
-                    return a.dT_ATUALIZACAO > b.dT_ATUALIZACAO
-                        ? -1
-                        : a.dT_ATUALIZACAO < b.dT_ATUALIZACAO
-                        ? 1
-                        : 0;
-                }),
+                sinaisVitais: action.payload
+                    .filter((item) => item.iE_SITUACAO !== 'I')
+                    .sort((a, b) => {
+                        return a.dT_ATUALIZACAO > b.dT_ATUALIZACAO
+                            ? -1
+                            : a.dT_ATUALIZACAO < b.dT_ATUALIZACAO
+                            ? 1
+                            : 0;
+                    }),
             };
         default:
             return state;

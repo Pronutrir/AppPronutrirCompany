@@ -235,6 +235,8 @@ const HistorySinaisVitais: React.FC = () => {
         );
     });
 
+    Item.displayName = "Item";
+
     const renderItem = useCallback(
         ({ item, index }: { item: ISinaisVitais; index: number }) => {
             return (

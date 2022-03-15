@@ -1,6 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import SearchBar, { ISource } from 'react-native-dynamic-search-bar';
+import { View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import CardConsultasGerais from '../components/cardConsultasGerais/cardConsultasGerais';
 import styles from './style';
@@ -9,12 +8,10 @@ import SinaisVitaisContext, {
     IPFSinaisVitais,
 } from '../../../contexts/sinaisVitaisContext';
 import { ScrollView } from 'react-native-gesture-handler';
-import BtnOptionsFilter from '../../../components/buttons/BtnOptionsFilter';
-import ModalBottom, {
-    ModalHandles,
-} from '../../../components/Modais/ModalBottom';
+import { ModalHandles } from '../../../components/Modais/ModalBottom';
 import { DateMask } from '../../../services/validacoes';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
+import SearchBar from 'react-native-dynamic-search-bar';
 export interface IParamConsulta {
     query: string | null | undefined;
     isLoading: boolean;
@@ -59,7 +56,7 @@ const SinaisVitaisGerais = () => {
     });
 
     const Search = async (filter: IFilterPF) => {
-        let query = filter.queryDate ? filter.queryDate : filter.queryNome;
+        const query = filter.queryDate ? filter.queryDate : filter.queryNome;
 
         setState((prevState) => {
             return {
@@ -139,7 +136,7 @@ const SinaisVitaisGerais = () => {
     };
 
     const onChangeDateSearch = (text: string) => {
-        let textDate = DateMask(text);
+        const textDate = DateMask(text);
         if (textDate.length === 0) {
             setState((prevState) => {
                 return {

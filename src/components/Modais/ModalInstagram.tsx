@@ -194,6 +194,8 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
     },
 );
 
+ModalInstagram.displayName = 'ModalInstagram';
+
 export default ModalInstagram;
 
 const createStyles = (theme: ThemeContextData) => {

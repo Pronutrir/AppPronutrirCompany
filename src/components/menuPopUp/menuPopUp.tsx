@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useImperativeHandle } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
+import { Menu, MenuItem } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
@@ -59,6 +59,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                     onRequestClose={hideMenu}>
                     {btnLabels.map((item) => (
                         <MenuItem
+                            key={item}
                             style={styles.boxItem}
                             textStyle={styles.text}
                             onPress={() => selectedItem(item)}>
@@ -70,6 +71,8 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
         );
     },
 );
+
+MenuPopUp.displayName = 'MenuPopUp';
 
 export default MenuPopUp;
 

@@ -5,10 +5,10 @@ import useTheme from './useTheme';
 // Create a type alias for our generator function
 // Notice that it's matching the form of the 'createStyles'
 // function which we've used previously
-type Generator<T extends {}> = (theme: ThemeContextData) => T;
+type Generator<T extends Record<string, unknown>> = (theme: ThemeContextData) => T;
 
 // Creating our custom hook
-const useThemeAwareObject = <T extends {}>(fn: Generator<T>) => {
+const useThemeAwareObject = <T extends Record<string, unknown>>(fn: Generator<T>) => {
     // Consume the provided value of our theme context
     const theme = useTheme();
     // Generate the object based on the current theme

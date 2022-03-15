@@ -1,6 +1,6 @@
 import React, { useState, memo, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Dimensions, Text } from 'react-native';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import Adicao from '../assets/svg/math-plus.svg';
 import Subtracao from '../assets/svg/math-minus.svg';
 import { MaskedTextInput } from 'react-native-mask-text';
@@ -26,13 +26,13 @@ const IncrementDecrement: React.FC<Props> = ({
     const size = Dimensions.get('screen').height / 40;
 
     const inc_Dec = (tipo: string) => {
-        var value: number = 1;
+        let value = 1;
 
         switch (medida) {
             case '°C':
                 {
                     value = 0.1;
-                    let ranger: number = RangerValue;
+                    const ranger = RangerValue;
                     if (tipo === 'soma') {
                         setRangerValue(ranger + value);
                     } else if (tipo === 'subtracao') {
@@ -43,7 +43,7 @@ const IncrementDecrement: React.FC<Props> = ({
             case 'kg':
                 {
                     value = 0.1;
-                    let ranger: number = RangerValue;
+                    const ranger = RangerValue;
                     if (tipo === 'soma') {
                         setRangerValue(ranger + value);
                     } else if (tipo === 'subtracao') {
@@ -63,7 +63,7 @@ const IncrementDecrement: React.FC<Props> = ({
 
     const setValue = useCallback((value: string) => {
         if (value && value !== '0') {
-            var _value: number = parseFloat(value);
+            let _value: number = parseFloat(value);
             _value = _value < min ? min : _value;
             _value = _value > max ? max : _value;
             setRangerValue(_value);
@@ -115,7 +115,7 @@ const IncrementDecrement: React.FC<Props> = ({
                 value={inputValue}
                 maxLength={5}
                 style={styles.valueInput}
-                onChangeText={(text, rawText) => setInputValue(text)}
+                onChangeText={(text) => setInputValue(text)}
                 onBlur={() => setValue(inputValue.toString())}
                 returnKeyType="next"
                 selectTextOnFocus={true}
