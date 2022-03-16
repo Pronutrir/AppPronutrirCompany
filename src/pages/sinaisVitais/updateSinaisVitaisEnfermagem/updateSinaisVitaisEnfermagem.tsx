@@ -155,13 +155,13 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nome: </Text>
                         <Text style={styles.text}>
-                            {PessoaFisica.nM_PESSOA_FISICA}
+                            {SinaisVitais?.nM_PESSOA_FISICA ? SinaisVitais?.nM_PESSOA_FISICA : PessoaFisica?.nM_PESSOA_FISICA}
                         </Text>
                     </View>
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nascimento: </Text>
                         <Text style={styles.text}>
-                            {moment(PessoaFisica.dT_NASCIMENTO).format(
+                            {moment(SinaisVitais?.dT_NASCIMENTO ? SinaisVitais?.dT_NASCIMENTO : PessoaFisica?.dT_NASCIMENTO).format(
                                 'DD-MM-YYYY',
                             )}
                         </Text>

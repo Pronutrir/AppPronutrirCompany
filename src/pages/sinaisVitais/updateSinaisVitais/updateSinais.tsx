@@ -16,12 +16,12 @@ interface Props {
     route: ProfileScreenRouteProp;
 }
 
-interface Params {
+/* interface Params {
     peso: number;
     altura: number;
     temperatura: number;
     oxigenacao: number;
-}
+} */
 
 const UpdateSinais: React.FC<Props> = ({
     route: {
@@ -29,8 +29,12 @@ const UpdateSinais: React.FC<Props> = ({
     },
 }: Props) => {
     const navigation = useNavigation();
-    const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais, GetAllSinaisVitais } =
-        useContext(SinaisVitaisContext);
+    const {
+        AddSinaisVitais,
+        GetSinaisVitais,
+        UpdateSinaisVitais,
+        GetAllSinaisVitais,
+    } = useContext(SinaisVitaisContext);
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
@@ -85,7 +89,9 @@ const UpdateSinais: React.FC<Props> = ({
             setAltura(SinaisVitais.qT_ALTURA_CM);
             setPeso(SinaisVitais.qT_PESO ? SinaisVitais.qT_PESO : 0);
             setTemperatura(SinaisVitais.qT_TEMP ? SinaisVitais.qT_TEMP : 0);
-            setOxigenacao(SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0);
+            setOxigenacao(
+                SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
+            );
             setActiveShimmer(true);
         } else {
             GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)
@@ -108,15 +114,19 @@ const UpdateSinais: React.FC<Props> = ({
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nome: </Text>
                         <Text style={styles.text}>
-                            {PessoaFisica.nM_PESSOA_FISICA}
+                            {SinaisVitais?.nM_PESSOA_FISICA
+                                ? SinaisVitais?.nM_PESSOA_FISICA
+                                : PessoaFisica?.nM_PESSOA_FISICA}
                         </Text>
                     </View>
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nascimento: </Text>
                         <Text style={styles.text}>
-                            {moment(PessoaFisica.dT_NASCIMENTO).format(
-                                'DD-MM-YYYY',
-                            )}
+                            {moment(
+                                SinaisVitais?.dT_NASCIMENTO
+                                    ? SinaisVitais?.dT_NASCIMENTO
+                                    : PessoaFisica?.dT_NASCIMENTO,
+                            ).format('DD-MM-YYYY')}
                         </Text>
                     </View>
                 </View>
@@ -196,7 +206,9 @@ const UpdateSinais: React.FC<Props> = ({
                         ? 'Deseja atualizar os Sinais Vitais ?'
                         : 'Deseja inserir os Sinais Vitais ?'
                 }
-                onpress={() => SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()}
+                onpress={() =>
+                    SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
+                }
             />
         </View>
     );

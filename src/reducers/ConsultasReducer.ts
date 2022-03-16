@@ -54,6 +54,7 @@ export interface ISinaisVitais {
     iE_APARELHO_PA: string;
     cD_PACIENTE: string;
     nM_PESSOA_FISICA: string;
+    dT_NASCIMENTO: string;
     cD_PESSOA_FISICA: string;
     qT_SATURACAO_O2: number;
     qT_TEMP: number;
