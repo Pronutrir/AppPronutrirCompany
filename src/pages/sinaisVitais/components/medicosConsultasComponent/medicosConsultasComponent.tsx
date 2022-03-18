@@ -10,6 +10,8 @@ import {
 import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
+import { ThemeContextData } from '../../../../contexts/themeContext';
+import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: IFilterConsultas | null): void;
@@ -23,6 +25,8 @@ const MedicosExamesComponent: React.FC<Props> = ({
     const {
         stateConsultas: { medicos },
     } = useContext(SinaisVitaisContext);
+
+    const styles = useThemeAwareObject(createStyles);
 
     const renderItem: ListRenderItem<IMedico> = ({ item }) => (
         <View
@@ -66,32 +70,35 @@ const MedicosExamesComponent: React.FC<Props> = ({
 
 export default MedicosExamesComponent;
 
-const styles = StyleSheet.create({
-    container: {
-        marginTop: 20,
-        marginHorizontal: 10,
-    },
-    selectTextStyle: {
-        color: '#08948A',
-        textAlign: 'center',
-        fontSize: RFValue(18, 680),
-    },
-    selectTextStyleActive: {
-        color: '#ffff',
-        textAlign: 'center',
-        fontSize: RFValue(18, 680),
-    },
-    optionContainerStyle: {
-        backgroundColor: '#fff',
-        paddingVertical: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    optionContainerStyleActive: {
-        backgroundColor: '#20cbc1',
-        paddingVertical: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 30,
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            marginTop: 20,
+            marginHorizontal: 10,
+        },
+        selectTextStyle: {
+            color: '#08948A',
+            textAlign: 'center',
+            fontSize: RFValue(18, 680),
+        },
+        selectTextStyleActive: {
+            color: '#ffff',
+            textAlign: 'center',
+            fontSize: RFValue(18, 680),
+        },
+        optionContainerStyle: {
+            backgroundColor: '#fff',
+            paddingVertical: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        optionContainerStyleActive: {
+            backgroundColor: '#20cbc1',
+            paddingVertical: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30,
+        },
+    });
+    return styles;
+};

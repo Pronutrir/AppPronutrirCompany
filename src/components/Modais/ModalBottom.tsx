@@ -25,7 +25,7 @@ import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     activeModal?: boolean;
-    children: any;
+    children: React.ReactNode;
     style?: ViewStyle;
     animationType?: 'none' | 'slide' | 'fade';
 }

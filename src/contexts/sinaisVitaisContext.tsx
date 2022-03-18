@@ -24,9 +24,10 @@ import {
     IMedico,
     ConsultasAction,
     ISinaisVitais,
+    IAlertaPaciente,
 } from '../reducers/ConsultasReducer';
 import axios, { AxiosResponse, CancelTokenSource } from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import firestore from '@react-native-firebase/firestore';
 interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
@@ -52,6 +53,7 @@ interface AuthContextData {
     InativarSinaisVitais: (
         sinaisUpdate: IInativarSinaisVitais,
     ) => Promise<void>;
+    useAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -146,6 +148,9 @@ export interface IInativarSinaisVitais {
     iE_SITUACAO: string;
     nM_USUARIO: string;
     cD_PACIENTE: string;
+}
+interface IAlertPacientResponse {
+    result: IAlertaPaciente[];
 }
 
 const SinaisVitaisContext = createContext({} as AuthContextData);
@@ -599,6 +604,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         getPerfilAutorizeTriagem,
     );
 
+    const useAlerts = () => {
+        return useQuery('AlertaPaciente', async () => {
+            const { data: { result } } = await Api.get<IAlertPacientResponse>('AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=9969');
+            return result;
+        });
+    }
+
     const ValidationAutorizeEnfermagem = useCallback(() => {
         return PerfisSinaisVitaisEnfermagem?.some(
             (element: IPerfisLiberados) => {
@@ -649,6 +661,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 ValidationAutorizeEnfermagem,
                 InativarSinaisVitais,
                 ValidationAutorizeTriagem,
+                useAlerts,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

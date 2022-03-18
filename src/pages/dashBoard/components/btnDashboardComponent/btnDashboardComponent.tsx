@@ -11,7 +11,6 @@ import React from 'react';
 import useTheme from '../../../../hooks/useTheme';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
-import SinaisVitaisSvg from '../../../../assets/svg/sinaisVitais.svg';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { SvgProps } from 'react-native-svg';
 
@@ -38,7 +37,7 @@ const BtnDashboardComponent: React.FC<Props> = ({
             onPress={() => onpress()}>
             <View style={styles.img_btnHotrizontal}>
                 <ImgSVG
-                    fill={theme.colors.TEXT_SECONDARY}
+                    fill={theme.colors.FILL_ICONE}
                     width={RFPercentage(5)}
                     height={RFPercentage(5)}
                 />

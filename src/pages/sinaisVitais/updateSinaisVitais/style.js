@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 const styles = StyleSheet.create({
@@ -56,6 +56,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginTop: 10,
   },
+  modalAlert: {
+      alignSelf: 'flex-end',
+  }
 })
 
 export default styles;

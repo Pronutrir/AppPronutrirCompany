@@ -79,6 +79,33 @@ export interface ISinaisVitais {
     nM_USUARIO: string;
 }
 
+export interface IAlertaPaciente {
+    nR_SEQUENCIA: 562;
+    nM_USUARIO: string;
+    iE_CONFIRMACAO: string;
+    dT_ATUALIZACAO: string;
+    dT_REGISTRO: string;
+    cD_PESSOA_FISICA: string;
+    nR_SEQ_TIPO: 1;
+    dS_OBSERVACAO: string | null;
+    iE_INTENSIDADE: string;
+    nR_ATENDIMENTO: 89643;
+    dT_ATUALIZACAO_NREC: string;
+    nM_USUARIO_NREC: string;
+    dT_LIBERACAO: string;
+    nM_USUARIO_LIBERACAO: string;
+    iE_NEGA_ALERGIAS: string;
+    cD_PERFIL_ATIVO: 1997;
+    iE_ALERTA: string;
+    cD_SETOR_ATENDIMENTO: 75;
+    cD_PROFISSIONAL: string;
+    dS_UTC_ATUALIZACAO: string;
+    dS_UTC: string;
+    iE_LISTA_PROBLEMA: string;
+    iE_ACAO: string;
+    dS_TIPO_ALERGIA: string;
+}
+
 export type ConsultasAction =
     | {
           type: 'setConsultas';

@@ -10,6 +10,7 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
+import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -109,6 +110,7 @@ const UpdateSinais: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
+            <ModalAlertPaciente styleContainerImg={styles.modalAlert} />
             <ScrollView style={styles.box}>
                 <View style={styles.item1}>
                     <View style={styles.boxLabel}>
