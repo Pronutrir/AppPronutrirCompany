@@ -1,10 +1,4 @@
-import React, {
-    useState,
-    useContext,
-    useCallback,
-    memo,
-    useRef,
-} from 'react';
+import React, { useState, useContext, useCallback, memo, useRef } from 'react';
 import {
     Text,
     View,
@@ -19,7 +13,9 @@ import HistorySvg from '../../../assets/svg/historico.svg';
 import ModalCentralizedOptions, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralizedOptions';
-import MenuPopUp, { ModalHandlesMenu } from '../../../components/menuPopUp/menuPopUp';
+import MenuPopUp, {
+    ModalHandlesMenu,
+} from '../../../components/menuPopUp/menuPopUp';
 import Loading from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
@@ -44,16 +40,21 @@ const HistorySinaisVitais: React.FC = () => {
         GetAllSinaisVitais,
         ValidationAutorizeEnfermagem,
         InativarSinaisVitais,
-        stateConsultas: { sinaisVitais },
-        dispatchConsultas,
+        useHistoryAlerts,
     } = useContext(SinaisVitaisContext);
-    
+
+    const {
+        data: historySinaisVitais,
+        refetch,
+        isLoading,
+        isFetching,
+    } = useHistoryAlerts();
+
     const refModalBotom = useRef<ModalHandles>(null);
     const refMenuBotom = useRef<ModalHandlesMenu>(null);
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
 
-    const [refreshing, setRefreshing] = useState<boolean>(false);
     const [selectedSinais, setSelectedSinais] =
         useState<IInativarSinaisVitais>();
 
@@ -228,14 +229,17 @@ const HistorySinaisVitais: React.FC = () => {
                     <MenuPopUp
                         ref={refMenuBotom}
                         btnLabels={['Editar', 'Excluir']}
-                        onpress={(label) => {refMenuBotom.current?.hideMenu(), MenuPopUpOptions(label, item)}}
+                        onpress={(label) => {
+                            refMenuBotom.current?.hideMenu(),
+                                MenuPopUpOptions(label, item);
+                        }}
                     />
                 </View>
             </View>
         );
     });
 
-    Item.displayName = "Item";
+    Item.displayName = 'Item';
 
     const renderItem = useCallback(
         ({ item, index }: { item: ISinaisVitais; index: number }) => {
@@ -261,18 +265,13 @@ const HistorySinaisVitais: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            {sinaisVitais ? (
+            {!isFetching ? (
                 <FlatList
-                    data={sinaisVitais}
+                    data={historySinaisVitais}
                     renderItem={renderItemCall}
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={refreshing}
-                    onRefresh={async () => {
-                        setRefreshing(true);
-                        dispatchConsultas({type: 'delSinaisVitais'});
-                        await GetAllSinaisVitais();
-                        setRefreshing(false);
-                    }}
+                    refreshing={isLoading}
+                    onRefresh={refetch}
                     ListEmptyComponent={renderItemEmpty}
                 />
             ) : (

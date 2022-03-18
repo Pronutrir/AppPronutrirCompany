@@ -53,7 +53,8 @@ interface AuthContextData {
     InativarSinaisVitais: (
         sinaisUpdate: IInativarSinaisVitais,
     ) => Promise<void>;
-    useAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>
+    useAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>;
+    useHistoryAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -403,11 +404,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetAllSinaisVitais = useCallback(async (): Promise<void> => {
         await Api.get(
-            `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${
-                usertasy.cD_PESSOA_FISICA
-            },${moment().format('YYYY-MM-DD')},${moment().format(
+            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
                 'YYYY-MM-DD',
-            )}`,
+            )},${moment().format('YYYY-MM-DD')}`,
         )
             .then((response) => {
                 const { result } = response.data;
@@ -606,10 +605,39 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const useAlerts = () => {
         return useQuery('AlertaPaciente', async () => {
-            const { data: { result } } = await Api.get<IAlertPacientResponse>('AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=9969');
+            const {
+                data: { result },
+            } = await Api.get<IAlertPacientResponse>(
+                'AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=9969',
+            );
             return result;
         });
-    }
+    };
+
+    const useHistoryAlerts = () => {
+        return useQuery(
+            'AlertaPacienteHistory',
+            async () => {
+                const {
+                    data: { result },
+                } = await Api.get<IAlertPacientResponse>(
+                    `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${usertasy.cD_PESSOA_FISICA},${moment().format(
+                        'YYYY-MM-DD',
+                    )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`,
+                );
+                return result;
+            },
+            {
+                enabled: true,
+                onError: () => {
+                    addAlert({
+                        message: 'Não foi possivel acessar o histórico tente mais tarde!',
+                        status: 'error',
+                    });
+                }
+            },
+        );
+    };
 
     const ValidationAutorizeEnfermagem = useCallback(() => {
         return PerfisSinaisVitaisEnfermagem?.some(
@@ -662,6 +690,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 InativarSinaisVitais,
                 ValidationAutorizeTriagem,
                 useAlerts,
+                useHistoryAlerts,
             }}>
             {children}
         </SinaisVitaisContext.Provider>
