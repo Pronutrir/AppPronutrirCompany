@@ -1,10 +1,12 @@
-import AnimatedLottieView from 'lottie-react-native';
+
 import React, {
     useRef,
     useState,
     useCallback,
     useImperativeHandle,
     useContext,
+    memo,
+    useEffect,
 } from 'react';
 import {
     View,
@@ -25,15 +27,15 @@ import Animated, {
     interpolateColor,
     useDerivedValue,
 } from 'react-native-reanimated';
+import AnimatedLottieView from 'lottie-react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { IAlertaPaciente } from '../../reducers/ConsultasReducer';
 import CardSimples from '../Cards/CardSimples';
-import ListAlertas from './ListAlertas';
-
 interface Props {
+    codPacient: string;
     activeModal?: boolean;
     styleModal?: StyleProp<ViewStyle>;
     styleContainerImg?: StyleProp<ViewStyle>;
@@ -47,309 +49,10 @@ export interface ModalHandles {
 
 type ThemeOpacity = 'light' | 'dark';
 
-const list: IAlertaPaciente[] = [
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-    {
-        nR_SEQUENCIA: 562,
-        nM_USUARIO: 'amedina',
-        iE_CONFIRMACAO: 'C',
-        dT_ATUALIZACAO: '2021-06-08T09:39:01',
-        dT_REGISTRO: '2021-06-08T09:38:19',
-        cD_PESSOA_FISICA: '9969',
-        nR_SEQ_TIPO: 1,
-        dS_OBSERVACAO:
-            'Paciente refere intolerãncia ao TRAMADOL-vômitos em jato.',
-        iE_INTENSIDADE: 'M',
-        nR_ATENDIMENTO: 89643,
-        dT_ATUALIZACAO_NREC: '2021-06-08T09:39:01',
-        nM_USUARIO_NREC: 'amedina',
-        dT_LIBERACAO: '2021-06-08T09:39:04',
-        nM_USUARIO_LIBERACAO: 'amedina',
-        iE_NEGA_ALERGIAS: 'N',
-        cD_PERFIL_ATIVO: 1997,
-        iE_ALERTA: 'S',
-        cD_SETOR_ATENDIMENTO: 75,
-        cD_PROFISSIONAL: '134',
-        dS_UTC_ATUALIZACAO: '08/06/2021T09:39:04',
-        dS_UTC: '08/06/2021T09:38:19',
-        iE_LISTA_PROBLEMA: 'N',
-        iE_ACAO: 'U',
-        dS_TIPO_ALERGIA: 'Medicamento',
-    },
-];
-
 const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
     (
         {
+            codPacient,
             animationType = 'none',
             styleContainerImg,
             styleModal,
@@ -358,10 +61,11 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
         ref,
     ) => {
         const { useAlerts } = useContext(SinaisVitaisContext);
-        const { data } = useAlerts();
+        const { data, isFetching } = useAlerts(codPacient);
 
         const styles = useThemeAwareObject(createStyles);
         const _view = useRef<any>(null);
+        const animatedRef = useRef<any>(null);
         const [active, setActive] = useState(activeModal);
         const [theme, setTheme] = useState<ThemeOpacity>('light');
 
@@ -430,39 +134,60 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
             }
         };
 
+        const TipoAlergia = ({ item }: { item: IAlertaPaciente }) => {
+            if (item.dS_TIPO_ALERGIA) {
+                return (
+                    <View style={styles.item}>
+                        <Text style={styles.label}>Tipo de Alergia</Text>
+                        <Text style={styles.text}>{item.dS_TIPO_ALERGIA}</Text>
+                    </View>
+                );
+            } else {
+                return null;
+            }
+        };
+
+        const DsSubstancia = ({ item }: { item: IAlertaPaciente }) => {
+            if (item.dS_SUBSTANCIA) {
+                return (
+                    <View style={styles.item}>
+                        <Text style={styles.label}>Tipo de Substância</Text>
+                        <Text style={styles.text}>{item.dS_SUBSTANCIA}</Text>
+                    </View>
+                );
+            } else {
+                return null;
+            }
+        };
+
         const renderItem: ListRenderItem<IAlertaPaciente> = ({ item }) => (
             <CardSimples styleCardContainer={styles.card}>
                 <TouchableOpacity>
                     <>
                         <Status item={item} />
                         <Observacao item={item} />
+                        <TipoAlergia item={item} />
+                        <DsSubstancia item={item} />
                     </>
                 </TouchableOpacity>
             </CardSimples>
         );
 
-        /* const renderItemEmpty = () => {
-            if (state.showRequest) {
-                return (
-                    <CardSimples styleCardContainer={styles.cardStyle}>
-                        <Text style={styles.text}>
-                            Nenhum sinal vital encontrado
-                        </Text>
-                    </CardSimples>
-                );
-            } else {
-                return null;
+        useEffect(() => {
+            if(data != undefined && data?.length > 0 && !isFetching){
+                animatedRef.current?.play();
             }
-        }; */
+        }, [isFetching]);
 
         return (
             <>
                 <TouchableOpacity
                     onPress={() => openModal()}
-                    style={[styles.container, styleContainerImg]}>
+                    style={[styles.container, styleContainerImg]}
+                    disabled={Boolean(data == undefined || data?.length <= 0)}>
                     <AnimatedLottieView
+                        ref={animatedRef}
                         source={require('../../assets/Animacoes/alert-notification.json')}
-                        autoPlay={Boolean(data)}
                         loop={true}
                         style={styles.emoji}
                     />
@@ -493,8 +218,11 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
                                 </Text>
                                 {data && (
                                     <FlatList
-                                        data={list}
+                                        data={data}
                                         renderItem={renderItem}
+                                        contentContainerStyle={
+                                            styles.contentContainerStyle
+                                        }
                                     />
                                 )}
                             </SafeAreaView>
@@ -508,7 +236,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
 
 ModalAlertPaciente.displayName = 'ModalAlertPaciente';
 
-export default ModalAlertPaciente;
+export default memo(ModalAlertPaciente);
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
@@ -529,8 +257,8 @@ const createStyles = (theme: ThemeContextData) => {
             backgroundColor: theme.colors.BACKDROP,
         },
         modalView: {
-            maxHeight: '50%',
-            minHeight: '20%',
+            maxHeight: '80%',
+            minHeight: '40%',
             backgroundColor: theme.colors.BACKGROUND_1,
             borderRadius: 20,
             alignItems: 'center',
@@ -550,10 +278,13 @@ const createStyles = (theme: ThemeContextData) => {
                 },
             }),
         },
+        contentContainerStyle: {
+            margin: RFPercentage(2),
+        },
         Titulo: {
             paddingVertical: 10,
             fontSize: theme.typography.SIZE.fontysize16,
-            fontFamily: theme.typography.FONTES.Regular,
+            fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_PRIMARY,
         },

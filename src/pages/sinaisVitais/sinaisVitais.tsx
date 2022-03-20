@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
-import EndSinaisVitais from './endSinaisVitais';
 import { HistorySinaisVitais } from './historySinaisVitais/historySinaisVitais';
 import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais';
 import SinaisVitaisGerais from './sinaisVItaisGerais/sinaisVitaisGerais';
@@ -32,8 +31,6 @@ type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 const SinaisVitais: React.FC = () => {
     const {
         GetConsultasQT,
-        GetAllSinaisVitais,
-        stateConsultas: { flag, medicos },
         stateConsultasQT: { consultasQT, flagQT },
     } = useContext(SinaisVitaisContext);
     const refFlatlist = useRef<FlatList>(null);
@@ -67,7 +64,7 @@ const SinaisVitais: React.FC = () => {
         },
     ]);
 
-    const getItemLayout = (data: any, index: any) => {
+    const getItemLayout = (data: PagesSinaisVitais[] | null | undefined, index: number) => {
         return {
             length: deviceWidth.width,
             offset: deviceWidth.width * index,
@@ -126,17 +123,17 @@ const SinaisVitais: React.FC = () => {
         }
     }, []);
 
-    const onViewableItemsChangedMenu = React.useCallback(
+    /* const onViewableItemsChangedMenu = React.useCallback(
         (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
             const { changed } = info;
             const [viewableItem] = changed;
-            const { index, isViewable } = viewableItem;
+            const { index } = viewableItem;
             if (index) {
                 selected(index, 'scrollToIndexMenu');
             }
         },
         [selected],
-    );
+    ); */
 
     /* const onViewableItemsChanged = React.useCallback(
         (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {

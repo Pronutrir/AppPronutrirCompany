@@ -104,6 +104,7 @@ export interface IAlertaPaciente {
     iE_LISTA_PROBLEMA: string;
     iE_ACAO: string;
     dS_TIPO_ALERGIA: string;
+    dS_SUBSTANCIA: string;
 }
 
 export type ConsultasAction =

@@ -53,7 +53,7 @@ interface AuthContextData {
     InativarSinaisVitais: (
         sinaisUpdate: IInativarSinaisVitais,
     ) => Promise<void>;
-    useAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>;
+    useAlerts: (codPacient: string) => UseQueryResult<IAlertaPaciente[], unknown>;
     useHistoryAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>;
 }
 export interface IFilterConsultas {
@@ -603,15 +603,15 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         getPerfilAutorizeTriagem,
     );
 
-    const useAlerts = () => {
+    const useAlerts = (codPacient: string) => {
         return useQuery('AlertaPaciente', async () => {
             const {
                 data: { result },
             } = await Api.get<IAlertPacientResponse>(
-                'AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=9969',
+                `AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=${codPacient}`,
             );
             return result;
-        });
+        }, {  });
     };
 
     const useHistoryAlerts = () => {

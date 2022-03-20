@@ -110,7 +110,14 @@ const UpdateSinais: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
-            <ModalAlertPaciente styleContainerImg={styles.modalAlert} />
+            <ModalAlertPaciente
+                styleContainerImg={styles.modalAlert}
+                codPacient={
+                    SinaisVitais?.cD_PACIENTE
+                        ? SinaisVitais?.cD_PACIENTE
+                        : PessoaFisica?.cD_PESSOA_FISICA
+                }
+            />
             <ScrollView style={styles.box}>
                 <View style={styles.item1}>
                     <View style={styles.boxLabel}>
