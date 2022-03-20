@@ -12,7 +12,6 @@ import {
     StyleSheet,
     SafeAreaView,
     Modal,
-    Platform,
     ViewStyle,
     TouchableOpacity,
     Text,
