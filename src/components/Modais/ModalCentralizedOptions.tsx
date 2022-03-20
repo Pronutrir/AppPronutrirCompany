@@ -10,7 +10,6 @@ import {
     StyleSheet,
     SafeAreaView,
     Modal,
-    ViewStyle,
     Platform,
     Text,
 } from 'react-native';

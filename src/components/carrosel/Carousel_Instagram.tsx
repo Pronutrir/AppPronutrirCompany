@@ -39,7 +39,6 @@ interface IImgInsta {
 
 const MyCarousel: React.FC = () => {
     const { addNotification } = useContext(NotificationGlobalContext);
-    const windowWidth = useWindowDimensions().width;
     const windowHeight = useWindowDimensions().height;
 
     const [post, setPost] = useState<IInstagram | null>(null);

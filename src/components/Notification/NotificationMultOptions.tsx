@@ -5,19 +5,16 @@ import React, {
     useRef,
     memo,
 } from 'react';
-import { StyleSheet, Text, View, Modal, Platform } from 'react-native';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { StyleSheet, Text, View, Modal } from 'react-native';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import BtnOptions from '../../components/buttons/BtnOptions';
 import { ThemeContextData } from '../../contexts/themeContext';
-import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-
 interface Notification {
     message: string;
     status?: 'sucess' | 'error' | 'warning' | 'info';
     onpress(): void;
 }
-
 export interface ModalHandles {
     closeNotification(): void;
     openNotification(): void;
@@ -28,7 +25,6 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
         const [active, setActive] = useState(false);
         const _view = useRef<any>(null);
 
-        const theme = useTheme();
         const styles = useThemeAwareObject(createStyles);
 
         const closeNotification = useCallback(() => {

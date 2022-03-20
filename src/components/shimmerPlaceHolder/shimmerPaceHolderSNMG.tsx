@@ -5,15 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { View } from 'react-native-animatable';
 
-interface Props {
-    width?: number;
-    height?: number;
-}
-
-const ShimmerPaceHolderSNMG: React.FC<Props> = ({
-    width = 80,
-    height = 80,
-}: Props) => {
+const ShimmerPaceHolderSNMG: React.FC = () => {
     return (
         <View style={styles.ContainerRanger}>
             <View style={styles.labelRanger}>

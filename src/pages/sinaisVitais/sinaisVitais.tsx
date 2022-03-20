@@ -12,7 +12,6 @@ import {
     TouchableOpacity,
     useWindowDimensions,
     ListRenderItem,
-    ViewToken,
 } from 'react-native';
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';

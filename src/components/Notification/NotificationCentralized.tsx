@@ -8,10 +8,8 @@ import {
     Platform,
 } from 'react-native';
 import OkImg from '../../assets/svg/ok.svg';
-import { RFValue } from 'react-native-responsive-fontsize';
 import notificationGlobalContext from '../../contexts/notificationGlobalContext';
 import { ThemeContextData } from '../../contexts/themeContext';
-import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
 const NotificationCentralized: React.FC = () => {
@@ -19,7 +17,6 @@ const NotificationCentralized: React.FC = () => {
         notificationGlobalContext,
     );
 
-    const theme = useTheme();
     const styles = useThemeAwareObject(createStyles);
 
     const disabled = () => {

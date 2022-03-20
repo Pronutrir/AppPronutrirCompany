@@ -41,7 +41,7 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
         { animationType = 'none', children, style, activeModal = false }: Props,
         ref,
     ) => {
-        const themed = useTheme();
+
         const styles = useThemeAwareObject(createStyles);
 
         const _view = useRef<any>(null);

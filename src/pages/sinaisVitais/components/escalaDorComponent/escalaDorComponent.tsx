@@ -1,6 +1,4 @@
 import {
-    FlatList,
-    ListRenderItem,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -9,16 +7,13 @@ import {
 import React from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import AnimatedLottieView from 'lottie-react-native';
-import useTheme from '../../../../hooks/useTheme';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import LinearGradient from 'react-native-linear-gradient';
-
 interface Props {
     onpress(value: number): void;
     disabled?: boolean;
 }
-
 interface IEscalaDor {
     id: number;
     label: string;

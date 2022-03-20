@@ -7,7 +7,6 @@ import {
     Platform,
     Pressable,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
     useAnimatedStyle,

@@ -258,7 +258,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         modalView: {
             maxHeight: '80%',
-            minHeight: '40%',
+            minHeight: '35%',
             backgroundColor: theme.colors.BACKGROUND_1,
             borderRadius: 20,
             alignItems: 'center',
@@ -282,7 +282,7 @@ const createStyles = (theme: ThemeContextData) => {
             margin: RFPercentage(2),
         },
         Titulo: {
-            paddingVertical: 10,
+            padding: 10,
             fontSize: theme.typography.SIZE.fontysize16,
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,

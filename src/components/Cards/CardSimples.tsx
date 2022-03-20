@@ -24,7 +24,7 @@ const createStyles = (theme: ThemeContextData) => {
             justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
-            backgroundColor: '#fff',
+            backgroundColor: theme.colors.BACKGROUND_1,
             margin: 10,
             ...Platform.select({
                 ios: {
