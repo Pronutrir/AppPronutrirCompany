@@ -13,6 +13,7 @@ import ShimerPlaceHolderMenu from '../../../components/shimmerPlaceHolder/shimer
 import TouchableShowHide from '../../../components/TouchableShowHide/TouchableShowHide';
 import EscalaDorComponent from '../components/escalaDorComponent/escalaDorComponent';
 import ToggleSwitch from '../../../components/Switch/ToggleSwitch';
+import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -150,6 +151,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
+            <ModalAlertPaciente
+                styleContainerImg={styles.modalAlert}
+                codPacient={
+                    SinaisVitais?.cD_PACIENTE
+                        ? SinaisVitais?.cD_PACIENTE
+                        : PessoaFisica?.cD_PESSOA_FISICA
+                }
+            />
             <ScrollView style={styles.box}>
                 <View style={styles.item1}>
                     <View style={styles.boxLabel}>

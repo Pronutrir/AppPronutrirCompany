@@ -56,6 +56,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginTop: 10,
   },
+  modalAlert: {
+    alignSelf: 'flex-end',
+}
 })
 
 export default styles;

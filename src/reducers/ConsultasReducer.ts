@@ -83,6 +83,7 @@ export interface IAlertaPaciente {
     nR_SEQUENCIA: 562;
     nM_USUARIO: string;
     iE_CONFIRMACAO: string;
+    iE_CLASSIFICACAO: string;
     dT_ATUALIZACAO: string;
     dT_REGISTRO: string;
     cD_PESSOA_FISICA: string;
@@ -96,6 +97,7 @@ export interface IAlertaPaciente {
     nM_USUARIO_LIBERACAO: string;
     iE_NEGA_ALERGIAS: string;
     cD_PERFIL_ATIVO: 1997;
+    dS_MEDIC_NAO_CAD: string;
     iE_ALERTA: string;
     cD_SETOR_ATENDIMENTO: 75;
     cD_PROFISSIONAL: string;
@@ -105,6 +107,7 @@ export interface IAlertaPaciente {
     iE_ACAO: string;
     dS_TIPO_ALERGIA: string;
     dS_SUBSTANCIA: string;
+    dS_REACAO: string;
 }
 
 export type ConsultasAction =

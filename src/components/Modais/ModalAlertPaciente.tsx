@@ -1,4 +1,3 @@
-
 import React, {
     useRef,
     useState,
@@ -100,6 +99,29 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
             };
         });
 
+        const Classificacao = ({ item }: { item: IAlertaPaciente }) => {
+            switch (item.iE_CLASSIFICACAO) {
+                case 'A':
+                    return (
+                        <View style={styles.item}>
+                            <Text style={styles.label}>Classificação:</Text>
+                            <Text style={styles.text}>
+                                Alergia/reações adversas
+                            </Text>
+                        </View>
+                    );
+                case 'I':
+                    return (
+                        <View style={styles.item}>
+                            <Text style={styles.label}>Classificação:</Text>
+                            <Text style={styles.text}>Intolerância</Text>
+                        </View>
+                    );
+                default:
+                    return null;
+            }
+        };
+
         const Status = ({ item }: { item: IAlertaPaciente }) => {
             switch (item.iE_CONFIRMACAO) {
                 case 'C':
@@ -125,7 +147,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
             if (item.dS_OBSERVACAO) {
                 return (
                     <View style={styles.item}>
-                        <Text style={styles.label}>Observação</Text>
+                        <Text style={styles.label}>Observação:</Text>
                         <Text style={styles.text}>{item.dS_OBSERVACAO}</Text>
                     </View>
                 );
@@ -138,7 +160,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
             if (item.dS_TIPO_ALERGIA) {
                 return (
                     <View style={styles.item}>
-                        <Text style={styles.label}>Tipo de Alergia</Text>
+                        <Text style={styles.label}>Tipo de Alergia:</Text>
                         <Text style={styles.text}>{item.dS_TIPO_ALERGIA}</Text>
                     </View>
                 );
@@ -147,12 +169,81 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
             }
         };
 
+        const Intensidade = ({ item }: { item: IAlertaPaciente }) => {
+            switch (item.iE_INTENSIDADE) {
+                case 'L':
+                    return (
+                        <View style={styles.item}>
+                            <Text style={styles.label}>Intensidade:</Text>
+                            <Text style={styles.text}>Leve/pequena</Text>
+                        </View>
+                    );
+                case 'M':
+                    return (
+                        <View style={styles.item}>
+                            <Text style={styles.label}>Intensidade:</Text>
+                            <Text style={styles.text}>Média/moderada</Text>
+                        </View>
+                    );
+                case 'I':
+                    return (
+                        <View style={styles.item}>
+                            <Text style={styles.label}>Intensidade:</Text>
+                            <Text style={styles.text}>Intensa/grande</Text>
+                        </View>
+                    );
+                case 'D':
+                    return (
+                        <View style={styles.item}>
+                            <Text style={styles.label}>Intensidade:</Text>
+                            <Text style={styles.text}>
+                                Desconhece/não informado
+                            </Text>
+                        </View>
+                    );
+                default:
+                    return null;
+            }
+        };
+
         const DsSubstancia = ({ item }: { item: IAlertaPaciente }) => {
             if (item.dS_SUBSTANCIA) {
                 return (
                     <View style={styles.item}>
-                        <Text style={styles.label}>Tipo de Substância</Text>
+                        <Text style={styles.label}>Tipo de Substância:</Text>
                         <Text style={styles.text}>{item.dS_SUBSTANCIA}</Text>
+                    </View>
+                );
+            } else {
+                return null;
+            }
+        };
+
+        const DescricaoMedNaoCadastrada = ({
+            item,
+        }: {
+            item: IAlertaPaciente;
+        }) => {
+            if (item.dS_MEDIC_NAO_CAD) {
+                return (
+                    <View style={styles.item}>
+                        <Text style={styles.label}>
+                            Medicação não cadastrada:
+                        </Text>
+                        <Text style={styles.text}>{item.dS_MEDIC_NAO_CAD}</Text>
+                    </View>
+                );
+            } else {
+                return null;
+            }
+        };
+
+        const DescricaoReacao = ({ item }: { item: IAlertaPaciente }) => {
+            if (item.dS_REACAO) {
+                return (
+                    <View style={styles.item}>
+                        <Text style={styles.label}>Reação:</Text>
+                        <Text style={styles.text}>{item.dS_REACAO}</Text>
                     </View>
                 );
             } else {
@@ -164,17 +255,21 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
             <CardSimples styleCardContainer={styles.card}>
                 <TouchableOpacity>
                     <>
+                        <Classificacao item={item} />
                         <Status item={item} />
-                        <Observacao item={item} />
                         <TipoAlergia item={item} />
+                        <Intensidade item={item} />
                         <DsSubstancia item={item} />
+                        <DescricaoMedNaoCadastrada item={item} />
+                        <DescricaoReacao item={item} />
+                        <Observacao item={item} />
                     </>
                 </TouchableOpacity>
             </CardSimples>
         );
 
         useEffect(() => {
-            if(data != undefined && data?.length > 0 && !isFetching){
+            if (data != undefined && data?.length > 0 && !isFetching) {
                 animatedRef.current?.play();
             }
         }, [isFetching]);
@@ -214,7 +309,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
                             <SafeAreaView
                                 style={[styles.modalView, styleModal]}>
                                 <Text style={styles.Titulo}>
-                                    (Alergias / Reações adversas)
+                                    Alergias/Reações adversas
                                 </Text>
                                 {data && (
                                     <FlatList
@@ -226,6 +321,13 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
                                     />
                                 )}
                             </SafeAreaView>
+                            <TouchableOpacity
+                                style={styles.btnCloser}
+                                onPress={() => closeModal()}>
+                                <Text style={styles.cancelTextStyle}>
+                                    Fechar
+                                </Text>
+                            </TouchableOpacity>
                         </Animated.View>
                     </Modal>
                 </View>
@@ -257,32 +359,20 @@ const createStyles = (theme: ThemeContextData) => {
             backgroundColor: theme.colors.BACKDROP,
         },
         modalView: {
-            maxHeight: '80%',
-            minHeight: '35%',
+            width: '90%',
+            maxHeight: RFPercentage(80),
+            minHeight: RFPercentage(60),
             backgroundColor: theme.colors.BACKGROUND_1,
-            borderRadius: 20,
-            alignItems: 'center',
-            justifyContent: 'center',
+            borderRadius: 10,
             shadowColor: theme.colors.BACKDROP,
-            ...Platform.select({
-                ios: {
-                    shadowOffset: {
-                        width: 0,
-                        height: 5,
-                    },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 6,
-                },
-                android: {
-                    elevation: 3,
-                },
-            }),
         },
         contentContainerStyle: {
             margin: RFPercentage(2),
+            paddingBottom: RFPercentage(4),
         },
         Titulo: {
-            padding: 10,
+            padding: RFPercentage(2),
+            alignSelf: 'center',
             fontSize: theme.typography.SIZE.fontysize16,
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
@@ -308,6 +398,21 @@ const createStyles = (theme: ThemeContextData) => {
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
+        },
+        btnCloser: {
+            width: '90%',
+            height: RFPercentage(6),
+            backgroundColor: theme.colors.BACKGROUND_1,
+            alignItems: 'center',
+            marginTop: RFPercentage(1.5),
+            paddingVertical: 10,
+            borderRadius: 10,
+        },
+        cancelTextStyle: {
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
         },
     });
     return styles;

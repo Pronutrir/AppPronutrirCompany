@@ -610,7 +610,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             } = await Api.get<IAlertPacientResponse>(
                 `AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=${codPacient}`,
             );
-            return result;
+            return result.filter(item => item.iE_ALERTA === "S");
         }, {  });
     };
 
