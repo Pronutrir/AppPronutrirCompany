@@ -21,7 +21,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
-import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     activeModal?: boolean;
