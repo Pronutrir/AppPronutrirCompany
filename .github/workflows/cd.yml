@@ -3,8 +3,7 @@ name: Development Distribution
 on:
   push:
     branches:
-      - develop
-      - 'release*'
+      - 'releases/**'
 
 jobs:
   dev-distribution:
