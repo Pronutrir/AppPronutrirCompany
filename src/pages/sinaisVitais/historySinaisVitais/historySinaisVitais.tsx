@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback, memo, useRef } from 'react';
+import React, { useState, useContext, useCallback, memo, useRef, useEffect } from 'react';
 import {
     Text,
     View,
@@ -6,7 +6,9 @@ import {
     Platform,
     StyleSheet,
     Dimensions,
+    AppState,
 } from 'react-native';
+import { focusManager } from 'react-query';
 import CardSimples from '../../../components/Cards/CardSimples';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
@@ -34,6 +36,18 @@ interface Parms {
     index: number;
 }
 
+focusManager.setEventListener((handleFocus) => {
+    const subscription = AppState.addEventListener('change', (state) => {
+        console.log(state);
+        handleFocus(state === 'active');
+    });
+
+    return () => {
+        subscription;
+        //subscription.remove()
+    };
+});
+
 const HistorySinaisVitais: React.FC = () => {
     const navigation = useNavigation();
     const {
@@ -41,6 +55,8 @@ const HistorySinaisVitais: React.FC = () => {
         ValidationAutorizeEnfermagem,
         InativarSinaisVitais,
         useHistoryAlerts,
+        UpdateSinaisVitais,
+        AddSinaisVitais,
     } = useContext(SinaisVitaisContext);
 
     const {
@@ -262,6 +278,10 @@ const HistorySinaisVitais: React.FC = () => {
         ({ item, index }) => renderItem({ item, index }),
         [],
     );
+
+    useEffect(() => {
+        refetch();
+    }, [UpdateSinaisVitais, AddSinaisVitais]);
 
     return (
         <View style={styles.container}>

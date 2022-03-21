@@ -164,7 +164,7 @@ const createStyles = (theme: ThemeContextData) => {
             borderRadius: 20,
             alignItems: 'center',
             justifyContent: 'center',
-            shadowColor: '#000',
+            shadowColor: theme.colors.BACKDROP,
             ...Platform.select({
                 ios: {
                     shadowOffset: {

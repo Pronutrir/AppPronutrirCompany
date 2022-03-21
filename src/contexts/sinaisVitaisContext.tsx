@@ -467,7 +467,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     message: 'Dados enviado com sucesso!',
                     status: 'sucess',
                 });
-                GetAllSinaisVitais();
             })
             .catch(() => {
                 addAlert({
@@ -617,13 +616,13 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     const useHistoryAlerts = () => {
         return useQuery(
             'AlertaPacienteHistory',
-            async () => {
+            async ({ signal }) => {
                 const {
                     data: { result },
                 } = await Api.get<IAlertPacientResponse>(
                     `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${usertasy.cD_PESSOA_FISICA},${moment().format(
                         'YYYY-MM-DD',
-                    )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`,
+                    )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`, { signal }
                 );
                 return result;
             },
