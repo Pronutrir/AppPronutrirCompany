@@ -6,7 +6,10 @@ on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch
   release:
-    types: [published]
+    types:
+      - created
+      - published
+      - prereleased
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
