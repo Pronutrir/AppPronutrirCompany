@@ -297,7 +297,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         }
     };
 
-    const GetMedicosConsultas = useCallback(async () => {
+    /* const GetMedicosConsultas = useCallback(async () => {
         await Api.get(
             `AgendaConsultas/ApresentarDadosNomeMedicosOuEspecialidadesAgendaConsultasGeral/${moment().format(
                 'YYYY-MM-DD',
@@ -324,7 +324,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 });
                 return;
             });
-    }, []);
+    }, []); */
 
     const SearchPFSinaisVitais = async (
         filter: IFilterPF,
@@ -537,7 +537,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
-    const DeleteSinaisVitais = async (id: number) => {
+    /* const DeleteSinaisVitais = async (id: number) => {
         await Api.delete(`SinaisVitaisMonitoracaoGeral/DeleteSVMG/${id}`)
             .then(() => {
                 GetAllSinaisVitais();
@@ -552,7 +552,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     status: 'error',
                 });
             });
-    };
+    }; */
 
     const getPerfilAutorizeEnfermagem = async () => {
         const useRef = firestore()
