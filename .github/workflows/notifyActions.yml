@@ -7,7 +7,7 @@ on:
   # but only for the master branch
   push:
     branches:
-      - 'releases/*******'
+      - 'releases/**'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
