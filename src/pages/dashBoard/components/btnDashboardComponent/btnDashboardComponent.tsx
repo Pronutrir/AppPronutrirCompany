@@ -11,7 +11,6 @@ import React from 'react';
 import useTheme from '../../../../hooks/useTheme';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
-import SinaisVitaisSvg from '../../../../assets/svg/sinaisVitais.svg';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { SvgProps } from 'react-native-svg';
 

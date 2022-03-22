@@ -40,10 +40,10 @@ const DashBoard: React.FC = () => {
                         label={'Sinais Vitais'}
                     />
                      <BtnDashboardComponent
-                        disabled={true}
-                        onpress={() => {''}}
+                        disabled={false}
+                        onpress={() => navigation.navigate('EvolucaoEnfermagem')}
                         ImgSVG={ConsultaMarcadasImg}
-                        label={'Consultas Marcadas'}
+                        label={'Evolução'}
                     />
                      <BtnDashboardComponent
                         disabled={true}
