@@ -39,11 +39,11 @@ const DashBoard: React.FC = () => {
                         ImgSVG={SinaisVitaisSvg}
                         label={'Sinais Vitais'}
                     />
-                     <BtnDashboardComponent
-                        disabled={true}
-                        onpress={() => {''}}
+                     <BtnDashboardComponent 
+                        disabled={false}
+                        onpress={() => navigation.navigate('EvolucaoEnfermagem')}
                         ImgSVG={ConsultaMarcadasImg}
-                        label={'Consultas Marcadas'}
+                        label={'Evolução'}
                     />
                      <BtnDashboardComponent
                         disabled={true}
