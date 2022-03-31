@@ -4,6 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import ShimerPlaceHolderSelected from '../shimmerPlaceHolder/shimerPlaceHolderSelected';
 
 const _data = [
     { label: 'Item 1', value: '1' },
@@ -24,6 +25,7 @@ interface Props {
     data?: Idata[];
     value?: any; // eslint-disable-line
     onChange?(item: Idata): void;
+    shimerPlaceHolder?: boolean;
 }
 
 const SelectedDropdown: React.FC<Props> = ({
@@ -31,6 +33,7 @@ const SelectedDropdown: React.FC<Props> = ({
     onChange,
     value,
     placeholder,
+    shimerPlaceHolder = false,
 }: Props) => {
     
     const styles = useThemeAwareObject(createStyles);
@@ -52,33 +55,38 @@ const SelectedDropdown: React.FC<Props> = ({
         );
     };
 
-    return (
-        <Dropdown
-            search={data.length > 20 ? true : false}
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.placeholderStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={data}
-            maxHeight={RFPercentage(45)}
-            labelField="label"
-            valueField="value"
-            placeholder={placeholder ? placeholder : 'Selecione'}
-            value={value ? value : _value}
-            onChange={(item) => {
-                if (onChange) {
-                    onChange(item);
-                } else {
-                    setValue(item.value);
-                }
-            }}
-            /*  renderLeftIcon={() => (
-          <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-        )} */
-            renderItem={renderItem}
-        />
-    );
+    if(shimerPlaceHolder){
+        return(<ShimerPlaceHolderSelected/>)
+        
+    }else{
+        return (
+            <Dropdown
+                search={data.length > 20 ? true : false}
+                style={styles.dropdown}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.placeholderStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={data}
+                maxHeight={RFPercentage(45)}
+                labelField="label"
+                valueField="value"
+                placeholder={placeholder ? placeholder : 'Selecione'}
+                value={value ? value : _value}
+                onChange={(item) => {
+                    if (onChange) {
+                        onChange(item);
+                    } else {
+                        setValue(item.value);
+                    }
+                }}
+                /*  renderLeftIcon={() => (
+              <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+            )} */
+                renderItem={renderItem}
+            />
+        )
+    }
 };
 
 export default SelectedDropdown;
@@ -89,6 +97,7 @@ const createStyles = (theme: ThemeContextData) => {
             width: '100%',
             height: RFPercentage(6),
             margin: RFPercentage(2),
+            alignSelf: 'center',
             backgroundColor: 'white',
             borderRadius: 10,
             ...Platform.select({

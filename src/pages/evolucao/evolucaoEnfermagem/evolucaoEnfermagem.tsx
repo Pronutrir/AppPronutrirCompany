@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
@@ -10,8 +10,7 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
 import RichComponent from '../components/richComponent/richComponent';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
-import { Idata } from '../../../components/selectedDropdown/SelectedDropdown';
-import { useQuery } from 'react-query';
+import { useQuery, QueryCache } from 'react-query';
 import Api from '../../../services/api';
 
 type ProfileScreenRouteProp = RouteProp<
@@ -45,31 +44,37 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
-    const [defaultText, setDefaultText] = useState(null);
+    const queryCache = new QueryCache()
+
+    const [defaultText, setDefaultText] = useState<string | null>(null);
+    const [tipoNota, setTipoNota] = useState<string | null>(null);
 
     const getTextDefault = (value: string | null) => {
-         return useQuery(['defaltTextHtml', value], async () => {
-            const {
-                data: { result },
-            } = await Api.get<ITextDefaultResponse>(
-                `TextoPadrao/ListarTextosPadroesInstituicao?titulo=${value}`,
-            );
-            return result[0];
-        },{enabled: defaultText != null});
-    }
+        return useQuery(
+            ['defaltTextHtml', value],
+            async () => {
+                const {
+                    data: { result },
+                } = await Api.get<ITextDefaultResponse>(
+                    `TextoPadrao/ListarTextosPadroesInstituicao?titulo=${value}`,
+                );
+                return result[0];
+            },
+            { enabled: defaultText != null },
+        );
+    };
 
-    const { data: resultTextDefault,   } = getTextDefault(defaultText);
+    const { data: resultTextDefault, isFetching, remove } = getTextDefault(defaultText);
 
-    /* const getTextDefault = (value: string) => {
-        const { data: reponseData } = useQuery('defaltTextHtml', async () => {
-            const {
-                data: { result },
-            } = await Api.get<ITextDefaultResponse>(
-                `TextoPadrao/ListarTextosPadroesInstituicao?titulo=${value}`,
-            );
-            return result[0];
-        });
-    }; */
+    /* const addEvoluçaoEnfermagem = useMutation(() => 
+        Api.post()
+    )
+ */
+    useEffect(() => {
+        return () => {
+           queryCache.clear();
+        };
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -77,18 +82,23 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 <View style={styles.item1}>
                     <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
                     <SelectedNotaText
-                        onPress={(value) =>
-                            setDefaultText(value.value.dS_TITULO)
+                        onPressTipoNota={(item) => setTipoNota(item?.label)}
+                        onPressTextPadrao={(item) =>
+                            setDefaultText(item?.label)
                         }
                     />
                 </View>
-                {resultTextDefault && (
-                    <RichComponent
-                        initialContentHTML={resultTextDefault?.dS_TEXTO}
-                    />
-                )}
+                <RichComponent
+                    shimerPlaceHolder={isFetching}
+                    initialContentHTML={resultTextDefault?.dS_TEXTO}
+                />
             </View>
-            <BtnOptions valueText={'Enviar'} onPress={() => console.log('')} />
+            {defaultText && tipoNota && (
+                <BtnOptions
+                    valueText={'Enviar'}
+                    onPress={() => console.log('')}
+                />
+            )}
         </SafeAreaView>
     );
 };

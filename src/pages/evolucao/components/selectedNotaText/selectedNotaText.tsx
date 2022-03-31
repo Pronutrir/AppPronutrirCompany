@@ -35,11 +35,12 @@ interface ItipoNotasResponse {
 }
 
 interface Props {
-    onPress(value: Idata): void;
+    onPressTipoNota(value: Idata): void;
+    onPressTextPadrao(value: Idata): void;
 }
 
-const SelectedNotaText: React.FC<Props> = ({ onPress }: Props) => {
-    const { data: listTipoNota } = useQuery('tiposNotas', async () => {
+const SelectedNotaText: React.FC<Props> = ({ onPressTipoNota, onPressTextPadrao }: Props) => {
+    const { data: listTipoNota, isFetching } = useQuery('tiposNotas', async () => {
         const {
             data: { result },
         } = await Api.get<ItipoNotasResponse>(
@@ -67,14 +68,16 @@ const SelectedNotaText: React.FC<Props> = ({ onPress }: Props) => {
                 <SelectedDropdown
                     placeholder="Tipo de nota"
                     data={listTipoNota}
-                    onChange={(value) => onPress(value)}
+                    onChange={(value) => onPressTipoNota(value)}
+                    shimerPlaceHolder={isFetching}
                 />
             </View>
             <View style={styles.box}>
                 <SelectedDropdown
                     placeholder="Texto padrão"
                     data={listTextDefault}
-                    onChange={(value) => onPress(value)}
+                    onChange={(value) => onPressTextPadrao(value)}
+                    shimerPlaceHolder={isFetching}
                 />
             </View>
         </View>
