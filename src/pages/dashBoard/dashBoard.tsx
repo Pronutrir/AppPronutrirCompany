@@ -41,7 +41,7 @@ const DashBoard: React.FC = () => {
                     />
                      <BtnDashboardComponent 
                         disabled={false}
-                        onpress={() => navigation.navigate('EvolucaoEnfermagem')}
+                        onpress={() => navigation.navigate('SearchPessoaFisica')}
                         ImgSVG={ConsultaMarcadasImg}
                         label={'Evolução'}
                     />

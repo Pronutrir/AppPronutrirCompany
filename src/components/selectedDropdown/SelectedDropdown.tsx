@@ -17,12 +17,12 @@ const _data = [
 ];
 export interface Idata {
     label: string;
-    value: any;
+    value: any; // eslint-disable-line
 }
 interface Props {
     placeholder?: string;
     data?: Idata[];
-    value?: any;
+    value?: any; // eslint-disable-line
     onChange?(item: Idata): void;
 }
 
@@ -36,7 +36,7 @@ const SelectedDropdown: React.FC<Props> = ({
     const styles = useThemeAwareObject(createStyles);
     const [_value, setValue] = useState(null);
 
-    const renderItem = (item: any) => {
+    const renderItem = (item: any) => { // eslint-disable-line
         return (
             <View style={styles.item}>
                 <Text style={styles.textItem}>{item.label}</Text>
@@ -57,7 +57,7 @@ const SelectedDropdown: React.FC<Props> = ({
             search={data.length > 20 ? true : false}
             style={styles.dropdown}
             placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
+            selectedTextStyle={styles.placeholderStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             data={data}
@@ -86,11 +86,11 @@ export default SelectedDropdown;
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         dropdown: {
-            marginVertical: RFPercentage(2),
+            width: '100%',
             height: RFPercentage(6),
+            margin: RFPercentage(2),
             backgroundColor: 'white',
             borderRadius: 10,
-            paddingHorizontal: RFPercentage(1),
             ...Platform.select({
                 ios: {
                     shadowOffset: {
@@ -117,23 +117,19 @@ const createStyles = (theme: ThemeContextData) => {
         textItem: {
             flex: 1,
             color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
+            fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
         },
         placeholderStyle: {
-            color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
-            fontFamily: theme.typography.FONTES.Regular,
-            letterSpacing: theme.typography.LETTERSPACING.S,
-        },
-        selectedTextStyle: {
-            height: RFPercentage(3),
-            color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
-            fontFamily: theme.typography.FONTES.Regular,
-            letterSpacing: theme.typography.LETTERSPACING.S,
+            height: Platform.OS === 'android' ? RFPercentage(5) : RFPercentage(3),
+            padding: RFPercentage(0.5),
             textAlign: 'center',
+            textAlignVertical: 'center',
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize12,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
         },
         iconStyle: {
             width: RFPercentage(4),
@@ -141,7 +137,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         inputSearchStyle: {
             color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
+            fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             height: RFPercentage(6),

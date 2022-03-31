@@ -37,7 +37,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         text:{
             fontSize: theme.typography.SIZE.fontysize12,
-            fontFamily: theme.typography.FONTES.Bold,
+            fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             paddingBottom: 5

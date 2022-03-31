@@ -16,6 +16,7 @@ import Animated, {
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -68,9 +69,10 @@ const BtnOptions: React.FC<Props> = ({
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
-            padding: 10,
+            padding: RFPercentage(1),
             justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_1,
         },
         text: {
             fontSize: theme.typography.SIZE.fontysize14,

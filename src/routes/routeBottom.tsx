@@ -44,7 +44,7 @@ const RouteBottom: React.FC = () => {
                                 color: color,
                                 paddingBottom: 5,
                                 fontSize: theme.typography.SIZE.fontysize12,
-                                fontFamily: theme.typography.FONTES.Bold,
+                                fontFamily: theme.typography.FONTES.Regular,
                                 letterSpacing: theme.typography.LETTERSPACING.S,
                             }}>
                             {route.name}

@@ -17,13 +17,6 @@ interface Props {
     route: ProfileScreenRouteProp;
 }
 
-/* interface Params {
-    peso: number;
-    altura: number;
-    temperatura: number;
-    oxigenacao: number;
-} */
-
 const UpdateSinais: React.FC<Props> = ({
     route: {
         params: { PessoaFisica, SinaisVitais },

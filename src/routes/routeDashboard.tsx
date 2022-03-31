@@ -21,6 +21,7 @@ import { IPFSinaisVitais } from '../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../reducers/ConsultasReducer';
 import UpdateSinaisVitaisEnfermagem from '../pages/sinaisVitais/updateSinaisVitaisEnfermagem/updateSinaisVitaisEnfermagem';
 import EvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/evolucaoEnfermagem';
+import SearchPessoaFisica from '../pages/evolucao/evolucaoEnfermagem/searchPessoaFisica';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -55,7 +56,10 @@ export type RootStackParamList = {
         PessoaFisica: IPFSinaisVitais;
         SinaisVitais: ISinaisVitais;
     };
-    EvolucaoEnfermagem: undefined;
+    EvolucaoEnfermagem: {
+        PessoaFisica: IPFSinaisVitais;
+    };
+    SearchPessoaFisica: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -146,6 +150,11 @@ const InitialStackNavigator = () => {
                 name="EvolucaoEnfermagem"
                 component={EvolucaoEnfermagem}
                 options={{ title: 'Evolucao Enfermagem' }}
+            />
+            <Stack.Screen
+                name="SearchPessoaFisica"
+                component={SearchPessoaFisica}
+                options={{ title: 'Evolucão Enfermagem' }}
             />
         </Stack.Navigator>
     );

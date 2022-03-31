@@ -7,33 +7,31 @@ import {
     TouchableOpacity,
     ActivityIndicator,
 } from 'react-native';
-import HistorySvg from '../../../../assets/svg/historico.svg';
+import HistorySvg from '../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
-import CardSimples from '../../../../components/Cards/CardSimples';
-import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { useNavigation } from '@react-navigation/native';
-import { IParamConsulta } from '../../sinaisVItaisGerais/sinaisVitaisGerais';
+import CardSimples from '../../components/Cards/CardSimples';
+import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import moment from 'moment';
 import SinaisVitaisContext, {
     IPFSinaisVitais,
-} from '../../../../contexts/sinaisVitaisContext';
-import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
+} from '../../contexts/sinaisVitaisContext';
+import { IParamConsulta } from '../searchBarPessoaFisica/searchBarPessoaFisica';
 
 interface Props {
     dataSourcePFsinaisVitais?: IPFSinaisVitais[] | null;
     setState: React.Dispatch<React.SetStateAction<IParamConsulta>>;
     state: IParamConsulta;
+    onPress: (item: IPFSinaisVitais) => void;
 }
 
 const CardConsultasGerais: React.FC<Props> = ({
     dataSourcePFsinaisVitais,
     setState,
     state,
+    onPress,
 }: Props) => {
-    const { SearchPFSinaisVitais, ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
-    //const [refreshing, setRefreshing] = useState<boolean>(false);
-
-    const navigation = useNavigation();
+    const { SearchPFSinaisVitais } =
+        useContext(SinaisVitaisContext);
 
     const LoadingSearch = async () => {
         if (state.continue && state.dataSource.length >= 10) {
@@ -74,20 +72,17 @@ const CardConsultasGerais: React.FC<Props> = ({
         }
     };
 
-    const Item = ({ item }: { item: IPFSinaisVitais; index: number }) => {
+    const Item = ({
+        item,
+        index,
+    }: {
+        item: IPFSinaisVitais;
+        index: number;
+    }) => {
         return (
             <TouchableOpacity
-                onPress={() => {
-                    if (ValidationAutorizeEnfermagem()) {
-                        navigation.navigate('UpdateSinaisVitaisEnfermagem', {
-                            PessoaFisica: item,
-                        });
-                    } else {
-                        navigation.navigate('UpdateSinais', {
-                            PessoaFisica: item,
-                        });
-                    }
-                }}
+                key={index}
+                onPress={() => onPress(item)}
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
                     <HistorySvg
@@ -111,7 +106,6 @@ const CardConsultasGerais: React.FC<Props> = ({
                         </Text>
                     </View>
                 </View>
-                <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
             </TouchableOpacity>
         );
     };
@@ -123,7 +117,7 @@ const CardConsultasGerais: React.FC<Props> = ({
         item: IPFSinaisVitais;
         index: number;
     }) => (
-        <CardSimples styleCardContainer={styles.cardStyle}>
+        <CardSimples key={index} styleCardContainer={styles.cardStyle}>
             <Item key={index} item={item} index={index} />
         </CardSimples>
     );
@@ -157,11 +151,13 @@ const CardConsultasGerais: React.FC<Props> = ({
         <View style={styles.container}>
             {!state.spinnerVisibility ? (
                 <FlatList
+                    nestedScrollEnabled={true}
                     data={dataSourcePFsinaisVitais}
                     renderItem={({ item, index }) =>
                         renderItem({ item, index })
                     }
-                    keyExtractor={(item, index) => index.toString()}
+                    scrollEnabled
+                    keyExtractor={(item, index) => `key-${index}`}
                     //refreshing={refreshing}
                     /*  onRefresh={async () => {
                         setRefreshing(true);
