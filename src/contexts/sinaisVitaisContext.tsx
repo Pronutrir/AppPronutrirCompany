@@ -454,7 +454,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             qT_PA_DIASTOLICA: atendimento.qT_PA_DIASTOLICA,
             qT_PAM: atendimento.qT_PAM,
             qT_FREQ_CARDIACA: atendimento.qT_FREQ_CARDIACA,
-            qT_FREQ_RESP: atendimento.qT_FREQ_CARDIACA,
+            qT_FREQ_RESP: atendimento.qT_FREQ_RESP,
             cD_ESCALA_DOR: atendimento.cD_ESCALA_DOR,
             qT_ESCALA_DOR: atendimento.qT_ESCALA_DOR,
             iE_UNID_MED_ALTURA: sinaisVitaisDefault.iE_UNID_MED_ALTURA,

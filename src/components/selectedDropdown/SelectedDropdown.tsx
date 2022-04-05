@@ -6,40 +6,36 @@ import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ShimerPlaceHolderSelected from '../shimmerPlaceHolder/shimerPlaceHolderSelected';
 
-const _data = [
-    { label: 'Item 1', value: '1' },
-    { label: 'Item 2', value: '2' },
-    { label: 'Item 3', value: '3' },
-    { label: 'Item 4', value: '4' },
-    { label: 'Item 5', value: '5' },
-    { label: 'Item 6', value: '6' },
-    { label: 'Item 7', value: '7' },
-    { label: 'Item 8', value: '8' },
+const _data: Array<{label: string}> = [
+    { label: 'Item 1' },
+    { label: 'Item 2' },
+    { label: 'Item 3' },
+    { label: 'Item 4' },
+    { label: 'Item 5' },
+    { label: 'Item 6' },
+    { label: 'Item 7' },
+    { label: 'Item 8' },
 ];
-export interface Idata {
-    label: string;
-    value: any; // eslint-disable-line
-}
-interface Props {
+interface Props<T> {
     placeholder?: string;
-    data?: Idata[];
+    data?: T[];
     value?: any; // eslint-disable-line
-    onChange?(item: Idata): void;
+    onChange?(item: T): void;
     shimerPlaceHolder?: boolean;
 }
 
-const SelectedDropdown: React.FC<Props> = ({
-    data = _data,
+const SelectedDropdown = <T extends {label: string}> ({
+    data,
     onChange,
     value,
     placeholder,
     shimerPlaceHolder = false,
-}: Props) => {
-    
+}: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
-    const [_value, setValue] = useState(null);
+    const [_value, setValue] = useState<T | null>(null);
 
-    const renderItem = (item: any) => { // eslint-disable-line
+    const renderItem = (item: T) => {
+        // eslint-disable-line
         return (
             <View style={styles.item}>
                 <Text style={styles.textItem}>{item.label}</Text>
@@ -55,19 +51,18 @@ const SelectedDropdown: React.FC<Props> = ({
         );
     };
 
-    if(shimerPlaceHolder){
-        return(<ShimerPlaceHolderSelected/>)
-        
-    }else{
+    if (shimerPlaceHolder) {
+        return <ShimerPlaceHolderSelected />;
+    } else {
         return (
             <Dropdown
-                search={data.length > 20 ? true : false}
+                search={data && data.length > 20 ? true : false}
                 style={styles.dropdown}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.placeholderStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
-                data={data}
+                data={data ?? _data}
                 maxHeight={RFPercentage(45)}
                 labelField="label"
                 valueField="value"
@@ -77,7 +72,7 @@ const SelectedDropdown: React.FC<Props> = ({
                     if (onChange) {
                         onChange(item);
                     } else {
-                        setValue(item.value);
+                        setValue(item);
                     }
                 }}
                 /*  renderLeftIcon={() => (
@@ -85,7 +80,7 @@ const SelectedDropdown: React.FC<Props> = ({
             )} */
                 renderItem={renderItem}
             />
-        )
+        );
     }
 };
 
@@ -131,7 +126,8 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
         },
         placeholderStyle: {
-            height: Platform.OS === 'android' ? RFPercentage(5) : RFPercentage(3),
+            height:
+                Platform.OS === 'android' ? RFPercentage(5) : RFPercentage(3),
             padding: RFPercentage(0.5),
             textAlign: 'center',
             textAlignVertical: 'center',

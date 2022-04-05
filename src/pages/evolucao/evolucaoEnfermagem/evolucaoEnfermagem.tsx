@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
@@ -10,8 +10,10 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
 import RichComponent from '../components/richComponent/richComponent';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
-import { useQuery, QueryCache } from 'react-query';
+import { useQuery, QueryCache, useMutation } from 'react-query';
 import Api from '../../../services/api';
+import AuthContext from '../../../contexts/auth';
+import moment from 'moment';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -20,7 +22,6 @@ type ProfileScreenRouteProp = RouteProp<
 interface Props {
     route: ProfileScreenRouteProp;
 }
-
 interface ITextDefault {
     nR_SEQUENCIA: number;
     nR_SEQ_ITEM_PRONT: number;
@@ -32,9 +33,17 @@ interface ITextDefault {
     dT_ATUALIZACAO_NREC: string;
     nM_USUARIO_NREC: string;
 }
-
 interface ITextDefaultResponse {
     result: ITextDefault[];
+}
+interface IEvolucao {
+    dT_EVOLUCAO?: string;
+    iE_TIPO_EVOLUCAO?: number;
+    iE_SITUACAO?: string;
+    dT_ATUALIZACAO?: string;
+    nM_USUARIO?: string;
+    cD_PESSOA_FISICA?: string;
+    dS_EVOLUCAO?: string;
 }
 
 const EvolucaoEnfermagem: React.FC<Props> = ({
@@ -42,16 +51,20 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         params: { PessoaFisica },
     },
 }: Props) => {
+    const {
+        stateAuth: { usertasy },
+    } = useContext(AuthContext);
     const styles = useThemeAwareObject(createStyles);
 
-    const queryCache = new QueryCache()
+    const queryCache = new QueryCache();
+
+    const [evolucao, setEvolucao] = useState<IEvolucao | null>();
 
     const [defaultText, setDefaultText] = useState<string | null>(null);
-    const [tipoNota, setTipoNota] = useState<string | null>(null);
 
     const getTextDefault = (value: string | null) => {
         return useQuery(
-            ['defaltTextHtml', value],
+            ['defaultTextHtml', value],
             async () => {
                 const {
                     data: { result },
@@ -64,15 +77,38 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         );
     };
 
-    const { data: resultTextDefault, isFetching, remove } = getTextDefault(defaultText);
+    const { data: resultTextDefault, isFetching } = getTextDefault(defaultText);
 
-    /* const addEvoluçaoEnfermagem = useMutation(() => 
-        Api.post()
-    )
- */
+    const addEvoluçaoEnfermagem = useMutation((item: IEvolucao) => {
+        console.log(item);
+        return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item).then(response =>{
+            console.log(response);
+        }).catch(erro => {
+            console.log(erro);
+        });
+    });
+
+    const setTipoEvolucao = (item: string) => {
+        if (item) {
+            setEvolucao({
+                ...evolucao,
+                iE_TIPO_EVOLUCAO: 1,
+                iE_SITUACAO: 'A',
+                nM_USUARIO: 'wcorreia',
+                cD_PESSOA_FISICA: PessoaFisica.cD_PESSOA_FISICA,
+                dT_ATUALIZACAO: moment().format(),
+                dT_EVOLUCAO: moment().format('YYYY-MM-DD'),
+            });
+        }
+    };
+
+    /* const setTextEvolucao = () => {
+
+    } */
+
     useEffect(() => {
         return () => {
-           queryCache.clear();
+            queryCache.clear();
         };
     }, []);
 
@@ -82,21 +118,26 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 <View style={styles.item1}>
                     <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
                     <SelectedNotaText
-                        onPressTipoNota={(item) => setTipoNota(item?.label)}
+                        onPressTipoNota={(item) =>
+                            setTipoEvolucao(item.cD_TIPO_EVOLUCAO)
+                        }
                         onPressTextPadrao={(item) =>
-                            setDefaultText(item?.label)
+                            setDefaultText(item.dS_TITULO)
                         }
                     />
                 </View>
                 <RichComponent
                     shimerPlaceHolder={isFetching}
                     initialContentHTML={resultTextDefault?.dS_TEXTO}
+                    onChanger={(item) =>
+                        setEvolucao({ ...evolucao, dS_EVOLUCAO: item })
+                    }
                 />
             </View>
-            {defaultText && tipoNota && (
+            {evolucao?.dS_EVOLUCAO && evolucao.iE_TIPO_EVOLUCAO && (
                 <BtnOptions
                     valueText={'Enviar'}
-                    onPress={() => console.log('')}
+                    onPress={() => addEvoluçaoEnfermagem.mutate(evolucao)}
                 />
             )}
         </SafeAreaView>

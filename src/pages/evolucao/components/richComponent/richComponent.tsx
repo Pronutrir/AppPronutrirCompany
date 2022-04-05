@@ -3,7 +3,7 @@ import {
     ScrollView,
     View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
     RichToolbar,
     actions,
@@ -11,20 +11,18 @@ import {
 } from 'react-native-pell-rich-editor';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import ShimmerPlaceHolderText from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderText';
-import ToggleSwitch from '../../../../components/Switch/ToggleSwitch';
-//import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
-//import { ThemeContextData } from '../../../../contexts/themeContext';
 interface Props {
     initialContentHTML?: string;
     shimerPlaceHolder?: boolean;
+    onChanger(textHtml: string): void;
 }
 
 const RichComponent: React.FC<Props> = ({
     initialContentHTML,
     shimerPlaceHolder = false,
+    onChanger,
 }: Props) => {
-    const [isEnabled, setIsEnabled] = useState(false);
-    //const styles = useThemeAwareObject(createStyles);
+    
     const richText = useRef<any>(); // eslint-disable-line
 
     return (
@@ -33,7 +31,6 @@ const RichComponent: React.FC<Props> = ({
                 iconSize={RFPercentage(2.5)}
                 editor={richText}
                 actions={[
-                    'customAction',
                     actions.setBold,
                     actions.setItalic,
                     actions.insertBulletsList,
@@ -46,14 +43,6 @@ const RichComponent: React.FC<Props> = ({
                     actions.undo,
                     actions.redo,
                 ]}
-                iconMap={{
-                    customAction: (
-                        { tintColor }, // eslint-disable-line
-                    ) => (
-                        <ToggleSwitch onpress={()=> {setIsEnabled(!isEnabled)}}/>
-                    ),
-                }}
-                customAction={() => console.log('testando')}
             />
             {shimerPlaceHolder ? (
                 <ShimmerPlaceHolderText />
@@ -61,15 +50,11 @@ const RichComponent: React.FC<Props> = ({
                 <ScrollView style={{ flex: 1 }}>
                     <KeyboardAvoidingView>
                         <RichEditor
-                            disabled={!isEnabled}
                             editorStyle={{ cssText: 'color:red' }}
                             ref={richText}
                             initialContentHTML={initialContentHTML}
                             onChange={(descriptionText) => {
-                                console.log(
-                                    'descriptionText:',
-                                    descriptionText,
-                                );
+                                onChanger(descriptionText)
                             }}
                         />
                     </KeyboardAvoidingView>

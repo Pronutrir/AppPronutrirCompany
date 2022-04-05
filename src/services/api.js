@@ -6,9 +6,9 @@ const api = axios.create({
     //producao
     //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
     //teste
-    baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
+    //baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
     //ngrouk
-    //baseURL: 'https://0f4a-177-22-36-198.ngrok.io/api/v1/',
+    baseURL: 'https://f90a-177-22-36-198.ngrok.io/api/v1/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -33,6 +33,7 @@ axios.interceptors.response.use(
         }
     },
     async function (error) {
+        console.log(error)
         try {
             if (axios.isCancel(error)) {
                 return Promise.reject(error);

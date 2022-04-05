@@ -1,15 +1,13 @@
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import SelectedDropdown, { Idata } from '../../../../components/selectedDropdown/SelectedDropdown';
+import SelectedDropdown from '../../../../components/selectedDropdown/SelectedDropdown';
 import { useQuery } from 'react-query';
 import Api from '../../../../services/api';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-
 interface ITextDefault {
     nR_SEQUENCIA: number;
     dS_TITULO: string;
 }
-
 interface ItipoNotas {
     cD_TIPO_EVOLUCAO: string;
     iE_ATEND_FECHADO: string;
@@ -25,31 +23,34 @@ interface ItipoNotas {
     dS_LEGENDA: string;
     iE_GERA_LANCTO_AUTO: string;
 }
-
 interface ItextPadraoResponse {
     result: ITextDefault[];
 }
-
 interface ItipoNotasResponse {
     result: ItipoNotas[];
 }
-
 interface Props {
-    onPressTipoNota(value: Idata): void;
-    onPressTextPadrao(value: Idata): void;
+    onPressTipoNota(value: ItipoNotas): void;
+    onPressTextPadrao(value: ITextDefault): void;
 }
 
-const SelectedNotaText: React.FC<Props> = ({ onPressTipoNota, onPressTextPadrao }: Props) => {
-    const { data: listTipoNota, isFetching } = useQuery('tiposNotas', async () => {
-        const {
-            data: { result },
-        } = await Api.get<ItipoNotasResponse>(
-            `TipoEvolucao/ListarTiposEvolucoes`,
-        );
-        return result.map((item) => {
-            return { label: item.dS_TIPO_EVOLUCAO, value: item };
-        });
-    });
+const SelectedNotaText: React.FC<Props> = ({
+    onPressTipoNota,
+    onPressTextPadrao,
+}: Props) => {
+    const { data: listTipoNota, isFetching } = useQuery(
+        'tiposNotas',
+        async () => {
+            const {
+                data: { result },
+            } = await Api.get<ItipoNotasResponse>(
+                `TipoEvolucao/ListarTiposEvolucoes`,
+            );
+            return result.map((item) => {
+                return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
+            });
+        },
+    );
 
     const { data: listTextDefault } = useQuery('defaltText', async () => {
         const {
@@ -68,7 +69,7 @@ const SelectedNotaText: React.FC<Props> = ({ onPressTipoNota, onPressTextPadrao 
                 <SelectedDropdown
                     placeholder="Tipo de nota"
                     data={listTipoNota}
-                    onChange={(value) => onPressTipoNota(value)}
+                    onChange={({ itemEvolucao }) => onPressTipoNota(itemEvolucao)}
                     shimerPlaceHolder={isFetching}
                 />
             </View>
@@ -76,7 +77,7 @@ const SelectedNotaText: React.FC<Props> = ({ onPressTipoNota, onPressTextPadrao 
                 <SelectedDropdown
                     placeholder="Texto padrão"
                     data={listTextDefault}
-                    onChange={(value) => onPressTextPadrao(value)}
+                    onChange={({ value }) => onPressTextPadrao(value)}
                     shimerPlaceHolder={isFetching}
                 />
             </View>
