@@ -16,12 +16,14 @@ import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnDashboardComponent from './components/btnDashboardComponent/btnDashboardComponent';
 import { useNavigation } from '@react-navigation/native';
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
+import AuthContext from '../../contexts/auth';
 
 const DashBoard: React.FC = () => {
 
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
     const { ValidationAutorizeTriagem } = useContext(SinaisVitaisContext);
+    const { ValidationAutorizeEvolucao } = useContext(AuthContext);
 
     return (
         <View style={styles.container}>
@@ -40,7 +42,7 @@ const DashBoard: React.FC = () => {
                         label={'Sinais Vitais'}
                     />
                      <BtnDashboardComponent 
-                        disabled={false}
+                        disabled={!ValidationAutorizeEvolucao()}
                         onpress={() => navigation.navigate('SearchPessoaFisica')}
                         ImgSVG={ConsultaMarcadasImg}
                         label={'Evolução'}

@@ -25,6 +25,7 @@ interface AuthContextData {
     dispatchAuth: React.Dispatch<LoginAction>;
     loading: boolean;
     getPerfis(nomeUsuario: string): UseQueryResult<IPerfis[], Error>;
+    ValidationAutorizeEvolucao: () => boolean;
 }
 
 interface IFirebaseLogin {
@@ -55,6 +56,10 @@ interface IPerfis {
     dS_UTC_ATUALIZACAO: string;
     dS_UTC: string;
     iE_HORARIO_VERAO: string;
+}
+export interface IPerfisLiberados {
+    cD_PERFIL: number;
+    dS_PERFIL: string;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -164,6 +169,45 @@ export const AuthProvider: React.FC = ({ children }) => {
         });
     };
 
+    const getPerfilAutorizeEvolucao = async () => {
+        const useRef = firestore()
+            .doc('FunctionsApp/Evolucao')
+            .collection('Perfis');
+
+        const resultPerfis: IPerfisLiberados[] = [];
+
+        await useRef.get().then((querySnapshot) => {
+            return querySnapshot.forEach((item) => {
+                resultPerfis.push({
+                    cD_PERFIL: item.get('cD_PERFIL'),
+                    dS_PERFIL: item.get('dS_PERFIL'),
+                });
+            });
+        });
+
+        return resultPerfis;
+    };
+
+    const { data: PerfisEvolucao } = useQuery(
+        'PerfisEnfermagem',
+        getPerfilAutorizeEvolucao,
+    );
+
+    const ValidationAutorizeEvolucao = useCallback(() => {
+        const result = PerfisEvolucao?.some(
+            (element: IPerfisLiberados) => {
+                return (
+                    element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL
+                );
+            },
+        );
+        if (result) {
+            return result;
+        } else {
+            return false;
+        }
+    }, [PerfisEvolucao, stateAuth.PerfilSelected]);
+
     useEffect(() => {
         (async () => {
             const token = await GetAuth();
@@ -192,6 +236,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 stateAuth,
                 dispatchAuth,
                 getPerfis,
+                ValidationAutorizeEvolucao,
             }}>
             {children}
         </AuthContext.Provider>

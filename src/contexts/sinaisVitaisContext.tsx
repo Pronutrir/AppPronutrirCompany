@@ -21,7 +21,6 @@ import {
     initialStateConsultas,
     IConsultas,
     IstateConsultas,
-    IMedico,
     ConsultasAction,
     ISinaisVitais,
     IAlertaPaciente,
