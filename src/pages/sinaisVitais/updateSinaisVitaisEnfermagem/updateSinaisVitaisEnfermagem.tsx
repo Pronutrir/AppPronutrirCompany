@@ -44,6 +44,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     const [disabledAntropometria, setDisabledAntropometria] = useState(true);
     const [disabledSinaisVitais, setDisabledSinaisVitais] = useState(false);
     const [disabledRegistroDor, setDisabledRegistroDor] = useState(false);
+    const [disabledTemperatura, setDisabledTemperatura] = useState(false);
     const [disabledMonitorizacao, setDisabledMonitorizacao] = useState(true);
 
     const [Peso, setPeso] = useState(0);
@@ -110,13 +111,13 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     };
 
     const pressaoArterialMedia = (): number => {
-        if(pas !== 40 && pad !== 40){
-            const pam: number = (pas+(pad * 2))/3
+        if (pas !== 40 && pad !== 40) {
+            const pam: number = (pas + pad * 2) / 3;
             return parseInt(pam.toFixed());
-        }else{
+        } else {
             return 0;
         }
-    }
+    };
 
     useEffect(() => {
         if (SinaisVitais) {
@@ -126,9 +127,19 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             setOxigenacao(
                 SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
             );
-            setPas(SinaisVitais.qT_PA_SISTOLICA ? SinaisVitais.qT_PA_SISTOLICA : 0);
-            setPad(SinaisVitais.qT_PA_DIASTOLICA ? SinaisVitais.qT_PA_DIASTOLICA : 0);
-            setFc(SinaisVitais.qT_FREQ_CARDIACA ? SinaisVitais.qT_FREQ_CARDIACA : 0);
+            setPas(
+                SinaisVitais.qT_PA_SISTOLICA ? SinaisVitais.qT_PA_SISTOLICA : 0,
+            );
+            setPad(
+                SinaisVitais.qT_PA_DIASTOLICA
+                    ? SinaisVitais.qT_PA_DIASTOLICA
+                    : 0,
+            );
+            setFc(
+                SinaisVitais.qT_FREQ_CARDIACA
+                    ? SinaisVitais.qT_FREQ_CARDIACA
+                    : 0,
+            );
             setFr(SinaisVitais.qT_FREQ_RESP ? SinaisVitais.qT_FREQ_RESP : 0);
             setDor(SinaisVitais.qT_ESCALA_DOR ? SinaisVitais.qT_ESCALA_DOR : 0);
             setActiveShimmer(true);
@@ -164,15 +175,19 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nome: </Text>
                         <Text style={styles.text}>
-                            {SinaisVitais?.nM_PESSOA_FISICA ? SinaisVitais?.nM_PESSOA_FISICA : PessoaFisica?.nM_PESSOA_FISICA}
+                            {SinaisVitais?.nM_PESSOA_FISICA
+                                ? SinaisVitais?.nM_PESSOA_FISICA
+                                : PessoaFisica?.nM_PESSOA_FISICA}
                         </Text>
                     </View>
                     <View style={styles.boxLabel}>
                         <Text style={styles.label}>Nascimento: </Text>
                         <Text style={styles.text}>
-                            {moment(SinaisVitais?.dT_NASCIMENTO ? SinaisVitais?.dT_NASCIMENTO : PessoaFisica?.dT_NASCIMENTO).format(
-                                'DD-MM-YYYY',
-                            )}
+                            {moment(
+                                SinaisVitais?.dT_NASCIMENTO
+                                    ? SinaisVitais?.dT_NASCIMENTO
+                                    : PessoaFisica?.dT_NASCIMENTO,
+                            ).format('DD-MM-YYYY')}
                         </Text>
                     </View>
                 </View>
@@ -181,7 +196,13 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                         <>
                             <TouchableShowHide TextHeader={'Antropometria'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch onpress={() => setDisabledAntropometria(!disabledAntropometria)} />
+                                    <ToggleSwitch
+                                        onpress={() =>
+                                            setDisabledAntropometria(
+                                                !disabledAntropometria,
+                                            )
+                                        }
+                                    />
                                     <SlideRanger
                                         label={'Altura'}
                                         medida={'cm'}
@@ -212,7 +233,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Sinais vitais'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch onpress={() => setDisabledSinaisVitais(!disabledSinaisVitais)} Enabled={!disabledSinaisVitais} />
+                                    <ToggleSwitch
+                                        onpress={() =>
+                                            setDisabledSinaisVitais(
+                                                !disabledSinaisVitais,
+                                            )
+                                        }
+                                        Enabled={!disabledSinaisVitais}
+                                    />
                                     <SlideRanger
                                         label={'PAS(mmHG)'}
                                         medida={'mmHg'}
@@ -280,6 +308,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                     />
                                 </View>
                                 <View style={styles.item2}>
+                                    <ToggleSwitch
+                                        onpress={() =>
+                                            setDisabledTemperatura(
+                                                !disabledTemperatura,
+                                            )
+                                        }
+                                        Enabled={disabledTemperatura}
+                                    />
                                     <SlideRanger
                                         label={'Temperatura'}
                                         medida={'°C'}
@@ -290,13 +326,20 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setTemperatura(value)
                                         }
-                                        disabled={disabledSinaisVitais}
+                                        disabled={!disabledTemperatura}
                                     />
                                 </View>
                             </TouchableShowHide>
                             <TouchableShowHide TextHeader={'Registro de dor'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch onpress={() => setDisabledRegistroDor(!disabledRegistroDor)} Enabled={!disabledRegistroDor} />
+                                    <ToggleSwitch
+                                        onpress={() =>
+                                            setDisabledRegistroDor(
+                                                !disabledRegistroDor,
+                                            )
+                                        }
+                                        Enabled={!disabledRegistroDor}
+                                    />
                                     <EscalaDorComponent
                                         onpress={(item) => {
                                             setDor(item);
@@ -320,7 +363,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                             <TouchableShowHide
                                 TextHeader={'Monitorização geral'}>
                                 <View style={styles.item2}>
-                                    <ToggleSwitch onpress={() => setDisabledMonitorizacao(!disabledMonitorizacao)} />
+                                    <ToggleSwitch
+                                        onpress={() =>
+                                            setDisabledMonitorizacao(
+                                                !disabledMonitorizacao,
+                                            )
+                                        }
+                                        Enabled={disabledMonitorizacao}
+                                    />
                                     <SlideRanger
                                         label={'Oximetria'}
                                         medida={'%'}
@@ -331,7 +381,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                         setValueRanger={(value) =>
                                             setOxigenacao(value)
                                         }
-                                        disabled={disabledMonitorizacao}
+                                        disabled={!disabledMonitorizacao}
                                     />
                                 </View>
                             </TouchableShowHide>
