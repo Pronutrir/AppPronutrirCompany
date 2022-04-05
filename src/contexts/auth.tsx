@@ -189,7 +189,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     };
 
     const { data: PerfisEvolucao } = useQuery(
-        'PerfisEnfermagem',
+        'PerfisEvolucao',
         getPerfilAutorizeEvolucao,
     );
 
