@@ -1,58 +1,34 @@
-import React, {
-    useState,
-    useEffect,
-    memo,
-    useContext,
-    useCallback,
-} from 'react';
+import React, { memo, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
-import { ISinaisVitais } from '../../reducers/ConsultasReducer';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
 import moment from 'moment';
-import Api from '../../services/api';
-import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
+import {
+    useSinaisVitaisHistory,
+    ISinaisVitais,
+} from '../../hooks/useSinaisVitais';
+import { RootStackParamList } from '../../routes/routeDashboard';
+import { RouteProp } from '@react-navigation/native';
 
-const EndSinaisVitais: React.FC = () => {
-    const { addNotification } = useContext(NotificationGlobalContext);
-    const [refreshing, setRefreshing] = useState<boolean>(false);
-    const [listSinaisVitais, setListSinaisVitais] = useState<
-    ISinaisVitais[] | null
-    >(null);
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'EndSinaisVitais'>;
+interface Props {
+    route: ProfileScreenRouteProp;
+}
 
-    const GetSinaisVitais = useCallback(async () => {
-        try {
-            const _sinaisVitais: ISinaisVitais[] = await Api.get(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosSVMG?pagina=${1}&rows=${5}`,
-            ).then((response) => {
-                const { result } = response.data;
-                if (result) {
-                    /* const order_result = */ result.sort(function (
-                        a: ISinaisVitais,
-                        b: ISinaisVitais,
-                    ) {
-                        return a.nR_SEQUENCIA > b.nR_SEQUENCIA
-                            ? -1
-                            : a.nR_SEQUENCIA < b.nR_SEQUENCIA
-                            ? 1
-                            : 0;
-                    });
-                    return result;
-                }
-            });
-            setListSinaisVitais(_sinaisVitais);
-            setRefreshing(false);
-        } catch (error) {
-            setRefreshing(false);
-            addNotification({
-                message:
-                    'Não foi possivel realizar a consulta, tente mais tarde!',
-                status: 'error',
-            });
-        }
-    }, [addNotification]);
+const EndSinaisVitais: React.FC<Props> = ({
+    route: {
+        params: { Paciente },
+    },
+}: Props) => {
+    const {
+        data: historySinalVitais,
+        isFetching,
+        refetch,
+        isLoading,
+        remove,
+    } = useSinaisVitaisHistory(Paciente);
 
     const Item = ({ item }: { item: ISinaisVitais; index: number }) => {
         return (
@@ -76,7 +52,7 @@ const EndSinaisVitais: React.FC = () => {
                         <Text style={styles.textLabel}>Data: </Text>
                         <Text style={styles.text}>{`${moment(
                             item.dT_SINAL_VITAL,
-                        ).format('DD-MM-YYYY')}`}</Text>
+                        ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
                     </View>
                     <View style={styles.item}>
                         <View style={styles.SubItem}>
@@ -130,25 +106,26 @@ const EndSinaisVitais: React.FC = () => {
     );
 
     useEffect(() => {
-        GetSinaisVitais();
-    }, [GetSinaisVitais]);
+        return () => {
+            remove();
+          };
+    }, []);
 
     return (
         <View style={styles.container}>
             <Text style={[styles.textLabel, styles.titleLabel]}>
                 Ultimos sinais vitais adicionados!
             </Text>
-            {listSinaisVitais ? (
+            {!isLoading ? (
                 <FlatList
-                    data={listSinaisVitais}
+                    data={historySinalVitais}
                     renderItem={({ item, index }) =>
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={refreshing}
+                    refreshing={isFetching}
                     onRefresh={() => {
-                        setRefreshing(true);
-                        GetSinaisVitais();
+                        refetch;
                     }}
                     ListEmptyComponent={renderItemEmpty}
                 />
@@ -165,7 +142,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('screen').width,
         paddingVertical: 10,
         alignItems: 'center',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     cardStyle: {
         flex: 1,

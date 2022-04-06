@@ -211,7 +211,7 @@ const HistorySinaisVitais: React.FC = () => {
                         <Text style={styles.textLabel}>Data: </Text>
                         <Text style={styles.text}>{`${moment(
                             item.dT_SINAL_VITAL,
-                        ).format('DD-MM-YYYY [às] hh:mm')}`}</Text>
+                        ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
                     </View>
                     <View style={styles.item}>
                         <View style={styles.SubItem}>

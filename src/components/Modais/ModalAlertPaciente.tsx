@@ -274,10 +274,10 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
         }, [isFetching]);
 
         return (
-            <>
+            <View style={styles.container}>
                 <TouchableOpacity
                     onPress={() => openModal()}
-                    style={[styles.container, styleContainerImg]}
+                    style={[styles.btn, styleContainerImg]}
                     disabled={Boolean(data == undefined || data?.length <= 0)}>
                     <AnimatedLottieView
                         ref={animatedRef}
@@ -330,7 +330,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
                         </Animated.View>
                     </Modal>
                 </View>
-            </>
+            </View>
         );
     },
 );
@@ -342,6 +342,11 @@ export default memo(ModalAlertPaciente);
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 5,
+        },
+        btn: {
             width: RFPercentage(4),
             height: RFPercentage(4),
             justifyContent: 'center',

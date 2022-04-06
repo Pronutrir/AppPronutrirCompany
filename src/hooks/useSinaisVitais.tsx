@@ -1,15 +1,16 @@
 import { useQuery } from 'react-query';
 import moment from 'moment';
 import Api from '../services/api';
-
+import NotificationGlobalContext from '../contexts/notificationGlobalContext';
+import { useContext } from 'react';
 interface ResponsePFdados {
     result: ISinaisVitais[];
 }
 
-interface ISinaisVitais {
+export interface ISinaisVitais {
     nR_SEQUENCIA: number;
     nR_ATENDIMENTO?: number;
-    dT_SINAL_VITAL?: string;
+    dT_SINAL_VITAL: string;
     dT_ATUALIZACAO?: string;
     iE_PRESSAO?: string;
     iE_MEMBRO?: string;
@@ -24,7 +25,7 @@ interface ISinaisVitais {
     cD_ESCALA_DOR?: string;
     qT_ESCALA_DOR?: number;
     cD_PACIENTE?: string;
-    nM_PESSOA_FISICA?: string;
+    nM_PESSOA_FISICA: string;
     dT_NASCIMENTO?: string;
     cD_PESSOA_FISICA?: string;
     qT_SATURACAO_O2?: number;
@@ -90,6 +91,7 @@ const initialSinaisVitais: ISinaisVitais[] = [
 ];
 
 const useSinaisVitaisAll = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
         'SinaisVitaisAll',
         async () => {
@@ -100,10 +102,53 @@ const useSinaisVitaisAll = () => {
                     'YYYY-MM-DD',
                 )},${moment().format('YYYY-MM-DD')}`,
             );
-            return result;
+            return result.sort((a, b) => {
+                return a?.dT_SINAL_VITAL < b.dT_SINAL_VITAL
+                    ? -1
+                    : a.dT_SINAL_VITAL > b.dT_SINAL_VITAL
+                    ? 1
+                    : 0;
+            });
         },
-        { placeholderData: initialSinaisVitais },
+        {
+            placeholderData: initialSinaisVitais,
+            onError: () => {
+                addAlert({
+                    message: 'Error ao Atualizar os sinais vitais',
+                    status: 'error',
+                });
+            },
+        },
     );
 };
 
-export { useSinaisVitaisAll };
+const useSinaisVitaisHistory = (paciente: string) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useQuery(
+        'SinaisVitaisHistory',
+        async () => {
+            const {
+                data: { result },
+            } = await Api.get<ResponsePFdados>(
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}`,
+            );
+            return result.sort((a, b) => {
+                return a?.dT_SINAL_VITAL < b.dT_SINAL_VITAL
+                    ? -1
+                    : a.dT_SINAL_VITAL > b.dT_SINAL_VITAL
+                    ? 1
+                    : 0;
+            });
+        },
+        {
+            onError: () => {
+                addAlert({
+                    message: 'Error ao Atualizar os sinais vitais',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+export { useSinaisVitaisAll, useSinaisVitaisHistory };
