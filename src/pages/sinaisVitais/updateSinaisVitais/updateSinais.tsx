@@ -11,6 +11,7 @@ import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
+import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -27,8 +28,9 @@ const UpdateSinais: React.FC<Props> = ({
         AddSinaisVitais,
         GetSinaisVitais,
         UpdateSinaisVitais,
-        GetAllSinaisVitais,
     } = useContext(SinaisVitaisContext);
+
+    const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
@@ -60,7 +62,7 @@ const UpdateSinais: React.FC<Props> = ({
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
         });
-        await GetAllSinaisVitais();
+        refetchSinaisVitais;
         setActiveModal(false);
         navigation.goBack();
     };
@@ -74,6 +76,7 @@ const UpdateSinais: React.FC<Props> = ({
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
         });
+        refetchSinaisVitais;
         setActiveModal(false);
         navigation.goBack();
     };

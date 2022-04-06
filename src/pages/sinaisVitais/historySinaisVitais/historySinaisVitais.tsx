@@ -26,6 +26,7 @@ import SinaisVitaisContext, {
 } from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
+import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -51,13 +52,14 @@ focusManager.setEventListener((handleFocus) => {
 const HistorySinaisVitais: React.FC = () => {
     const navigation = useNavigation();
     const {
-        GetAllSinaisVitais,
         ValidationAutorizeEnfermagem,
         InativarSinaisVitais,
         useHistoryAlerts,
         UpdateSinaisVitais,
         AddSinaisVitais,
     } = useContext(SinaisVitaisContext);
+
+    const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
     const {
         data: historySinaisVitais,
@@ -102,7 +104,7 @@ const HistorySinaisVitais: React.FC = () => {
         if (selectedSinais) {
             setActiveModal(true);
             await InativarSinaisVitais(selectedSinais);
-            await GetAllSinaisVitais();
+            refetchSinaisVitais;
             setActiveModal(false);
         }
     };

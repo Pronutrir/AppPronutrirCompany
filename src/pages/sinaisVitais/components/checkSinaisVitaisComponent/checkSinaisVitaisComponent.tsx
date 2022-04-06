@@ -1,17 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CheckMark from '../../../../assets/svg/checkMark.svg';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
-
+import { useSinaisVitaisAll } from '../../../../hooks/useSinaisVitais';
 interface Props {
     Item: string;
 }
 
 const CheckSinaisVitaisComponent: React.FC<Props> = ({ Item }: Props) => {
-    const {
-        stateConsultas: { sinaisVitais },
-    } = useContext(SinaisVitaisContext);
+    
+    const { data: sinaisVitais } = useSinaisVitaisAll();
 
     if (sinaisVitais?.some((element) => element.cD_PACIENTE === Item)) {
         return (

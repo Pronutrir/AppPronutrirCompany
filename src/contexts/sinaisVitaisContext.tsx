@@ -41,7 +41,6 @@ interface AuthContextData {
     GetSinaisVitais(
         nR_SEQUENCIA: string,
     ): Promise<ISinaisVitais | null | undefined>;
-    GetAllSinaisVitais(): Promise<void>;
     FilterConsultas({
         dS_ESPECIALIDADE,
         nM_GUERRA,
@@ -401,37 +400,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
-    const GetAllSinaisVitais = useCallback(async (): Promise<void> => {
-        await Api.get(
-            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
-                'YYYY-MM-DD',
-            )},${moment().format('YYYY-MM-DD')}`,
-        )
-            .then((response) => {
-                const { result } = response.data;
-                if (result) {
-                    dispatchConsultas({
-                        type: 'setSinaisVitais',
-                        payload: result,
-                    });
-                } else {
-                    addAlert({
-                        message:
-                            'Não foi possivel consultar os sinais vitais, tente mais tarde!',
-                        status: 'info',
-                    });
-                }
-            })
-            .catch(() => {
-                addAlert({
-                    message:
-                        'Não foi possivel consultar os sinais vitais, tente mais tarde!',
-                    status: 'error',
-                });
-                return null;
-            });
-    }, [addAlert, usertasy]);
-
     const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
         await Api.post<ISinaisVitais>('SinaisVitaisMonitoracaoGeral', {
             iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
@@ -539,7 +507,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     /* const DeleteSinaisVitais = async (id: number) => {
         await Api.delete(`SinaisVitaisMonitoracaoGeral/DeleteSVMG/${id}`)
             .then(() => {
-                GetAllSinaisVitais();
                 addAlert({
                     message: 'Dados excluir com sucesso!',
                     status: 'sucess',
@@ -663,12 +630,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         }
     }, [PerfisSinaisVitaisTriagem, stateAuth.PerfilSelected]);
 
-    useEffect(() => {
-        if (usertasy.cD_PESSOA_FISICA) {
-            GetAllSinaisVitais();
-        }
-    }, [GetAllSinaisVitais, usertasy]);
-
     return (
         <SinaisVitaisContext.Provider
             value={{
@@ -681,7 +642,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 dispatchConsultas,
                 SearchPFSinaisVitais,
                 GetSinaisVitais,
-                GetAllSinaisVitais,
                 FilterConsultas,
                 UpdateSinaisVitais,
                 ValidationAutorizeEnfermagem,

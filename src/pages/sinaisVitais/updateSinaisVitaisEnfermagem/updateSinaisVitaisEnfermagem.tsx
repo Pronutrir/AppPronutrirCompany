@@ -14,6 +14,7 @@ import TouchableShowHide from '../../../components/TouchableShowHide/TouchableSh
 import EscalaDorComponent from '../components/escalaDorComponent/escalaDorComponent';
 import ToggleSwitch from '../../../components/Switch/ToggleSwitch';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
+import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -33,8 +34,9 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
         AddSinaisVitais,
         GetSinaisVitais,
         UpdateSinaisVitais,
-        GetAllSinaisVitais,
     } = useContext(SinaisVitaisContext);
+
+    const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
@@ -85,7 +87,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
             qT_PA_SISTOLICA: pas <= 40 ? null : pas,
         });
-        await GetAllSinaisVitais();
+        refetchSinaisVitais;
         setActiveModal(false);
         navigation.goBack();
     };
