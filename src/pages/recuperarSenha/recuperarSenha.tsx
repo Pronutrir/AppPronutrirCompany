@@ -1,7 +1,13 @@
 import React, { useRef, useState, useContext } from 'react';
-import { Text, View, Pressable, TextInput, ImageBackground, Keyboard } from 'react-native';
-
-import styles from './style';
+import {
+    Text,
+    View,
+    Pressable,
+    TextInput,
+    ImageBackground,
+    Keyboard,
+} from 'react-native';
+import _styles from './style';
 import Loading from '../../components/Loading/Loading';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
 import { Formik } from 'formik';
@@ -9,11 +15,18 @@ import AuthContext from '../../contexts/auth';
 import MybackButton from '../../components/buttons/BackButton';
 import auth from '@react-native-firebase/auth';
 import MyModalSimples from '../../componentes/MyModalSimples';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { useNavigation } from '@react-navigation/native';
 
-export default function recuperarSenha({ navigation }) {
+export default function recuperarSenha() {
 
+    const navigation = useNavigation();
     const { stateAuth } = useContext(AuthContext);
-    const { usertasy, Usuario: { email } } = stateAuth;
+    const {
+        usertasy: { dS_EMAIL },
+    } = stateAuth;
+
+    const styles = useThemeAwareObject(_styles);
 
     const Email = useRef(null);
     const [modalLoading, setModalLoading] = useState(false);
@@ -21,52 +34,63 @@ export default function recuperarSenha({ navigation }) {
 
     const recoveryPassword = () => {
         setModalLoading(true);
-        var actionCodeSettings = {
+        const actionCodeSettings = {
             handleCodeInApp: false,
             url: `https://webapppronutrir.com.br/redefinirsenha`,
             iOS: {
-                bundleId: 'com.apppronutrir'
+                bundleId: 'com.apppronutrir',
             },
             android: {
                 packageName: 'com.apppronutrir',
                 installApp: true,
-                minimumVersion: '12'
+                minimumVersion: '12',
             },
             // When multiple custom dynamic link domains are defined, specify which
             // one to use.
             //dynamicLinkDomain: "https://apppronutrir.page.link"
         };
 
-        auth().sendPasswordResetEmail(email, actionCodeSettings)
+        auth()
+            .sendPasswordResetEmail(dS_EMAIL, actionCodeSettings)
             .then(function () {
                 // Verification email sent.
                 setModalLoading(false);
                 setModalActive(true);
             })
-            .catch(function (error) {
+            .catch(() => {
                 // Error occurred. Inspect error.code.
                 setModalLoading(false);
             });
-    }
+    };
 
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
+            <ImageBackground
+                style={styles.BackgroundImage}
+                source={require('../../assets/imagens/logoBackgroud.png')}>
                 <View style={{ marginTop: 20 }}>
                     <MybackButton onPress={() => navigation.goBack()} />
                 </View>
                 <Formik
                     initialValues={{
-                        Email: email,
+                        Email: dS_EMAIL,
                     }}
-                    onSubmit={values => {
-                        recoveryPassword(values);
-                    }}
-                >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                        <View style={{ flex: 1 }} >
+                    onSubmit={() => {
+                        recoveryPassword();
+                    }}>
+                    {({
+                        handleSubmit,
+                        values,
+                    }) => (
+                        <View style={{ flex: 1 }}>
                             <View style={styles.box1}>
-                                <Text style={styles.textInfo}>Enviar Email para recuperar senha</Text>
+                                <Text style={styles.textLabel}>
+                                    Recuperação de senha
+                                </Text>
+                                <Text style={styles.textInfo}>
+                                    Para recuperar a sua senha, nós enviaremos
+                                    um link para a alteração da senha.
+                                </Text>
                                 <TextInput
                                     ref={Email}
                                     style={styles.input}
@@ -78,18 +102,24 @@ export default function recuperarSenha({ navigation }) {
                             </View>
                             <View style={styles.box2}>
                                 <Btnprosseguir
-                                    valueText={'Enviar Email'}
+                                    valueText={'Enviar'}
                                     onPress={() => handleSubmit()}
                                 />
                             </View>
-                            <View style={styles.box3}>
+                            <View>
                                 <Loading activeModal={modalLoading} />
-                                <MyModalSimples activeModal={modalActive} setActiveModal={setModalActive} label={'Email Enviado com sucesso! verifique seu email.'} />
+                                <MyModalSimples
+                                    activeModal={modalActive}
+                                    setActiveModal={setModalActive}
+                                    label={
+                                        'Email Enviado com sucesso! verifique seu email.'
+                                    }
+                                />
                             </View>
                         </View>
                     )}
                 </Formik>
             </ImageBackground>
-        </Pressable >
-    )
+        </Pressable>
+    );
 }

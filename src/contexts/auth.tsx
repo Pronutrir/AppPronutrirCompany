@@ -27,12 +27,10 @@ interface AuthContextData {
     getPerfis(nomeUsuario: string): UseQueryResult<IPerfis[], Error>;
     ValidationAutorizeEvolucao: () => boolean;
 }
-
 interface IFirebaseLogin {
     email: string;
     uid: string;
 }
-
 interface IFirestone {
     cpf: string;
     email: string;
@@ -40,7 +38,6 @@ interface IFirestone {
     nome: string;
     token: string;
 }
-
 interface ReponsePerfis {
     result: IPerfis[];
 }
