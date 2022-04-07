@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import {
     StyleSheet,
     Text,
@@ -13,18 +13,22 @@ import Loading from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
 import auth from '@react-native-firebase/auth';
 import SelectedDropdown from '../selectedDropdown/SelectedDropdown';
-import { Idata } from '../../components/selectedDropdown/SelectedDropdown';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
 import { savePerfil } from '../../utils';
+import { IPerfis } from '../../reducers/UserReducer';
+import NotificationMultOptions, {
+    ModalHandles,
+} from '../Notification/NotificationMultOptions';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
-    
     const styles = useThemeAwareObject(createStyles);
+
+    const notificationRef = useRef<ModalHandles>(null);
 
     const {
         stateAuth: {
@@ -38,30 +42,14 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     const [loading, setLoading] = useState(false);
 
     const logout = () => {
-        Alert.alert(
-            'Mensagem',
-            'Deseja Realmente sair?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'OK',
-                    onPress: () =>
-                        auth()
-                            .signOut()
-                            .then(() => {
-                                dispatchAuth({ type: 'delUser', payload: '' });
-                                setLoading(true);
-                            })
-                            .catch((error) => {
-                                Alert.alert('Erro', error.code);
-                            }),
-                },
-            ],
-            { cancelable: true },
-        );
+        auth()
+            .signOut()
+            .then(() => {
+                dispatchAuth({ type: 'delUser', payload: '' });
+                setLoading(true);
+            }).catch(() => {
+                console.log('erro')
+            })
     };
 
     const RefactoryData = () => {
@@ -73,10 +61,10 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         });
     };
 
-    const SelectedPerfilApp = (item: Idata) => {
+    const SelectedPerfilApp = (item: IPerfis) => {
         setLoading(true);
-        dispatchAuth({ type: 'setPerfilApp', payload: item.value });
-        savePerfil(item.value);
+        dispatchAuth({ type: 'setPerfilApp', payload: item });
+        savePerfil(item);
         setTimeout(() => {
             setLoading(false);
             navigation.closeDrawer();
@@ -106,7 +94,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
             <View style={styles.box2}>
                 <SelectedDropdown
                     data={RefactoryData()}
-                    onChange={SelectedPerfilApp}
+                    onChange={({ value }) => SelectedPerfilApp(value)}
                     value={PerfilSelected}
                     placeholder={'Perfil do App'}
                 />
@@ -114,12 +102,18 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
             <View style={styles.box3}>
                 <TouchableOpacity
                     style={styles.btnSair}
-                    onPress={() => logout()}>
+                    onPress={() => notificationRef.current?.openNotification()}>
                     <Text style={styles.text3}>Sair</Text>
                 </TouchableOpacity>
                 <Text style={styles.text2}>Versão 1.5</Text>
             </View>
             <Loading activeModal={loading} />
+            <NotificationMultOptions
+                ref={notificationRef}
+                title={'Mensagem'}
+                message={'Deseja Realmente sair?'}
+                onpress={() => logout()}
+            />
         </View>
     );
 };

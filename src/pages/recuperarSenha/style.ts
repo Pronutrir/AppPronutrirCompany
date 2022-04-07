@@ -36,9 +36,11 @@ const createStyles = (theme: ThemeContextData) => {
             borderBottomColor: '#DBCCCC',
             borderBottomWidth:2,
             margin: 10,
-            fontSize: 20,
             textAlign: 'center',
-            color: '#7A8B8E'
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
         },
         BackgroundImage:{
             flex: 1,

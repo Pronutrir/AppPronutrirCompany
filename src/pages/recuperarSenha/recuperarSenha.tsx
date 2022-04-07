@@ -14,12 +14,13 @@ import { Formik } from 'formik';
 import AuthContext from '../../contexts/auth';
 import MybackButton from '../../components/buttons/BackButton';
 import auth from '@react-native-firebase/auth';
-import MyModalSimples from '../../componentes/MyModalSimples';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { useNavigation } from '@react-navigation/native';
+import NotificationSimples, {
+    ModalHandles,
+} from '../../components/Notification/NotificationSimple';
 
 export default function recuperarSenha() {
-
     const navigation = useNavigation();
     const { stateAuth } = useContext(AuthContext);
     const {
@@ -29,8 +30,8 @@ export default function recuperarSenha() {
     const styles = useThemeAwareObject(_styles);
 
     const Email = useRef(null);
+    const notificationRef = useRef<ModalHandles>(null);
     const [modalLoading, setModalLoading] = useState(false);
-    const [modalActive, setModalActive] = useState(false);
 
     const recoveryPassword = () => {
         setModalLoading(true);
@@ -55,7 +56,7 @@ export default function recuperarSenha() {
             .then(function () {
                 // Verification email sent.
                 setModalLoading(false);
-                setModalActive(true);
+                notificationRef.current?.openModal();
             })
             .catch(() => {
                 // Error occurred. Inspect error.code.
@@ -78,10 +79,7 @@ export default function recuperarSenha() {
                     onSubmit={() => {
                         recoveryPassword();
                     }}>
-                    {({
-                        handleSubmit,
-                        values,
-                    }) => (
+                    {({ handleSubmit, values }) => (
                         <View style={{ flex: 1 }}>
                             <View style={styles.box1}>
                                 <Text style={styles.textLabel}>
@@ -108,12 +106,13 @@ export default function recuperarSenha() {
                             </View>
                             <View>
                                 <Loading activeModal={modalLoading} />
-                                <MyModalSimples
-                                    activeModal={modalActive}
-                                    setActiveModal={setModalActive}
-                                    label={
+                                <NotificationSimples
+                                    ref={notificationRef}
+                                    title="Mensagem:"
+                                    message={
                                         'Email Enviado com sucesso! verifique seu email.'
                                     }
+                                    onpress={() => navigation.goBack()}
                                 />
                             </View>
                         </View>

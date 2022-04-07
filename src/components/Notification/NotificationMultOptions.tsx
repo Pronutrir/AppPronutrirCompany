@@ -10,19 +10,28 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import BtnOptions from '../../components/buttons/BtnOptions';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-interface Notification {
-    message: string;
-    status?: 'sucess' | 'error' | 'warning' | 'info';
-    onpress(): void;
+interface Props {
+    title?: string;
+    message?: string;
+    activeModal?: boolean;
+    onpress?(): void;
 }
 export interface ModalHandles {
     closeNotification(): void;
     openNotification(): void;
 }
 
-const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
-    ({ message, onpress }: Notification, ref) => {
-        const [active, setActive] = useState(false);
+const NotificationMultOptions = React.forwardRef<ModalHandles, Props>(
+    (
+        {
+            title = 'Mensagem:',
+            message = 'teste',
+            activeModal = false,
+            onpress,
+        }: Props,
+        ref,
+    ) => {
+        const [active, setActive] = useState(activeModal);
         const _view = useRef<any>(null);
 
         const styles = useThemeAwareObject(createStyles);
@@ -42,6 +51,13 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
             };
         });
 
+        const disabled = () => {
+            setActive(false);
+            if (onpress) {
+                onpress();
+            }
+        };
+
         return (
             <View>
                 <Modal animationType="fade" transparent={true} visible={active}>
@@ -60,14 +76,14 @@ const NotificationMultOptions = React.forwardRef<ModalHandles, Notification>(
                         }}>
                         <View style={styles.modalView}>
                             <View style={styles.box}>
-                                <Text style={styles.Titulo}>Mensagem:</Text>
+                                <Text style={styles.Titulo}>{title}</Text>
                             </View>
                             <View style={styles.box}>
                                 <Text style={styles.textMsn}>{message}</Text>
                             </View>
                             <View style={styles.boxBtn}>
                                 <BtnOptions
-                                    onPress={() => onpress()}
+                                    onPress={() => disabled()}
                                     valueText={'Ok'}
                                 />
                                 <BtnOptions
@@ -109,8 +125,8 @@ const createStyles = (theme: ThemeContextData) => {
             justifyContent: 'center',
             alignItems: 'center',
         },
-        boxBtn:{
-
+        boxBtn: {
+            flexDirection: 'row',
         },
         textMsn: {
             fontSize: theme.typography.SIZE.fontysize16,
