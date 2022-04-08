@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import moment from 'moment';
 import Api from '../services/api';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
@@ -125,17 +125,17 @@ const useSinaisVitaisAll = () => {
 const useSinaisVitaisHistory = (paciente: string) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
-        'SinaisVitaisHistory',
+        ['SinaisVitaisHistory', paciente ],
         async () => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}`,
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=100`,
             );
             return result.sort((a, b) => {
-                return a?.dT_SINAL_VITAL < b.dT_SINAL_VITAL
+                return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
                     ? -1
-                    : a.dT_SINAL_VITAL > b.dT_SINAL_VITAL
+                    : a.dT_SINAL_VITAL < b.dT_SINAL_VITAL
                     ? 1
                     : 0;
             });
@@ -151,4 +151,15 @@ const useSinaisVitaisHistory = (paciente: string) => {
     );
 };
 
-export { useSinaisVitaisAll, useSinaisVitaisHistory };
+const _useSinaisVitaisHistory = (paciente: string) => {
+    return useInfiniteQuery('SinaisVitaisHistory', async ({ pageParam = 1 }) => {
+        const {
+            data: { result },
+        } = await Api.get<ResponsePFdados>(
+            `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=${pageParam}&rows=5`,
+        );
+        return result;
+    })
+}
+
+export { useSinaisVitaisAll, useSinaisVitaisHistory, _useSinaisVitaisHistory };

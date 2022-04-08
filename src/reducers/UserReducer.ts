@@ -130,7 +130,16 @@ export const UserReducer = (
             };
 
         case 'setUserTasy':
-            return { ...state, usertasy: action.payload };
+            return {
+                ...state,
+                usertasy: {
+                    ...action.payload,
+                    usuariO_FUNCIONARIO_PERFIL:
+                        action.payload.usuariO_FUNCIONARIO_PERFIL ?? [],
+                    usuariO_FUNCIONARIO_SETOR:
+                        action.payload.usuariO_FUNCIONARIO_SETOR ?? [],
+                },
+            };
 
         case 'UpdateUserTasyCPF':
             return {

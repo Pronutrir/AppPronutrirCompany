@@ -8,6 +8,7 @@ import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shim
 import {
     useSinaisVitaisHistory,
     ISinaisVitais,
+    _useSinaisVitaisHistory,
 } from '../../hooks/useSinaisVitais';
 import { RootStackParamList } from '../../routes/routeDashboard';
 import { RouteProp } from '@react-navigation/native';
@@ -22,6 +23,7 @@ const EndSinaisVitais: React.FC<Props> = ({
         params: { Paciente },
     },
 }: Props) => {
+
     const {
         data: historySinalVitais,
         isFetching,

@@ -50,7 +50,7 @@ export default function consultarNome({ navigation }) {
                                 keyboardVerticalOffset={Platform.OS === "ios" ? 130 : -180}
                             >
                                 <View style={styles.box1}>
-                                    <Text style={styles.textInfo}>Informe seu nome e sobrenome</Text>
+                                    <Text style={styles.textInfo}>Informe seu nome completo</Text>
                                     <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
                                     <TextInput
                                         ref={Nome}

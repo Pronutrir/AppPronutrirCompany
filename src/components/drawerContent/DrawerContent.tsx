@@ -52,6 +52,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
             })
     };
 
+
     const RefactoryData = () => {
         const result = usuariO_FUNCIONARIO_PERFIL.map((element) => {
             return { label: element.dS_PERFIL, value: element };
