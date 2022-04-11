@@ -1,17 +1,17 @@
 import React, { memo, useEffect } from 'react';
-import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, FlatList, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
 import moment from 'moment';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import {
-    useSinaisVitaisHistory,
     ISinaisVitais,
     _useSinaisVitaisHistory,
 } from '../../hooks/useSinaisVitais';
 import { RootStackParamList } from '../../routes/routeDashboard';
 import { RouteProp } from '@react-navigation/native';
+import ActiveIndicator from '../../components/Loading/ActiveIndicator';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'EndSinaisVitais'>;
 interface Props {
@@ -23,14 +23,22 @@ const EndSinaisVitais: React.FC<Props> = ({
         params: { Paciente },
     },
 }: Props) => {
-
     const {
         data: historySinalVitais,
         isFetching,
         refetch,
         isLoading,
         remove,
-    } = useSinaisVitaisHistory(Paciente);
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = _useSinaisVitaisHistory(Paciente);
+
+    const loadMore = () => {
+        if (hasNextPage) {
+            fetchNextPage();
+        }
+    };
 
     const Item = ({ item }: { item: ISinaisVitais; index: number }) => {
         return (
@@ -97,7 +105,7 @@ const EndSinaisVitais: React.FC<Props> = ({
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={item.nR_SEQUENCIA} item={item} index={index} />
+            <Item key={index} item={item} index={index} />
         </CardSimples>
     );
 
@@ -106,11 +114,17 @@ const EndSinaisVitais: React.FC<Props> = ({
             <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
         </CardSimples>
     );
+    
+    const renderFooter = () => {
+        return (
+            <ActiveIndicator active={isFetchingNextPage} />
+        );
+    };
 
     useEffect(() => {
         return () => {
             remove();
-          };
+        };
     }, []);
 
     return (
@@ -120,16 +134,19 @@ const EndSinaisVitais: React.FC<Props> = ({
             </Text>
             {!isLoading ? (
                 <FlatList
-                    data={historySinalVitais}
+                    data={historySinalVitais?.pages.map((page) => page).flat()}
                     renderItem={({ item, index }) =>
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={isFetching}
+                    /* refreshing={isFetching}
                     onRefresh={() => {
                         refetch;
-                    }}
+                    }} */
                     ListEmptyComponent={renderItemEmpty}
+                    ListFooterComponent={renderFooter}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={0.5}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
@@ -185,6 +202,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         margin: 3,
     },
+    
 });
 
 export default memo(EndSinaisVitais);

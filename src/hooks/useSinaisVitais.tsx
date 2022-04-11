@@ -125,7 +125,7 @@ const useSinaisVitaisAll = () => {
 const useSinaisVitaisHistory = (paciente: string) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
-        ['SinaisVitaisHistory', paciente ],
+        ['SinaisVitaisHistory', paciente],
         async () => {
             const {
                 data: { result },
@@ -152,14 +152,26 @@ const useSinaisVitaisHistory = (paciente: string) => {
 };
 
 const _useSinaisVitaisHistory = (paciente: string) => {
-    return useInfiniteQuery('SinaisVitaisHistory', async ({ pageParam = 1 }) => {
-        const {
-            data: { result },
-        } = await Api.get<ResponsePFdados>(
-            `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=${pageParam}&rows=5`,
-        );
-        return result;
-    })
-}
+    return useInfiniteQuery(
+        'SinaisVitaisHistory',
+        async ({ pageParam = 1 }) => {
+            const {
+                data: { result },
+            } = await Api.get<ResponsePFdados>(
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=${pageParam}&rows=10`,
+            );
+            return result;
+        },
+        {
+            getNextPageParam: (lastPage, pages) => {
+                if(lastPage?.length < 10){
+                    return null;
+                }else{
+                    return pages.length + 1
+                }
+            },
+        },
+    );
+};
 
 export { useSinaisVitaisAll, useSinaisVitaisHistory, _useSinaisVitaisHistory };
