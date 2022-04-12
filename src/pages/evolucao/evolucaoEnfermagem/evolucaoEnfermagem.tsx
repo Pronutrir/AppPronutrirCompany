@@ -63,6 +63,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     const [defaultText, setDefaultText] = useState<string | null>(null);
 
     const getTextDefault = (value: string | null) => {
+        console.log(value);
         return useQuery(
             ['defaultTextHtml', value],
             async () => {
@@ -71,6 +72,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 } = await Api.get<ITextDefaultResponse>(
                     `TextoPadrao/ListarTextosPadroesInstituicao?titulo=${value}`,
                 );
+                console.log(result[1])
                 return result[0];
             },
             { enabled: defaultText != null },
@@ -80,12 +82,13 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     const { data: resultTextDefault, isFetching } = getTextDefault(defaultText);
 
     const addEvoluçaoEnfermagem = useMutation((item: IEvolucao) => {
-        console.log(item);
-        return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item).then(response =>{
-            console.log(response);
-        }).catch(erro => {
-            console.log(erro);
-        });
+        return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((erro) => {
+                console.log(erro);
+            });
     });
 
     const setTipoEvolucao = (item: string) => {
@@ -96,8 +99,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 iE_SITUACAO: 'A',
                 nM_USUARIO: 'wcorreia',
                 cD_PESSOA_FISICA: PessoaFisica.cD_PESSOA_FISICA,
-                dT_ATUALIZACAO: moment().format(),
-                dT_EVOLUCAO: moment().format('YYYY-MM-DD'),
+                dT_ATUALIZACAO: moment().format('YYYY-MM-DD HH:mm:ss'),
+                dT_EVOLUCAO: moment().format('YYYY-MM-DD HH:mm:ss'),
             });
         }
     };
@@ -129,9 +132,10 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 <RichComponent
                     shimerPlaceHolder={isFetching}
                     initialContentHTML={resultTextDefault?.dS_TEXTO}
-                    onChanger={(item) =>
-                        setEvolucao({ ...evolucao, dS_EVOLUCAO: item })
-                    }
+                    onChanger={(item) => {
+                        const textHtml = `<html tasy="html5"><body>${item}</body></html>`;
+                        setEvolucao({ ...evolucao, dS_EVOLUCAO: textHtml });
+                    }}
                 />
             </View>
             {evolucao?.dS_EVOLUCAO && evolucao.iE_TIPO_EVOLUCAO && (

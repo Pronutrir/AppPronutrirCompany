@@ -15,6 +15,7 @@ import EscalaDorComponent from '../components/escalaDorComponent/escalaDorCompon
 import ToggleSwitch from '../../../components/Switch/ToggleSwitch';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
+import BtnRadius from '../../../components/buttons/BtnRadius';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -164,14 +165,31 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
-            <ModalAlertPaciente
-                styleContainerImg={styles.modalAlert}
-                codPacient={
-                    SinaisVitais?.cD_PACIENTE
-                        ? SinaisVitais?.cD_PACIENTE
-                        : PessoaFisica?.cD_PESSOA_FISICA
-                }
-            />
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}>
+                <BtnRadius
+                    containerStyles={{
+                        backgroundColor: 'white',
+                    }}
+                    size={3}
+                    onPress={() => {navigation.navigate('EndSinaisVitais', {
+                        Paciente: SinaisVitais?.nM_PESSOA_FISICA
+                        ? SinaisVitais?.nM_PESSOA_FISICA
+                        : PessoaFisica?.nM_PESSOA_FISICA,
+                        Tipo: 'day'
+                    })}}
+                />
+                <ModalAlertPaciente
+                    codPacient={
+                        SinaisVitais?.cD_PACIENTE
+                            ? SinaisVitais?.cD_PACIENTE
+                            : PessoaFisica?.cD_PESSOA_FISICA
+                    }
+                />
+            </View>
             <ScrollView style={styles.box}>
                 <View style={styles.item1}>
                     <View style={styles.boxLabel}>

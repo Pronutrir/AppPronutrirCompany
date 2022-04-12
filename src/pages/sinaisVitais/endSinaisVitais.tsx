@@ -1,5 +1,5 @@
-import React, { memo, useEffect } from 'react';
-import { View, FlatList, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
@@ -12,21 +12,28 @@ import {
 import { RootStackParamList } from '../../routes/routeDashboard';
 import { RouteProp } from '@react-navigation/native';
 import ActiveIndicator from '../../components/Loading/ActiveIndicator';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
+import Checkbox from '../../components/checkbox/checkbox';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'EndSinaisVitais'>;
 interface Props {
     route: ProfileScreenRouteProp;
 }
 
+type IFilter = 'day' | 'all';
+
 const EndSinaisVitais: React.FC<Props> = ({
     route: {
-        params: { Paciente },
+        params: { Paciente, Tipo },
     },
 }: Props) => {
+    const styles = useThemeAwareObject(createStyles);
+
+    const [checkboxFilter, setCheckboxFilter] = useState<IFilter>(Tipo === 'day' ? Tipo : 'all');
+
     const {
         data: historySinalVitais,
-        isFetching,
-        refetch,
         isLoading,
         remove,
         hasNextPage,
@@ -35,7 +42,7 @@ const EndSinaisVitais: React.FC<Props> = ({
     } = _useSinaisVitaisHistory(Paciente);
 
     const loadMore = () => {
-        if (hasNextPage) {
+        if (hasNextPage && checkboxFilter === 'all') {
             fetchNextPage();
         }
     };
@@ -114,11 +121,23 @@ const EndSinaisVitais: React.FC<Props> = ({
             <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
         </CardSimples>
     );
-    
+
     const renderFooter = () => {
-        return (
-            <ActiveIndicator active={isFetchingNextPage} />
-        );
+        return <ActiveIndicator active={isFetchingNextPage} />;
+    };
+
+    const historySinaisVitaisFilter = (
+        value: IFilter,
+    ): ISinaisVitais[] | undefined => {
+        let result = historySinalVitais?.pages.map((page) => page).flat();
+        if (value === 'day') {
+            result = result?.filter(
+                ({ dT_SINAL_VITAL }) =>
+                    moment(dT_SINAL_VITAL).format('YYYY-MM-DD') ===
+                    moment().format('YYYY-MM-DD'),
+            );
+        }
+        return result;
     };
 
     useEffect(() => {
@@ -133,21 +152,35 @@ const EndSinaisVitais: React.FC<Props> = ({
                 Ultimos sinais vitais adicionados!
             </Text>
             {!isLoading ? (
-                <FlatList
-                    data={historySinalVitais?.pages.map((page) => page).flat()}
-                    renderItem={({ item, index }) =>
-                        renderItem({ item, index })
-                    }
-                    keyExtractor={(item, index) => index.toString()}
-                    /* refreshing={isFetching}
+                <>
+                    <View style={styles.BoxCheckbox}>
+                        <Checkbox
+                            isChecked={checkboxFilter === 'day' ? true : false}
+                            text="Diário"
+                            onPress={()=> setCheckboxFilter('day')}
+                        />
+                        <Checkbox
+                            isChecked={checkboxFilter === 'all' ? true : false}
+                            text="Todos"
+                            onPress={()=> setCheckboxFilter('all')}
+                        />
+                    </View>
+                    <FlatList
+                        data={historySinaisVitaisFilter(checkboxFilter)}
+                        renderItem={({ item, index }) =>
+                            renderItem({ item, index })
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                        /* refreshing={isFetching}
                     onRefresh={() => {
                         refetch;
                     }} */
-                    ListEmptyComponent={renderItemEmpty}
-                    ListFooterComponent={renderFooter}
-                    onEndReached={loadMore}
-                    onEndReachedThreshold={0.5}
-                />
+                        ListEmptyComponent={renderItemEmpty}
+                        ListFooterComponent={renderFooter}
+                        onEndReached={loadMore}
+                        onEndReachedThreshold={0.5}
+                    />
+                </>
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
@@ -155,54 +188,64 @@ const EndSinaisVitais: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: Dimensions.get('screen').width,
-        paddingVertical: 10,
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    cardStyle: {
-        flex: 1,
-    },
-    titleLabel: {
-        alignSelf: 'flex-start',
-        paddingLeft: 10,
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    box1: {
-        flex: 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 3,
-    },
-    box2: {
-        flex: 5,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        margin: 3,
-    },
-    
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            width: Dimensions.get('screen').width,
+            paddingVertical: 10,
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_1,
+        },
+        cardStyle: {
+            flex: 1,
+            padding: RFPercentage(1)
+        },
+        titleLabel: {
+            alignSelf: 'flex-start',
+            paddingLeft: 10,
+        },
+        textLabel: {
+            color: '#1E707D',
+            fontSize: RFValue(16, 680),
+            fontWeight: 'bold',
+        },
+        text: {
+            color: '#666666',
+            fontSize: RFValue(16, 680),
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 3,
+        },
+        box2: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            margin: 3,
+        },
+        BoxCheckbox: {
+            flexDirection: 'row',
+            margin: 10,
+        },
+        Checkbox: {
+            marginHorizontal: 10,
+        },
+    });
+    return styles;
+};
 
 export default memo(EndSinaisVitais);

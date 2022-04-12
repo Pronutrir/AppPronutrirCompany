@@ -63,6 +63,7 @@ export type RootStackParamList = {
     SearchPessoaFisica: undefined;
     EndSinaisVitais: {
         Paciente: string;
+        Tipo: string;
     };
 };
 
