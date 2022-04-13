@@ -3,11 +3,11 @@ import { Alert } from 'react-native';
 
 const api = axios.create({
     //producao
-    //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
+    baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
     //teste
     //baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
     //ngrok
-    baseURL: 'https://806a-177-22-36-198.ngrok.io/api/v1/',
+    //baseURL: 'https://806a-177-22-36-198.ngrok.io/api/v1/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
