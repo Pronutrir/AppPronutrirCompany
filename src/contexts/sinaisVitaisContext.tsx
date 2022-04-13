@@ -376,7 +376,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         nR_SEQUENCIA: string,
     ): Promise<ISinaisVitais | null | undefined> => {
         return Api.get<any, AxiosResponse<ResponseSVMG>>(
-            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMG/${nR_SEQUENCIA}`,
+            `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGGeral/${nR_SEQUENCIA}`,
         )
             .then((response) => {
                 const { result } = response.data;
