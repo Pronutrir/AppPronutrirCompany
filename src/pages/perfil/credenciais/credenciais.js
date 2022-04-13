@@ -36,7 +36,12 @@ export default function credenciais() {
                 <Pressable onPress={Keyboard.dismiss}>
                     <Formik
                         initialValues={{
-                            CPF: cpfMask(usertasy.nR_CPF),
+                            CPF: usertasy
+                                ? `*** . *** . ${usertasy.nR_CPF.substring(
+                                      6,
+                                      9,
+                                  )}-${usertasy.nR_CPF.substring(9, 11)}`
+                                : null,
                         }}
                         onSubmit={values => {
                             atualizarPerfil(values);

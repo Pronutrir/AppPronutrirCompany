@@ -51,28 +51,23 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         params: { PessoaFisica },
     },
 }: Props) => {
-    const {
-        stateAuth: { usertasy },
-    } = useContext(AuthContext);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
 
     const [evolucao, setEvolucao] = useState<IEvolucao | null>();
 
-    const [defaultText, setDefaultText] = useState<string | null>(null);
+    const [defaultText, setDefaultText] = useState<number | null>(null);
 
-    const getTextDefault = (value: string | null) => {
-        console.log(value);
+    const getTextDefault = (value: number | null) => {
         return useQuery(
             ['defaultTextHtml', value],
             async () => {
                 const {
                     data: { result },
                 } = await Api.get<ITextDefaultResponse>(
-                    `TextoPadrao/ListarTextosPadroesInstituicao?titulo=${value}`,
+                    `TextoPadrao/ListarTextosPadroesInstituicao?nrSequencia=${value}`,
                 );
-                console.log(result[1])
                 return result[0];
             },
             { enabled: defaultText != null },
@@ -125,7 +120,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                             setTipoEvolucao(item.cD_TIPO_EVOLUCAO)
                         }
                         onPressTextPadrao={(item) =>
-                            setDefaultText(item.dS_TITULO)
+                            setDefaultText(item.nR_SEQUENCIA)
                         }
                     />
                 </View>

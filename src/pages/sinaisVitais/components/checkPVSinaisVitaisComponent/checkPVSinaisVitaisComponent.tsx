@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 interface Props {
-    Item?: string;
+    Item?: number;
 }
 
 const CheckPVSinaisVitaisComponent: React.FC<Props> = ({ Item }: Props) => {
-    if (Item === 'C1') {
+    if (Item === 0) {
         return (
             <View style={styles.container}>
                 <View style={styles.options1}>

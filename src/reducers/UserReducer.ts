@@ -21,7 +21,7 @@ export const initialState: LoginState = {
         usuariO_FUNCIONARIO_SETOR: [],
         usuariO_FUNCIONARIO_PERFIL: [],
     },
-    PerfilSelected: null,
+    PerfilSelected: undefined,
 };
 
 export interface UsuarioFirebase {
@@ -32,7 +32,7 @@ export interface UsuarioFirebase {
 export interface LoginState {
     Usuario: UsuarioFirebase;
     usertasy: UserTasy;
-    PerfilSelected: IPerfis | null;
+    PerfilSelected: IPerfis | undefined | null;
 }
 
 export interface UserTasy {
@@ -90,7 +90,7 @@ export type LoginAction =
               | 'setImgPerfil';
           payload: string;
       }
-    | { type: 'setPerfilApp'; payload: IPerfis }
+    | { type: 'setPerfilApp'; payload: IPerfis | null | undefined }
     | { type: 'setUserTasy'; payload: UserTasy }
     | { type: 'setUser'; payload: UsuarioFirebase };
 
@@ -101,7 +101,6 @@ export const UserReducer = (
     switch (action.type) {
         case 'setUser':
             return { ...state, Usuario: action.payload };
-
         case 'delUser':
             return {
                 Usuario: {
@@ -126,9 +125,8 @@ export const UserReducer = (
                     usuariO_FUNCIONARIO_SETOR: [],
                     usuariO_FUNCIONARIO_PERFIL: [],
                 },
-                PerfilSelected: null,
+                PerfilSelected: undefined,
             };
-
         case 'setUserTasy':
             return {
                 ...state,
@@ -140,13 +138,11 @@ export const UserReducer = (
                         action.payload.usuariO_FUNCIONARIO_SETOR ?? [],
                 },
             };
-
         case 'UpdateUserTasyCPF':
             return {
                 ...state,
                 usertasy: { ...state.usertasy, nR_CPF: action.payload },
             };
-
         case 'UpdateUserTasyNome':
             return {
                 ...state,
@@ -161,13 +157,11 @@ export const UserReducer = (
                 ...state,
                 usertasy: { ...state.usertasy, dT_NASCIMENTO: action.payload },
             };
-
         case 'UpdateUserTasyDDD':
             return {
                 ...state,
                 usertasy: { ...state.usertasy, nR_DDD_CELULAR: action.payload },
             };
-
         case 'UpdateUserTasyFone':
             return {
                 ...state,
@@ -176,19 +170,16 @@ export const UserReducer = (
                     nR_TELEFONE_CELULAR: action.payload,
                 },
             };
-
         case 'UpdateUserTasyEmail':
             return {
                 ...state,
                 usertasy: { ...state.usertasy, dS_EMAIL: action.payload },
             };
-
         case 'UpdateSenha':
             return {
                 ...state,
                 usertasy: { ...state.usertasy, nR_Senha: action.payload },
             };
-
         case 'setImgPerfil':
             return {
                 ...state,

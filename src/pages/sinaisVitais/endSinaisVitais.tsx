@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
@@ -15,6 +15,7 @@ import ActiveIndicator from '../../components/Loading/ActiveIndicator';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import Checkbox from '../../components/checkbox/checkbox';
+import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'EndSinaisVitais'>;
 interface Props {
@@ -30,7 +31,11 @@ const EndSinaisVitais: React.FC<Props> = ({
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
-    const [checkboxFilter, setCheckboxFilter] = useState<IFilter>(Tipo === 'day' ? Tipo : 'all');
+    const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
+
+    const [checkboxFilter, setCheckboxFilter] = useState<IFilter>(
+        ValidationAutorizeEnfermagem() ? 'day' : 'all',
+    );
 
     const {
         data: historySinalVitais,
@@ -44,6 +49,73 @@ const EndSinaisVitais: React.FC<Props> = ({
     const loadMore = () => {
         if (hasNextPage && checkboxFilter === 'all') {
             fetchNextPage();
+        }
+    };
+
+    const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
+        if (ValidationAutorizeEnfermagem()) {
+            return (
+                <>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Pressão arterial sistólica:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_PA_SISTOLICA}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Pressão arterial diastólica:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_PA_DIASTOLICA}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Pressão arterial média :{' '}
+                            </Text>
+                            <Text style={styles.text}>{item.qT_PAM}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Frequência cardíaca:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_FREQ_CARDIACA}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Frequência respiratória:{' '}
+                            </Text>
+                            <Text style={styles.text}>{item.qT_FREQ_RESP}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.item}>
+                        <View style={styles.SubItem}>
+                            <Text style={styles.textLabel}>
+                                Escala de dor:{' '}
+                            </Text>
+                            <Text style={styles.text}>
+                                {item.qT_ESCALA_DOR}
+                            </Text>
+                        </View>
+                    </View>
+                </>
+            );
+        } else {
+            return null;
         }
     };
 
@@ -99,6 +171,7 @@ const EndSinaisVitais: React.FC<Props> = ({
                             }`}</Text>
                         </View>
                     </View>
+                    <ComplementoEnfermagem item={item} />
                 </View>
             </View>
         );
@@ -157,12 +230,12 @@ const EndSinaisVitais: React.FC<Props> = ({
                         <Checkbox
                             isChecked={checkboxFilter === 'day' ? true : false}
                             text="Diário"
-                            onPress={()=> setCheckboxFilter('day')}
+                            onPress={() => setCheckboxFilter('day')}
                         />
                         <Checkbox
                             isChecked={checkboxFilter === 'all' ? true : false}
                             text="Todos"
-                            onPress={()=> setCheckboxFilter('all')}
+                            onPress={() => setCheckboxFilter('all')}
                         />
                     </View>
                     <FlatList
@@ -199,7 +272,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         cardStyle: {
             flex: 1,
-            padding: RFPercentage(1)
+            padding: RFPercentage(1),
         },
         titleLabel: {
             alignSelf: 'flex-start',
@@ -218,6 +291,7 @@ const createStyles = (theme: ThemeContextData) => {
             flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
+            marginVertical: RFPercentage(0.5),
         },
         SubItem: {
             flex: 1,
@@ -227,8 +301,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
         box1: {
             flex: 0.5,
-            justifyContent: 'center',
-            alignItems: 'center',
             margin: 3,
         },
         box2: {

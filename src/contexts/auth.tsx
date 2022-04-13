@@ -110,6 +110,17 @@ export const AuthProvider: React.FC = ({ children }) => {
         }
     };
 
+    const getPerfilUser = async (cD_PESSOA_FISICA: string) => {
+        const result = await getPerfil();
+            if (
+                result?.cD_PESSOA_FISICA === cD_PESSOA_FISICA
+            ) {
+                dispatchAuth({ type: 'setPerfilApp', payload: result });
+            }else{
+                dispatchAuth({ type: 'setPerfilApp', payload: null });
+            }
+    }
+
     // metodo principal de validacão de acesso!
     const singIn = useCallback(async (user: any) => {
         setTimeout(async () => {
@@ -132,6 +143,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                             getFireStone?.cpf,
                         );
                         if (result) {
+
                             //informa que há usuário logado
                             setUsuario({ email, uid });
                             setLoading(false);
@@ -139,6 +151,9 @@ export const AuthProvider: React.FC = ({ children }) => {
                                 type: 'setUserTasy',
                                 payload: result,
                             });
+
+                            //verificar perfil usuário cache
+                            await getPerfilUser(result.cD_PESSOA_FISICA);
                         }
                         //registra o dispositivo no onesignal inclui um id externo para notificações!
                         OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
@@ -213,17 +228,6 @@ export const AuthProvider: React.FC = ({ children }) => {
             }
         })();
     }, [singIn]);
-
-    useEffect(() => {
-        (async () => {
-            const result = await getPerfil();
-            if (
-                result?.cD_PESSOA_FISICA === stateAuth?.usertasy?.cD_PESSOA_FISICA
-            ) {
-                dispatchAuth({ type: 'setPerfilApp', payload: result });
-            }
-        })();
-    }, [stateAuth.usertasy]);
 
     return (
         <AuthContext.Provider
