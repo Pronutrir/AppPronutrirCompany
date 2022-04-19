@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
@@ -10,10 +10,14 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
 import RichComponent from '../components/richComponent/richComponent';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
-import { useQuery, QueryCache, useMutation } from 'react-query';
-import Api from '../../../services/api';
-import AuthContext from '../../../contexts/auth';
+import { QueryCache } from 'react-query';
+import {
+    useEvolucaoTextDefault,
+    useAddEvoluçaoEnfermagem,
+    IEvolucao,
+} from '../../../hooks/useEvolucao';
 import moment from 'moment';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -22,35 +26,13 @@ type ProfileScreenRouteProp = RouteProp<
 interface Props {
     route: ProfileScreenRouteProp;
 }
-interface ITextDefault {
-    nR_SEQUENCIA: number;
-    nR_SEQ_ITEM_PRONT: number;
-    dS_TITULO: string;
-    nM_USUARIO: string;
-    dT_ATUALIZACAO: string;
-    iE_PERMITE_ALTERAR_TEXTO: string;
-    dS_TEXTO: string;
-    dT_ATUALIZACAO_NREC: string;
-    nM_USUARIO_NREC: string;
-}
-interface ITextDefaultResponse {
-    result: ITextDefault[];
-}
-interface IEvolucao {
-    dT_EVOLUCAO?: string;
-    iE_TIPO_EVOLUCAO?: number;
-    iE_SITUACAO?: string;
-    dT_ATUALIZACAO?: string;
-    nM_USUARIO?: string;
-    cD_PESSOA_FISICA?: string;
-    dS_EVOLUCAO?: string;
-}
 
 const EvolucaoEnfermagem: React.FC<Props> = ({
     route: {
         params: { PessoaFisica },
     },
 }: Props) => {
+    const refModal = useRef<LoadHandles>(null);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
@@ -59,32 +41,10 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const [defaultText, setDefaultText] = useState<number | null>(null);
 
-    const getTextDefault = (value: number | null) => {
-        return useQuery(
-            ['defaultTextHtml', value],
-            async () => {
-                const {
-                    data: { result },
-                } = await Api.get<ITextDefaultResponse>(
-                    `TextoPadrao/ListarTextosPadroesInstituicao?nrSequencia=${value}`,
-                );
-                return result[0];
-            },
-            { enabled: defaultText != null },
-        );
-    };
-
-    const { data: resultTextDefault, isFetching } = getTextDefault(defaultText);
-
-    const addEvoluçaoEnfermagem = useMutation((item: IEvolucao) => {
-        return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item)
-            .then((response) => {
-                console.log(response);
-            })
-            .catch((erro) => {
-                console.log(erro);
-            });
-    });
+    const { data: resultTextDefault, isFetching } =
+        useEvolucaoTextDefault(defaultText);
+    const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
+        useAddEvoluçaoEnfermagem();
 
     const setTipoEvolucao = (item: string) => {
         if (item) {
@@ -100,9 +60,11 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         }
     };
 
-    /* const setTextEvolucao = () => {
-
-    } */
+    const addEvolucaoEnfermagem = async (evolucao: IEvolucao) => {
+        refModal.current?.openModal()
+        await mutateAsyncEvoluçaoEnfermagem(evolucao);
+        refModal.current?.closeModal()
+    };
 
     useEffect(() => {
         return () => {
@@ -136,9 +98,10 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
             {evolucao?.dS_EVOLUCAO && evolucao.iE_TIPO_EVOLUCAO && (
                 <BtnOptions
                     valueText={'Enviar'}
-                    onPress={() => addEvoluçaoEnfermagem.mutate(evolucao)}
+                    onPress={() => addEvolucaoEnfermagem(evolucao)}
                 />
             )}
+            <Loading ref={refModal} />
         </SafeAreaView>
     );
 };
