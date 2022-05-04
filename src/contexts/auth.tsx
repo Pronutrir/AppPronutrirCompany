@@ -5,7 +5,6 @@ import React, {
     useReducer,
     useCallback,
 } from 'react';
-import { credenciais_Mobile } from '../credenciais';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Api from '../services/api';
@@ -19,6 +18,8 @@ import {
 import OneSignal from 'react-native-onesignal';
 import { useQuery, UseQueryResult } from 'react-query';
 import { getPerfil } from '../utils';
+import ApiAuth from '../services/apiAuth';
+import { Alert } from 'react-native';
 interface AuthContextData {
     signed: boolean;
     stateAuth: LoginState;
@@ -59,6 +60,19 @@ export interface IPerfisLiberados {
     dS_PERFIL: string;
 }
 
+interface TokenResponse {
+    id: number;
+    username: string;
+    dataRegistro: string;
+    dataAtualizacao: string;
+    dataHoraValidado: string;
+    dataExpira: string;
+    ativo: true;
+    jwtToken: string;
+    integraApi: boolean;
+    refreshToken: string;
+}
+
 const AuthContext = createContext({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
@@ -68,15 +82,31 @@ export const AuthProvider: React.FC = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     //consulta e retorna o token para acesso a api tasy
-    const GetAuth = async () => {
-        return Api.post('Auth/login', credenciais_Mobile)
-            .then((response) => {
-                const { token } = response.data;
-                //console.log(token);
-                Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-                return token;
-            })
-    };
+    const GetAuth = useCallback(() => {
+        return ApiAuth.get<TokenResponse>('auth', {
+            headers: {
+                Authorization:
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21lIjoibWFyY2VsbyIsImVtYWlsIjoidGVzdGVAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTY1MDY0OTczMH0.LokzG25HtlSESSpLl6FTsbZ71NhcmDAyNfJCn8mjt60',
+            },
+        }).then((response) => {
+            const { jwtToken } = response.data;
+            Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
+            return jwtToken;
+        }).catch(error => {
+            Alert.alert(
+                "Alert Title",
+                error,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ]
+              );
+        });
+    }, []);
 
     //consulta e retorna o usuário da api tasy
     const ConsultaCpfTasy = async (cpf: string) => {
@@ -112,14 +142,12 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     const getPerfilUser = async (cD_PESSOA_FISICA: string) => {
         const result = await getPerfil();
-            if (
-                result?.cD_PESSOA_FISICA === cD_PESSOA_FISICA
-            ) {
-                dispatchAuth({ type: 'setPerfilApp', payload: result });
-            }else{
-                dispatchAuth({ type: 'setPerfilApp', payload: null });
-            }
-    }
+        if (result?.cD_PESSOA_FISICA === cD_PESSOA_FISICA) {
+            dispatchAuth({ type: 'setPerfilApp', payload: result });
+        } else {
+            dispatchAuth({ type: 'setPerfilApp', payload: null });
+        }
+    };
 
     // metodo principal de validacão de acesso!
     const singIn = useCallback(async (user: any) => {
@@ -143,7 +171,6 @@ export const AuthProvider: React.FC = ({ children }) => {
                             getFireStone?.cpf,
                         );
                         if (result) {
-
                             //informa que há usuário logado
                             setUsuario({ email, uid });
                             setLoading(false);
@@ -206,13 +233,9 @@ export const AuthProvider: React.FC = ({ children }) => {
     );
 
     const ValidationAutorizeEvolucao = useCallback(() => {
-        const result = PerfisEvolucao?.some(
-            (element: IPerfisLiberados) => {
-                return (
-                    element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL
-                );
-            },
-        );
+        const result = PerfisEvolucao?.some((element: IPerfisLiberados) => {
+            return element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL;
+        });
         if (result) {
             return result;
         } else {

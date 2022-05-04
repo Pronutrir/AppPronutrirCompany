@@ -43,7 +43,7 @@ const DashBoard: React.FC = () => {
                     />
                      <BtnDashboardComponent 
                         disabled={!ValidationAutorizeEvolucao()}
-                        onpress={() => navigation.navigate('SearchPessoaFisica')}
+                        onpress={() => navigation.navigate('HistoryEvolucao')}
                         ImgSVG={ConsultaMarcadasImg}
                         label={'Evolução'}
                     />

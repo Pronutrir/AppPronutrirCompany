@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
 import { View } from 'react-native-animatable';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
 import RichComponent from '../components/richComponent/richComponent';
@@ -18,6 +18,7 @@ import {
 } from '../../../hooks/useEvolucao';
 import moment from 'moment';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
+import AuthContext from '../../../contexts/auth';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -32,6 +33,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         params: { PessoaFisica },
     },
 }: Props) => {
+    const { stateAuth: { usertasy: { usuariO_FUNCIONARIO_SETOR, cD_PESSOA_FISICA }  } } = useContext(AuthContext);
+    const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
     const styles = useThemeAwareObject(createStyles);
 
@@ -52,7 +55,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 ...evolucao,
                 iE_TIPO_EVOLUCAO: 1,
                 iE_SITUACAO: 'A',
-                nM_USUARIO: 'wcorreia',
+                nM_USUARIO: usuariO_FUNCIONARIO_SETOR[0].nM_USUARIO,
+                cD_MEDICO: cD_PESSOA_FISICA,
                 cD_PESSOA_FISICA: PessoaFisica.cD_PESSOA_FISICA,
                 dT_ATUALIZACAO: moment().format('YYYY-MM-DD HH:mm:ss'),
                 dT_EVOLUCAO: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -61,9 +65,10 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     };
 
     const addEvolucaoEnfermagem = async (evolucao: IEvolucao) => {
-        refModal.current?.openModal()
+        refModal.current?.openModal();
         await mutateAsyncEvoluçaoEnfermagem(evolucao);
-        refModal.current?.closeModal()
+        refModal.current?.closeModal();
+        navigation.reset({ index: 0, routes: [{ name: 'RouteBottom' }, { name: 'SearchPessoaFisica' }] })
     };
 
     useEffect(() => {

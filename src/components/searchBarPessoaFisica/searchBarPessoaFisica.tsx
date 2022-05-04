@@ -12,7 +12,6 @@ import SearchBar from 'react-native-dynamic-search-bar';
 import styles from './style';
 import CardConsultasGerais from '../Cards/cardConsultasGerais';
 import { useNavigation } from '@react-navigation/native';
-
 export interface IParamConsulta {
     query: string | null | undefined;
     isLoading: boolean;
@@ -24,7 +23,6 @@ export interface IParamConsulta {
     continue: boolean;
     showRequest: boolean;
 }
-
 interface Ifilter {
     filter: string;
     placeHolder: string;
@@ -38,13 +36,18 @@ const filterDefault = [
     },
 ];
 
-const SinaisVitaisGerais: React.FC = () => {
+interface Props {
+    reset?: boolean;
+}
+
+const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }:Props) => {
     const navigation = useNavigation();
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
     const refModalBotom = useRef<ModalHandles>(null);
     const [filterSelected, setFilterSelected] = useState<Ifilter>(
         filterDefault[0],
     );
+
     const [state, setState] = useState<IParamConsulta>({
         query: '',
         isLoading: true,
@@ -59,7 +62,6 @@ const SinaisVitaisGerais: React.FC = () => {
 
     const Search = async (filter: IFilterPF) => {
         const query = filter.queryDate ? filter.queryDate : filter.queryNome;
-
         setState((prevState) => {
             return {
                 ...prevState,
@@ -171,6 +173,12 @@ const SinaisVitaisGerais: React.FC = () => {
     useEffect(() => {
         setFilterSelected(filterDefault[0]);
     }, []);
+
+    useEffect(() => {
+        if(reset){
+            Onclean();
+        }
+    },[reset])
 
     return (
         <View style={styles.container}>
