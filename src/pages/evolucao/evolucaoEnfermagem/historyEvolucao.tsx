@@ -1,11 +1,15 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import React, { useContext } from 'react';
-import { useHistoryEvolucao, IEvolucaoHistory } from '../../../hooks/useEvolucao';
+import {
+    useHistoryEvolucao,
+    IEvolucaoHistory,
+} from '../../../hooks/useEvolucao';
 import AuthContext from '../../../contexts/auth';
 import CardSimples from '../../../components/Cards/CardSimples';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
 import moment from 'moment';
+import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 
 const HistoryEvolucao: React.FC = () => {
     const {
@@ -57,32 +61,38 @@ const HistoryEvolucao: React.FC = () => {
     );
 
     return (
-        <FlatList
-            data={data}
-            renderItem={({ item, index }) => renderItem({ item, index })}
-            keyExtractor={(item, index) => index.toString()}
-            /* refreshing={isFetching}
+        <View style={styles.container}>
+            {data ? (
+                <FlatList
+                    data={data}
+                    renderItem={({ item, index }) =>
+                        renderItem({ item, index })
+                    }
+                    keyExtractor={(item, index) => index.toString()}
+                    /* refreshing={isFetching}
                     onRefresh={() => {
                         refetch;
                     }} */
-            //ListEmptyComponent={renderItemEmpty}
-            //ListFooterComponent={renderFooter}
-            //onEndReached={loadMore}
-            onEndReachedThreshold={0.5}
-        />
+                    //ListEmptyComponent={renderItemEmpty}
+                    //ListFooterComponent={renderFooter}
+                    //onEndReached={loadMore}
+                    onEndReachedThreshold={0.5}
+                />
+            ) : (
+                Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
+            )}
+        </View>
     );
 };
 
 export default HistoryEvolucao;
 
 const styles = StyleSheet.create({
-    container:{
-
-    },
+    container: {flex: 1},
     box1: {
         flex: 0.5,
         margin: 3,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     box2: {
         flex: 5,

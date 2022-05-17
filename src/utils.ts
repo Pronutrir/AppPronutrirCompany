@@ -6,11 +6,29 @@ export async function getUser() {
     return user != null ? JSON.parse(user) : null;
 }
 
-export async function saveUser(useToken: any) {
+export async function saveRefreshToken(refreshToken: string) {
+    await AsyncStorage.setItem('@RefreshToken', JSON.stringify(refreshToken));
+}
+
+export async function getRefreshToken() {
+    const refreshtoken = await AsyncStorage.getItem('@RefreshToken');
+    return refreshtoken != null ? JSON.parse(refreshtoken) : null;
+}
+
+export async function mergeRefreshToken(refreshToken: string) {
+    if (AsyncStorage.mergeItem)
+        await AsyncStorage?.mergeItem('@RefreshToken', JSON.stringify(refreshToken));
+}
+
+export async function deleteRefreshToken() {
+    await AsyncStorage.removeItem('@RefreshToken');
+}
+
+export async function saveUser(useToken: string) {
     await AsyncStorage.setItem('@User', JSON.stringify(useToken));
 }
 
-export async function store(useToken: any) {
+export async function store(useToken: string) {
     return await AsyncStorage.setItem('@User', useToken);
 }
 
@@ -18,7 +36,7 @@ export async function deleteUser() {
     await AsyncStorage.removeItem('@User');
 }
 
-export async function mergeUser(useToken: any) {
+export async function mergeUser(useToken: string) {
     if (AsyncStorage.mergeItem)
         await AsyncStorage?.mergeItem('@User', JSON.stringify(useToken));
 }

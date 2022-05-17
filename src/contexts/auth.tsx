@@ -17,9 +17,8 @@ import {
 } from '../reducers/UserReducer';
 import OneSignal from 'react-native-onesignal';
 import { useQuery, UseQueryResult } from 'react-query';
-import { getPerfil } from '../utils';
+import { getPerfil, saveRefreshToken } from '../utils';
 import ApiAuth from '../services/apiAuth';
-import { Alert } from 'react-native';
 interface AuthContextData {
     signed: boolean;
     stateAuth: LoginState;
@@ -82,29 +81,14 @@ export const AuthProvider: React.FC = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     //consulta e retorna o token para acesso a api tasy
-    const GetAuth = useCallback(() => {
-        return ApiAuth.get<TokenResponse>('auth', {
-            headers: {
-                Authorization:
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21lIjoibWFyY2VsbyIsImVtYWlsIjoidGVzdGVAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTY1MDY0OTczMH0.LokzG25HtlSESSpLl6FTsbZ71NhcmDAyNfJCn8mjt60',
-            },
-        }).then((response) => {
-            const { jwtToken } = response.data;
+    const GetAuth = useCallback(async () => {
+        return ApiAuth.get<TokenResponse>('auth').then((response) => {
+            const { jwtToken, refreshToken } = response.data;
             Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
+            saveRefreshToken(refreshToken);
             return jwtToken;
-        }).catch(error => {
-            Alert.alert(
-                "Alert Title",
-                error,
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                  },
-                  { text: "OK", onPress: () => console.log("OK Pressed") }
-                ]
-              );
+        }).catch(() => {
+            console.log('Error token');
         });
     }, []);
 

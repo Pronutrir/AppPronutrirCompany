@@ -233,7 +233,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     filter?.dS_ESPECIALIDADE
                         ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
                         : ''
-                }&codEstabelecimento=7&rows=200`,
+                }&codEstabelecimento=7&rows=500&cacheKey=true&cacheName=sinaisVitais`,
                 {
                     cancelToken: axiosSourceConsultas.current.token,
                 },

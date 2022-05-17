@@ -1,13 +1,16 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
+import refreshToken from './refreshToken';
+
+const baseurl = 'https://6fc1-177-22-36-198.ngrok.io/api/v1/';
 
 const api = axios.create({
     //producao
     //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
     //teste
-    baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
+    //baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
     //ngrok
-    //baseURL: 'https://8c2e-177-22-36-198.ngrok.io/api/v1/',
+    baseURL: 'https://6fc1-177-22-36-198.ngrok.io/api/v1/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -32,7 +35,7 @@ axios.interceptors.response.use(
         }
     },
     async function (error) {
-        console.log(error)
+        console.log(error);
         try {
             if (axios.isCancel(error)) {
                 return Promise.reject(error);
@@ -141,28 +144,17 @@ axios.interceptors.response.use(
     },
 );
 
-api.interceptors.request.use(
-    async req => {
-        console.log(api.defaults.headers.common);
-        console.log(req);
-        return req;
-    }
-)
-
-/* axios.interceptors.request.use(async function (config) {
+api.interceptors.request.use(async (req) => {
     try {
-        console.log(config);
-
-        const httpMetric = perf().newHttpMetric(config.url, config.method);
-        config.metadata = { httpMetric };
-
-        // add any extra metric attributes, if required
-        // httpMetric.putAttribute('userId', '12345678');
-
-        await httpMetric.start();
-    } finally {
-        return config;
+        const tokenUpdated = await refreshToken(req.baseURL, req.headers['common']);
+        if(tokenUpdated){
+            req.headers.Authorization = `Bearer ${tokenUpdated}`;
+        }
+    } catch (error) {
+        console.log(error);
+    }finally{
+        return req;  
     }
-}); */
+});
 
 export default api;

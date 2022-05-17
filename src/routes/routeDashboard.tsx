@@ -24,6 +24,7 @@ import EvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/evolucaoEnf
 import SearchPessoaFisica from '../pages/evolucao/evolucaoEnfermagem/searchPessoaFisica';
 import EndSinaisVitais from '../pages/sinaisVitais/endSinaisVitais';
 import HistoryEvolucao from '../pages/evolucao/evolucaoEnfermagem/historyEvolucao';
+import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -66,7 +67,8 @@ export type RootStackParamList = {
         Paciente: string;
         Tipo: string;
     };
-    HistoryEvolucao: undefined
+    HistoryEvolucao: undefined;
+    IndexEvolucao: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -172,6 +174,11 @@ const InitialStackNavigator = () => {
                 name="HistoryEvolucao"
                 component={HistoryEvolucao}
                 options={{ title: 'Histórico evolução' }}
+            />
+            <Stack.Screen
+                name="IndexEvolucao"
+                component={IndexEvolucao}
+                options={{ title: 'Evolucão Enfermagem' }}
             />
         </Stack.Navigator>
     );
