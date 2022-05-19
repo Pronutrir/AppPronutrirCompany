@@ -15,13 +15,13 @@ const PessoaFisicaComponent = ({ PessoaFisica }:Props) => {
     return (
         <View>
             <View style={styles.boxLabel}>
-                <Text style={styles.label}>Nome: </Text>
+                <Text style={styles.textLabel}>Nome: </Text>
                 <Text style={styles.text}>
                     {PessoaFisica?.nM_PESSOA_FISICA}
                 </Text>
             </View>
             <View style={styles.boxLabel}>
-                <Text style={styles.label}>Nascimento: </Text>
+                <Text style={styles.textLabel}>Nascimento: </Text>
                 <Text style={styles.text}>
                     {moment(PessoaFisica?.dT_NASCIMENTO).format('DD-MM-YYYY')}
                 </Text>
@@ -47,15 +47,19 @@ const createStyles = (theme: ThemeContextData) => {
             flexWrap: 'wrap',
             marginTop: 10,
         },
-        label: {
-            color: '#1E707D',
-            fontSize: RFValue(16, 680),
-            fontWeight: 'bold',
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            textAlignVertical: 'center'
         },
         text: {
-            color: '#1E707D',
-            fontSize: RFValue(16, 680),
-            flexWrap: 'wrap',
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            textAlignVertical: 'center'
         },
     });
     return styles;

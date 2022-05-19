@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import SearchBarPessoaFisica from '../../../components/searchBarPessoaFisica/searchBarPessoaFisica';
 
@@ -8,8 +8,7 @@ const SearchPessoaFisica = () => {
         <SafeAreaView
             style={{
                 flex: 1,
-                paddingTop: RFPercentage(2),
-                backgroundColor: '#fff',
+                paddingTop: RFPercentage(0.5),
             }}>
             <SearchBarPessoaFisica/>
         </SafeAreaView>

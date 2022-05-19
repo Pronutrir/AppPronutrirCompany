@@ -14,11 +14,12 @@ import {
     ListRenderItem,
 } from 'react-native';
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
 import { HistorySinaisVitais } from './historySinaisVitais/historySinaisVitais';
 import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais';
 import SinaisVitaisGerais from './sinaisVItaisGerais/sinaisVitaisGerais';
-import styles from './style';
+import createStyles from './style';
 interface PagesSinaisVitais {
     Index: number;
     Name: string;
@@ -28,6 +29,9 @@ interface PagesSinaisVitais {
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
 const SinaisVitais: React.FC = () => {
+
+    const styles = useThemeAwareObject(createStyles);
+
     const {
         GetConsultasQT,
         stateConsultasQT: { consultasQT, flagQT },
@@ -121,30 +125,6 @@ const SinaisVitais: React.FC = () => {
             refView3.current?.setNativeProps({ style: styles.btnSelected });
         }
     }, []);
-
-    /* const onViewableItemsChangedMenu = React.useCallback(
-        (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
-            const { changed } = info;
-            const [viewableItem] = changed;
-            const { index } = viewableItem;
-            if (index) {
-                selected(index, 'scrollToIndexMenu');
-            }
-        },
-        [selected],
-    ); */
-
-    /* const onViewableItemsChanged = React.useCallback(
-        (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
-            const { changed } = info;
-            const [viewableItem] = changed;
-            const { index, isViewable } = viewableItem;
-            if (index) {
-                selected(index, 'scrollToIndexMenu');
-            }
-        },
-        [selected],
-    ); */
 
     const renderPagesItem: ListRenderItem<PagesSinaisVitais> = ({
         item: { Name },

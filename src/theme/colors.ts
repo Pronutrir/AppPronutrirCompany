@@ -4,7 +4,7 @@ const EMERALD = '#2ecc71';
 const ALIZARIN = '#e74c3c';
 
 const GREENPRIMARY= '#038C7F';
-const GREENLIGHT = '#88BFBF';
+const GREENLIGHT = '#20c4cb';
 const GREENDARK = '#038C8C';
 
 const BROWNPRIMARY = '#737373';
@@ -39,6 +39,9 @@ export interface IColor {
     DARKLIGHT: string;
     BLACK: string;
     WHITE: string;
+    BUTTON_PRIMARY: string;
+    BUTTON_SECUNDARY: string;
+    BUTTON_TERTIARY: string;
 }
 
 export interface IThemeColors {
@@ -53,12 +56,19 @@ const common = {
     ERROR: ALIZARIN,
 };
 
+const BntColor = {
+    BUTTON_PRIMARY: WHITE,
+    BUTTON_SECUNDARY: GREENLIGHT,
+    BUTTON_TERTIARY: "",
+}
+
 const light: IColor = {
     ...common,
+    ...BntColor,
     BACKGROUND_1: WHITE,
     BACKGROUND_2: BROWNLIGHT,
     BACKDROP: OPACITY,
-    TEXT_PRIMARY: GREENPRIMARY,
+    TEXT_PRIMARY: GREENDARK,
     TEXT_SECONDARY: BROWNPRIMARY,
     TEXT_TERTIARY: WHITE,
     FILL_ICONE: BROWNPRIMARY,
@@ -75,6 +85,7 @@ const light: IColor = {
 
 const dark: IColor = {
     ...common,
+    ...BntColor,
     BACKGROUND_1: WHITE,
     BACKGROUND_2: BROWNLIGHT,
     BACKDROP: OPACITY,

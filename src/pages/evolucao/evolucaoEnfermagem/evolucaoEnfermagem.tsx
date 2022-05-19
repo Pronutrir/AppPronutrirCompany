@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
@@ -33,7 +32,11 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         params: { PessoaFisica },
     },
 }: Props) => {
-    const { stateAuth: { usertasy: { usuariO_FUNCIONARIO_SETOR, cD_PESSOA_FISICA }  } } = useContext(AuthContext);
+    const {
+        stateAuth: {
+            usertasy: { usuariO_FUNCIONARIO_SETOR, cD_PESSOA_FISICA },
+        },
+    } = useContext(AuthContext);
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
     const styles = useThemeAwareObject(createStyles);
@@ -68,7 +71,10 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         refModal.current?.openModal();
         await mutateAsyncEvoluçaoEnfermagem(evolucao);
         refModal.current?.closeModal();
-        navigation.reset({ index: 0, routes: [{ name: 'RouteBottom' }, { name: 'SearchPessoaFisica' }] })
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'RouteBottom' }, { name: 'SearchPessoaFisica' }],
+        });
     };
 
     useEffect(() => {
@@ -78,8 +84,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     }, []);
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-            <View style={{ flex: 1, height: '100%' }}>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.box}>
                 <View style={styles.item1}>
                     <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
                     <SelectedNotaText
@@ -115,28 +121,17 @@ export default EvolucaoEnfermagem;
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: theme.colors.BACKGROUND_1,
+        container: { 
+            flex: 1, 
+            backgroundColor: theme.colors.BACKGROUND_1 
+        },
+        box: { 
+            flex: 1, 
+            height: '100%' 
         },
         item1: {
             padding: 10,
             alignItems: 'flex-start',
-        },
-        boxLabel: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            marginTop: 10,
-        },
-        label: {
-            color: '#1E707D',
-            fontSize: RFValue(16, 680),
-            fontWeight: 'bold',
-        },
-        text: {
-            color: '#1E707D',
-            fontSize: RFValue(16, 680),
-            flexWrap: 'wrap',
         },
     });
     return styles;

@@ -38,6 +38,7 @@ const SelectedNotaText: React.FC<Props> = ({
     onPressTipoNota,
     onPressTextPadrao,
 }: Props) => {
+    
     const { data: listTipoNota, isFetching } = useQuery(
         'tiposNotas',
         async () => {

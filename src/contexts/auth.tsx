@@ -87,8 +87,8 @@ export const AuthProvider: React.FC = ({ children }) => {
             Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
             saveRefreshToken(refreshToken);
             return jwtToken;
-        }).catch(() => {
-            console.log('Error token');
+        }).catch((error) => {
+            console.log('Error token', error);
         });
     }, []);
 

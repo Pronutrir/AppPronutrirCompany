@@ -86,6 +86,7 @@ export default function consultaCpf({ navigation }) {
 
         } catch (error) {
             setModalActive(false);
+            console.log(error)
             const { message } = error
             if (message) {
                 setModalNotification(prevState => {

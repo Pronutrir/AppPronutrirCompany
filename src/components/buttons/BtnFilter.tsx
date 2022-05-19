@@ -6,6 +6,8 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { ThemeContextData } from '../../contexts/themeContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     name?: string;
     styleText?: TextStyle;
@@ -18,6 +20,9 @@ const BtnFilter: React.FC<Props> = ({
     onPress,
     active,
 }: Props) => {
+
+    const styles = useThemeAwareObject(createStyles);
+
     const styleOpacity = useSharedValue(1);
 
     const animatedStyles = useAnimatedStyle(() => {
@@ -51,60 +56,66 @@ const BtnFilter: React.FC<Props> = ({
 
 export default BtnFilter;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginHorizontal: 5,
-    },
-    textBtn: {
-        color: '#666666',
-        fontSize: RFValue(14, 680),
-    },
-    textBtnActive: {
-        color: '#ffff',
-        fontSize: RFValue(14, 680),
-        fontWeight: 'bold',
-    },
-    btn: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 5,
-        paddingVertical: 10,
-        backgroundColor: '#fff',
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            marginHorizontal: 5,
+        },
+        textBtn: {
+            color: theme.colors.TEXT_SECONDARY,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            fontSize: theme.typography.SIZE.fontysize14,
+        },
+        textBtnActive: {
+            color: theme.colors.TEXT_TERTIARY,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            fontSize: theme.typography.SIZE.fontysize14,
+        },
+        btn: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 5,
+            paddingVertical: 10,
+            backgroundColor: theme.colors.BUTTON_PRIMARY,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        borderRadius: 10,
-    },
-    activeBtn: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 5,
-        paddingVertical: 10,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+                android: {
+                    elevation: 3,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        borderRadius: 10,
-        backgroundColor: '#20cbc1',
-    },
-});
+            }),
+            borderRadius: 10,
+        },
+        activeBtn: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 5,
+            paddingVertical: 10,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
+            borderRadius: 10,
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
+        },
+    });
+    return styles;
+};

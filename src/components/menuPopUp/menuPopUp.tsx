@@ -51,7 +51,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                     anchor={
                         <OptionsSvg
                             onPress={showMenu}
-                            width={RFPercentage(4)}
+                            width={RFPercentage(2)}
                             height={RFPercentage(4)}
                             fill={theme.colors.TEXT_SECONDARY}
                         />

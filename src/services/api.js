@@ -2,15 +2,13 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import refreshToken from './refreshToken';
 
-const baseurl = 'https://6fc1-177-22-36-198.ngrok.io/api/v1/';
-
 const api = axios.create({
     //producao
-    //baseURL: 'https://webapppronutrir.com.br:8005/api/v1/',
+    //baseURL: 'https://servicesapppronutrir.com.br/apitasy/api/v1/',
     //teste
-    //baseURL: 'https://webapppronutrir.com.br:9001/api/v1/',
+    baseURL: 'https://servicesapppronutrir.com.br/apitasytest/api/v1/',
     //ngrok
-    baseURL: 'https://6fc1-177-22-36-198.ngrok.io/api/v1/',
+    //baseURL: 'https://6fc1-177-22-36-198.ngrok.io/api/v1/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',

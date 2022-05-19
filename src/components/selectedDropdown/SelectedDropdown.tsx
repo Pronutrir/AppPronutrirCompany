@@ -6,7 +6,7 @@ import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ShimerPlaceHolderSelected from '../shimmerPlaceHolder/shimerPlaceHolderSelected';
 
-const _data: Array<{label: string}> = [
+const _data: Array<{ label: string }> = [
     { label: 'Item 1' },
     { label: 'Item 2' },
     { label: 'Item 3' },
@@ -24,7 +24,7 @@ interface Props<T> {
     shimerPlaceHolder?: boolean;
 }
 
-const SelectedDropdown = <T extends {label: string}> ({
+const SelectedDropdown = <T extends { label: string }>({
     data,
     onChange,
     value,
@@ -39,14 +39,6 @@ const SelectedDropdown = <T extends {label: string}> ({
         return (
             <View style={styles.item}>
                 <Text style={styles.textItem}>{item.label}</Text>
-                {/*  {item.value === value && (
-              <AntDesign
-                style={styles.icon}
-                color="black"
-                name="Safety"
-                size={20}
-              />
-            )} */}
             </View>
         );
     };
@@ -134,7 +126,7 @@ const createStyles = (theme: ThemeContextData) => {
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize12,
             fontFamily: theme.typography.FONTES.Regular,
-            letterSpacing: theme.typography.LETTERSPACING.S,
+            letterSpacing: theme.typography.LETTERSPACING.L,
         },
         iconStyle: {
             width: RFPercentage(4),

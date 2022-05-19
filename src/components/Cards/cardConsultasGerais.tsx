@@ -16,6 +16,8 @@ import SinaisVitaisContext, {
     IPFSinaisVitais,
 } from '../../contexts/sinaisVitaisContext';
 import { IParamConsulta } from '../searchBarPessoaFisica/searchBarPessoaFisica';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
 
 interface Props {
     dataSourcePFsinaisVitais?: IPFSinaisVitais[] | null;
@@ -30,6 +32,9 @@ const CardConsultasGerais: React.FC<Props> = ({
     state,
     onPress,
 }: Props) => {
+
+    const styles = useThemeAwareObject(createStyles);
+
     const { SearchPFSinaisVitais } =
         useContext(SinaisVitaisContext);
 
@@ -176,57 +181,65 @@ const CardConsultasGerais: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: 10,
-    },
-    cardStyle: {
-        flex: 1,
-        padding: 10,
-    },
-    titleLabel: {
-        alignSelf: 'flex-start',
-        paddingLeft: 10,
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    box1: {
-        flex: 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 3,
-    },
-    box2: {
-        flex: 5,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        margin: 3,
-    },
-    loading: {
-        margin: 10,
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#fff',
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            marginTop: 10,
+        },
+        cardStyle: {
+            flex: 1,
+            padding: 10,
+        },
+        titleLabel: {
+            alignSelf: 'flex-start',
+            paddingLeft: 10,
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            textAlignVertical: 'center'
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            textAlignVertical: 'center'
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 3,
+        },
+        box2: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            margin: 3,
+        },
+        loading: {
+            margin: 10,
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
+        },
+    });
+    return styles;
+}
 
 export default memo(CardConsultasGerais);

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').height / 16,
         margin: 5,
         padding: 5,
-        backgroundColor: '#08948A',
+        backgroundColor: '#833d72',
         justifyContent: 'center',
         alignItems: 'center',
         ...Platform.select({

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
 import React, { useContext } from 'react';
 import {
     useHistoryEvolucao,
@@ -10,8 +10,13 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
 import moment from 'moment';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../../contexts/themeContext';
 
 const HistoryEvolucao: React.FC = () => {
+    
+    const styles = useThemeAwareObject(createStyles);
+
     const {
         stateAuth: {
             usertasy: { cD_PESSOA_FISICA },
@@ -87,42 +92,54 @@ const HistoryEvolucao: React.FC = () => {
 
 export default HistoryEvolucao;
 
-const styles = StyleSheet.create({
-    container: {flex: 1},
-    box1: {
-        flex: 0.5,
-        margin: 3,
-        justifyContent: 'center',
-    },
-    box2: {
-        flex: 5,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        margin: 3,
-    },
-    cardStyle: {
-        flex: 1,
-        padding: RFPercentage(1),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginVertical: RFPercentage(0.5),
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: { 
+            flex: 1, 
+            width: Dimensions.get('screen').width 
+        },
+        box1: {
+            flex: 0.5,
+            margin: 3,
+            justifyContent: 'center',
+        },
+        box2: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            margin: 3,
+        },
+        cardStyle: {
+            flex: 1,
+            padding: RFPercentage(1),
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginVertical: RFPercentage(0.5),
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            textAlignVertical: 'center'
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            textAlignVertical: 'center'
+        },
+    });
+    return styles;
+}
+

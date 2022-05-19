@@ -7,10 +7,12 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import SearchPessoaFisica from './searchPessoaFisica';
 import HistoryEvolucao from './historyEvolucao';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../../contexts/themeContext';
 
 interface PagesSinaisVitais {
     Index: number;
@@ -21,6 +23,9 @@ interface PagesSinaisVitais {
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
 const IndexEvolucao: React.FC = () => {
+
+    const styles = useThemeAwareObject(createStyles);
+
     const refFlatlistMenu = useRef<FlatList>(null);
     const refFlatlist = useRef<FlatList>(null);
     const refView0 = useRef<TouchableOpacity>(null);
@@ -38,6 +43,14 @@ const IndexEvolucao: React.FC = () => {
             Ref: refView1,
         },
     ]);
+
+    const getItemLayout = (data: PagesSinaisVitais[] | null | undefined, index: number) => {
+        return {
+            length: Dimensions.get('screen').width,
+            offset: Dimensions.get('screen').width * index,
+            index,
+        };
+    };
 
     const scrollToIndex = (index: number) => {
         refFlatlist.current?.scrollToIndex({ animated: true, index: index });
@@ -82,15 +95,19 @@ const IndexEvolucao: React.FC = () => {
     const renderPagesItem: ListRenderItem<PagesSinaisVitais> = ({
         item: { Name },
     }) => {
-        if (Name === 'Consultas') {
+        if (Name === 'Evolução') {
             return <SearchPessoaFisica />;
         }
-        if (Name === 'Tratamento') {
+        if (Name === 'Histórico') {
             return <HistoryEvolucao />;
         } else {
             return null;
         }
     };
+    
+    useEffect(() => {
+        selected(0, 'scrollToIndex');
+    }, [selected]);
 
     return (
         <View style={styles.container}>
@@ -101,6 +118,11 @@ const IndexEvolucao: React.FC = () => {
                     keyExtractor={(item) => item.Index.toString()}
                     renderItem={renderItemMenu}
                     horizontal={true}
+                    contentContainerStyle={{
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
+                        width: Dimensions.get('window').width,
+                    }}
                     // pagingEnabled={true}
                     showsHorizontalScrollIndicator={false}
                     //onViewableItemsChanged={onViewableItemsChangedMenu}
@@ -123,7 +145,7 @@ const IndexEvolucao: React.FC = () => {
                     //viewabilityConfig={viewabilityConfig.current}
                     //initialNumToRender={3}
                     //ListEmptyComponent={EmptyComponent}
-                    //getItemLayout={getItemLayout}
+                    getItemLayout={getItemLayout}
                     //scrollEnabled={false}
                     //refreshing={refresh}
                     /* onRefresh={() => {
@@ -138,41 +160,45 @@ const IndexEvolucao: React.FC = () => {
 
 export default IndexEvolucao;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#E6ECEC',
-    },
-    box1: {
-        backgroundColor: '#fff',
-        width: Dimensions.get('screen').width,
-        height: RFPercentage(8),
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    box2: {
-        flex: 1,
-    },
-    btn: {
-        flex: 1,
-        width: Dimensions.get('screen').width / 100 * 45,
-        backgroundColor: '#20c4cb',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomWidth: 5,
-        borderColor: '#20c4cb',
-        margin: RFPercentage(0.5),
-        borderRadius: 5,
-        paddingHorizontal: 5,
-    },
-    textBtn: {
-        color: '#fff',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-        padding: RFPercentage(1),
-        paddingHorizontal: RFPercentage(2),
-    },
-    btnSelected: {
-        borderColor: '#08948A',
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.BACKGROUND_1,
+        },
+        box1: {
+            width: Dimensions.get('screen').width,
+            height: RFPercentage(8),
+            flexDirection: 'row',
+            justifyContent: 'center',
+        },
+        box2: {
+            flex: 1,
+        },
+        btn: {
+            //flex: 1,
+            width: (Dimensions.get('screen').width / 100) * 45,
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottomWidth: 5,
+            borderColor: theme.colors.BUTTON_SECUNDARY,
+            margin: RFPercentage(0.5),
+            borderRadius: 5,
+            paddingHorizontal: 5,
+        },
+        textBtn: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_TERTIARY,
+            fontSize: theme.typography.SIZE.fontysize18,
+            padding: RFPercentage(1),
+            paddingHorizontal: RFPercentage(2),
+        },
+        btnSelected: {
+            borderColor: theme.colors.GREENPRIMARY,
+        },
+    });
+    return styles;
+};
+

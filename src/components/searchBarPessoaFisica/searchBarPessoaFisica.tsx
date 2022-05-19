@@ -9,9 +9,10 @@ import { ModalHandles } from '../../components/Modais/ModalBottom';
 import { DateMask } from '../../services/validacoes';
 import MenuPopUp from '../../components/menuPopUp/menuPopUp';
 import SearchBar from 'react-native-dynamic-search-bar';
-import styles from './style';
+import createStyles from './style';
 import CardConsultasGerais from '../Cards/cardConsultasGerais';
 import { useNavigation } from '@react-navigation/native';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 export interface IParamConsulta {
     query: string | null | undefined;
     isLoading: boolean;
@@ -41,6 +42,9 @@ interface Props {
 }
 
 const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }:Props) => {
+    
+    const styles = useThemeAwareObject(createStyles);
+
     const navigation = useNavigation();
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
     const refModalBotom = useRef<ModalHandles>(null);

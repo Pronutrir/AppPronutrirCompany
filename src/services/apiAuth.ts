@@ -4,7 +4,7 @@ const ApiAuth = axios.create({
     //teste
     //baseURL: 'http://52.171.215.196:8000/',
     //localhost
-    baseURL: 'http://52.171.215.196:9669',
+    baseURL: 'https://servicesapppronutrir.com.br/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
