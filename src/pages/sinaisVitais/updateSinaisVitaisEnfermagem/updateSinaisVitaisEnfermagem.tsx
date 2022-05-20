@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { View, ScrollView, Text } from 'react-native';
-import styles from './style';
+import createStyles from './style';
 import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
 import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
@@ -16,6 +16,7 @@ import ToggleSwitch from '../../../components/Switch/ToggleSwitch';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
 import BtnRadius from '../../../components/buttons/BtnRadius';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -30,6 +31,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
         params: { PessoaFisica, SinaisVitais },
     },
 }: Props) => {
+    const styles = useThemeAwareObject(createStyles);
     const navigation = useNavigation();
     const {
         AddSinaisVitais,

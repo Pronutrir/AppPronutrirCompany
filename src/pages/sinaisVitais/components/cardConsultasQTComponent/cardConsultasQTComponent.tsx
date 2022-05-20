@@ -15,11 +15,15 @@ import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
+import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../../../contexts/themeContext';
 interface Props {
     dataSourceQT?: IconsultaQT[] | null;
 }
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
+
+    const styles = useThemeAwareObject(createStyles);
 
     const { GetConsultasQT, ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -119,51 +123,58 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: 10,
-    },
-    cardStyle: {
-        flex: 1,
-        padding: 10,
-    },
-    titleLabel: {
-        alignSelf: 'flex-start',
-        paddingLeft: 10,
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    box1: {
-        flex: 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 3,
-    },
-    box2: {
-        flex: 5,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        margin: 3,
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            marginTop: 10,
+        },
+        cardStyle: {
+            flex: 1,
+            padding: 10,
+        },
+        titleLabel: {
+            alignSelf: 'flex-start',
+            paddingLeft: 10,
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 3,
+        },
+        box2: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            margin: 3,
+        },
+    });
+    return styles;
+}
+
 
 export default memo(CardConsultasQTComponent);

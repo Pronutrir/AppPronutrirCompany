@@ -28,7 +28,7 @@ const ToggleSwitch: React.FC<Props> = ({ onpress, Enabled = false }: Props) => {
                     false: theme.colors.BROWNPRIMARY,
                     true: theme.colors.GREENDARK,
                 }}
-                thumbColor={isEnabled ? theme.colors.WHITE : '#f4f3f4'}
+                thumbColor={isEnabled ? theme.colors.WHITE : theme.colors.BROWNLIGHT}
                 ios_backgroundColor={theme.colors.BROWNPRIMARY}
                 onValueChange={toggleSwitch}
                 value={isEnabled}

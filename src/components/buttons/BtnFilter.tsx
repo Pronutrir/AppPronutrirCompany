@@ -5,7 +5,6 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {

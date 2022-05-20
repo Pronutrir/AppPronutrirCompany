@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
+import { View, StyleSheet, Dimensions, SafeAreaView, Modal } from 'react-native';
 import propTypes from 'prop-types';
 
 const windowWidth = Dimensions.get('screen').width;

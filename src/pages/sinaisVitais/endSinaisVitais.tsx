@@ -1,7 +1,7 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
 import HistorySvg from '../../assets/svg/historico.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
 import moment from 'moment';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
@@ -26,7 +26,7 @@ type IFilter = 'day' | 'all';
 
 const EndSinaisVitais: React.FC<Props> = ({
     route: {
-        params: { Paciente, Tipo },
+        params: { Paciente },
     },
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
@@ -279,13 +279,16 @@ const createStyles = (theme: ThemeContextData) => {
             paddingLeft: 10,
         },
         textLabel: {
-            color: '#1E707D',
-            fontSize: RFValue(16, 680),
-            fontWeight: 'bold',
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
         },
         text: {
-            color: '#666666',
-            fontSize: RFValue(16, 680),
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
             flex: 1,

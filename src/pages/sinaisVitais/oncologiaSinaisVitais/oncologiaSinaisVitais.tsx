@@ -5,7 +5,8 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import CardConsultasQTComponent from '../components/cardConsultasQTComponent/cardConsultasQTComponent';
 import { IconsultaQT } from '../../../reducers/ConsultasQTReducer';
-import styles from './style';
+import createStyles from './style';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 interface Consulta {
     query: string;
     isLoading: boolean;
@@ -18,6 +19,9 @@ interface Consulta {
 }
 
 const OncologiaSinaisVitais = () => {
+
+    const styles = useThemeAwareObject(createStyles);
+
     const {
         stateConsultasQT: { consultasQT, flagQT },
     } = useContext(SinaisVitaisContext);
@@ -64,8 +68,6 @@ const OncologiaSinaisVitais = () => {
     };
 
     const Onclean = () => {
-        //setSelected(undefined);
-        //setAtendimento(null);
         setState((prevState) => {
             return {
                 ...prevState,
@@ -75,41 +77,6 @@ const OncologiaSinaisVitais = () => {
             };
         });
     };
-
-    /* const renderFooter = () => {
-        if (!state.loadingScrow) {
-            return null;
-        }
-        return (
-            <View style={styles.loading}>
-                <ActivityIndicator size={'small'} color={'#08948A'} />
-            </View>
-        );
-    }; */
-
-    /*  const SearchAtendimentos = () => {
-        console.log('SearchAtendimentos');
-    }; */
-
-    /*  const LoadingSearch = () => {
-        console.log('LoadingSearch');
-    }; */
-
-    /* const renderItem: ListRenderItem<consultaQT> = ({ item }) => {
-        return (
-            <Pressable
-                key={item.NM_PESSOA_FISICA}
-                style={styles.item}
-                onPress={() => SearchAtendimentos()}>
-                <Text
-                    style={
-                        styles.descricao
-                    }>{`${item.NM_PESSOA_FISICA.toUpperCase()}`}</Text>
-            </Pressable>
-        );
-    }; */
-
-    //const renderItem = ({ item }: { item: any }) => <Item item={item} />;
 
     useEffect(() => {
         setState((prevState) => {

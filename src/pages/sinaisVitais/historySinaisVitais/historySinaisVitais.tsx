@@ -1,4 +1,11 @@
-import React, { useState, useContext, useCallback, memo, useRef, useEffect } from 'react';
+import React, {
+    useState,
+    useContext,
+    useCallback,
+    memo,
+    useRef,
+    useEffect,
+} from 'react';
 import {
     Text,
     View,
@@ -10,7 +17,7 @@ import {
 } from 'react-native';
 import { focusManager } from 'react-query';
 import CardSimples from '../../../components/Cards/CardSimples';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
 import ModalCentralizedOptions, {
     ModalHandles,
@@ -27,6 +34,8 @@ import SinaisVitaisContext, {
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
+import { ThemeContextData } from '../../../contexts/themeContext';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -50,6 +59,7 @@ focusManager.setEventListener((handleFocus) => {
 });
 
 const HistorySinaisVitais: React.FC = () => {
+    const styles = useThemeAwareObject(createStyles);
     const navigation = useNavigation();
     const {
         ValidationAutorizeEnfermagem,
@@ -316,78 +326,84 @@ const HistorySinaisVitais: React.FC = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: Dimensions.get('screen').width,
-        paddingVertical: 10,
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    cardStyle: {
-        flex: 1,
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginVertical: RFPercentage(0.5),
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    box1: {
-        flex: 0.7,
-        paddingTop: 10,
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-    },
-    box2: {
-        flex: 5,
-        margin: 10,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-    },
-    box3: {
-        marginVertical: 5,
-        justifyContent: 'flex-start',
-    },
-    btn: {
-        width: RFPercentage(5),
-        height: RFPercentage(5),
-        padding: 5,
-        marginHorizontal: 5,
-        marginVertical: RFPercentage(2),
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 30,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            width: Dimensions.get('screen').width,
+            paddingVertical: 10,
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_2,
+        },
+        cardStyle: {
+            flex: 1,
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginVertical: RFPercentage(0.5),
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.7,
+            paddingTop: 10,
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+        },
+        box2: {
+            flex: 5,
+            margin: 10,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+        },
+        box3: {
+            marginVertical: 5,
+            justifyContent: 'flex-start',
+        },
+        btn: {
+            width: RFPercentage(5),
+            height: RFPercentage(5),
+            padding: 5,
+            marginHorizontal: 5,
+            marginVertical: RFPercentage(2),
+            backgroundColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+        },
+    });
+    return styles;
+};
 
 export { HistorySinaisVitais };

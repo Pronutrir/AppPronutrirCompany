@@ -223,9 +223,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             axiosSourceConsultas.current = axios.CancelToken.source();
 
             await Api.get(
-                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                `AgendaConsultas/FilterAgendamentosGeral/${moment('2022-04-02').format(
                     'YYYY-MM-DD',
-                )},${moment().format(
+                )},${moment('2022-04-02').format(
                     'YYYY-MM-DD',
                 )}?pagina=1&semStatusAgenda='C'${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''

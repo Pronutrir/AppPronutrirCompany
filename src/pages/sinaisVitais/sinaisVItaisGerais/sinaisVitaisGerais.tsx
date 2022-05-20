@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import { View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import CardConsultasGerais from '../components/cardConsultasGerais/cardConsultasGerais';
-import styles from './style';
+import createStyles from './style';
 import SinaisVitaisContext, {
     IFilterPF,
     IPFSinaisVitais,
@@ -12,6 +12,7 @@ import { ModalHandles } from '../../../components/Modais/ModalBottom';
 import { DateMask } from '../../../services/validacoes';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import SearchBar from 'react-native-dynamic-search-bar';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 export interface IParamConsulta {
     query: string | null | undefined;
     isLoading: boolean;
@@ -38,6 +39,9 @@ const filterDefault = [
 ];
 
 const SinaisVitaisGerais: React.FC = () => {
+
+    const styles = useThemeAwareObject(createStyles);
+
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
     const refModalBotom = useRef<ModalHandles>(null);
     const [filterSelected, setFilterSelected] = useState<Ifilter>(

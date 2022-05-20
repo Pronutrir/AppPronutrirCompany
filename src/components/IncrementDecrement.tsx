@@ -4,6 +4,8 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Adicao from '../assets/svg/math-plus.svg';
 import Subtracao from '../assets/svg/math-minus.svg';
 import { MaskedTextInput } from 'react-native-mask-text';
+import { ThemeContextData } from '../contexts/themeContext';
+import { useThemeAwareObject } from '../hooks/useThemedStyles';
 interface Props {
     RangerValue: number;
     medida: string;
@@ -21,6 +23,7 @@ const IncrementDecrement: React.FC<Props> = ({
     max = 100,
     disabled = false,
 }: Props) => {
+    const styles = useThemeAwareObject(createStyles);
     const [inputValue, setInputValue] = useState(RangerValue.toString());
 
     const size = Dimensions.get('screen').height / 40;
@@ -132,35 +135,42 @@ const IncrementDecrement: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    Container: {
-        flexDirection: 'row',
-        alignSelf: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1,
-    },
-    valueInput: {
-        width: Dimensions.get('screen').width / 6,
-        fontSize: RFValue(20, 680),
-        textAlign: 'center',
-        color: '#7C9292',
-    },
-    btnInc: {
-        width: 40,
-        height: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    textInc: {
-        color: '#7C9292',
-        fontSize: RFValue(20, 680),
-        textAlign: 'center',
-    },
-    text: {
-        color: '#7C9292',
-        fontSize: RFValue(14, 680),
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        Container: {
+            flexDirection: 'row',
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1,
+        },
+        valueInput: {
+            width: Dimensions.get('screen').width / 6,
+            fontSize: RFValue(20, 680),
+            textAlign: 'center',
+            color: theme.colors.TEXT_SECONDARY,
+        },
+        btnInc: {
+            width: 40,
+            height: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        textInc: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            fontSize: theme.typography.SIZE.fontysize20,
+            color: theme.colors.TEXT_SECONDARY,
+            textAlign: 'center',
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            fontSize: theme.typography.SIZE.fontysize14,
+            color: theme.colors.TEXT_SECONDARY,
+        },
+    });
+    return styles;
+}
 
 export default memo(IncrementDecrement);

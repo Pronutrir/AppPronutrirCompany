@@ -7,9 +7,10 @@ import {
     Text,
     TouchableOpacity,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
+import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
@@ -69,30 +70,34 @@ const MedicosExamesComponent: React.FC<Props> = ({
 
 export default MedicosExamesComponent;
 
-const createStyles = () => {
+const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
-            marginTop: 20,
-            marginHorizontal: 10,
+            marginTop: RFPercentage(1),
+            marginHorizontal: RFPercentage(1),
         },
         selectTextStyle: {
-            color: '#08948A',
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize18,
             textAlign: 'center',
-            fontSize: RFValue(18, 680),
         },
         selectTextStyleActive: {
-            color: '#ffff',
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_TERTIARY,
+            fontSize: theme.typography.SIZE.fontysize18,
             textAlign: 'center',
-            fontSize: RFValue(18, 680),
         },
         optionContainerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: theme.colors.BACKGROUND_1,
             paddingVertical: 10,
             justifyContent: 'center',
             alignItems: 'center',
         },
         optionContainerStyleActive: {
-            backgroundColor: '#20cbc1',
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
             paddingVertical: 10,
             justifyContent: 'center',
             alignItems: 'center',
