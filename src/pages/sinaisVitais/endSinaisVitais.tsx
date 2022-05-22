@@ -184,7 +184,7 @@ const EndSinaisVitais: React.FC<Props> = ({
         item: ISinaisVitais;
         index: number;
     }) => (
-        <CardSimples styleCardContainer={styles.cardStyle}>
+        <CardSimples key={index} styleCardContainer={styles.cardStyle}>
             <Item key={index} item={item} index={index} />
         </CardSimples>
     );

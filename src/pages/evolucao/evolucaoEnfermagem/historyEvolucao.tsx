@@ -1,21 +1,25 @@
 import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import {
     useHistoryEvolucao,
     IEvolucaoHistory,
 } from '../../../hooks/useEvolucao';
 import AuthContext from '../../../contexts/auth';
 import CardSimples from '../../../components/Cards/CardSimples';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
 import moment from 'moment';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
+import MenuPopUp, { ModalHandlesMenu } from '../../../components/menuPopUp/menuPopUp';
+import { useNavigation } from '@react-navigation/native';
 
 const HistoryEvolucao: React.FC = () => {
     
+    const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
+    const refMenuBotom = useRef<ModalHandlesMenu>(null);
 
     const {
         stateAuth: {
@@ -23,6 +27,21 @@ const HistoryEvolucao: React.FC = () => {
         },
     } = useContext(AuthContext);
     const { data } = useHistoryEvolucao(cD_PESSOA_FISICA);
+
+    const MenuPopUpOptions = (itemSelected: string, item: IEvolucaoHistory) => {
+        switch (itemSelected) {
+            case 'Editar':
+                navigation.navigate('EvolucaoEnfermagem', {
+                    Evolução: item
+                });
+                break;
+            case 'Excluir':
+                //setSelectedSinaisInativar(item);
+                break;
+            default:
+                break;
+        }
+    };
 
     const Item = ({ item }: { item: IEvolucaoHistory; index: number }) => {
         return (
@@ -48,6 +67,16 @@ const HistoryEvolucao: React.FC = () => {
                             item.dT_EVOLUCAO,
                         ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
                     </View>
+                </View>
+                <View style={styles.box3}>
+                    <MenuPopUp
+                        ref={refMenuBotom}
+                        btnLabels={['Editar', 'Excluir']}
+                        onpress={(label) => {
+                            refMenuBotom.current?.hideMenu(),
+                                MenuPopUpOptions(label, item);
+                        }}
+                    />
                 </View>
             </View>
         );
@@ -109,9 +138,12 @@ const createStyles = (theme: ThemeContextData) => {
             alignItems: 'flex-start',
             margin: 3,
         },
+        box3: {
+            justifyContent: 'flex-start',
+        },
         cardStyle: {
             flex: 1,
-            padding: RFPercentage(1),
+            padding: RFPercentage(0.5),
         },
         item: {
             flex: 1,
