@@ -10,7 +10,7 @@
         "lint": "eslint ./",
         "lintFix": "eslint ./ --fix",
         "np": "np --no-publish",
-        "postversion": "react-native-version"
+        "postversion": "react-native-version --never-amend"
     },
     "repository": {
         "type": "git",
