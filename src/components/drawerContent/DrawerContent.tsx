@@ -1,6 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
-import { Image } from 'react-native-animatable';
+import { StyleSheet, Text, View, Dimensions, Platform, KeyboardAvoidingView, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Loading from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
