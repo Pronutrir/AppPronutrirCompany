@@ -6,8 +6,8 @@ import {
     Alert,
     Dimensions,
     Platform,
+    Image
 } from 'react-native';
-import { Image } from 'react-native-animatable';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Loading from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
@@ -18,6 +18,7 @@ import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
 import { savePerfil } from '../../utils';
+import VersionInfo from 'react-native-version-info';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
@@ -117,7 +118,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     onPress={() => logout()}>
                     <Text style={styles.text3}>Sair</Text>
                 </TouchableOpacity>
-                <Text style={styles.text2}>Versão 1.5</Text>
+                <Text style={styles.text2}>Versão {VersionInfo.appVersion}</Text>
             </View>
             <Loading activeModal={loading} />
         </View>
