@@ -1,10 +1,9 @@
 name: Development Distribution
 
 on:
-  push:
-    branches:
-      - develop
-      - 'release*'
+  workflow_dispatch: # To trigger manual build
+  release:
+    types: [published] # only run the workflow when a new release has been published
 
 jobs:
   dev-distribution:
@@ -50,7 +49,7 @@ jobs:
           firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
           firebaseGroups: ${{ secrets.FIREBASE_GROUPS }}
           firebaseAppId: ${{ secrets.FIREBASE_APP_ID }}
-          notes: ${{ github.event.head_commit.message }}
+          notes: ${{ github.event.release.body }}
       run: |
         yarn global add firebase-tools
         export PATH="$(yarn global bin):$PATH"
