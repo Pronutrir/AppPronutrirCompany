@@ -1,8 +1,9 @@
 import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import {
     useHistoryEvolucao,
     IEvolucaoHistory,
+    useDeleteEvoluçaoEnfermagem,
 } from '../../../hooks/useEvolucao';
 import AuthContext from '../../../contexts/auth';
 import CardSimples from '../../../components/Cards/CardSimples';
@@ -14,29 +15,41 @@ import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import MenuPopUp, { ModalHandlesMenu } from '../../../components/menuPopUp/menuPopUp';
 import { useNavigation } from '@react-navigation/native';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 
 const HistoryEvolucao: React.FC = () => {
     
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
     const refMenuBotom = useRef<ModalHandlesMenu>(null);
+    const refModal = useRef<LoadHandles>(null);
 
     const {
         stateAuth: {
             usertasy: { cD_PESSOA_FISICA },
         },
     } = useContext(AuthContext);
-    const { data } = useHistoryEvolucao(cD_PESSOA_FISICA);
+    const { data, refetch } = useHistoryEvolucao(cD_PESSOA_FISICA);
 
-    const MenuPopUpOptions = (itemSelected: string, item: IEvolucaoHistory) => {
+    const { mutateAsync: mutateAsyncDeleteEvoluçaoEnfermagem } =
+    useDeleteEvoluçaoEnfermagem();
+
+    const onDeleteEvolucao = async (item: IEvolucaoHistory) => {
+        refModal.current?.openModal();
+        await mutateAsyncDeleteEvoluçaoEnfermagem(item.cD_EVOLUCAO);
+        refModal.current?.closeModal();
+        refetch();
+    }
+
+    const MenuPopUpOptions = async (itemSelected: string, item: IEvolucaoHistory) => {
         switch (itemSelected) {
             case 'Editar':
-                navigation.navigate('EvolucaoEnfermagem', {
-                    Evolução: item
+                navigation.navigate('UpdateEvolucaoEnfermagem', {
+                    Evolucao: item,
                 });
                 break;
             case 'Excluir':
-                //setSelectedSinaisInativar(item);
+                    await onDeleteEvolucao(item);
                 break;
             default:
                 break;
@@ -61,8 +74,14 @@ const HistoryEvolucao: React.FC = () => {
                                 styles.text
                             }>{`${item.nM_PACIENTE.toUpperCase()}`}</Text>
                     </View>
+                    {/* <View style={styles.item}>
+                        <Text style={styles.textLabel}>Data de nascimento: </Text>
+                        <Text style={styles.text}>{`${moment(
+                            dT_NASCIMENTO,
+                        ).format('DD-MM-YYYY')}`}</Text>
+                    </View> */}
                     <View style={styles.item}>
-                        <Text style={styles.textLabel}>Data: </Text>
+                        <Text style={styles.textLabel}>Data da evolução: </Text>
                         <Text style={styles.text}>{`${moment(
                             item.dT_EVOLUCAO,
                         ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
@@ -115,6 +134,7 @@ const HistoryEvolucao: React.FC = () => {
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
+             <Loading ref={refModal} />
         </View>
     );
 };

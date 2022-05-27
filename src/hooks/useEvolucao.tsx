@@ -26,7 +26,7 @@ export interface ITextDefault {
     dT_ATUALIZACAO_NREC: string;
     nM_USUARIO_NREC: string;
 }
-interface IEvolucaoHistoryResponse {
+export interface IEvolucaoHistoryResponse {
     result: IEvolucaoHistory[];
 }
 export interface IEvolucaoHistory {
@@ -55,9 +55,28 @@ export interface IEvolucaoHistory {
     medicosEvolucao: [];
     especialidadeMedicasEvolucao: [];
 }
+export interface ItipoNotas {
+    cD_TIPO_EVOLUCAO: string;
+    iE_ATEND_FECHADO: string;
+    dT_ATUALIZACAO: string;
+    dS_TIPO_EVOLUCAO: string;
+    iE_SITUACAO: string;
+    nM_USUARIO: string;
+    iE_REGRA_ALTA: string;
+    iE_EVOLUCAO_SUSCDS: string;
+    iE_NOTACAO_CLINICA_AGEND_GRUPO: string;
+    dT_ATUALIZACAO_NREC: string;
+    nM_USUARIO_NREC: string;
+    dS_LEGENDA: string;
+    iE_GERA_LANCTO_AUTO: string;
+}
+export interface ItipoNotasResponse {
+    result: ItipoNotas[];
+}
 
 const useAddEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
+
     return useMutation(
         (item: IEvolucao) => {
             return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item);
@@ -72,6 +91,53 @@ const useAddEvoluçaoEnfermagem = () => {
         },
     );
 };
+
+const useDeleteEvoluçaoEnfermagem = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+
+    return useMutation(
+        (idEvolução: number) => {
+            return Api.delete(`EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolução}`);
+        },
+        {
+            onError: () => {
+                addAlert({
+                    message: 'Error ao excluir a evolução tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+const useNotasClinicas = () => {
+    return useQuery(
+        'tiposNotas',
+        async () => {
+            const {
+                data: { result },
+            } = await Api.get<ItipoNotasResponse>(
+                `TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
+            );
+            return result.map((item) => {
+                return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
+            });
+        },
+    )
+}
+
+const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
+    return useQuery('defaltText', async () => {
+        const {
+            data: { result },
+        } = await Api.get<ITextDefaultResponse>(
+            `TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?codNotasClinicas=${cD_TIPO_EVOLUCAO}&pagina=1&rows=100`,
+        );
+        return result.map((item) => {
+            return { label: item.dS_TITULO, value: item };
+        });
+    }, { enabled: Boolean(cD_TIPO_EVOLUCAO) });
+}
 
 const useEvolucaoTextDefault = (value: number | null) => {
     const { addAlert } = useContext(NotificationGlobalContext);
@@ -123,4 +189,11 @@ const useHistoryEvolucao = (codMedico: string) => {
     );
 };
 
-export { useAddEvoluçaoEnfermagem, useEvolucaoTextDefault, useHistoryEvolucao };
+export { 
+    useAddEvoluçaoEnfermagem, 
+    useEvolucaoTextDefault, 
+    useHistoryEvolucao, 
+    useNotasClinicas, 
+    useEvolucaoTextDefaultReduzidos,
+    useDeleteEvoluçaoEnfermagem
+};

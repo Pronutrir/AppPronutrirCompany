@@ -8,7 +8,7 @@ import {
     View,
 } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import SearchPessoaFisica from './searchPessoaFisica';
 import HistoryEvolucao from './historyEvolucao';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';

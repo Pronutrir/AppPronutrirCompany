@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
-import { View } from 'react-native-animatable';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
@@ -28,9 +27,7 @@ interface Props {
 }
 
 const EvolucaoEnfermagem: React.FC<Props> = ({
-    route: {
-        params: { Evolucao },
-    },
+    route: { params: { Evolucao } }
 }: Props) => {
     /* const {
         stateAuth: {
@@ -93,7 +90,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         <SafeAreaView style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
-                    {/* <PessoaFisicaComponent PessoaFisica={{  }} /> */}
+                    <PessoaFisicaComponent PessoaFisica={{ nM_PESSOA_FISICA: Evolucao.nM_PACIENTE, dT_NASCIMENTO: Evolucao.dT_EVOLUCAO  }} />
                     <SelectedNotaText
                         onPressTipoNota={(item) =>
                             console.log(item)
@@ -106,7 +103,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 </View>
                 <RichComponent
                     shimerPlaceHolder={isFetching}
-                    initialContentHTML={resultTextDefault?.dS_TEXTO}
+                    initialContentHTML={Evolucao.dS_EVOLUCAO}
                     onChanger={(item) => {
                         const textHtml = `<html tasy="html5"><body>${item}</body></html>`;
                         setEvolucao({ ...evolucao, dS_EVOLUCAO: textHtml });

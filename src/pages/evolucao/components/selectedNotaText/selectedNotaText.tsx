@@ -1,34 +1,11 @@
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
 import SelectedDropdown from '../../../../components/selectedDropdown/SelectedDropdown';
-import { useQuery } from 'react-query';
-import Api from '../../../../services/api';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-interface ITextDefault {
-    nR_SEQUENCIA: number;
-    dS_TITULO: string;
-}
-interface ItipoNotas {
-    cD_TIPO_EVOLUCAO: string;
-    iE_ATEND_FECHADO: string;
-    dT_ATUALIZACAO: string;
-    dS_TIPO_EVOLUCAO: string;
-    iE_SITUACAO: string;
-    nM_USUARIO: string;
-    iE_REGRA_ALTA: string;
-    iE_EVOLUCAO_SUSCDS: string;
-    iE_NOTACAO_CLINICA_AGEND_GRUPO: string;
-    dT_ATUALIZACAO_NREC: string;
-    nM_USUARIO_NREC: string;
-    dS_LEGENDA: string;
-    iE_GERA_LANCTO_AUTO: string;
-}
-interface ItextPadraoResponse {
-    result: ITextDefault[];
-}
-interface ItipoNotasResponse {
-    result: ItipoNotas[];
-}
+import { ItipoNotas, ITextDefault, useEvolucaoTextDefaultReduzidos, useNotasClinicas } from '../../../../hooks/useEvolucao';
+import { QueryCache } from 'react-query';
+
+
 interface Props {
     onPressTipoNota(value: ItipoNotas): void;
     onPressTextPadrao(value: ITextDefault): void;
@@ -38,40 +15,40 @@ const SelectedNotaText: React.FC<Props> = ({
     onPressTipoNota,
     onPressTextPadrao,
 }: Props) => {
-    
-    const { data: listTipoNota, isFetching } = useQuery(
-        'tiposNotas',
-        async () => {
-            const {
-                data: { result },
-            } = await Api.get<ItipoNotasResponse>(
-                `TipoEvolucao/ListarTiposEvolucoes`,
-            );
-            return result.map((item) => {
-                return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
-            });
-        },
-    );
 
-    const { data: listTextDefault } = useQuery('defaltText', async () => {
-        const {
-            data: { result },
-        } = await Api.get<ItextPadraoResponse>(
-            `TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?pagina=1&rows=100`,
-        );
-        return result.map((item) => {
-            return { label: item.dS_TITULO, value: item };
-        });
-    });
+    const queryCache = new QueryCache();
+
+    const [tipoNotasclinica, setTipoNotasClinica] = useState<string>();
+
+    const { data: listTipoNotas, isFetching: isFetchingNotas } = useNotasClinicas();
+
+    const { data: listTextDefault, isFetching: isFetchingText, refetch } = useEvolucaoTextDefaultReduzidos(tipoNotasclinica);
+
+    const selectNotasClinicas = (itemEvolucao: ItipoNotas) => {
+        if(itemEvolucao.cD_TIPO_EVOLUCAO){
+            setTipoNotasClinica(itemEvolucao.cD_TIPO_EVOLUCAO);
+            onPressTipoNota(itemEvolucao)
+        }
+    }
+
+    useEffect(() => {
+        refetch();
+    }, [tipoNotasclinica]);
+
+    useEffect(() => {
+        return () => {
+            queryCache.clear();
+        };
+    }, []);
 
     return (
         <View style={styles.container}>
             <View style={styles.box}>
                 <SelectedDropdown
                     placeholder="Tipo de nota"
-                    data={listTipoNota}
-                    onChange={({ itemEvolucao }) => onPressTipoNota(itemEvolucao)}
-                    shimerPlaceHolder={isFetching}
+                    data={listTipoNotas}
+                    onChange={({ itemEvolucao }) => selectNotasClinicas(itemEvolucao)}
+                    shimerPlaceHolder={isFetchingNotas}
                 />
             </View>
             <View style={styles.box}>
@@ -79,7 +56,7 @@ const SelectedNotaText: React.FC<Props> = ({
                     placeholder="Texto padrão"
                     data={listTextDefault}
                     onChange={({ value }) => onPressTextPadrao(value)}
-                    shimerPlaceHolder={isFetching}
+                    shimerPlaceHolder={isFetchingText}
                 />
             </View>
         </View>

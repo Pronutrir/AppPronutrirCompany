@@ -4,7 +4,6 @@ import React, {
     useContext,
     useReducer,
     useRef,
-    useEffect,
 } from 'react';
 import Api from '../services/api';
 import AuthContext from './auth';

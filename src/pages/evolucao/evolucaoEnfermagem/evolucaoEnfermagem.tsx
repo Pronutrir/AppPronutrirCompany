@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
-import { View } from 'react-native-animatable';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
@@ -49,6 +48,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const { data: resultTextDefault, isFetching } =
         useEvolucaoTextDefault(defaultText);
+        
     const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
         useAddEvoluçaoEnfermagem();
 
@@ -73,7 +73,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         refModal.current?.closeModal();
         navigation.reset({
             index: 0,
-            routes: [{ name: 'RouteBottom' }, { name: 'SearchPessoaFisica' }],
+            routes: [{ name: 'RouteBottom' }, { name: 'IndexEvolucao' }],
         });
     };
 

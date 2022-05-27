@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import moment from 'moment';
-import { IPFSinaisVitais } from '../../../../contexts/sinaisVitaisContext';
-
+interface IPessoaFisica{
+    nM_PESSOA_FISICA: string;
+    dT_NASCIMENTO: string;
+}
 interface Props {
-    PessoaFisica: IPFSinaisVitais
+    PessoaFisica: IPessoaFisica
 }
 
 const PessoaFisicaComponent = ({ PessoaFisica }:Props) => {
