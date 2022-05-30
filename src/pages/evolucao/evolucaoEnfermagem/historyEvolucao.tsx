@@ -4,6 +4,7 @@ import {
     useHistoryEvolucao,
     IEvolucaoHistory,
     useDeleteEvoluçaoEnfermagem,
+    useLiberarEvolucao,
 } from '../../../hooks/useEvolucao';
 import AuthContext from '../../../contexts/auth';
 import CardSimples from '../../../components/Cards/CardSimples';
@@ -13,12 +14,14 @@ import moment from 'moment';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
-import MenuPopUp, { ModalHandlesMenu } from '../../../components/menuPopUp/menuPopUp';
+import MenuPopUp, {
+    ModalHandlesMenu,
+} from '../../../components/menuPopUp/menuPopUp';
 import { useNavigation } from '@react-navigation/native';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
+import CheckEvolucaoComponent from '../components/checkEvolucaoComponent/checkEvolucaoComponent';
 
 const HistoryEvolucao: React.FC = () => {
-    
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
     const refMenuBotom = useRef<ModalHandlesMenu>(null);
@@ -29,27 +32,42 @@ const HistoryEvolucao: React.FC = () => {
             usertasy: { cD_PESSOA_FISICA },
         },
     } = useContext(AuthContext);
-    const { data, refetch } = useHistoryEvolucao(cD_PESSOA_FISICA);
+    const { data, refetch, isFetching } = useHistoryEvolucao(cD_PESSOA_FISICA);
 
     const { mutateAsync: mutateAsyncDeleteEvoluçaoEnfermagem } =
-    useDeleteEvoluçaoEnfermagem();
+        useDeleteEvoluçaoEnfermagem();
+
+    const { mutateAsync: mutateAsyncLiberarEvolucao } = useLiberarEvolucao();
 
     const onDeleteEvolucao = async (item: IEvolucaoHistory) => {
         refModal.current?.openModal();
         await mutateAsyncDeleteEvoluçaoEnfermagem(item.cD_EVOLUCAO);
+        await refetch();
         refModal.current?.closeModal();
-        refetch();
-    }
+    };
 
-    const MenuPopUpOptions = async (itemSelected: string, item: IEvolucaoHistory) => {
+    const onLiberarEvolucao = async (idEvolucao: number) => {
+        refModal.current?.openModal();
+        await mutateAsyncLiberarEvolucao(idEvolucao);
+        await refetch();
+        refModal.current?.closeModal();
+    };
+
+    const MenuPopUpOptions = async (
+        itemSelected: string,
+        item: IEvolucaoHistory,
+    ) => {
         switch (itemSelected) {
+            case 'Liberar':
+                await onLiberarEvolucao(item.cD_EVOLUCAO);
+                break;
             case 'Editar':
                 navigation.navigate('UpdateEvolucaoEnfermagem', {
                     Evolucao: item,
                 });
                 break;
             case 'Excluir':
-                    await onDeleteEvolucao(item);
+                await onDeleteEvolucao(item);
                 break;
             default:
                 break;
@@ -90,12 +108,15 @@ const HistoryEvolucao: React.FC = () => {
                 <View style={styles.box3}>
                     <MenuPopUp
                         ref={refMenuBotom}
-                        btnLabels={['Editar', 'Excluir']}
+                        btnLabels={['Liberar', 'Editar', 'Excluir']}
                         onpress={(label) => {
                             refMenuBotom.current?.hideMenu(),
                                 MenuPopUpOptions(label, item);
                         }}
                     />
+                </View>
+                <View style={{ marginVertical: 2 }}>
+                    <CheckEvolucaoComponent Item={item.cD_PESSOA_FISICA} />
                 </View>
             </View>
         );
@@ -122,10 +143,10 @@ const HistoryEvolucao: React.FC = () => {
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    /* refreshing={isFetching}
+                    refreshing={isFetching}
                     onRefresh={() => {
-                        refetch;
-                    }} */
+                        refetch();
+                    }}
                     //ListEmptyComponent={renderItemEmpty}
                     //ListFooterComponent={renderFooter}
                     //onEndReached={loadMore}
@@ -134,7 +155,7 @@ const HistoryEvolucao: React.FC = () => {
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
-             <Loading ref={refModal} />
+            <Loading ref={refModal} />
         </View>
     );
 };
@@ -143,9 +164,9 @@ export default HistoryEvolucao;
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
-        container: { 
-            flex: 1, 
-            width: Dimensions.get('screen').width 
+        container: {
+            flex: 1,
+            width: Dimensions.get('screen').width,
         },
         box1: {
             flex: 0.5,
@@ -182,16 +203,15 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_PRIMARY,
             fontSize: theme.typography.SIZE.fontysize16,
-            textAlignVertical: 'center'
+            textAlignVertical: 'center',
         },
         text: {
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
-            textAlignVertical: 'center'
+            textAlignVertical: 'center',
         },
     });
     return styles;
-}
-
+};

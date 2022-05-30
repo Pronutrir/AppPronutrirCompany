@@ -76,12 +76,17 @@ export interface ItipoNotasResponse {
 
 const useAddEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
-
     return useMutation(
         (item: IEvolucao) => {
             return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item);
         },
         {
+            onSuccess: () => {
+                addAlert({
+                    message: 'Evolução adicionada com sucesso!',
+                    status: 'sucess',
+                });
+            },
             onError: () => {
                 addAlert({
                     message: 'Error ao adicionar a evolução tente mais tarde!',
@@ -94,12 +99,17 @@ const useAddEvoluçaoEnfermagem = () => {
 
 const useDeleteEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
-
     return useMutation(
-        (idEvolução: number) => {
-            return Api.delete(`EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolução}`);
+        (idEvolucao: number) => {
+            return Api.delete(`EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolucao}`);
         },
         {
+            onSuccess: () => {
+                addAlert({
+                    message: 'Evolução excluída com sucesso!',
+                    status: 'sucess',
+                });
+            },
             onError: () => {
                 addAlert({
                     message: 'Error ao excluir a evolução tente mais tarde!',
@@ -187,7 +197,30 @@ const useHistoryEvolucao = (codMedico: string) => {
             },
         },
     );
-};
+}; 
+
+const useLiberarEvolucao = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useMutation(
+        (idEvolucao: number) => {
+            return Api.delete(`EvolucaoPaciente/LiberarEvolucaoPaciente/${idEvolucao}`);
+        },
+        {
+            onSuccess: () => {
+                addAlert({
+                    message: 'Evolução Liberar com sucesso!',
+                    status: 'sucess',
+                });
+            },
+            onError: () => {
+                addAlert({
+                    message: 'Error ao Liberar a evolução tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+}
 
 export { 
     useAddEvoluçaoEnfermagem, 
@@ -195,5 +228,6 @@ export {
     useHistoryEvolucao, 
     useNotasClinicas, 
     useEvolucaoTextDefaultReduzidos,
-    useDeleteEvoluçaoEnfermagem
+    useDeleteEvoluçaoEnfermagem,
+    useLiberarEvolucao
 };

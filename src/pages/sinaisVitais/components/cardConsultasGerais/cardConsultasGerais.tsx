@@ -8,7 +8,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import HistorySvg from '../../../../assets/svg/historico.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import { useNavigation } from '@react-navigation/native';
