@@ -1,5 +1,9 @@
 name: telegram message
-on: [push]
+on:
+  push:
+    branches:
+      - develop
+      - main
 jobs:
 
   build:
