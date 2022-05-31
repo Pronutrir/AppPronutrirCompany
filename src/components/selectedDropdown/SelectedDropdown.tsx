@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -22,6 +22,7 @@ interface Props<T> {
     value?: any; // eslint-disable-line
     onChange?(item: T): void;
     shimerPlaceHolder?: boolean;
+    disable?: boolean;
 }
 
 const SelectedDropdown = <T extends { label: string }>({
@@ -30,6 +31,7 @@ const SelectedDropdown = <T extends { label: string }>({
     value,
     placeholder,
     shimerPlaceHolder = false,
+    disable = false,
 }: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
     const [_value, setValue] = useState<T | null>(null);
@@ -48,6 +50,7 @@ const SelectedDropdown = <T extends { label: string }>({
     } else {
         return (
             <Dropdown
+                disable={disable}
                 search={data && data.length > 20 ? true : false}
                 style={styles.dropdown}
                 placeholderStyle={styles.placeholderStyle}
@@ -68,8 +71,8 @@ const SelectedDropdown = <T extends { label: string }>({
                     }
                 }}
                 /*  renderLeftIcon={() => (
-              <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-            )} */
+                    <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                )} */
                 renderItem={renderItem}
             />
         );

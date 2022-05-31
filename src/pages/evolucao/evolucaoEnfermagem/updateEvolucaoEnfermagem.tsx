@@ -14,9 +14,7 @@ import {
     useAddEvoluçaoEnfermagem,
     IEvolucao,
 } from '../../../hooks/useEvolucao';
-import moment from 'moment';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
-import AuthContext from '../../../contexts/auth';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -27,7 +25,9 @@ interface Props {
 }
 
 const EvolucaoEnfermagem: React.FC<Props> = ({
-    route: { params: { Evolucao } }
+    route: {
+        params: { Evolucao },
+    },
 }: Props) => {
     /* const {
         stateAuth: {
@@ -44,8 +44,6 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const [defaultText, setDefaultText] = useState<number | null>(null);
 
-    const { data: resultTextDefault, isFetching } =
-        useEvolucaoTextDefault(defaultText);
     const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
         useAddEvoluçaoEnfermagem();
 
@@ -80,39 +78,29 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         };
     }, []);
 
-    /* useEffect(() => {
-        if(Evolucao){
-            setEvolucao(Evolucao);
-        }
-    },[]); */
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
-                    <PessoaFisicaComponent PessoaFisica={{ nM_PESSOA_FISICA: Evolucao.nM_PACIENTE, dT_NASCIMENTO: Evolucao.dT_EVOLUCAO  }} />
-                    <SelectedNotaText
-                        onPressTipoNota={(item) =>
-                            console.log(item)
-                            //setTipoEvolucao(item.cD_TIPO_EVOLUCAO)
-                        }
-                        onPressTextPadrao={(item) =>
-                            setDefaultText(item.nR_SEQUENCIA)
-                        }
+                    <PessoaFisicaComponent
+                        PessoaFisica={{
+                            nM_PESSOA_FISICA: Evolucao.nM_PACIENTE,
+                            dT_NASCIMENTO: Evolucao.dT_EVOLUCAO,
+                        }}
                     />
                 </View>
                 <RichComponent
-                    shimerPlaceHolder={isFetching}
+                    //shimerPlaceHolder={isFetching}
                     initialContentHTML={Evolucao.dS_EVOLUCAO}
                     onChanger={(item) => {
-                        const textHtml = `<html tasy="html5"><body>${item}</body></html>`;
+                        const textHtml = `<html tasy="html5"><head><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>${item}</body></html>`;
                         setEvolucao({ ...evolucao, dS_EVOLUCAO: textHtml });
                     }}
                 />
             </View>
-            {evolucao?.dS_EVOLUCAO && evolucao.iE_TIPO_EVOLUCAO && (
+            {evolucao?.dS_EVOLUCAO && (
                 <BtnOptions
-                    valueText={'Enviar'}
+                    valueText={'Atualizar'}
                     onPress={() => addEvolucaoEnfermagem(evolucao)}
                 />
             )}
@@ -125,13 +113,13 @@ export default EvolucaoEnfermagem;
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
-        container: { 
-            flex: 1, 
-            backgroundColor: theme.colors.BACKGROUND_1 
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.BACKGROUND_1,
         },
-        box: { 
-            flex: 1, 
-            height: '100%' 
+        box: {
+            flex: 1,
+            height: '100%',
         },
         item1: {
             padding: 10,

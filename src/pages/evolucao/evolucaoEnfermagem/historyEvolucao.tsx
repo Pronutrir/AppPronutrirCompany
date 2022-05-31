@@ -1,5 +1,5 @@
 import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef } from 'react';
 import {
     useHistoryEvolucao,
     IEvolucaoHistory,
@@ -29,7 +29,7 @@ const HistoryEvolucao: React.FC = () => {
 
     const {
         stateAuth: {
-            usertasy: { cD_PESSOA_FISICA },
+            usertasy: { cD_PESSOA_FISICA, nM_USUARIO },
         },
     } = useContext(AuthContext);
     const { data, refetch, isFetching } = useHistoryEvolucao(cD_PESSOA_FISICA);
@@ -46,9 +46,12 @@ const HistoryEvolucao: React.FC = () => {
         refModal.current?.closeModal();
     };
 
-    const onLiberarEvolucao = async (idEvolucao: number) => {
+    const onLiberarEvolucao = async (item: IEvolucaoHistory) => {
         refModal.current?.openModal();
-        await mutateAsyncLiberarEvolucao(idEvolucao);
+        await mutateAsyncLiberarEvolucao({
+            cD_EVOLUCAO: item.cD_EVOLUCAO,
+            nM_USUARIO: nM_USUARIO,
+        });
         await refetch();
         refModal.current?.closeModal();
     };
@@ -59,7 +62,7 @@ const HistoryEvolucao: React.FC = () => {
     ) => {
         switch (itemSelected) {
             case 'Liberar':
-                await onLiberarEvolucao(item.cD_EVOLUCAO);
+                await onLiberarEvolucao(item);
                 break;
             case 'Editar':
                 navigation.navigate('UpdateEvolucaoEnfermagem', {
@@ -106,17 +109,19 @@ const HistoryEvolucao: React.FC = () => {
                     </View>
                 </View>
                 <View style={styles.box3}>
-                    <MenuPopUp
-                        ref={refMenuBotom}
-                        btnLabels={['Liberar', 'Editar', 'Excluir']}
-                        onpress={(label) => {
-                            refMenuBotom.current?.hideMenu(),
-                                MenuPopUpOptions(label, item);
-                        }}
-                    />
-                </View>
-                <View style={{ marginVertical: 2 }}>
-                    <CheckEvolucaoComponent Item={item.cD_PESSOA_FISICA} />
+                    <View style={{ alignItems: 'flex-end' }}>
+                        <MenuPopUp
+                            ref={refMenuBotom}
+                            btnLabels={['Liberar', 'Editar', 'Excluir']}
+                            onpress={(label) => {
+                                refMenuBotom.current?.hideMenu(),
+                                    MenuPopUpOptions(label, item);
+                            }}
+                        />
+                    </View>
+                    <View>
+                        <CheckEvolucaoComponent Item={item.dT_LIBERACAO} />
+                    </View>
                 </View>
             </View>
         );
@@ -169,9 +174,10 @@ const createStyles = (theme: ThemeContextData) => {
             width: Dimensions.get('screen').width,
         },
         box1: {
-            flex: 0.5,
+            flex: 0.6,
             margin: 3,
             justifyContent: 'center',
+            alignItems: 'center',
         },
         box2: {
             flex: 5,
@@ -180,7 +186,7 @@ const createStyles = (theme: ThemeContextData) => {
             margin: 3,
         },
         box3: {
-            justifyContent: 'flex-start',
+            justifyContent: 'space-between',
         },
         cardStyle: {
             flex: 1,

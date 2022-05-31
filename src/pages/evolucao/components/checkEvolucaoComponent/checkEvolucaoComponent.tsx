@@ -1,20 +1,17 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import CheckMark from '../../../../assets/svg/checkMark.svg';
 import { ThemeContextData } from '../../../../contexts/themeContext';
-import { useSinaisVitaisAll } from '../../../../hooks/useSinaisVitais';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 interface Props {
-    Item: string;
+    Item?: string;
 }
 
 const CheckEvolucaoComponent: React.FC<Props> = ({ Item }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
-    const { data: sinaisVitais } = useSinaisVitaisAll();
-
-    if (sinaisVitais?.some((element) => element.cD_PACIENTE === Item)) {
+    if (Item) {
         return (
             <View style={styles.container}>
                 <CheckMark
@@ -35,7 +32,7 @@ export default CheckEvolucaoComponent;
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
-            position: 'absolute',
+            position: 'relative',
             right: 0,
             bottom: -10,
             padding: 5,

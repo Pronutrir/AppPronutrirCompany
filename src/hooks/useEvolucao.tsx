@@ -40,6 +40,7 @@ export interface IEvolucaoHistory {
     dS_EVOLUCAO: string;
     cD_MEDICO: string;
     nM_PROFISSIONAL: string;
+    dT_LIBERACAO: string;
     qT_SUPERF_CORPORIA: number;
     iE_RECEM_NATO: string;
     iE_SITUACAO: string;
@@ -73,8 +74,35 @@ export interface ItipoNotas {
 export interface ItipoNotasResponse {
     result: ItipoNotas[];
 }
+interface IEvolucaoliberacao {
+    cD_EVOLUCAO: number;
+    nM_USUARIO: string;
+}
 
 const useAddEvoluçaoEnfermagem = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useMutation(
+        (item: IEvolucao) => {
+            return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item);
+        },
+        {
+            onSuccess: () => {
+                addAlert({
+                    message: 'Evolução adicionada com sucesso!',
+                    status: 'sucess',
+                });
+            },
+            onError: () => {
+                addAlert({
+                    message: 'Error ao adicionar a evolução tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+const useUpdateEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
         (item: IEvolucao) => {
@@ -101,7 +129,9 @@ const useDeleteEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
         (idEvolucao: number) => {
-            return Api.delete(`EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolucao}`);
+            return Api.delete(
+                `EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolucao}`,
+            );
         },
         {
             onSuccess: () => {
@@ -121,33 +151,34 @@ const useDeleteEvoluçaoEnfermagem = () => {
 };
 
 const useNotasClinicas = () => {
+    return useQuery('tiposNotas', async () => {
+        const {
+            data: { result },
+        } = await Api.get<ItipoNotasResponse>(
+            `TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
+        );
+        return result.map((item) => {
+            return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
+        });
+    });
+};
+
+const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
     return useQuery(
-        'tiposNotas',
+        'defaltText',
         async () => {
             const {
                 data: { result },
-            } = await Api.get<ItipoNotasResponse>(
-                `TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
+            } = await Api.get<ITextDefaultResponse>(
+                `TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?codNotasClinicas=${cD_TIPO_EVOLUCAO}&pagina=1&rows=100`,
             );
             return result.map((item) => {
-                return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
+                return { label: item.dS_TITULO, value: item };
             });
         },
-    )
-}
-
-const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
-    return useQuery('defaltText', async () => {
-        const {
-            data: { result },
-        } = await Api.get<ITextDefaultResponse>(
-            `TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?codNotasClinicas=${cD_TIPO_EVOLUCAO}&pagina=1&rows=100`,
-        );
-        return result.map((item) => {
-            return { label: item.dS_TITULO, value: item };
-        });
-    }, { enabled: Boolean(cD_TIPO_EVOLUCAO) });
-}
+        { enabled: Boolean(cD_TIPO_EVOLUCAO) },
+    );
+};
 
 const useEvolucaoTextDefault = (value: number | null) => {
     const { addAlert } = useContext(NotificationGlobalContext);
@@ -197,13 +228,16 @@ const useHistoryEvolucao = (codMedico: string) => {
             },
         },
     );
-}; 
+};
 
 const useLiberarEvolucao = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
-        (idEvolucao: number) => {
-            return Api.delete(`EvolucaoPaciente/LiberarEvolucaoPaciente/${idEvolucao}`);
+        (Evolucao: IEvolucaoliberacao) => {
+            console.log('useliberar', Evolucao);
+            return Api.put(
+                `EvolucaoPaciente/LiberarEvolucaoPaciente/${Evolucao.cD_EVOLUCAO}`, Evolucao,
+            );
         },
         {
             onSuccess: () => {
@@ -220,14 +254,15 @@ const useLiberarEvolucao = () => {
             },
         },
     );
-}
+};
 
-export { 
-    useAddEvoluçaoEnfermagem, 
-    useEvolucaoTextDefault, 
-    useHistoryEvolucao, 
-    useNotasClinicas, 
+export {
+    useAddEvoluçaoEnfermagem,
+    useUpdateEvoluçaoEnfermagem,
+    useEvolucaoTextDefault,
+    useHistoryEvolucao,
+    useNotasClinicas,
     useEvolucaoTextDefaultReduzidos,
     useDeleteEvoluçaoEnfermagem,
-    useLiberarEvolucao
+    useLiberarEvolucao,
 };

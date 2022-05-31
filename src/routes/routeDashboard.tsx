@@ -73,7 +73,7 @@ export type RootStackParamList = {
     IndexEvolucao: undefined;
     UpdateEvolucaoEnfermagem: {
         Evolucao: IEvolucaoHistory;
-    }
+    };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

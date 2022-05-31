@@ -4,8 +4,6 @@ import SelectedDropdown from '../../../../components/selectedDropdown/SelectedDr
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ItipoNotas, ITextDefault, useEvolucaoTextDefaultReduzidos, useNotasClinicas } from '../../../../hooks/useEvolucao';
 import { QueryCache } from 'react-query';
-
-
 interface Props {
     onPressTipoNota(value: ItipoNotas): void;
     onPressTextPadrao(value: ITextDefault): void;
