@@ -105,8 +105,8 @@ const useAddEvoluçaoEnfermagem = () => {
 const useUpdateEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
-        (item: IEvolucao) => {
-            return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item);
+        (item: IEvolucaoHistory) => {
+            return Api.put(`EvolucaoPaciente/PutEvolucaoPaciente/${item.cD_EVOLUCAO}`, item);
         },
         {
             onSuccess: () => {

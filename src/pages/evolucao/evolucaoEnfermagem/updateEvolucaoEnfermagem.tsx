@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
-import SelectedNotaText from '../components/selectedNotaText/selectedNotaText';
 import RichComponent from '../components/richComponent/richComponent';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import { QueryCache } from 'react-query';
 import {
-    useEvolucaoTextDefault,
-    useAddEvoluçaoEnfermagem,
     IEvolucao,
+    IEvolucaoHistory,
+    useUpdateEvoluçaoEnfermagem,
 } from '../../../hooks/useEvolucao';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
+import AuthContext from '../../../contexts/auth';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -29,42 +29,25 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         params: { Evolucao },
     },
 }: Props) => {
-    /* const {
+    const {
         stateAuth: {
             usertasy: { usuariO_FUNCIONARIO_SETOR, cD_PESSOA_FISICA },
         },
-    } = useContext(AuthContext); */
+    } = useContext(AuthContext);
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
 
-    const [evolucao, setEvolucao] = useState<IEvolucao | null>();
+    const [evolucao, setEvolucao] = useState<IEvolucaoHistory>(Evolucao);
 
-    const [defaultText, setDefaultText] = useState<number | null>(null);
+    const { mutateAsync: mutateAsyncUpdateEvoluçaoEnfermagem } =
+        useUpdateEvoluçaoEnfermagem();
 
-    const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
-        useAddEvoluçaoEnfermagem();
-
-    /* const setTipoEvolucao = (item: string) => {
-        if (item) {
-            setEvolucao({
-                ...evolucao,
-                iE_TIPO_EVOLUCAO: 1,
-                iE_SITUACAO: 'A',
-                nM_USUARIO: usuariO_FUNCIONARIO_SETOR[0].nM_USUARIO,
-                cD_MEDICO: cD_PESSOA_FISICA,
-                cD_PESSOA_FISICA: PessoaFisica.cD_PESSOA_FISICA,
-                dT_ATUALIZACAO: moment().format('YYYY-MM-DD HH:mm:ss'),
-                dT_EVOLUCAO: moment().format('YYYY-MM-DD HH:mm:ss'),
-            });
-        }
-    }; */
-
-    const addEvolucaoEnfermagem = async (evolucao: IEvolucao) => {
+    const addUpdateEvolucaoEnfermagem = async () => {
         refModal.current?.openModal();
-        await mutateAsyncEvoluçaoEnfermagem(evolucao);
+        await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
         refModal.current?.closeModal();
         navigation.reset({
             index: 0,
@@ -101,7 +84,9 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
             {evolucao?.dS_EVOLUCAO && (
                 <BtnOptions
                     valueText={'Atualizar'}
-                    onPress={() => addEvolucaoEnfermagem(evolucao)}
+                    onPress={() =>
+                        addUpdateEvolucaoEnfermagem()
+                    }
                 />
             )}
             <Loading ref={refModal} />

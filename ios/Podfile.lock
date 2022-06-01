@@ -509,7 +509,7 @@ PODS:
     - OneSignal/OneSignalOutcomes
   - OneSignal/OneSignalOutcomes (3.11.1):
     - OneSignal/OneSignalCore
-  - OneSignalXCFramework (3.10.3)
+  - OneSignalXCFramework (3.10.1)
   - PromisesObjC (2.1.0)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
@@ -736,10 +736,10 @@ PODS:
     - React-Core
   - react-native-date-picker (3.4.3):
     - React-Core
-  - react-native-image-picker (4.8.3):
+  - react-native-image-picker (4.7.3):
     - React-Core
-  - react-native-onesignal (4.3.9):
-    - OneSignalXCFramework (= 3.10.3)
+  - react-native-onesignal (4.3.7):
+    - OneSignalXCFramework (= 3.10.1)
     - React (< 1.0.0, >= 0.13.0)
   - react-native-pure-jwt (3.0.0):
     - JWT (= 3.0.0-beta.12)
@@ -748,7 +748,7 @@ PODS:
     - React-Core
   - react-native-spinkit (1.4.1):
     - React
-  - react-native-webview (11.18.2):
+  - react-native-webview (11.17.2):
     - React-Core
   - React-perflogger (0.66.0)
   - React-RCTActionSheet (0.66.0):
@@ -815,7 +815,7 @@ PODS:
     - React-jsi (= 0.66.0)
     - React-logger (= 0.66.0)
     - React-perflogger (= 0.66.0)
-  - RNCAsyncStorage (1.17.5):
+  - RNCAsyncStorage (1.16.2):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
@@ -832,7 +832,7 @@ PODS:
     - Firebase/Database (= 8.8.0)
     - React-Core
     - RNFBApp
-  - RNFBDynamicLinks (14.9.4):
+  - RNFBDynamicLinks (14.5.1):
     - Firebase/DynamicLinks (= 8.8.0)
     - GoogleUtilities/AppDelegateSwizzler
     - React-Core
@@ -841,7 +841,7 @@ PODS:
     - Firebase/Firestore (= 8.8.0)
     - React-Core
     - RNFBApp
-  - RNFBPerf (14.9.4):
+  - RNFBPerf (14.5.1):
     - Firebase/Performance (= 8.8.0)
     - React-Core
     - RNFBApp
@@ -851,7 +851,7 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNReanimated (2.8.0):
+  - RNReanimated (2.4.1):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -859,6 +859,7 @@ PODS:
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
+    - React
     - React-callinvoker
     - React-Core
     - React-Core/DevSupport
@@ -1135,7 +1136,7 @@ SPEC CHECKSUMS:
   lottie-react-native: b561920bba7ec727ec94a473b683cffba00faece
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OneSignal: 60902887c93f91e9b5599583e7df5f55b2144755
-  OneSignalXCFramework: 4efd7bd68c2b14920955b3f14b5b75bbf8fb662c
+  OneSignalXCFramework: fe027712118f2862ab193b72270487f11450ea63
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   RCT-Folly: a21c126816d8025b547704b777a2ba552f3d9fa9
   RCTRequired: e4a18a90004e0ed97bba9081099104fd0f658dc9
@@ -1152,12 +1153,12 @@ SPEC CHECKSUMS:
   React-logger: 9a9cd87d4ea681ae929b32ef580638ff1b50fb24
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
-  react-native-image-picker: e95b4785b685cfc06609bc50ed6fb55b59990c99
-  react-native-onesignal: 88a38450ee225600da7fbcfcf844a8af487db919
+  react-native-image-picker: 4e6008ad8c2321622affa2c85432a5ebd02d480c
+  react-native-onesignal: 7643517fe655b94cfda8e697ec16f9b9135648b8
   react-native-pure-jwt: 5b2e4fda2ec4c64be542bbe957adf88d6ea73d72
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   react-native-spinkit: da294fd828216ad211fe36a5c14c1e09f09e62db
-  react-native-webview: 8ec7ddf9eb4ddcd92b32cee7907efec19a9ec7cb
+  react-native-webview: 380c1a03ec94b7ed764dac8db1e7c9952d08c93a
   React-perflogger: 1f554c2b684e2f484f9edcdfdaeedab039fbaca8
   React-RCTActionSheet: 610d5a5d71ab4808734782c8bca6a12ec3563672
   React-RCTAnimation: ec6ed97370ace32724c253f29f0586cafcab8126
@@ -1170,18 +1171,18 @@ SPEC CHECKSUMS:
   React-RCTVibration: 53b92d54b923283638cb0186da7a5c2d2b70a49b
   React-runtimeexecutor: 4bb657a97aa74568d9ed634c8bd478299bb8a3a6
   ReactCommon: eb059748e842a1a86025ebbd4ac9d99e74492f88
-  RNCAsyncStorage: 81187912cc9a5c2591ddb161e03e587688afb764
+  RNCAsyncStorage: 7ebe0ebbb533d9336de2734866d172cce6515fce
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
   RNFBApp: 729c0666395b1953198dc4a1ec6deb8fbe1c302e
   RNFBAuth: 7718be1152f5d1d0bb970a8d33094d010f1ac21c
   RNFBDatabase: 1e8e42f296c43f812ac91fe078ceedbf02c77a23
-  RNFBDynamicLinks: 0e7bcd70ae65bf7122b1092ca95856181e692999
+  RNFBDynamicLinks: 1bffb503daabd680e69585c11225510500977a87
   RNFBFirestore: eef5fd4cfbe35316af559631db06a34b8391628a
-  RNFBPerf: e9651322b62c17df07d90df57d802c7b5a96707a
+  RNFBPerf: e260970a1f3210aa3af7f7aafeb15c4f9378f963
   RNFBStorage: 0c7bbab8436996aed5a7a9d7470a7df067a66419
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNReanimated: 58b57be69a237fb02ec8099d25171057638cf41a
+  RNReanimated: e8afbe2a9e08e9e778ea72ddb1a8533445812621
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
