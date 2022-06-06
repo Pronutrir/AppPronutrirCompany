@@ -32,6 +32,7 @@ import ModalCentralizedOptions, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralizedOptions';
 import NotificationInfor from '../../../components/Notification/NotificationInfor';
+import Infomation from '../../../assets/svg/informacoes.svg';
 
 const HistoryEvolucao: React.FC = () => {
     const navigation = useNavigation();
@@ -165,8 +166,12 @@ const HistoryEvolucao: React.FC = () => {
                                         MenuPopUpOptions(label, item);
                                 }}
                             />
-                        ):
-                        <NotificationInfor msn='Somente estará disponível para edição ou exclusão ás evoluções que não estiverem liberadas, após a liberação das evoluções só será possível fazer alterações até o prazo de 24 horas!'/>}
+                        ) : (
+                            <NotificationInfor
+                                msn="Somente estará disponível para edição ou exclusão ás evoluções que não estiverem liberadas, após a liberação das evoluções só será possível fazer alterações até o prazo de 24 horas!"
+                                iconeTop={Infomation}
+                            />
+                        )}
                     </View>
                     <View>
                         <CheckEvolucaoComponent Item={item.dT_LIBERACAO} />
