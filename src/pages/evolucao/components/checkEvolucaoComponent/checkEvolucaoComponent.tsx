@@ -16,8 +16,8 @@ const CheckEvolucaoComponent: React.FC<Props> = ({ Item }: Props) => {
             <View style={styles.container}>
                 <CheckMark
                     style={styles.img}
-                    width={RFPercentage(3.5)}
-                    height={RFPercentage(3.5)}
+                    width={RFPercentage(2.5)}
+                    height={RFPercentage(2.5)}
                 />
                 <Text style={styles.text}>Liberado</Text>
             </View>

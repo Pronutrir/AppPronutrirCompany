@@ -22,15 +22,15 @@ const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
 interface Props {
-    valueText: string;
-    onPress(): void;
+    valueText?: string;
+    onPress?(): void;
     disable?: boolean;
 }
 
 const BtnOptions: React.FC<Props> = ({
-    valueText,
-    onPress,
-    disable,
+    valueText = 'text',
+    onPress = () => {''},
+    disable = false,
 }: Props) => {
     const styleOpacity = useSharedValue(1);
 
