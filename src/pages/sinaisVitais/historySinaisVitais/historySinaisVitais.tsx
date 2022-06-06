@@ -25,7 +25,7 @@ import ModalCentralizedOptions, {
 import MenuPopUp, {
     ModalHandlesMenu,
 } from '../../../components/menuPopUp/menuPopUp';
-import Loading from '../../../components/Loading/Loading';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext, {
@@ -78,23 +78,22 @@ const HistorySinaisVitais: React.FC = () => {
         isFetching,
     } = useHistoryAlerts();
 
-    const refModalBotom = useRef<ModalHandles>(null);
-    const refMenuBotom = useRef<ModalHandlesMenu>(null);
-
-    const [activeModal, setActiveModal] = useState<boolean>(false);
+    const refModalOptions = useRef<ModalHandles>(null);
+    const refMenuPopUp = useRef<ModalHandlesMenu>(null);
+    const refLoading = useRef<LoadHandles>(null);
 
     const [selectedSinais, setSelectedSinais] =
         useState<IInativarSinaisVitais>();
 
     const setSelectedSinaisInativar = (item: IInativarSinaisVitais) => {
-        refModalBotom.current?.openModal();
+        setTimeout(
+            () => {
+                refModalOptions.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+        );
         setSelectedSinais(item);
     };
-
-    /* const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
-        setActiveModalDel(true);
-        setSelectedSinais(item);
-    }; */
 
     const RedirectNavigation = (item: ISinaisVitais) => {
         if (ValidationAutorizeEnfermagem()) {
@@ -112,10 +111,15 @@ const HistorySinaisVitais: React.FC = () => {
 
     const InativarSinalVital = async () => {
         if (selectedSinais) {
-            setActiveModal(true);
+            setTimeout(
+                () => {
+                    refLoading.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
             await InativarSinaisVitais(selectedSinais);
-            refetchSinaisVitais;
-            setActiveModal(false);
+            await refetchSinaisVitais();
+            refLoading.current?.closeModal();
         }
     };
 
@@ -255,10 +259,10 @@ const HistorySinaisVitais: React.FC = () => {
                 </View>
                 <View style={styles.box3}>
                     <MenuPopUp
-                        ref={refMenuBotom}
+                        ref={refMenuPopUp}
                         btnLabels={['Editar', 'Excluir']}
                         onpress={(label) => {
-                            refMenuBotom.current?.hideMenu(),
+                            refMenuPopUp.current?.hideMenu(),
                                 MenuPopUpOptions(label, item);
                         }}
                     />
@@ -309,19 +313,13 @@ const HistorySinaisVitais: React.FC = () => {
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
-            <Loading activeModal={activeModal} />
+            <Loading ref={refLoading} />
             <ModalCentralizedOptions
                 animationType={'slide'}
-                ref={refModalBotom}
+                ref={refModalOptions}
                 message={'Deseja inativar este Sinal Vital ?'}
                 onpress={() => InativarSinalVital()}
             />
-            {/* <ModalCentralizedOptions
-                activeModal={activeModalDel}
-                message={'Deseja deletar este Sinal Vital ?'}
-                onpress={() => DeleteSinaisVitais(selectedSinais.nR_SEQUENCIA)}
-                setActiveModal={setActiveModalDel}
-            /> */}
         </View>
     );
 };

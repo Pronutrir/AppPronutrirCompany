@@ -48,7 +48,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const { data: resultTextDefault, isFetching } =
         useEvolucaoTextDefault(defaultText);
-        
+
     const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
         useAddEvoluçaoEnfermagem();
 
@@ -68,13 +68,17 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     };
 
     const addEvolucaoEnfermagem = async (evolucao: IEvolucao) => {
-        refModal.current?.openModal();
-        await mutateAsyncEvoluçaoEnfermagem(evolucao);
-        refModal.current?.closeModal();
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'RouteBottom' }, { name: 'IndexEvolucao' }],
-        });
+        try {
+            refModal.current?.openModal();
+            await mutateAsyncEvoluçaoEnfermagem(evolucao);
+            refModal.current?.closeModal();
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'RouteBottom' }, { name: 'IndexEvolucao' }],
+            });
+        } catch (error) {
+            refModal.current?.closeModal();
+        }
     };
 
     useEffect(() => {
@@ -121,13 +125,13 @@ export default EvolucaoEnfermagem;
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
-        container: { 
-            flex: 1, 
-            backgroundColor: theme.colors.BACKGROUND_1 
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.BACKGROUND_1,
         },
-        box: { 
-            flex: 1, 
-            height: '100%' 
+        box: {
+            flex: 1,
+            height: '100%',
         },
         item1: {
             padding: 10,

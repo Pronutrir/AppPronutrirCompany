@@ -29,6 +29,10 @@ export interface ITextDefault {
 export interface IEvolucaoHistoryResponse {
     result: IEvolucaoHistory[];
 }
+
+export interface IEvolucaoFilterHistoryResponse {
+    result: IEvolucaoHistory;
+}
 export interface IEvolucaoHistory {
     cD_EVOLUCAO: number;
     dT_EVOLUCAO: string;
@@ -111,7 +115,7 @@ const useUpdateEvoluçaoEnfermagem = () => {
         {
             onSuccess: () => {
                 addAlert({
-                    message: 'Evolução adicionada com sucesso!',
+                    message: 'Evolução atualizada com sucesso!',
                     status: 'sucess',
                 });
             },
@@ -222,7 +226,31 @@ const useHistoryEvolucao = (codMedico: string) => {
             onError: () => {
                 addAlert({
                     message:
-                        'Error ao listar os textos padroes tenta mais tarde!',
+                        'Error ao listar os textos padrões tenta mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+const useFilterHistoryEvolucao = (idEvolucao: number) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useQuery(
+        ['FilterHistoryEvolucao', idEvolucao],
+        async () => {
+            const {
+                data: { result },
+            } = await Api.get<IEvolucaoFilterHistoryResponse>(
+                `EvolucaoPaciente/FiltraEvolucaoPacientePorId/${idEvolucao}`,
+            );
+            return result;
+        },
+        {
+            onError: () => {
+                addAlert({
+                    message:
+                        'Error ao listar os textos padrões tenta mais tarde!',
                     status: 'error',
                 });
             },
@@ -234,7 +262,6 @@ const useLiberarEvolucao = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
         (Evolucao: IEvolucaoliberacao) => {
-            console.log('useliberar', Evolucao);
             return Api.put(
                 `EvolucaoPaciente/LiberarEvolucaoPaciente/${Evolucao.cD_EVOLUCAO}`, Evolucao,
             );
@@ -265,4 +292,5 @@ export {
     useEvolucaoTextDefaultReduzidos,
     useDeleteEvoluçaoEnfermagem,
     useLiberarEvolucao,
+    useFilterHistoryEvolucao,
 };

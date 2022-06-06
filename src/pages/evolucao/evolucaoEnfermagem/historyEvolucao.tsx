@@ -1,5 +1,12 @@
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useRef } from 'react';
+import {
+    Dimensions,
+    FlatList,
+    StyleSheet,
+    Text,
+    View,
+    Platform,
+} from 'react-native';
+import React, { useContext, useRef, useState } from 'react';
 import {
     useHistoryEvolucao,
     IEvolucaoHistory,
@@ -20,34 +27,64 @@ import MenuPopUp, {
 import { useNavigation } from '@react-navigation/native';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import CheckEvolucaoComponent from '../components/checkEvolucaoComponent/checkEvolucaoComponent';
+import { useServerHour } from '../../../hooks/useServerHour';
+import ModalCentralizedOptions, {
+    ModalHandles,
+} from '../../../components/Modais/ModalCentralizedOptions';
 
 const HistoryEvolucao: React.FC = () => {
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
     const refMenuBotom = useRef<ModalHandlesMenu>(null);
     const refModal = useRef<LoadHandles>(null);
+    const refModalBotom = useRef<ModalHandles>(null);
+
+    const [evolucao, setEvolucao] = useState<IEvolucaoHistory | undefined>();
 
     const {
         stateAuth: {
             usertasy: { cD_PESSOA_FISICA, nM_USUARIO },
         },
     } = useContext(AuthContext);
+
     const { data, refetch, isFetching } = useHistoryEvolucao(cD_PESSOA_FISICA);
+
+    const { data: serverDataHour } = useServerHour();
+
+    const optionsPopUp = (EVOLUCAO: IEvolucaoHistory) => {
+        return (
+            (moment(serverDataHour).diff(EVOLUCAO.dT_EVOLUCAO, 'hours') < 24 &&
+                Boolean(EVOLUCAO.dT_LIBERACAO)) ||
+            Boolean(!EVOLUCAO.dT_LIBERACAO)
+        );
+    };
 
     const { mutateAsync: mutateAsyncDeleteEvoluçaoEnfermagem } =
         useDeleteEvoluçaoEnfermagem();
 
     const { mutateAsync: mutateAsyncLiberarEvolucao } = useLiberarEvolucao();
 
-    const onDeleteEvolucao = async (item: IEvolucaoHistory) => {
-        refModal.current?.openModal();
-        await mutateAsyncDeleteEvoluçaoEnfermagem(item.cD_EVOLUCAO);
-        await refetch();
-        refModal.current?.closeModal();
+    const onDeleteEvolucao = async (item?: IEvolucaoHistory) => {
+        if (item) {
+            setTimeout(
+                () => {
+                    refModal.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
+            await mutateAsyncDeleteEvoluçaoEnfermagem(item.cD_EVOLUCAO);
+            await refetch();
+            refModal.current?.closeModal();
+        }
     };
 
     const onLiberarEvolucao = async (item: IEvolucaoHistory) => {
-        refModal.current?.openModal();
+        setTimeout(
+            () => {
+                refModal.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+        );
         await mutateAsyncLiberarEvolucao({
             cD_EVOLUCAO: item.cD_EVOLUCAO,
             nM_USUARIO: nM_USUARIO,
@@ -70,7 +107,15 @@ const HistoryEvolucao: React.FC = () => {
                 });
                 break;
             case 'Excluir':
-                await onDeleteEvolucao(item);
+                {
+                    setTimeout(
+                        () => {
+                            refModalBotom.current?.openModal();
+                            setEvolucao(item);
+                        },
+                        Platform.OS === 'android' ? 0 : 500,
+                    );
+                }
                 break;
             default:
                 break;
@@ -110,14 +155,16 @@ const HistoryEvolucao: React.FC = () => {
                 </View>
                 <View style={styles.box3}>
                     <View style={{ alignItems: 'flex-end' }}>
-                        <MenuPopUp
-                            ref={refMenuBotom}
-                            btnLabels={['Liberar', 'Editar', 'Excluir']}
-                            onpress={(label) => {
-                                refMenuBotom.current?.hideMenu(),
-                                    MenuPopUpOptions(label, item);
-                            }}
-                        />
+                        {optionsPopUp(item) && (
+                            <MenuPopUp
+                                ref={refMenuBotom}
+                                btnLabels={['Liberar', 'Editar', 'Excluir']}
+                                onpress={(label) => {
+                                    refMenuBotom.current?.hideMenu(),
+                                        MenuPopUpOptions(label, item);
+                                }}
+                            />
+                        )}
                     </View>
                     <View>
                         <CheckEvolucaoComponent Item={item.dT_LIBERACAO} />
@@ -139,6 +186,12 @@ const HistoryEvolucao: React.FC = () => {
         </CardSimples>
     );
 
+    const renderItemEmpty = () => (
+        <CardSimples styleCardContainer={styles.cardStyle}>
+            <Text style={styles.text}>Nenhum Histórico encontrado!</Text>
+        </CardSimples>
+    );
+
     return (
         <View style={styles.container}>
             {data ? (
@@ -152,14 +205,20 @@ const HistoryEvolucao: React.FC = () => {
                     onRefresh={() => {
                         refetch();
                     }}
-                    //ListEmptyComponent={renderItemEmpty}
+                    ListEmptyComponent={renderItemEmpty}
                     //ListFooterComponent={renderFooter}
                     //onEndReached={loadMore}
-                    onEndReachedThreshold={0.5}
+                    //onEndReachedThreshold={0.5}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
+            <ModalCentralizedOptions
+                animationType={'slide'}
+                ref={refModalBotom}
+                message={'Deseja excluir este Sinal Vital ?'}
+                onpress={() => onDeleteEvolucao(evolucao)}
+            />
             <Loading ref={refModal} />
         </View>
     );

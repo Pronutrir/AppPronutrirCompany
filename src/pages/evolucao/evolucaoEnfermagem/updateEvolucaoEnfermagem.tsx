@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
@@ -9,12 +9,12 @@ import RichComponent from '../components/richComponent/richComponent';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import { QueryCache } from 'react-query';
 import {
-    IEvolucao,
     IEvolucaoHistory,
+    useFilterHistoryEvolucao,
     useUpdateEvoluçaoEnfermagem,
 } from '../../../hooks/useEvolucao';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
-import AuthContext from '../../../contexts/auth';
+import ShimmerPlaceHolderText from '../../../components/shimmerPlaceHolder/shimerPlaceHolderText';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -29,11 +29,6 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         params: { Evolucao },
     },
 }: Props) => {
-    const {
-        stateAuth: {
-            usertasy: { usuariO_FUNCIONARIO_SETOR, cD_PESSOA_FISICA },
-        },
-    } = useContext(AuthContext);
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
     const styles = useThemeAwareObject(createStyles);
@@ -42,17 +37,22 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const [evolucao, setEvolucao] = useState<IEvolucaoHistory>(Evolucao);
 
+    const { data: EvolucaoFilter, isFetching } = useFilterHistoryEvolucao(
+        Evolucao.cD_EVOLUCAO,
+    );
+
     const { mutateAsync: mutateAsyncUpdateEvoluçaoEnfermagem } =
         useUpdateEvoluçaoEnfermagem();
 
     const addUpdateEvolucaoEnfermagem = async () => {
         refModal.current?.openModal();
-        await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
-        refModal.current?.closeModal();
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'RouteBottom' }, { name: 'SearchPessoaFisica' }],
-        });
+        try {
+            await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
+            refModal.current?.closeModal();
+            navigation.goBack();
+        } catch (error) {
+            refModal.current?.closeModal();
+        }
     };
 
     useEffect(() => {
@@ -72,21 +72,26 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                         }}
                     />
                 </View>
-                <RichComponent
-                    //shimerPlaceHolder={isFetching}
-                    initialContentHTML={Evolucao.dS_EVOLUCAO}
-                    onChanger={(item) => {
-                        const textHtml = `<html tasy="html5"><head><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>${item}</body></html>`;
-                        setEvolucao({ ...evolucao, dS_EVOLUCAO: textHtml });
-                    }}
-                />
+                {EvolucaoFilter ? (
+                    <RichComponent
+                        shimerPlaceHolder={isFetching}
+                        initialContentHTML={EvolucaoFilter.dS_EVOLUCAO}
+                        onChanger={(item) => {
+                            const textHtml = `<html tasy="html5"><head><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>${item}</body></html>`;
+                            setEvolucao({
+                                ...EvolucaoFilter,
+                                dS_EVOLUCAO: textHtml,
+                            });
+                        }}
+                    />
+                ) : (
+                    <ShimmerPlaceHolderText />
+                )}
             </View>
             {evolucao?.dS_EVOLUCAO && (
                 <BtnOptions
                     valueText={'Atualizar'}
-                    onPress={() =>
-                        addUpdateEvolucaoEnfermagem()
-                    }
+                    onPress={() => addUpdateEvolucaoEnfermagem()}
                 />
             )}
             <Loading ref={refModal} />

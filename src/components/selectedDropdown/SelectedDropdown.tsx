@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
