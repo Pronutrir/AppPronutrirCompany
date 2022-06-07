@@ -11,7 +11,7 @@ import useTheme from '../hooks/useTheme';
 const Index: React.FC = () => {
     
     const theme = useTheme();
-    const { signed, loading } = useContext(AuthContext);
+    const { signed, loading, stateAuth: { PerfilSelected, UnidadeSelected } } = useContext(AuthContext);
 
     return loading ? (
         <>

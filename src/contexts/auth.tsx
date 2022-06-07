@@ -17,7 +17,7 @@ import {
 } from '../reducers/UserReducer';
 import OneSignal from 'react-native-onesignal';
 import { useQuery, UseQueryResult } from 'react-query';
-import { getPerfil, saveRefreshToken } from '../utils';
+import { getPerfil, getUnidade, saveRefreshToken } from '../utils';
 import ApiAuth from '../services/apiAuth';
 interface AuthContextData {
     signed: boolean;
@@ -124,11 +124,14 @@ export const AuthProvider: React.FC = ({ children }) => {
         }
     };
 
-    const getPerfilUser = async (cD_PESSOA_FISICA: string) => {
-        const result = await getPerfil();
-        if (result?.cD_PESSOA_FISICA === cD_PESSOA_FISICA) {
-            dispatchAuth({ type: 'setPerfilApp', payload: result });
+    const getPerfilUnidadeUser = async (cD_PESSOA_FISICA: string) => {
+        const resultUnidade = await getUnidade();
+        const resultPerfil = await getPerfil();
+        if (resultPerfil?.cD_PESSOA_FISICA === cD_PESSOA_FISICA) {
+            dispatchAuth({ type: 'setUnidade', payload: resultUnidade });
+            dispatchAuth({ type: 'setPerfilApp', payload: resultPerfil });
         } else {
+            dispatchAuth({ type: 'setUnidade', payload: null });
             dispatchAuth({ type: 'setPerfilApp', payload: null });
         }
     };
@@ -154,6 +157,10 @@ export const AuthProvider: React.FC = ({ children }) => {
                         const result: UserTasy = await ConsultaCpfTasy(
                             getFireStone?.cpf,
                         );
+
+                        //verificar perfil usuário cache
+                        await getPerfilUnidadeUser(result.cD_PESSOA_FISICA);
+
                         if (result) {
                             //informa que há usuário logado
                             setUsuario({ email, uid });
@@ -163,8 +170,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                                 payload: result,
                             });
 
-                            //verificar perfil usuário cache
-                            await getPerfilUser(result.cD_PESSOA_FISICA);
+                            
                         }
                         //registra o dispositivo no onesignal inclui um id externo para notificações!
                         OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);

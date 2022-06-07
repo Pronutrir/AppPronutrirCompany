@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IPerfis } from './reducers/UserReducer';
+import { IPerfis, IUnidade } from './reducers/UserReducer';
 
 export async function getUser() {
     const user = await AsyncStorage.getItem('@User');
@@ -57,6 +57,15 @@ export async function mergerUserTasy(userTasy: any) {
 
 export async function deleteUserTasy() {
     await AsyncStorage.removeItem('@UserTasy');
+}
+
+export async function saveUnidade(Unidade: IUnidade) {
+    await AsyncStorage.setItem('@Unidade', JSON.stringify(Unidade));
+}
+
+export async function getUnidade(): Promise<IUnidade> {
+    const user = await AsyncStorage.getItem('@Unidade');
+    return user != null ? JSON.parse(user) : null;
 }
 
 export async function savePerfil(Perfil: IPerfis) {

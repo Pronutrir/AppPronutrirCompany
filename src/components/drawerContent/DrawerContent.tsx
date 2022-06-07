@@ -1,21 +1,31 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, Platform, KeyboardAvoidingView, Image } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Dimensions,
+    Platform,
+    KeyboardAvoidingView,
+    Image,
+} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Loading from '../../components/Loading/Loading';
+import Loading, { LoadHandles } from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
 import auth from '@react-native-firebase/auth';
 import SelectedDropdown from '../selectedDropdown/SelectedDropdown';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
-import { savePerfil } from '../../utils';
-import { IPerfis } from '../../reducers/UserReducer';
+import { savePerfil, saveUnidade } from '../../utils';
+import { IPerfis, IUnidade } from '../../reducers/UserReducer';
 import NotificationMultOptions, {
     ModalHandles,
 } from '../Notification/NotificationMultOptions';
 import ModalCentralize, {
-    ModalHandles as ModalHandlesPerfil,
+    ModalHandles as ModalHandlesSelect,
 } from '../Modais/ModalCentralize';
+import { useUnidades } from '../../hooks/useEstabelecimentos';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
@@ -23,33 +33,36 @@ interface Props {
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
+    const loadingRef = useRef<LoadHandles>(null);
     const notificationRef = useRef<ModalHandles>(null);
-    const modalRef = useRef<ModalHandlesPerfil>(null);
+    const modalSelectPerfisRef = useRef<ModalHandlesSelect>(null);
+    const modaSelectUnidadelRef = useRef<ModalHandlesSelect>(null);
 
     const {
         stateAuth: {
             usertasy,
             usertasy: { usuariO_FUNCIONARIO_PERFIL },
             PerfilSelected,
+            UnidadeSelected,
         },
         dispatchAuth,
     } = useContext(AuthContext);
 
-    const [loading, setLoading] = useState(false);
+    const { data: unidades } = useUnidades();
 
     const logout = () => {
         auth()
             .signOut()
             .then(() => {
                 dispatchAuth({ type: 'delUser', payload: '' });
-                setLoading(true);
+                loadingRef.current?.openModal();
             })
             .catch(() => {
                 console.log('erro');
             });
     };
 
-    const RefactoryData = () => {
+    const RefactoryPerfisData = () => {
         const result = usuariO_FUNCIONARIO_PERFIL.map((element) => {
             return { label: element.dS_PERFIL, value: element };
         });
@@ -58,22 +71,38 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         });
     };
 
+    const SelectedUnidadeApp = (item: IUnidade) => {
+        modaSelectUnidadelRef.current?.closeModal();
+        navigation.closeDrawer();
+        dispatchAuth({ type: 'setUnidade', payload: item });
+        saveUnidade(item);
+    };
+
     const SelectedPerfilApp = (item: IPerfis) => {
-        setLoading(true);
+        modalSelectPerfisRef.current?.closeModal();
         dispatchAuth({ type: 'setPerfilApp', payload: item });
         savePerfil(item);
         setTimeout(() => {
-            modalRef.current?.closeModal();
-            setLoading(false);
+            loadingRef.current?.openModal();
+        }, 500);
+        
+        setTimeout(() => {
+            loadingRef.current?.closeModal();
             navigation.closeDrawer();
-        }, 1000);
+        }, 2000);
     };
 
     useEffect(() => {
-        if(PerfilSelected === null){
-            modalRef.current?.openModal();
+        if (UnidadeSelected === null) {
+            modaSelectUnidadelRef.current?.openModal();
         }
-    }, [PerfilSelected]);
+    }, []);
+
+    useEffect(() => {
+        if (UnidadeSelected && PerfilSelected === null ) {
+            modalSelectPerfisRef.current?.openModal();
+        }
+    }, [UnidadeSelected]);
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -97,7 +126,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
             </View>
             <View style={styles.box2}>
                 <SelectedDropdown
-                    data={RefactoryData()}
+                    data={RefactoryPerfisData()}
                     onChange={({ value }) => SelectedPerfilApp(value)}
                     value={PerfilSelected}
                     placeholder={'Perfil do App'}
@@ -111,28 +140,41 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                 </TouchableOpacity>
                 <Text style={styles.text2}>Versão 1.5</Text>
             </View>
-            <Loading activeModal={loading} />
             <NotificationMultOptions
                 ref={notificationRef}
                 title={'Mensagem'}
                 message={'Deseja Realmente sair?'}
                 onpress={() => logout()}
             />
-            <ModalCentralize
-                ref={modalRef}
-                disableTouchOff={true}>
+            <ModalCentralize ref={modaSelectUnidadelRef} disableTouchOff={true}>
+                <View style={styles.boxModalPerfil}>
+                    <Text style={styles.textLabelModal}>
+                        Selecione a unidade!
+                    </Text>
+                    <SelectedDropdown
+                        data={unidades}
+                        onChange={({ value }) => SelectedUnidadeApp(value)}
+                        value={PerfilSelected}
+                        placeholder={'Selecione a unidade'}
+                        maxHeight={RFPercentage(20)}
+                        ContainerStyle={styles.ContainerStyle}
+                    />
+                </View>
+            </ModalCentralize>
+            <ModalCentralize ref={modalSelectPerfisRef} disableTouchOff={true}>
                 <View style={styles.boxModalPerfil}>
                     <Text style={styles.textLabelModal}>
                         Selecione o perfil de acesso!
                     </Text>
                     <SelectedDropdown
-                        data={RefactoryData()}
+                        data={RefactoryPerfisData()}
                         onChange={({ value }) => SelectedPerfilApp(value)}
                         value={PerfilSelected}
                         placeholder={'Perfil do App'}
                     />
                 </View>
             </ModalCentralize>
+            <Loading ref={loadingRef} />
         </KeyboardAvoidingView>
     );
 };
@@ -162,6 +204,10 @@ const createStyles = (theme: ThemeContextData) => {
         imgLogo: {
             width: Dimensions.get('screen').width / 5,
             height: Dimensions.get('screen').width / 5,
+        },
+        ContainerStyle: {
+            //justifyContent: 'center',
+            //alignItems:'center'
         },
         text1: {
             fontSize: theme.typography.SIZE.fontysize22,

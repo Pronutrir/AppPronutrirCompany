@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Platform } from 'react-native';
+import { StyleSheet, Text, View, Platform, StyleProp, ViewStyle } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -23,6 +23,9 @@ interface Props<T> {
     onChange?(item: T): void;
     shimerPlaceHolder?: boolean;
     disable?: boolean;
+    DropDownStyle?: StyleProp<ViewStyle>;
+    ContainerStyle?: StyleProp<ViewStyle>;
+    maxHeight?: number
 }
 
 const SelectedDropdown = <T extends { label: string }>({
@@ -32,6 +35,9 @@ const SelectedDropdown = <T extends { label: string }>({
     placeholder,
     shimerPlaceHolder = false,
     disable = false,
+    DropDownStyle,
+    maxHeight = RFPercentage(45),
+    ContainerStyle,
 }: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
     const [_value, setValue] = useState<T | null>(null);
@@ -52,13 +58,14 @@ const SelectedDropdown = <T extends { label: string }>({
             <Dropdown
                 disable={disable}
                 search={data && data.length > 20 ? true : false}
-                style={styles.dropdown}
+                style={[{ ...styles.dropdown }, DropDownStyle]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.placeholderStyle}
                 inputSearchStyle={styles.inputSearchStyle}
+                containerStyle={ContainerStyle}
                 iconStyle={styles.iconStyle}
                 data={data ?? _data}
-                maxHeight={RFPercentage(45)}
+                maxHeight={maxHeight}
                 labelField="label"
                 valueField="value"
                 placeholder={placeholder ? placeholder : 'Selecione'}
@@ -115,6 +122,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         textItem: {
             flex: 1,
+            textAlign: 'center',
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
