@@ -121,7 +121,7 @@ const useUpdateEvoluçaoEnfermagem = () => {
             },
             onError: () => {
                 addAlert({
-                    message: 'Error ao adicionar a evolução tente mais tarde!',
+                    message: 'Error ao atualizar a evolução tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -155,6 +155,7 @@ const useDeleteEvoluçaoEnfermagem = () => {
 };
 
 const useNotasClinicas = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery('tiposNotas', async () => {
         const {
             data: { result },
@@ -164,10 +165,18 @@ const useNotasClinicas = () => {
         return result.map((item) => {
             return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
         });
+    },{
+        onError: () => {
+            addAlert({
+                message: 'Error ao consultar notas clinicas tente mais tarde!',
+                status: 'error',
+            });
+        },
     });
 };
 
 const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
         'defaltText',
         async () => {
@@ -180,7 +189,15 @@ const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
                 return { label: item.dS_TITULO, value: item };
             });
         },
-        { enabled: Boolean(cD_TIPO_EVOLUCAO) },
+        { 
+            enabled: Boolean(cD_TIPO_EVOLUCAO),
+            onError: () => {
+                addAlert({
+                    message: 'Error ao consultar textos padrões tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
     );
 };
 
@@ -202,7 +219,7 @@ const useEvolucaoTextDefault = (value: number | null) => {
             onError: () => {
                 addAlert({
                     message:
-                        'Error ao listar os textos padroes tenta mais tarde!',
+                        'Error ao listar os textos padroes tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -223,10 +240,12 @@ const useHistoryEvolucao = (codMedico: string) => {
             return result;
         },
         {
+            //enabled: false,
+            staleTime : 60 * 30000, // 30 minuto
             onError: () => {
                 addAlert({
                     message:
-                        'Error ao listar os textos padrões tenta mais tarde!',
+                        'Error ao listar os evoluções tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -250,7 +269,7 @@ const useFilterHistoryEvolucao = (idEvolucao: number) => {
             onError: () => {
                 addAlert({
                     message:
-                        'Error ao listar os textos padrões tenta mais tarde!',
+                        'Error ao listar os evoluções tente mais tarde!',
                     status: 'error',
                 });
             },

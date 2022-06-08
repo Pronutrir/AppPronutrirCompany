@@ -9,7 +9,6 @@ import NotificationCentralized from './components/Notification/NotificationCentr
 import OneSignal from 'react-native-onesignal';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './contexts/themeContext';
-import NetInfo from '@react-native-community/netinfo';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
@@ -35,18 +34,6 @@ const Index: React.FC = () => {
 
         return unsubscribe;
     }, []) */
-
-    useEffect(() => {
-        // Subscribe
-        const unsubscribe = NetInfo.addEventListener((state) => {
-            console.log('Connection type', state.type);
-            console.log('Is connected?', state.isConnected);
-        });
-        return () => {
-            // Unsubscribe
-            unsubscribe();
-        };
-    }, []);
 
     useEffect(() => {
         // @ts-expect-error: Unreachable code error

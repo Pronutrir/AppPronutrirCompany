@@ -18,6 +18,7 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { useUnidades } from '../../hooks/useEstabelecimentos';
 import { IUnidade } from '../../reducers/UserReducer';
 import { saveUnidade } from '../../utils';
+import { useQueryClient } from 'react-query';
 
 const DashBoard: React.FC = () => {
     const navigation = useNavigation();
@@ -27,12 +28,15 @@ const DashBoard: React.FC = () => {
 
     const { data: unidades } = useUnidades();
 
+    const queryClient = useQueryClient();
+
     const SelectedUnidadeApp = async (item: IUnidade) => {
         if(UnidadeSelected?.cD_ESTABELECIMENTO !== item.cD_ESTABELECIMENTO){
             setTimeout(() => {
                 dispatchAuth({ type: 'setUnidadeDaSh', payload: item });
             }, 1000);
             await saveUnidade(item);
+            queryClient.clear();
         }
     };
 

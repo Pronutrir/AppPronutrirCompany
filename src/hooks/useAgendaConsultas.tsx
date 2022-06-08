@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useContext } from 'react';
-import { useQuery, onlineManager } from 'react-query';
+import { useQuery } from 'react-query';
 import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
@@ -54,7 +54,6 @@ export interface IMedico {
     dS_ESPECIALIDADE: string;
     nM_GUERRA: string;
 }
-
 export interface IResultAgendaConsultas {
     result: IAgendaConsulta[];
     medicos: IMedico[];
@@ -113,8 +112,8 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
             })};
         },
         {
-            //enabled: stateUnidade(),
-            //staleTime : 60 * 1000, // 1 minuto
+            //enabled: false,
+            staleTime : 60 * 30000, // 30 minuto
             onError: () => {
                 addAlert({
                     message: 'Error ao carregar as agendas, tenta mais tarde!',

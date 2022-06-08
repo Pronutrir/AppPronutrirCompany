@@ -54,8 +54,8 @@ const useGetAgendasQt = () => {
 
     },
     {
-        //enabled: stateUnidade(),
-        //staleTime : 60 * 1000, // 1 minuto
+        //enabled: false,
+        staleTime : 60 * 30000, // 30 minuto
         onError: () => {
             addAlert({
                 message: 'Error ao carregar as agendas, tenta mais tarde!',

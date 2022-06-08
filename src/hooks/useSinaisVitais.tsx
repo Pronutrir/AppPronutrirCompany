@@ -114,7 +114,7 @@ const useSinaisVitaisAll = () => {
             placeholderData: initialSinaisVitais,
             onError: () => {
                 addAlert({
-                    message: 'Error ao Atualizar os sinais vitais',
+                    message: 'Error ao listar os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -130,7 +130,7 @@ const useSinaisVitaisHistory = (paciente: string) => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=100`,
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=500`,
             );
             return result.sort((a, b) => {
                 return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
@@ -143,7 +143,7 @@ const useSinaisVitaisHistory = (paciente: string) => {
         {
             onError: () => {
                 addAlert({
-                    message: 'Error ao Atualizar os sinais vitais',
+                    message: 'Error ao listar os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
             },
