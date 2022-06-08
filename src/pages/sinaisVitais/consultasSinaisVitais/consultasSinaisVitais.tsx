@@ -9,7 +9,7 @@ import ModalBottom, {
 } from '../../../components/Modais/ModalBottom';
 import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
-import { useGetAgendaConsultas, IAgendaConsulta, IResultAgendaConsultas, IMedico } from '../../../hooks/useAgendaConsultas';
+import { useGetAgendaConsultas, IAgendaConsulta, IResultAgendaConsultas } from '../../../hooks/useAgendaConsultas';
 import AuthContext from '../../../contexts/auth';
 
 const ConsultasSinaisVitais: React.FC = () => {
