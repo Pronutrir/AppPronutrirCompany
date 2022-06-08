@@ -48,7 +48,6 @@ interface Parms {
 
 focusManager.setEventListener((handleFocus) => {
     const subscription = AppState.addEventListener('change', (state) => {
-        console.log(state);
         handleFocus(state === 'active');
     });
 

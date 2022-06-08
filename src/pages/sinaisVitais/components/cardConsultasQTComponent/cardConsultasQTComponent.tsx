@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import HistorySvg from '../../../../assets/svg/historico.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import { IconsultaQT } from '../../../../reducers/ConsultasQTReducer';
@@ -17,15 +17,18 @@ import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
+import { QueryObserverResult } from 'react-query';
+import { IAgendaQT } from '../../../../hooks/useAgendaQt';
 interface Props {
-    dataSourceQT?: IconsultaQT[] | null;
+    dataSourceQT?: IconsultaQT[] | null | undefined;
+    refetch<T extends Record<keyof T, unknown>>(): Promise<QueryObserverResult<IAgendaQT[], unknown>>;
 }
 
-const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
+const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT, refetch }: Props) => {
 
     const styles = useThemeAwareObject(createStyles);
 
-    const { GetConsultasQT, ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
+    const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
@@ -108,7 +111,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                     refreshing={refreshing}
                     onRefresh={async () => {
                         setRefreshing(true);
-                        await GetConsultasQT();
+                        await refetch();
                         setRefreshing(false);
                     }}
                     ListEmptyComponent={renderItemEmpty}

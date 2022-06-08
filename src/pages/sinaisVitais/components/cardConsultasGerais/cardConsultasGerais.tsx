@@ -168,12 +168,6 @@ const CardConsultasGerais: React.FC<Props> = ({
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    //refreshing={refreshing}
-                    /*  onRefresh={async () => {
-                        setRefreshing(true);
-                        await GetConsultasQT();
-                        setRefreshing(false);
-                    }} */
                     ListEmptyComponent={renderItemEmpty}
                     onEndReached={LoadingSearch}
                     onEndReachedThreshold={0.3}

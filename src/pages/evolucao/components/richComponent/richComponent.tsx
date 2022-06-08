@@ -55,7 +55,7 @@ const RichComponent: React.FC<Props> = ({
     }, []);
 
     const onKeyHide = useCallback(() => {
-        console.log();
+        //console.log();
     }, []);
 
     const onKeyShow = useCallback(() => {
@@ -64,7 +64,7 @@ const RichComponent: React.FC<Props> = ({
 
     // editor height change
     const handleHeightChange = useCallback((height) => {
-        console.log('editor height change:', height);
+        //console.log('editor height change:', height);
     }, []);
 
     const handleInsertEmoji = useCallback((emoji) => {
@@ -134,7 +134,7 @@ const RichComponent: React.FC<Props> = ({
     }, []);
 
     const handleInput = useCallback(({ data, inputType }) => {
-        console.log(inputType, data);
+       //console.log(inputType, data);
     }, []);
 
     const handleMessage = useCallback(({ type, id, data }) => {
@@ -156,11 +156,11 @@ const RichComponent: React.FC<Props> = ({
     }, []);
 
     const handleFocus = useCallback(() => {
-        console.log('editor focus');
+        //console.log('editor focus');
     }, []);
 
     const handleBlur = useCallback(() => {
-        console.log('editor blur');
+        //console.log('editor blur');
     }, []);
 
     const handleCursorPosition = useCallback((scrollY) => {

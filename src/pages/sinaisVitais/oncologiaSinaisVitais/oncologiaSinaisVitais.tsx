@@ -1,17 +1,16 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import SearchBar from 'react-native-dynamic-search-bar';
 import { RFValue } from 'react-native-responsive-fontsize';
-import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import CardConsultasQTComponent from '../components/cardConsultasQTComponent/cardConsultasQTComponent';
-import { IconsultaQT } from '../../../reducers/ConsultasQTReducer';
 import createStyles from './style';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import { IAgendaQT, useGetAgendasQt } from '../../../hooks/useAgendaQt';
 interface Consulta {
     query: string;
     isLoading: boolean;
     refreshing: boolean;
-    dataSource: IconsultaQT[];
+    dataSource: IAgendaQT[] | undefined;
     spinnerVisibility: boolean;
     page: number;
     loadingScrow: boolean;
@@ -19,17 +18,15 @@ interface Consulta {
 }
 
 const OncologiaSinaisVitais = () => {
-
     const styles = useThemeAwareObject(createStyles);
 
-    const {
-        stateConsultasQT: { consultasQT, flagQT },
-    } = useContext(SinaisVitaisContext);
+    const { data: agendasQt, refetch } = useGetAgendasQt();
+
     const [state, setState] = useState<Consulta>({
         query: '',
         isLoading: true,
         refreshing: false,
-        dataSource: consultasQT,
+        dataSource: undefined,
         spinnerVisibility: false,
         page: 1,
         loadingScrow: false,
@@ -44,27 +41,33 @@ const OncologiaSinaisVitais = () => {
         if (clearSetTimeout.current) {
             clearTimeout(clearSetTimeout.current);
         }
-        clearSetTimeout.current = setTimeout(() => {
-            const SeachResult = consultasQT.filter((item) =>
-                item.nM_PESSOA_FISICA
-                    .toLocaleLowerCase()
-                    .includes(name.toLocaleLowerCase()),
-            );
-            if (SeachResult.length > 0) {
-                setState((old) => {
-                    return {
-                        ...old,
-                        query: name,
-                        dataSource: SeachResult,
-                        spinnerVisibility: false,
-                    };
-                });
-            } else {
-                setState((old) => {
-                    return { ...old, query: name, spinnerVisibility: false };
-                });
-            }
-        }, 2000);
+        if (agendasQt) {
+            clearSetTimeout.current = setTimeout(() => {
+                const SeachResult = agendasQt.filter((item) =>
+                    item.nM_PESSOA_FISICA
+                        .toLocaleLowerCase()
+                        .includes(name.toLocaleLowerCase()),
+                );
+                if (SeachResult.length > 0) {
+                    setState((old) => {
+                        return {
+                            ...old,
+                            query: name,
+                            dataSource: SeachResult,
+                            spinnerVisibility: false,
+                        };
+                    });
+                } else {
+                    setState((old) => {
+                        return {
+                            ...old,
+                            query: name,
+                            spinnerVisibility: false,
+                        };
+                    });
+                }
+            }, 1000);
+        }
     };
 
     const Onclean = () => {
@@ -72,7 +75,7 @@ const OncologiaSinaisVitais = () => {
             return {
                 ...prevState,
                 spinnerVisibility: false,
-                dataSource: consultasQT,
+                dataSource: agendasQt,
                 query: '',
             };
         });
@@ -83,11 +86,11 @@ const OncologiaSinaisVitais = () => {
             return {
                 ...prevState,
                 spinnerVisibility: false,
-                dataSource: consultasQT,
+                dataSource: agendasQt,
                 query: '',
             };
         });
-    }, [consultasQT]);
+    }, [agendasQt]);
 
     return (
         <View style={styles.container}>
@@ -105,9 +108,7 @@ const OncologiaSinaisVitais = () => {
                 selectionColor="#fff"
                 value={state.query}
             />
-            <CardConsultasQTComponent
-                dataSourceQT={flagQT ? state.dataSource : null}
-            />
+            <CardConsultasQTComponent refetch={() => refetch()} dataSourceQT={state.dataSource} />
         </View>
     );
 };

@@ -57,7 +57,6 @@ export default function consultaCpf({ navigation }) {
 
             let firebaseExiste = null;
 
-            console.log(_Cpf);
             // consulta o cpf do cliente na api tasy
             const dadosTasy = await getCpf(_Cpf);
 
@@ -86,7 +85,6 @@ export default function consultaCpf({ navigation }) {
 
         } catch (error) {
             setModalActive(false);
-            console.log(error)
             const { message } = error
             if (message) {
                 setModalNotification(prevState => {

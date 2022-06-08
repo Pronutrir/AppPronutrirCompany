@@ -8,7 +8,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import HistorySvg from '../../assets/svg/historico.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import moment from 'moment';
@@ -163,12 +163,6 @@ const CardConsultasGerais: React.FC<Props> = ({
                     }
                     scrollEnabled
                     keyExtractor={(item, index) => `key-${index}`}
-                    //refreshing={refreshing}
-                    /*  onRefresh={async () => {
-                        setRefreshing(true);
-                        await GetConsultasQT();
-                        setRefreshing(false);
-                    }} */
                     ListEmptyComponent={renderItemEmpty}
                     onEndReached={LoadingSearch}
                     onEndReachedThreshold={0.3}

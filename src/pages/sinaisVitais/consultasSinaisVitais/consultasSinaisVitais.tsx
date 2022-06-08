@@ -33,7 +33,6 @@ const ConsultasSinaisVitais: React.FC = () => {
 
     const filterConsultas = (item?: IFilterConsultas): IAgendaConsulta[] | undefined => {
         const stateConsultas = useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
-        console.log(stateConsultas);
         if(item){
             if (stateConsultas?.result && (item?.dS_ESPECIALIDADE)) {
                 return stateConsultas.result.filter(

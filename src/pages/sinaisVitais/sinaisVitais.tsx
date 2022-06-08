@@ -3,7 +3,6 @@ import React, {
     useRef,
     useCallback,
     useEffect,
-    useContext,
 } from 'react';
 import {
     Text,
@@ -13,7 +12,6 @@ import {
     useWindowDimensions,
     ListRenderItem,
 } from 'react-native';
-import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
 import { HistorySinaisVitais } from './historySinaisVitais/historySinaisVitais';
@@ -32,10 +30,6 @@ const SinaisVitais: React.FC = () => {
 
     const styles = useThemeAwareObject(createStyles);
 
-    const {
-        GetConsultasQT,
-        stateConsultasQT: { consultasQT, flagQT },
-    } = useContext(SinaisVitaisContext);
     const refFlatlist = useRef<FlatList>(null);
     const refFlatlistMenu = useRef<FlatList>(null);
     const refView0 = useRef<TouchableOpacity>(null);
@@ -152,12 +146,6 @@ const SinaisVitais: React.FC = () => {
             </Text>
         </View>
     );
-
-    useEffect(() => {
-        if (consultasQT.length === 0 && !flagQT) {
-            GetConsultasQT();
-        }
-    }, [GetConsultasQT, flagQT, consultasQT]);
 
     useEffect(() => {
         selected(0, 'scrollToIndex');

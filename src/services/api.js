@@ -33,7 +33,6 @@ axios.interceptors.response.use(
         }
     },
     async function (error) {
-        console.log(error);
         try {
             if (axios.isCancel(error)) {
                 return Promise.reject(error);
