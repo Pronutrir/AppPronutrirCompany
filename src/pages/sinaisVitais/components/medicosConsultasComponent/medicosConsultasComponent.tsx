@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     FlatList,
@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
@@ -16,15 +15,14 @@ import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: IFilterConsultas | null): void;
     selectedFilter?: IFilterConsultas;
+    listMedicos: IMedico[] | null | undefined;
 }
 
-const MedicosExamesComponent: React.FC<Props> = ({
+const medicosConsultasComponent: React.FC<Props> = ({
     onPress,
     selectedFilter,
+    listMedicos,
 }: Props) => {
-    const {
-        stateConsultas: { medicos },
-    } = useContext(SinaisVitaisContext);
 
     const styles = useThemeAwareObject(createStyles);
 
@@ -60,7 +58,7 @@ const MedicosExamesComponent: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             <FlatList
-                data={medicos}
+                data={listMedicos}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
             />
@@ -68,7 +66,7 @@ const MedicosExamesComponent: React.FC<Props> = ({
     );
 };
 
-export default MedicosExamesComponent;
+export default medicosConsultasComponent;
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({

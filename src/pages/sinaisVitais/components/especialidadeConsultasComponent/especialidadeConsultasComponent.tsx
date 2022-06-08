@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import {
     StyleSheet,
     FlatList,
@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
@@ -16,16 +15,15 @@ import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: IFilterConsultas | null): void;
     selectedFilter?: IFilterConsultas;
+    listMedicos: IMedico[] | null | undefined;
 }
 
 const EspecialidadeConsultasComponent: React.FC<Props> = ({
     onPress,
     selectedFilter,
+    listMedicos,
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
-    const {
-        stateConsultas: { medicos },
-    } = useContext(SinaisVitaisContext);
 
     const renderItem: ListRenderItem<IMedico> = ({ item }) => (
         <View
@@ -59,7 +57,7 @@ const EspecialidadeConsultasComponent: React.FC<Props> = ({
     );
 
     const refactoryEspecialidades = useCallback(() => {
-        const medicosDuplicates = medicos?.filter(
+        const medicosDuplicates = listMedicos?.filter(
             (item, index, array) =>
                 array.findIndex(
                     (t) => t.cD_ESPECIALIDADE === item.cD_ESPECIALIDADE,

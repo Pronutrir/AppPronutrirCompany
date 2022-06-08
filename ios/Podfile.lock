@@ -738,6 +738,8 @@ PODS:
     - React-Core
   - react-native-image-picker (4.7.3):
     - React-Core
+  - react-native-netinfo (9.0.0):
+    - React-Core
   - react-native-onesignal (4.3.7):
     - OneSignalXCFramework (= 3.10.1)
     - React (< 1.0.0, >= 0.13.0)
@@ -918,6 +920,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-pure-jwt (from `../node_modules/react-native-pure-jwt`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1033,6 +1036,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-onesignal:
     :path: "../node_modules/react-native-onesignal"
   react-native-pure-jwt:
@@ -1154,6 +1159,7 @@ SPEC CHECKSUMS:
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
   react-native-image-picker: 4e6008ad8c2321622affa2c85432a5ebd02d480c
+  react-native-netinfo: 5b664b2945a8f02102b296f0f812bddd6827ed9c
   react-native-onesignal: 7643517fe655b94cfda8e697ec16f9b9135648b8
   react-native-pure-jwt: 5b2e4fda2ec4c64be542bbe957adf88d6ea73d72
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9

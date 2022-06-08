@@ -155,7 +155,7 @@ const SinaisVitaisContext = createContext({} as AuthContextData);
 
 export const SinaisVitaisProvider: React.FC = ({ children }) => {
     const {
-        stateAuth: { usertasy },
+        stateAuth: { usertasy, UnidadeSelected },
         stateAuth,
     } = useContext(AuthContext);
 
@@ -176,7 +176,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const GetConsultasQT = useCallback(async () => {
         await Api.get(
-            `AgendaQuimio/GetAgendaQuimioterapiaGeral/7,75,${moment().format(
+            `AgendaQuimio/GetAgendaQuimioterapiaGeral/${UnidadeSelected?.cD_ESTABELECIMENTO},75,${moment().format(
                 'YYYY-MM-DD',
             )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`,
         )
@@ -222,9 +222,9 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             axiosSourceConsultas.current = axios.CancelToken.source();
 
             await Api.get(
-                `AgendaConsultas/FilterAgendamentosGeral/${moment('2022-04-02').format(
+                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
                     'YYYY-MM-DD',
-                )},${moment('2022-04-02').format(
+                )},${moment().format(
                     'YYYY-MM-DD',
                 )}?pagina=1&semStatusAgenda='C'${
                     filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
@@ -232,7 +232,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                     filter?.dS_ESPECIALIDADE
                         ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
                         : ''
-                }&codEstabelecimento=7&rows=500&cacheKey=true&cacheName=sinaisVitais`,
+                }&codEstabelecimento=${UnidadeSelected?.cD_ESTABELECIMENTO}&rows=500&cacheKey=true&cacheName=sinaisVitais`,
                 {
                     cancelToken: axiosSourceConsultas.current.token,
                 },

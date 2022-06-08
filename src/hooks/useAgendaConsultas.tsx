@@ -1,14 +1,13 @@
 import moment from 'moment';
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, onlineManager } from 'react-query';
+import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
-
 export interface IFilterConsultas {
     nM_GUERRA?: string | null;
     dS_ESPECIALIDADE?: string | null;
 }
-
 export interface IAgendaConsulta {
     nR_SEQUENCIA: number;
     cD_AGENDA: number;
@@ -45,46 +44,77 @@ export interface IAgendaConsulta {
     cD_PROCEDENCIA: number;
     nM_USUARIO_CONFIRM: string;
     counT_SVMP: number;
+    Medicos: IMedico[];
+}
+interface IResponseAgendaConsulta {
+    result: IAgendaConsulta[];
+}
+export interface IMedico {
+    cD_ESPECIALIDADE: number;
+    dS_ESPECIALIDADE: string;
+    nM_GUERRA: string;
 }
 
-interface IResponseAgendaConsulta {
-    result: IAgendaConsulta[] 
+export interface IResultAgendaConsultas {
+    result: IAgendaConsulta[];
+    medicos: IMedico[];
 }
 
 const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
+
     const { addAlert } = useContext(NotificationGlobalContext);
+
+    const {
+        stateAuth: { UnidadeSelected },
+    } = useContext(AuthContext);
+
     return useQuery(
-        ['defaultTextHtml', filter],
-        async ({ signal }) => {
-            const {
-                data: { result },
-            } = await Api.get<IResponseAgendaConsulta>(
-                `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
-                    'YYYY-MM-DD',
-                )},${moment().format(
-                    'YYYY-MM-DD',
-                )}?pagina=1&semStatusAgenda='C'${
-                    filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
-                }${
-                    filter?.dS_ESPECIALIDADE
-                        ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
-                        : ''
-                }&codEstabelecimento=7&rows=500&cacheKey=true&cacheName=sinaisVitais`,
-                {
-                    signal,
-                },
-            );
-            return result;
+        'agendasConsultas',
+        async () => {
+            const { result } = (
+                await Api.get<IResponseAgendaConsulta>(
+                    `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+                        'YYYY-MM-DD',
+                    )},${moment().format('YYYY-MM-DD')}?${
+                        filter?.nM_GUERRA
+                            ? `&nomeMedico=${filter.nM_GUERRA}`
+                            : ''
+                    }${
+                        filter?.dS_ESPECIALIDADE
+                            ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
+                            : ''
+                    }&semStatusAgenda='C'&codEstabelecimento=${
+                        UnidadeSelected?.cD_ESTABELECIMENTO
+                    }&rows=500&cacheKey=true&cacheName=sinaisVitais+${
+                        UnidadeSelected?.dS_MUNICIPIO
+                    }`,
+                )
+            ).data;
+
+            return {result, medicos: result?.map((item) => {
+                return {
+                    nM_GUERRA: item?.nM_GUERRA,
+                    dS_ESPECIALIDADE: item?.dS_ESPECIALIDADE,
+                    cD_ESPECIALIDADE: item.cD_ESPECIALIDADE,
+                };
+            })
+            .filter(
+                (item, index, array) =>
+                    array.findIndex(
+                        (t) => t.nM_GUERRA === item.nM_GUERRA,
+                    ) === index,
+            )
+            .sort((a, b) => {
+                return a.nM_GUERRA < b.nM_GUERRA
+                    ? -1
+                    : a.nM_GUERRA > b.nM_GUERRA
+                    ? 1
+                    : 0;
+            })};
         },
         {
-            /* getNextPageParam: (lastPage, pages) => {
-                if (lastPage?.length < 10) {
-                    return null;
-                } else {
-                    return pages.length + 1;
-                }
-            }, */
-            enabled: false,
+            //enabled: stateUnidade(),
+            //staleTime : 60 * 1000, // 1 minuto
             onError: () => {
                 addAlert({
                     message: 'Error ao carregar as agendas, tenta mais tarde!',

@@ -16,7 +16,7 @@ import {
     LoginAction,
 } from '../reducers/UserReducer';
 import OneSignal from 'react-native-onesignal';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import { getPerfil, getUnidade, saveRefreshToken } from '../utils';
 import ApiAuth from '../services/apiAuth';
 interface AuthContextData {
@@ -26,6 +26,7 @@ interface AuthContextData {
     loading: boolean;
     getPerfis(nomeUsuario: string): UseQueryResult<IPerfis[], Error>;
     ValidationAutorizeEvolucao: () => boolean;
+    useGetFetchQuery<T extends Record<keyof T, unknown>>(key: string): T | undefined;
 }
 interface IFirebaseLogin {
     email: string;
@@ -77,8 +78,12 @@ const AuthContext = createContext({} as AuthContextData);
 export const AuthProvider: React.FC = ({ children }) => {
     const [stateAuth, dispatchAuth] = useReducer(UserReducer, initialState);
     const [usuario, setUsuario] = useState<IFirebaseLogin | null>(null);
-
+    const queryClient = useQueryClient();
     const [loading, setLoading] = useState(true);
+
+    const useGetFetchQuery = <T extends Record<keyof T, unknown>>(key: string): T | undefined => {
+        return queryClient.getQueryData<T>(key);
+    };
 
     //consulta e retorna o token para acesso a api tasy
     const GetAuth = useCallback(async () => {
@@ -251,6 +256,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 dispatchAuth,
                 getPerfis,
                 ValidationAutorizeEvolucao,
+                useGetFetchQuery,
             }}>
             {children}
         </AuthContext.Provider>

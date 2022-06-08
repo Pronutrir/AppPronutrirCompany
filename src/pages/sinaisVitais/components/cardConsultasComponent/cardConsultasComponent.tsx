@@ -13,22 +13,29 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import SinaisVitaisContext, {
+import {
     IFilterConsultas,
 } from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import CheckPVSinaisVitaisComponent from '../checkPVSinaisVitaisComponent/checkPVSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
-
+import {
+    IAgendaConsulta,
+    useGetAgendaConsultas,
+} from '../../../../hooks/useAgendaConsultas';
 interface Props {
     dataSourceConsultas?: IConsultas[] | null;
     selectFilter: React.MutableRefObject<IFilterConsultas>;
+    isFetching?: boolean;
+    filterConsultas: (item?: IFilterConsultas) => IAgendaConsulta[] | undefined;
 }
 
 const CardConsultasComponent: React.FC<Props> = ({
     dataSourceConsultas,
     selectFilter,
+    isFetching,
+    filterConsultas,
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
@@ -36,7 +43,9 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const navigation = useNavigation();
 
-    const { FilterConsultas, GetConsultas } = useContext(SinaisVitaisContext);
+    const { refetch } = useGetAgendaConsultas();
+
+    //const { FilterConsultas, GetConsultas } = useContext(SinaisVitaisContext);
 
     const Item = ({ item }: { item: IConsultas; index: number }) => {
         return (
@@ -111,7 +120,9 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
-            {dataSourceConsultas ? (
+            {isFetching ? (
+                Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
+            ) : (
                 <FlatList
                     data={dataSourceConsultas}
                     renderItem={({ item, index }) =>
@@ -125,24 +136,22 @@ const CardConsultasComponent: React.FC<Props> = ({
                             selectFilter.current.nM_GUERRA ||
                             selectFilter.current.dS_ESPECIALIDADE
                         ) {
-                            FilterConsultas({
+                            filterConsultas({
                                 nM_GUERRA: selectFilter.current.nM_GUERRA
                                     ? selectFilter.current.nM_GUERRA
                                     : null,
-                                dS_ESPECIALIDADE: selectFilter.current
-                                    .dS_ESPECIALIDADE
+                                dS_ESPECIALIDADE: selectFilter.current.dS_ESPECIALIDADE
                                     ? selectFilter.current.dS_ESPECIALIDADE
                                     : null,
                             });
                         } else {
-                            await GetConsultas();
+                            await refetch();
+                            //await GetConsultas();
                         }
                         setRefreshing(false);
                     }}
                     ListEmptyComponent={renderItemEmpty}
                 />
-            ) : (
-                Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
         </View>
     );

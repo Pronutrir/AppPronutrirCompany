@@ -2,7 +2,6 @@ import React, { useContext, useRef, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import styles from './style';
 import CardConsultasComponent from '../components/cardConsultasComponent/cardConsultasComponent';
-import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
 import FilterConsultasComponent from '../components/filterConsultasComponent/filterConsultasComponent';
 import MedicosConsultasComponent from '../components/medicosConsultasComponent/medicosConsultasComponent';
 import ModalBottom, {
@@ -10,14 +9,14 @@ import ModalBottom, {
 } from '../../../components/Modais/ModalBottom';
 import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
-import { IConsultas } from '../../../reducers/ConsultasReducer';
+import { useGetAgendaConsultas, IAgendaConsulta, IResultAgendaConsultas, IMedico } from '../../../hooks/useAgendaConsultas';
+import AuthContext from '../../../contexts/auth';
 
 const ConsultasSinaisVitais: React.FC = () => {
-    const {
-        stateConsultas: { consultas, flag },
-        GetConsultas,
-        FilterConsultas,
-    } = useContext(SinaisVitaisContext);
+
+    const { data: listAgendasConsultas, isFetching } = useGetAgendaConsultas();
+    const { useGetFetchQuery } = useContext(AuthContext);
+
     const refModalBottom = useRef<ModalHandles>(null);
     const [selectedModal, setSelectedModal] = useState<string | null>(null);
     const [activeModal, setActiveModal] = useState(false);
@@ -30,7 +29,26 @@ const ConsultasSinaisVitais: React.FC = () => {
         nM_GUERRA: null,
         dS_ESPECIALIDADE: null,
     });
-    const [listConsultas, setListConsutas] = useState<IConsultas[] | null | undefined>(null);
+    const [listConsultas, setListConsutas] = useState<IAgendaConsulta[] | null | undefined>(listAgendasConsultas?.result);
+
+    const filterConsultas = (item?: IFilterConsultas): IAgendaConsulta[] | undefined => {
+        const stateConsultas = useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
+        console.log(stateConsultas);
+        if(item){
+            if (stateConsultas?.result && (item?.dS_ESPECIALIDADE)) {
+                return stateConsultas.result.filter(
+                    (element) => element.dS_ESPECIALIDADE === item.dS_ESPECIALIDADE,
+                );
+            }
+            if (stateConsultas?.result && item?.nM_GUERRA) {
+                return stateConsultas.result?.filter(
+                    (element) => element.nM_GUERRA === item.nM_GUERRA,
+                );
+            }
+        }else{
+            return stateConsultas?.result;
+        }
+    };
 
     const _FilterConsultas = async (item?: IFilterConsultas | null) => {
         if (item) {
@@ -49,7 +67,7 @@ const ConsultasSinaisVitais: React.FC = () => {
             setActiveModal(false);
             selectFilter.current = { ...selectFilter.current, ...item };
             refModalBottom.current?.closeModal();
-            setListConsutas(FilterConsultas(item))
+            setListConsutas(filterConsultas(item))
         } else {
             selectFilter.current = {
                 ...selectFilter.current,
@@ -57,7 +75,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                 nM_GUERRA: null,
             };
             refModalBottom.current?.closeModal();
-            setListConsutas(consultas);
+            setListConsutas(filterConsultas());
         }
     };
 
@@ -74,6 +92,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                     <EspecialidadeConsultasComponent
                         onPress={(value) => _FilterConsultas(value)}
                         selectedFilter={selectFilter.current}
+                        listMedicos={listAgendasConsultas?.medicos}
                     />
                 );
             case 'Médico':
@@ -81,6 +100,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                     <MedicosConsultasComponent
                         onPress={(value) => _FilterConsultas(value)}
                         selectedFilter={selectFilter.current}
+                        listMedicos={listAgendasConsultas?.medicos}
                     />
                 );
             default:
@@ -88,15 +108,9 @@ const ConsultasSinaisVitais: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        if (!consultas && !flag) {
-            GetConsultas();
-        }
-    }, [GetConsultas, consultas, flag]);
-
-    useEffect(() => {
-        setListConsutas(consultas);
-    }, [consultas]);
+    useEffect(() =>{
+        setListConsutas(listAgendasConsultas?.result);
+    },[listAgendasConsultas]);
 
     return (
         <View style={styles.container}>
@@ -107,6 +121,8 @@ const ConsultasSinaisVitais: React.FC = () => {
             <CardConsultasComponent
                 dataSourceConsultas={listConsultas}
                 selectFilter={selectFilter}
+                isFetching={isFetching}
+                filterConsultas={filterConsultas}
             />
             <ModalBottom
                 activeModal={activeModal}

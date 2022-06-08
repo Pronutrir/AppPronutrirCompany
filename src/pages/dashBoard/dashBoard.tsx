@@ -28,10 +28,12 @@ const DashBoard: React.FC = () => {
     const { data: unidades } = useUnidades();
 
     const SelectedUnidadeApp = async (item: IUnidade) => {
-        setTimeout(() => {
-            dispatchAuth({ type: 'setUnidadeDaSh', payload: item });
-        }, 1000);
-        await saveUnidade(item);
+        if(UnidadeSelected?.cD_ESTABELECIMENTO !== item.cD_ESTABELECIMENTO){
+            setTimeout(() => {
+                dispatchAuth({ type: 'setUnidadeDaSh', payload: item });
+            }, 1000);
+            await saveUnidade(item);
+        }
     };
 
     return (
