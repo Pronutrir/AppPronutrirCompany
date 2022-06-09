@@ -12,6 +12,10 @@
         "np": "np --no-publish",
         "postversion": "react-native-version"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Pronutrir/AppPronutrirCompany.git"
+    },
     "dependencies": {
         "@freakycoder/react-native-bounceable": "^0.2.4",
         "@react-native-async-storage/async-storage": "^1.13.2",
