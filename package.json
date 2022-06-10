@@ -33,6 +33,7 @@
         "@react-navigation/drawer": "^5.12.5",
         "@react-navigation/native": "^5.9.4",
         "@react-navigation/stack": "^5.14.5",
+        "@types/react-native-material-textfield": "^0.16.5",
         "axios": "^0.26.1",
         "cspell": "^5.19.2",
         "eslint-fix": "^1.0.3",

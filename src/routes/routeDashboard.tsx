@@ -27,6 +27,7 @@ import HistoryEvolucao from '../pages/evolucao/evolucaoEnfermagem/historyEvoluca
 import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
 import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updateEvolucaoEnfermagem';
 import { IEvolucaoHistory } from '../hooks/useEvolucao';
+import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -73,6 +74,12 @@ export type RootStackParamList = {
     IndexEvolucao: undefined;
     UpdateEvolucaoEnfermagem: {
         Evolucao: IEvolucaoHistory;
+    };
+    AcompanhateSinaisVitais: {
+        PessoaFisica: {
+            nM_PESSOA_FISICA: string;
+            dT_NASCIMENTO: string;
+        };
     };
 };
 
@@ -189,6 +196,11 @@ const InitialStackNavigator = () => {
                 name="IndexEvolucao"
                 component={IndexEvolucao}
                 options={{ title: 'Evolucão Enfermagem' }}
+            />
+            <Stack.Screen
+                name="AcompanhateSinaisVitais"
+                component={AcompanhateSinaisVitais}
+                options={{ title: 'adicionar acompanhante' }}
             />
         </Stack.Navigator>
     );

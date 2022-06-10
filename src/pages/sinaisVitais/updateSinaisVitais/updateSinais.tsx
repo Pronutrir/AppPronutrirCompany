@@ -12,8 +12,8 @@ import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
-import BtnRadius from '../../../components/buttons/BtnRadius';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -25,7 +25,6 @@ const UpdateSinais: React.FC<Props> = ({
         params: { PessoaFisica, SinaisVitais },
     },
 }: Props) => {
-
     const styles = useThemeAwareObject(createStyles);
 
     const navigation = useNavigation();
@@ -83,6 +82,36 @@ const UpdateSinais: React.FC<Props> = ({
         navigation.goBack();
     };
 
+    const MenuPopUpOptions = async (itemSelected: string) => {
+        switch (itemSelected) {
+            case 'Histórico':
+                navigation.navigate('EndSinaisVitais', {
+                    Paciente: SinaisVitais?.nM_PESSOA_FISICA
+                        ? SinaisVitais?.nM_PESSOA_FISICA
+                        : PessoaFisica?.nM_PESSOA_FISICA,
+                    Tipo: 'all',
+                });
+                break;
+            case 'Acompanhante':
+                navigation.navigate('AcompanhateSinaisVitais', {
+                    PessoaFisica: {
+                        nM_PESSOA_FISICA: SinaisVitais?.nM_PESSOA_FISICA
+                            ? SinaisVitais?.nM_PESSOA_FISICA
+                            : PessoaFisica?.nM_PESSOA_FISICA,
+                        dT_NASCIMENTO: SinaisVitais?.dT_NASCIMENTO
+                            ? SinaisVitais?.dT_NASCIMENTO
+                            : PessoaFisica?.dT_NASCIMENTO,
+                    },
+                });
+                break;
+            case 'Observações':
+                console.log(itemSelected);
+                break;
+            default:
+                break;
+        }
+    };
+
     useEffect(() => {
         if (SinaisVitais) {
             setAltura(SinaisVitais.qT_ALTURA_CM);
@@ -112,19 +141,8 @@ const UpdateSinais: React.FC<Props> = ({
                 style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
+                    alignItems: 'center',
                 }}>
-                <BtnRadius
-                    containerStyles={{
-                        backgroundColor: 'white',
-                    }}
-                    size={3}
-                    onPress={() => {navigation.navigate('EndSinaisVitais', {
-                        Paciente: SinaisVitais?.nM_PESSOA_FISICA
-                        ? SinaisVitais?.nM_PESSOA_FISICA
-                        : PessoaFisica?.nM_PESSOA_FISICA,
-                        Tipo: 'all',
-                    })}}
-                />
                 <ModalAlertPaciente
                     codPacient={
                         SinaisVitais?.cD_PACIENTE
@@ -132,6 +150,12 @@ const UpdateSinais: React.FC<Props> = ({
                             : PessoaFisica?.cD_PESSOA_FISICA
                     }
                 />
+                <View>
+                    <MenuPopUp
+                        btnLabels={['Histórico', 'Acompanhante', 'Observações']}
+                        onpress={(item) => MenuPopUpOptions(item)}
+                    />
+                </View>
             </View>
             <ScrollView style={styles.box}>
                 <View style={styles.item1}>
