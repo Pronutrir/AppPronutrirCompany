@@ -1,27 +1,20 @@
 import { useContext } from 'react';
 import { useQuery } from 'react-query';
+import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
 
-interface IUnidade {
-    cD_CGC: string;
-    dS_RAZAO_SOCIAL: string;
-    nM_FANTASIA: string;
-    cD_CEP: string;
-    nR_ENDERECO: string;
-    dS_ENDERECO: string;
-    dS_BAIRRO: string;
-    dS_MUNICIPIO: string;
-    sG_ESTADO: string;
-    dT_ATUALIZACAO: string;
-    nM_USUARIO: string;
-    nR_DDD_TELEFONE: string;
-    nR_TELEFONE: string;
-    cD_TIPO_PESSOA: number;
-    iE_PROD_FABRIC: string;
-    iE_SITUACAO: string;
+export interface IUnidade {
     cD_ESTABELECIMENTO: number;
-    label: string;
+    dS_ESTABELECIMENTO: string;
+    cD_SETOR_PADRAO: number;
+    dT_ATUALIZACAO: string;
+    dT_ATUALIZACAO_NREC: string;
+    nM_USUARIO: string;
+    nM_USUARIO_NREC: string;
+    nM_USUARIO_PARAM: string;
+    nR_SEQ_PERFIL: number;
+    nR_SEQ_SIGNATURE_ENTITY: number;
 }
 
 interface IReponseUnidades {
@@ -34,29 +27,29 @@ interface refactoreUnidades {
 }
 
 const useUnidades = () => {
-
     const { addAlert } = useContext(NotificationGlobalContext);
+    const { stateAuth: { usertasy } } = useContext(AuthContext);
 
     return useQuery(
         'unidades',
         async () => {
             const { result } = (
                 await Api.get<IReponseUnidades>(
-                    'Estabelecimentos/listarEstabelecimentos',
+                    `UsuarioEstabelecimento/FiltrarUsuarioEstabCodUsuarioNumSeqGeral?nomeUsuarioParam=${usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&page=1&rows=50`,
                 )
             ).data;
 
             const resultFilter = result?.map((item) => {
                 return {
-                    label: item.nM_FANTASIA.replace('PRONUTRIR ', ''),
+                    label: item.dS_ESTABELECIMENTO.replace('PRONUTRIR ', '').replace('- ', ''),
                     value: item,
                 };
             });
 
             const orderByResult = resultFilter.sort(function (a, b) {
-                return a.value.dS_MUNICIPIO < b.value.dS_MUNICIPIO
+                return a.value.dS_ESTABELECIMENTO < b.value.dS_ESTABELECIMENTO
                     ? -1
-                    : a.value.dS_MUNICIPIO > b.value.dS_MUNICIPIO
+                    : a.value.dS_ESTABELECIMENTO > b.value.dS_ESTABELECIMENTO
                     ? 1
                     : 0;
             });
@@ -68,7 +61,8 @@ const useUnidades = () => {
             staleTime: 60 * 30000, // 30 minuto
             onError: () => {
                 addAlert({
-                    message: 'Error ao carregar as agendas, tenta mais tarde!',
+                    message:
+                        'Error ao carregar os estabelecimentos, tenta mais tarde!',
                     status: 'error',
                 });
             },

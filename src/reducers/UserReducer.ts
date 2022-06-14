@@ -1,3 +1,5 @@
+import { IUnidade } from "../hooks/useEstabelecimentos";
+
 export const initialState: LoginState = {
     Usuario: {
         email: '',
@@ -75,26 +77,6 @@ export interface IPerfis {
     dS_UTC_ATUALIZACAO: string;
     dS_UTC: string;
     iE_HORARIO_VERAO: string;
-}
-export interface IUnidade {
-    cD_CGC: string,
-    dS_RAZAO_SOCIAL: string,
-    nM_FANTASIA: string,
-    cD_CEP: string,
-    nR_ENDERECO: string,
-    dS_ENDERECO: string,
-    dS_BAIRRO: string,
-    dS_MUNICIPIO: string,
-    sG_ESTADO: string,
-    dT_ATUALIZACAO: string,
-    nM_USUARIO: string,
-    nR_DDD_TELEFONE: string,
-    nR_TELEFONE: string,
-    cD_TIPO_PESSOA: number,
-    iE_PROD_FABRIC: string,
-    iE_SITUACAO: string,
-    cD_ESTABELECIMENTO: number,
-    label: string,
 }
 
 export type LoginAction =

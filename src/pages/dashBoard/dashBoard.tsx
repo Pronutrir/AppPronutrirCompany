@@ -15,8 +15,7 @@ import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
 import AuthContext from '../../contexts/auth';
 import SelectedDropdown from '../../components/selectedDropdown/SelectedDropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import { useUnidades } from '../../hooks/useEstabelecimentos';
-import { IUnidade } from '../../reducers/UserReducer';
+import { useUnidades, IUnidade } from '../../hooks/useEstabelecimentos';
 import { saveUnidade } from '../../utils';
 import { useQueryClient } from 'react-query';
 

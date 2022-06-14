@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IPerfis, IUnidade } from './reducers/UserReducer';
+import { IUnidade } from './hooks/useEstabelecimentos';
+import { IPerfis } from './reducers/UserReducer';
 
 export async function getUser() {
     const user = await AsyncStorage.getItem('@User');

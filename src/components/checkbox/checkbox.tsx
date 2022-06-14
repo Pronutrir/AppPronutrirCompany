@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useCallback, useImperativeHandle, useState } from 'react';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -14,38 +14,58 @@ type Props = {
     isChecked?: boolean;
     //iconStyle: CustomTextStyleProp;
     //textStyle={{ fontFamily: "JosefinSans-Regular" }}
-    onPress?(isChecked: boolean): void;
+    onPress?(isChecked: boolean, text?: string): void;
 };
+export interface CheckedHandles {
+    onPressChecked?(isChecked: boolean): void;
+    text?: string;
+}
 
-const Checkbox = ({
-    size = 4,
-    text = undefined,
-    isChecked = false,
-    onPress,
-}: Props) => {
-    const theme = useTheme();
-    const styles = useThemeAwareObject(createStyles);
+const Checkbox = React.forwardRef<CheckedHandles, Props>(
+    (
+        { size = 2.5, text = undefined, isChecked = false, onPress }: Props,
+        ref,
+    ) => {
 
-    return (
-        <BouncyCheckbox
-            size={RFPercentage(size)}
-            isChecked={isChecked}
-            fillColor={theme.colors.GREENPRIMARY}
-            unfillColor={theme.colors.BACKGROUND_1}
-            style={styles.checkbox}
-            textStyle={styles.text}
-            text={text}
-            onPress={(isChecked: boolean) => {
-                if (onPress) {
-                    onPress(isChecked);
-                }
-            }}
-            disableBuiltInState={true}
-            iconImageStyle={styles.iconImageStyle}
-            iconStyle={styles.iconStyle}
-        />
-    );
-};
+        const theme = useTheme();
+        const styles = useThemeAwareObject(createStyles);
+
+        const [check, setcheck] = useState(isChecked);
+
+        const onPressChecked = useCallback((isChecked: boolean) => {
+            setcheck(isChecked);
+        }, []);
+
+        useImperativeHandle(ref, () => {
+            return {
+                onPressChecked,
+                text
+            };
+        });
+
+        return (
+            <BouncyCheckbox
+                size={RFPercentage(size)}
+                isChecked={check}
+                fillColor={theme.colors.GREENPRIMARY}
+                unfillColor={theme.colors.BACKGROUND_1}
+                style={styles.checkbox}
+                textStyle={styles.text}
+                text={text}
+                onPress={() => {
+                    if (onPress) {
+                        onPress(check, text);
+                    }
+                }}
+                disableBuiltInState={true}
+                iconImageStyle={styles.iconImageStyle}
+                iconStyle={styles.iconStyle}
+            />
+        );
+    },
+);
+
+Checkbox.displayName = 'Checkbox';
 
 export default Checkbox;
 
@@ -63,13 +83,13 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
         },
-        iconImageStyle: { 
-            width: RFPercentage(2.5), 
-            height: RFPercentage(2.5) 
+        iconImageStyle: {
+            width: RFPercentage(1.5),
+            height: RFPercentage(1.5),
         },
-        iconStyle: { 
-            margin: 0, 
-            padding: 0 
+        iconStyle: {
+            margin: 0,
+            padding: 0,
         },
     });
     return styles;

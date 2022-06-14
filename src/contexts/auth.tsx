@@ -103,6 +103,10 @@ export const AuthProvider: React.FC = ({ children }) => {
             (response) => {
                 const { result } = response.data;
                 if (result) {
+                    dispatchAuth({
+                        type: 'setUserTasy',
+                        payload: result,
+                    });
                     return result;
                 } else {
                     return null;
@@ -170,12 +174,6 @@ export const AuthProvider: React.FC = ({ children }) => {
                             //informa que há usuário logado
                             setUsuario({ email, uid });
                             setLoading(false);
-                            dispatchAuth({
-                                type: 'setUserTasy',
-                                payload: result,
-                            });
-
-                            
                         }
                         //registra o dispositivo no onesignal inclui um id externo para notificações!
                         OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
