@@ -28,6 +28,7 @@ import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
 import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updateEvolucaoEnfermagem';
 import { IEvolucaoHistory } from '../hooks/useEvolucao';
 import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
+import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -82,6 +83,13 @@ export type RootStackParamList = {
             cD_PESSOA_FISICA: string,
         };
     };
+    addAcompanhanteSinaisVitais: {
+        PessoaFisica: {
+            nM_PESSOA_FISICA: string;
+            dT_NASCIMENTO: string;
+            cD_PESSOA_FISICA: string,
+        };
+    }
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -201,7 +209,12 @@ const InitialStackNavigator = () => {
             <Stack.Screen
                 name="AcompanhateSinaisVitais"
                 component={AcompanhateSinaisVitais}
-                options={{ title: 'adicionar acompanhante' }}
+                options={{ title: 'Vincular acompanhante' }}
+            />
+            <Stack.Screen
+                name="addAcompanhanteSinaisVitais"
+                component={addAcompanhanteSinaisVitais}
+                options={{ title: 'Adicionar acompanhante' }}
             />
         </Stack.Navigator>
     );

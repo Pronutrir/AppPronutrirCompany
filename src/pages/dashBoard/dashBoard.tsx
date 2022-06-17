@@ -33,7 +33,7 @@ const DashBoard: React.FC = () => {
         if(UnidadeSelected?.cD_ESTABELECIMENTO !== item.cD_ESTABELECIMENTO){
             setTimeout(() => {
                 dispatchAuth({ type: 'setUnidadeDaSh', payload: item });
-            }, 1000);
+            }, 500);
             await saveUnidade(item);
             queryClient.clear();
         }

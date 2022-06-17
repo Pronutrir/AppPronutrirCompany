@@ -1,30 +1,31 @@
 import {
     Dimensions,
-    Keyboard,
-    Pressable,
+    ListRenderItem,
+    Platform,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
-import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
-import { InputStandard } from 'react-native-input-outline';
-import useTheme from '../../../hooks/useTheme';
-import BtnCentered from '../../../components/buttons/BtnCentered';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
-import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { valicacaoCPF } from '../../../services/validacaoCpf';
-import { cpfMask } from '../../../services/validacoes';
-import Checkbox from '../../../components/checkbox/checkbox';
-import SelectedDropdown from '../../../components/selectedDropdown/SelectedDropdown';
-import { useAddFamiliar } from '../../../hooks/useFamiliar';
+import {
+    IGetFamiliar,
+    useGetFamiliar,
+    useVincularFamiliar,
+} from '../../../hooks/useFamiliar';
+import { FlatList } from 'react-native-gesture-handler';
+import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
+import ModalCentralizedOptions, {
+    ModalHandles,
+} from '../../../components/Modais/ModalCentralizedOptions';
+import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -34,278 +35,126 @@ interface Props {
     route: ProfileScreenRouteProp;
 }
 
-interface form {
-    Name: string;
-    CPF: string;
-    RG: string;
-    Parentesco: string;
-    Sexo: string;
-}
-
-const parentesco = [
-    { label: 'Amigo' },
-    { label: 'Avô(ó)' },
-    { label: 'Cônjuge/Companheira(o)' },
-    { label: 'Cunhado(a)' },
-    { label: 'Irmã(o)' },
-    { label: 'Mãe' },
-    { label: 'Pai' },
-    { label: 'Primo(a)' },
-    { label: 'Sobrinho(a)' },
-    { label: 'Tio(a)' },
-];
-
-const sexo = [
-    { label: 'Feminino' },
-    { label: 'Inderterminado' },
-    { label: 'Masculino' },
-];
-
-const AcompanhanteSinaisVitais = ({ route }: Props) => {
-    const navigation = useNavigation();
-    const { mutateAsync } = useAddFamiliar();
-
-    const [document, setDocument] = useState<string | undefined>('CPF');
-    const nameRef = useRef<string | undefined>(undefined);
-
-    const theme = useTheme();
+const AcompanhateSinaisVitais = ({ route }: Props) => {
     const styles = useThemeAwareObject(createStyle);
 
-    const refModal = useRef<LoadHandles>(null);
+    const navigation = useNavigation();
 
-    const addAcompanhante = async (values: form) => {
+    const refModal = useRef<LoadHandles>(null);
+    const refModalOptions = useRef<ModalHandles>(null);
+
+    const [acompanhante, setAcompanhante] = useState<
+        IGetFamiliar | undefined
+    >();
+
+    const { data: listFamiliar, isFetching } = useGetFamiliar(
+        route.params.PessoaFisica.cD_PESSOA_FISICA,
+    );
+
+    const { mutateAsync } = useVincularFamiliar();
+
+    const vincularAcompanhante = async (item?: IGetFamiliar) => {
         try {
-            refModal.current?.openModal();
-            const result = await mutateAsync({
-                cD_PESSOA_FISICA: route.params.PessoaFisica.cD_PESSOA_FISICA,
-                nR_CPF: values.CPF,
-                iE_GENDER: values.Sexo,
-                nM_PESSOA_FISICA: values.Name,
-            });
-            navigation.goBack();
+            if (item) {
+                refModal.current?.openModal();
+                await mutateAsync(item);
+                refModal.current?.closeModal();
+            }
         } catch (error) {
-            refModal.current?.closeModal();
-        } finally {
             refModal.current?.closeModal();
         }
     };
 
-    const setCheckBox = (isChecked: boolean, text?: string) => {
-        switch (text) {
-            case 'CPF':
-                setDocument(text);
-                break;
-            case 'RG':
-                setDocument(text);
+    const addAcompanhante = (item: IGetFamiliar) => {
+        refModalOptions.current?.openModal();
+        setAcompanhante(item);
+    };
+
+    const renderItem: ListRenderItem<IGetFamiliar> = ({ item }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => addAcompanhante(item)}
+                style={styles.cards}>
+                <View style={styles.box1}>
+                    {/* <HistorySvg
+                        width={RFPercentage(5)}
+                        height={RFPercentage(5)}>
+                        Botão
+                    </HistorySvg> */}
+                </View>
+                <View style={styles.box2}>
+                    <View style={styles.item}>
+                        <Text style={styles.textLabel}>Acompanhante: </Text>
+                        <Text
+                            style={
+                                styles.text
+                            }>{`${item?.nM_ACOMPANHANTE.toUpperCase()}`}</Text>
+                    </View>
+                    <View style={styles.item}>
+                        <Text style={styles.textLabel}>
+                            Grau de parentesco:{' '}
+                        </Text>
+                        <Text style={styles.text}>
+                            {item.dS_GRAU_PARENTESCO}
+                        </Text>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        );
+    };
+
+    const MenuPopUpOptions = async (itemSelected: string) => {
+        switch (itemSelected) {
+            case 'Adicionar Acompanhante':
+                navigation.navigate('addAcompanhanteSinaisVitais', { PessoaFisica: route.params.PessoaFisica});
                 break;
             default:
                 break;
         }
     };
 
-    const FormSchema = Yup.object().shape({
-        Name: Yup.string()
-            .required('Nome é obrigatório!')
-            .matches(/(\w.+\s).+/, 'Insira ooo nome e sobrenome'),
-        CPF: Yup.lazy(() => {
-            switch (document) {
-                case 'CPF':
-                    return Yup.string()
-                        .required('CPF é obrigatório!')
-                        .test(
-                            'validationCPF',
-                            'CPF inválido',
-                            (value) =>
-                                Boolean(value) &&
-                                valicacaoCPF(value?.replace(/[.-]/g, '')),
-                        );
-                    break;
-                default:
-                    return Yup.string().optional();
-                    break;
-            }
-        }),
-        RG: Yup.lazy(() => {
-            switch (document) {
-                case 'RG':
-                    return Yup.string()
-                        .required('RG é obrigatório!')
-                        .max(18, 'Verifique a quantidade de caracteres');
-                    break;
-                default:
-                    return Yup.string().optional();
-                    break;
-            }
-        }),
-    });
-
-    useEffect(() => {
-        setCheckBox(true, 'CPF');
-    }, []);
-
-    const MyReactNativeForm = () => (
-        <Formik
-            initialValues={{
-                Name: '',
-                CPF: '',
-                RG: '',
-                Parentesco: '',
-                Sexo: '',
-            }}
-            onSubmit={(values) => addAcompanhante(values)}
-            validationSchema={FormSchema}>
-            {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                values,
-                errors,
-                touched,
-                setFieldValue,
-                setTouched,
-            }) => (
-                <>
-                    <View style={styles.containerForm}>
-                        <View style={styles.boxForm}>
-                            <Text style={styles.title}>
-                                Dados do acompanhante
-                            </Text>
-                            <InputStandard
-                                error={
-                                    errors.Name && touched.Name
-                                        ? errors.Name
-                                        : undefined
-                                }
-                                placeholder={'Nome completo'}
-                                style={styles.inputText}
-                                activeColor={theme.colors.TEXT_PRIMARY}
-                                fontSize={theme.typography.SIZE.fontysize14}
-                                fontColor={theme.colors.TEXT_SECONDARY}
-                                onChangeText={handleChange('Name')}
-                                onEndEditing={(item) => {
-                                    setTouched({ ...touched, ['Name']: true }),
-                                        (nameRef.current =
-                                            item.nativeEvent.text);
-                                }}
-                                value={nameRef.current}
-                            />
-                        </View>
-                        <View style={styles.boxForm}>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    marginBottom: 10,
-                                }}>
-                                <Checkbox
-                                    isChecked={document === 'CPF'}
-                                    text="CPF"
-                                    onPress={(isChecked, text) => {
-                                        setCheckBox(isChecked, text);
-                                    }}
-                                />
-                                <Checkbox
-                                    isChecked={document === 'RG'}
-                                    text="RG"
-                                    onPress={(isChecked, text) => {
-                                        setCheckBox(isChecked, text);
-                                    }}
-                                />
-                            </View>
-                            {document === 'CPF' && (
-                                <InputStandard
-                                    error={
-                                        errors.CPF && touched.CPF
-                                            ? errors.CPF
-                                            : undefined
-                                    }
-                                    placeholder={'Documento de indentificação'}
-                                    style={styles.inputText}
-                                    activeColor={theme.colors.TEXT_PRIMARY}
-                                    fontSize={theme.typography.SIZE.fontysize14}
-                                    fontColor={theme.colors.TEXT_SECONDARY}
-                                    onChangeText={(e) =>
-                                        setFieldValue('CPF', cpfMask(e))
-                                    }
-                                    keyboardType={'numeric'}
-                                    onEndEditing={handleBlur('CPF')}
-                                    value={values.CPF}
-                                />
-                            )}
-                            {document === 'RG' && (
-                                <InputStandard
-                                    error={
-                                        errors.RG && touched.RG
-                                            ? errors.RG
-                                            : undefined
-                                    }
-                                    placeholder={'Documento de indentificação'}
-                                    style={styles.inputText}
-                                    activeColor={theme.colors.TEXT_PRIMARY}
-                                    fontSize={theme.typography.SIZE.fontysize14}
-                                    fontColor={theme.colors.TEXT_SECONDARY}
-                                    onChangeText={(e) => setFieldValue('RG', e)}
-                                    keyboardType={'numeric'}
-                                    onEndEditing={handleBlur('RG')}
-                                    value={values.RG}
-                                />
-                            )}
-                        </View>
-                        <View style={styles.boxSelect}>
-                            {touched.Parentesco && errors.Parentesco && (
-                                <Text style={styles.Error}>
-                                    {errors.Parentesco}
-                                </Text>
-                            )}
-                            <SelectedDropdown
-                                data={parentesco}
-                                placeholder="Parentesco"
-                                maxHeight={RFPercentage(25)}
-                                DropDownStyle={styles.SelectedDropdown}
-                                onChange={(value) =>
-                                    setFieldValue('Parentesco', value.label)
-                                }
-                            />
-                            <SelectedDropdown
-                                data={sexo}
-                                placeholder="Sexo"
-                                maxHeight={RFPercentage(15)}
-                                DropDownStyle={styles.SelectedDropdown}
-                                onChange={(value) =>
-                                    setFieldValue('Sexo', value.label)
-                                }
-                            />
-                        </View>
-                        <View style={styles.btnContainer}>
-                            <BtnCentered
-                                SizeText={18}
-                                labelBtn={'Adicionar'}
-                                onPress={() => handleSubmit()}
-                                enabled={true}
-                            />
-                        </View>
-                    </View>
-                </>
-            )}
-        </Formik>
-    );
-
     return (
-        <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
             <View style={styles.box}>
                 <Text style={styles.title}>Paciente</Text>
                 <PessoaFisicaComponent
                     PessoaFisica={route.params.PessoaFisica}
                 />
             </View>
-            <View style={styles.box}>
-                <MyReactNativeForm />
+            <View style={[styles.box, styles.boxTitle]}>
+                <Text style={styles.title}>Acompanhantes Cadastrados</Text>
+                <View style={styles.menu}>
+                    <MenuPopUp
+                        btnLabels={['Adicionar Acompanhante']}
+                        onpress={(item) => MenuPopUpOptions(item)}
+                    />
+                </View>
+            </View>
+            <View style={styles.boxCards}>
+                {isFetching ? (
+                    Array(3).fill(<ShimerPlaceHolderCardSNVTs />)
+                ) : (
+                    <FlatList
+                        data={listFamiliar}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={renderItem}
+                        showsHorizontalScrollIndicator={false}
+                        // ListEmptyComponent={EmptyComponent}
+                        // getItemLayout={getItemLayout}
+                    />
+                )}
             </View>
             <Loading ref={refModal} />
-        </Pressable>
+            <ModalCentralizedOptions
+                ref={refModalOptions}
+                message={'Deseja vincular o acompanhante ?'}
+                onpress={() => vincularAcompanhante(acompanhante)}
+            />
+        </View>
     );
 };
 
-export default AcompanhanteSinaisVitais;
+export default AcompanhateSinaisVitais;
 
 const createStyle = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
@@ -321,17 +170,42 @@ const createStyle = (theme: ThemeContextData) => {
             paddingVertical: RFPercentage(2),
             marginTop: RFPercentage(2),
         },
-        containerForm: {
-            width: '100%',
-            paddingHorizontal: RFPercentage(3),
-            justifyContent: 'space-between',
+        boxCards: {
+            marginVertical: RFPercentage(2),
         },
-        boxForm: {
-            marginVertical: 20,
+        boxTitle: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
         },
-        boxSelect: {
+        menu: {
+            position: 'absolute', 
+            right: 0, 
+            marginHorizontal: 10
+        },
+        cards: {
+            width: (Dimensions.get('screen').width / 100) * 95,
+            borderRadius: 10,
             flexDirection: 'row',
             justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            margin: 10,
+            paddingVertical: RFPercentage(1),
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
         },
         title: {
             margin: 10,
@@ -341,32 +215,45 @@ const createStyle = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
             textAlign: 'center',
         },
-        btnContainer: {
-            width: '100%',
-            marginTop: RFPercentage(5),
-            alignSelf: 'flex-end',
-            height: RFPercentage(10),
+        titleLabel: {
+            alignSelf: 'flex-start',
+            paddingLeft: 10,
         },
-        inputText: {
-            marginBottom: 20,
+        textLabel: {
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
-            color: theme.colors.TEXT_SECONDARY,
+            color: theme.colors.TEXT_PRIMARY,
             fontSize: theme.typography.SIZE.fontysize16,
         },
         text: {
-            fontFamily: theme.typography.FONTES.Bold,
+            fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
         },
-        SelectedDropdown: {
-            width: (Dimensions.get('screen').width / 10) * 4,
-            backgroundColor: theme.colors.BACKGROUND_1,
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginVertical: RFPercentage(0.5),
         },
-        Error: {
-            color: 'red',
-            fontSize: RFValue(14, 680),
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 3,
+        },
+        box2: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            margin: 3,
         },
     });
     return styles;
