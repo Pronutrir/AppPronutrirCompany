@@ -73,6 +73,7 @@ export interface SinaisVitaisPost {
     qT_FREQ_RESP?: number | null;
     cD_ESCALA_DOR?: string | null;
     qT_ESCALA_DOR?: number | null;
+    dS_OBSERVACAO: string | null;
 }
 export interface SinaisVitaisPut {
     nR_SEQUENCIA: number;
@@ -270,6 +271,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             iE_SITUACAO: sinaisVitaisDefault.iE_SITUACAO,
             dT_LIBERACAO: moment().format(),
             nM_USUARIO: usertasy.nM_USUARIO,
+            dS_OBSERVACAO: atendimento.dS_OBSERVACAO,
         })
             .then(() => {
                 addAlert({

@@ -79,6 +79,7 @@ export type RootStackParamList = {
         PessoaFisica: {
             nM_PESSOA_FISICA: string;
             dT_NASCIMENTO: string;
+            cD_PESSOA_FISICA: string,
         };
     };
 };

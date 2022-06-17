@@ -48,6 +48,7 @@ export interface ISinaisVitais {
     nM_USUARIO?: string;
     nM_USUARIO_NREC?: string;
     dT_ATUALIZACAO_NREC?: string;
+    dS_OBSERVACAO?: string;
 }
 
 const initialSinaisVitais: ISinaisVitais[] = [

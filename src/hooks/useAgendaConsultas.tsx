@@ -85,7 +85,7 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
                     }&semStatusAgenda='C'&codEstabelecimento=${
                         UnidadeSelected?.cD_ESTABELECIMENTO
                     }&rows=500&cacheKey=true&cacheName=sinaisVitais+${
-                        UnidadeSelected?.dS_MUNICIPIO
+                        UnidadeSelected?.dS_ESTABELECIMENTO
                     }`,
                 )
             ).data;

@@ -148,7 +148,7 @@ api.interceptors.request.use(async (req) => {
             req.headers.Authorization = `Bearer ${tokenUpdated}`;
         }
     } catch (error) {
-        console.log(error);
+        return Promise.reject(error);
     }finally{
         return req;  
     }

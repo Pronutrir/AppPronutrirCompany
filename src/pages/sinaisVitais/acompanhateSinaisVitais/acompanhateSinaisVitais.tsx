@@ -24,6 +24,7 @@ import { valicacaoCPF } from '../../../services/validacaoCpf';
 import { cpfMask } from '../../../services/validacoes';
 import Checkbox from '../../../components/checkbox/checkbox';
 import SelectedDropdown from '../../../components/selectedDropdown/SelectedDropdown';
+import { useAddFamiliar } from '../../../hooks/useFamiliar';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -62,7 +63,7 @@ const sexo = [
 
 const AcompanhanteSinaisVitais = ({ route }: Props) => {
     const navigation = useNavigation();
-    const { addAlert } = useContext(NotificationGlobalContext);
+    const { mutateAsync } = useAddFamiliar();
 
     const [document, setDocument] = useState<string | undefined>('CPF');
     const nameRef = useRef<string | undefined>(undefined);
@@ -72,18 +73,21 @@ const AcompanhanteSinaisVitais = ({ route }: Props) => {
 
     const refModal = useRef<LoadHandles>(null);
 
-    const addAcompanhante = (values: form) => {
-        console.log(values);
-        refModal.current?.openModal();
-        setTimeout(() => {
-            console.log('acompanhante adicionado!');
-            refModal.current?.closeModal();
-            addAlert({
-                message: 'Acompanhante adicionado com sucesso!',
-                status: 'sucess',
+    const addAcompanhante = async (values: form) => {
+        try {
+            refModal.current?.openModal();
+            const result = await mutateAsync({
+                cD_PESSOA_FISICA: route.params.PessoaFisica.cD_PESSOA_FISICA,
+                nR_CPF: values.CPF,
+                iE_GENDER: values.Sexo,
+                nM_PESSOA_FISICA: values.Name,
             });
             navigation.goBack();
-        }, 2000);
+        } catch (error) {
+            refModal.current?.closeModal();
+        } finally {
+            refModal.current?.closeModal();
+        }
     };
 
     const setCheckBox = (isChecked: boolean, text?: string) => {
@@ -158,7 +162,7 @@ const AcompanhanteSinaisVitais = ({ route }: Props) => {
                 errors,
                 touched,
                 setFieldValue,
-                setTouched
+                setTouched,
             }) => (
                 <>
                     <View style={styles.containerForm}>
@@ -178,7 +182,11 @@ const AcompanhanteSinaisVitais = ({ route }: Props) => {
                                 fontSize={theme.typography.SIZE.fontysize14}
                                 fontColor={theme.colors.TEXT_SECONDARY}
                                 onChangeText={handleChange('Name')}
-                                onEndEditing={(item) => { setTouched({...touched, ['Name']: true}), nameRef.current = item.nativeEvent.text } }
+                                onEndEditing={(item) => {
+                                    setTouched({ ...touched, ['Name']: true }),
+                                        (nameRef.current =
+                                            item.nativeEvent.text);
+                                }}
                                 value={nameRef.current}
                             />
                         </View>
@@ -243,7 +251,11 @@ const AcompanhanteSinaisVitais = ({ route }: Props) => {
                             )}
                         </View>
                         <View style={styles.boxSelect}>
-                        {(touched.Parentesco && errors.Parentesco) && <Text style={styles.Error}>{errors.Parentesco}</Text>}
+                            {touched.Parentesco && errors.Parentesco && (
+                                <Text style={styles.Error}>
+                                    {errors.Parentesco}
+                                </Text>
+                            )}
                             <SelectedDropdown
                                 data={parentesco}
                                 placeholder="Parentesco"
@@ -350,10 +362,11 @@ const createStyle = (theme: ThemeContextData) => {
         },
         SelectedDropdown: {
             width: (Dimensions.get('screen').width / 10) * 4,
+            backgroundColor: theme.colors.BACKGROUND_1,
         },
-        Error:{
-            color:'red',
-            fontSize: RFValue(14, 680)
+        Error: {
+            color: 'red',
+            fontSize: RFValue(14, 680),
         },
     });
     return styles;

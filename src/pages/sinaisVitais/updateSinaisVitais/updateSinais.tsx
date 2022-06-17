@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, ScrollView, Text } from 'react-native';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { View, ScrollView, Text, Platform } from 'react-native';
 import createStyles from './style';
 import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
@@ -14,6 +14,10 @@ import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
+import ModalCentralize, {
+    ModalHandles,
+} from '../../../components/Modais/ModalCentralize';
+import CardObservacao from '../components/cardObservacao/cardlObservacao';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -25,6 +29,8 @@ const UpdateSinais: React.FC<Props> = ({
         params: { PessoaFisica, SinaisVitais },
     },
 }: Props) => {
+    const refmodalObservacoes = useRef<ModalHandles>(null);
+
     const styles = useThemeAwareObject(createStyles);
 
     const navigation = useNavigation();
@@ -42,6 +48,7 @@ const UpdateSinais: React.FC<Props> = ({
     const [Altura, setAltura] = useState(0);
     const [temperatura, setTemperatura] = useState(0);
     const [oxigenacao, setOxigenacao] = useState(0);
+    const [observacao, setObservacao] = useState<string>('');
 
     const ChangerProperty = () => {
         let x = false;
@@ -49,7 +56,8 @@ const UpdateSinais: React.FC<Props> = ({
             Altura !== 0 ||
             Peso !== 0 ||
             oxigenacao !== 50 ||
-            temperatura !== 30;
+            temperatura !== 30 ||
+            observacao !== '';
         return x;
     };
 
@@ -76,6 +84,7 @@ const UpdateSinais: React.FC<Props> = ({
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
+            dS_OBSERVACAO: observacao ? observacao : null,
         });
         refetchSinaisVitais;
         setActiveModal(false);
@@ -101,11 +110,19 @@ const UpdateSinais: React.FC<Props> = ({
                         dT_NASCIMENTO: SinaisVitais?.dT_NASCIMENTO
                             ? SinaisVitais?.dT_NASCIMENTO
                             : PessoaFisica?.dT_NASCIMENTO,
+                        cD_PESSOA_FISICA: SinaisVitais?.cD_PESSOA_FISICA
+                            ? SinaisVitais?.cD_PESSOA_FISICA
+                            : PessoaFisica?.cD_PESSOA_FISICA,
                     },
                 });
                 break;
             case 'Observações':
-                console.log(itemSelected);
+                setTimeout(
+                    () => {
+                        refmodalObservacoes.current?.openModal();
+                    },
+                    Platform.OS === 'ios' ? 500 : 0,
+                );
                 break;
             default:
                 break;
@@ -152,7 +169,11 @@ const UpdateSinais: React.FC<Props> = ({
                 />
                 <View>
                     <MenuPopUp
-                        btnLabels={['Histórico', 'Acompanhante', 'Observações']}
+                        btnLabels={[
+                            'Histórico',
+                            'Acompanhante', 
+                            'Observações',
+                        ]}
                         onpress={(item) => MenuPopUpOptions(item)}
                     />
                 </View>
@@ -258,6 +279,13 @@ const UpdateSinais: React.FC<Props> = ({
                     SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
                 }
             />
+            <ModalCentralize ref={refmodalObservacoes}>
+                <CardObservacao
+                    observacao={observacao}
+                    setObservacao={(value) => setObservacao(value)}
+                    onpress={()=> refmodalObservacoes.current?.closeModal()}
+                />
+            </ModalCentralize>
         </View>
     );
 };

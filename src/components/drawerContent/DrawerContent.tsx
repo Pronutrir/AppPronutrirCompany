@@ -17,14 +17,14 @@ import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
 import { savePerfil, saveUnidade } from '../../utils';
-import { IPerfis, IUnidade } from '../../reducers/UserReducer';
+import { IPerfis } from '../../reducers/UserReducer';
 import NotificationMultOptions, {
     ModalHandles,
 } from '../Notification/NotificationMultOptions';
 import ModalCentralize, {
     ModalHandles as ModalHandlesSelect,
 } from '../Modais/ModalCentralize';
-import { useUnidades } from '../../hooks/useEstabelecimentos';
+import { IUnidade, useUnidades } from '../../hooks/useEstabelecimentos';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 interface Props {
     navigation: DrawerNavigationHelpers;
