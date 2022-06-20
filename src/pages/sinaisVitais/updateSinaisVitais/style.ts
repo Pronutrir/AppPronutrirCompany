@@ -60,7 +60,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         modalAlert: {
             alignSelf: 'flex-end',
-        }
+        },
     });
     return styles;
 }

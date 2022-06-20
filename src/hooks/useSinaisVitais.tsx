@@ -6,7 +6,6 @@ import { useContext } from 'react';
 interface ResponsePFdados {
     result: ISinaisVitais[];
 }
-
 export interface ISinaisVitais {
     nR_SEQUENCIA: number;
     nR_ATENDIMENTO?: number;
@@ -123,7 +122,7 @@ const useSinaisVitaisAll = () => {
     );
 };
 
-const useSinaisVitaisHistory = (paciente: string) => {
+const useSinaisVitaisHistory = (paciente: string, rows = 500) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
         ['SinaisVitaisHistory', paciente],
@@ -131,7 +130,7 @@ const useSinaisVitaisHistory = (paciente: string) => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=500`,
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=${rows}`,
             );
             return result.sort((a, b) => {
                 return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL

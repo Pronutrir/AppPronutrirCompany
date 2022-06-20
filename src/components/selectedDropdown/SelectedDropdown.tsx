@@ -25,7 +25,8 @@ interface Props<T> {
     disable?: boolean;
     DropDownStyle?: StyleProp<ViewStyle>;
     ContainerStyle?: StyleProp<ViewStyle>;
-    maxHeight?: number
+    maxHeight?: number;
+    error?: boolean;
 }
 
 const SelectedDropdown = <T extends { label: string }>({
@@ -38,6 +39,7 @@ const SelectedDropdown = <T extends { label: string }>({
     DropDownStyle,
     maxHeight = RFPercentage(45),
     ContainerStyle,
+    error = false,
 }: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
     const [_value, setValue] = useState<T | null>(null);
@@ -59,7 +61,7 @@ const SelectedDropdown = <T extends { label: string }>({
                 disable={disable}
                 search={data && data.length > 20 ? true : false}
                 style={[{ ...styles.dropdown }, DropDownStyle]}
-                placeholderStyle={styles.placeholderStyle}
+                placeholderStyle={[styles.placeholderStyle, error && { color: 'red' }]}
                 selectedTextStyle={styles.placeholderStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 containerStyle={ContainerStyle}
@@ -150,6 +152,7 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             height: RFPercentage(6),
         },
+
     });
     return styles;
 };

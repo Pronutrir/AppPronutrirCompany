@@ -8,7 +8,7 @@ import {
     View,
 } from 'react-native';
 import React, { useRef, useState } from 'react';
-import { RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import { RouteProp, useNavigation } from '@react-navigation/native';
@@ -103,6 +103,14 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
         );
     };
 
+    const EmptyComponent = () => (
+        <View style={styles.viewEmpty}>
+            <Text style={styles.textEmpty}>
+                Paciente não possui acompanhante cadastrado.
+            </Text>
+        </View>
+    );
+
     const MenuPopUpOptions = async (itemSelected: string) => {
         switch (itemSelected) {
             case 'Adicionar Acompanhante':
@@ -125,6 +133,7 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
                 <Text style={styles.title}>Acompanhantes Cadastrados</Text>
                 <View style={styles.menu}>
                     <MenuPopUp
+                        widthMenu={RFPercentage(31)}
                         btnLabels={['Adicionar Acompanhante']}
                         onpress={(item) => MenuPopUpOptions(item)}
                     />
@@ -139,8 +148,8 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={renderItem}
                         showsHorizontalScrollIndicator={false}
-                        // ListEmptyComponent={EmptyComponent}
-                        // getItemLayout={getItemLayout}
+                        ListEmptyComponent={EmptyComponent}
+                        //getItemLayout={getItemLayout}
                     />
                 )}
             </View>
@@ -254,6 +263,19 @@ const createStyle = (theme: ThemeContextData) => {
             justifyContent: 'center',
             alignItems: 'flex-start',
             margin: 3,
+        },
+        textEmpty: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+            marginHorizontal: 10,
+            textAlign: 'center'
+        },
+        viewEmpty: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: RFValue(22, 680),
         },
     });
     return styles;

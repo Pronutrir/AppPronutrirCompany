@@ -16,6 +16,7 @@ interface Props {
     BtnOptionsSvg?: React.FC<SvgProps>;
     onpress?(item: string): void;
     styleSvg?: IStyleSvg;
+    widthMenu?: number
 }
 export interface ModalHandlesMenu {
     showMenu(): void;
@@ -33,6 +34,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                 height: RFPercentage(4),
                 fill: '#737373',
             },
+            widthMenu
         }: Props,
         ref,
     ) => {
@@ -65,6 +67,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
         return (
             <View style={styles.container}>
                 <Menu
+                    style={{ width: widthMenu && widthMenu }}
                     visible={visible}
                     anchor={<BtnOptionsSvg onPress={showMenu} {...styleSvg} />}
                     onRequestClose={hideMenu}>
@@ -72,10 +75,9 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                         <MenuItem
                             key={item}
                             style={styles.boxItem}
-                            textStyle={styles.text}
-                            onPress={() => selectedItem(item)}
-                            >
-                            <Text>{item}</Text> 
+                            textStyle={{...styles.text, width: widthMenu && widthMenu}}
+                            onPress={() => selectedItem(item)}>
+                            <Text>{item}</Text>
                         </MenuItem>
                     ))}
                 </Menu>
@@ -99,7 +101,6 @@ const createStyles = (theme: ThemeContextData) => {
             paddingVertical: RFPercentage(0.5),
         },
         text: {
-            width: '100%',
             fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,

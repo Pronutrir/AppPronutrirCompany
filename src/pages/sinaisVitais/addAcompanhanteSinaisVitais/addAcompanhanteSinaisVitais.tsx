@@ -37,8 +37,8 @@ interface form {
     Name: string;
     CPF: string;
     RG: string;
-    Parentesco: number;
-    Sexo: string;
+    PARENTESCO: number;
+    SEXO: string;
 }
 
 const parentesco = [
@@ -56,8 +56,8 @@ const parentesco = [
 
 const sexo = [
     { label: 'Feminino', iE_GENDER: 'F' },
-    { label: 'Inderterminado',iE_GENDER: 'I' },
-    { label: 'Masculino',iE_GENDER: 'M' },
+    { label: 'Inderterminado', iE_GENDER: 'I' },
+    { label: 'Masculino', iE_GENDER: 'M' },
 ];
 
 const addAcompanhanteSinaisVitais = ({ route }: Props) => {
@@ -75,12 +75,12 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     const addAcompanhante = async (values: form) => {
         try {
             refModal.current?.openModal();
-            const result = await mutateAsync({
+            await mutateAsync({
                 cD_PESSOA_FISICA: route.params.PessoaFisica.cD_PESSOA_FISICA,
                 nR_CPF: values.CPF,
-                iE_GENDER: values.Sexo,
+                iE_GENDER: values.SEXO,
                 nM_PESSOA_FISICA: values.Name,
-                nR_SEQ_GRAU_PARENTESCO: values.Parentesco
+                nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO,
             });
             navigation.goBack();
         } catch (error) {
@@ -106,7 +106,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     const FormSchema = Yup.object().shape({
         Name: Yup.string()
             .required('Nome é obrigatório!')
-            .matches(/(\w.+\s).+/, 'Insira ooo nome e sobrenome'),
+            .matches(/(\w.+\s).+/, 'Insira o nome e sobrenome'),
         CPF: Yup.lazy(() => {
             switch (document) {
                 case 'CPF':
@@ -137,6 +137,12 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     break;
             }
         }),
+        PARENTESCO: Yup.number()
+            .required('Parentesco é obrigatório!')
+            .test('validation', 'Parentesco é obrigatório!', (value) =>
+                value ? value > 0 : false,
+            ),
+        SEXO: Yup.string().required('Sexo é obrigatório!'),
     });
 
     useEffect(() => {
@@ -149,8 +155,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 Name: '',
                 CPF: '',
                 RG: '',
-                Parentesco: 0,
-                Sexo: '',
+                PARENTESCO: 0,
+                SEXO: '',
             }}
             onSubmit={(values) => addAcompanhante(values)}
             validationSchema={FormSchema}>
@@ -251,27 +257,27 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                             )}
                         </View>
                         <View style={styles.boxSelect}>
-                            {touched.Parentesco && errors.Parentesco && (
-                                <Text style={styles.Error}>
-                                    {errors.Parentesco}
-                                </Text>
-                            )}
                             <SelectedDropdown
+                                error={errors.PARENTESCO ? true : false}
                                 data={parentesco}
                                 placeholder="Parentesco"
                                 maxHeight={RFPercentage(25)}
                                 DropDownStyle={styles.SelectedDropdown}
                                 onChange={(value) =>
-                                    setFieldValue('Parentesco', value.nR_SEQ_GRAU_PARENTESCO)
+                                    setFieldValue(
+                                        'PARENTESCO',
+                                        value.nR_SEQ_GRAU_PARENTESCO,
+                                    )
                                 }
                             />
                             <SelectedDropdown
+                                error={errors.SEXO ? true : false}
                                 data={sexo}
                                 placeholder="Sexo"
                                 maxHeight={RFPercentage(15)}
                                 DropDownStyle={styles.SelectedDropdown}
                                 onChange={(value) =>
-                                    setFieldValue('Sexo', value.iE_GENDER)
+                                    setFieldValue('SEXO', value.iE_GENDER)
                                 }
                             />
                         </View>

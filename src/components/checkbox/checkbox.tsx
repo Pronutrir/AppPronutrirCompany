@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import React, { useCallback, useImperativeHandle, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -42,6 +42,10 @@ const Checkbox = React.forwardRef<CheckedHandles, Props>(
                 text
             };
         });
+
+        useEffect(() => {
+            setcheck(isChecked);
+        }, [isChecked]);
 
         return (
             <BouncyCheckbox
