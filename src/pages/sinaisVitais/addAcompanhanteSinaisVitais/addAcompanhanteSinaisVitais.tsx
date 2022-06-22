@@ -67,7 +67,7 @@ const parentesco = [
 
 const sexo = [
     { label: 'Feminino', iE_GENDER: 'F' },
-    { label: 'Inderterminado', iE_GENDER: 'I' },
+    { label: 'Indeterminado', iE_GENDER: 'I' },
     { label: 'Masculino', iE_GENDER: 'M' },
 ];
 
@@ -146,6 +146,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     cD_PESSOA_FISICA:
                         route.params.PessoaFisica.cD_PESSOA_FISICA,
                     nR_CPF: values.CPF,
+                    nR_IDENTIDADE: values.RG,
                     iE_GENDER: values.SEXO,
                     nM_PESSOA_FISICA: values.Name,
                     nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO,
@@ -179,6 +180,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 });
                 refModal.current?.closeModal();
                 queryClient.invalidateQueries('familiares');
+                navigation.goBack();
             }
         } catch (error) {
             refModal.current?.closeModal();

@@ -182,6 +182,7 @@ const createStyle = (theme: ThemeContextData) => {
             marginTop: RFPercentage(2),
         },
         boxCards: {
+            flex: 1,
             marginVertical: RFPercentage(2),
         },
         boxTitle: {
