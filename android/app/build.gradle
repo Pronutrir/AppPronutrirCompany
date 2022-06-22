@@ -148,8 +148,8 @@ android {
         applicationId "com.apppronutrircompany"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName "1.7.4"
+        versionCode 10
+        versionName "1.7.5"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
     }
