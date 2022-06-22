@@ -96,7 +96,7 @@ export default function NotificationAlert() {
                         onAnimationEnd={() => disabled()}
                         easing="ease-in-out"
                         iterationCount={1}
-                        delay={6000}
+                        delay={10000}
                         style={[
                             styles.Animatable,
                             alert.status && {

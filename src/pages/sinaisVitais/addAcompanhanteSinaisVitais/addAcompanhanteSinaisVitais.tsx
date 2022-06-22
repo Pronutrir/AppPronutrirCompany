@@ -6,7 +6,7 @@ import {
     Text,
     View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
@@ -23,7 +23,18 @@ import { valicacaoCPF } from '../../../services/validacaoCpf';
 import { cpfMask } from '../../../services/validacoes';
 import Checkbox from '../../../components/checkbox/checkbox';
 import SelectedDropdown from '../../../components/selectedDropdown/SelectedDropdown';
-import { useAddFamiliar } from '../../../hooks/useFamiliar';
+import {
+    IFamiliarVincular,
+    IGetFamiliar,
+    useAddFamiliar,
+    useVincularFamiliar,
+} from '../../../hooks/useFamiliar';
+import AuthContext, { IPessoaFisica } from '../../../contexts/auth';
+import ModalCentralizedOptions, {
+    ModalHandles,
+} from '../../../components/Modais/ModalCentralizedOptions';
+import { useQueryClient } from 'react-query';
+import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -33,7 +44,7 @@ interface Props {
     route: ProfileScreenRouteProp;
 }
 
-interface form {
+interface Form {
     Name: string;
     CPF: string;
     RG: string;
@@ -61,31 +72,115 @@ const sexo = [
 ];
 
 const addAcompanhanteSinaisVitais = ({ route }: Props) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    const {
+        stateAuth: { usertasy }, useGetFetchQuery
+    } = useContext(AuthContext);
+    const { ConsultaCpfRg } = useContext(AuthContext);
+
+    const queryClient = useQueryClient();
     const navigation = useNavigation();
-    const { mutateAsync } = useAddFamiliar();
+
+    const { mutateAsync: mutateAsyncAddFamiliar } = useAddFamiliar();
+    const { mutateAsync: mutateAsyncVincularFamiliar } = useVincularFamiliar();
 
     const [document, setDocument] = useState<string | undefined>('CPF');
-    const nameRef = useRef<string | undefined>(undefined);
+
+    const nameRef = useRef<string>('');
+    const cpfRef = useRef<string>('');
+    const rgRef = useRef<string>('');
+
+    const [pessoaFisica, setPessoaFisica] = useState<
+        IPessoaFisica | undefined
+    >();
+    const [valuesform, setValuesForm] = useState<Form | undefined>();
+
+    const refModalOptions1 = useRef<ModalHandles>(null);
+    const refModalOptions2 = useRef<ModalHandles>(null);
 
     const theme = useTheme();
     const styles = useThemeAwareObject(createStyle);
 
     const refModal = useRef<LoadHandles>(null);
 
-    const addAcompanhante = async (values: form) => {
+    const verifyAcompanhante = async (values: Form) => {
+        refModal.current?.openModal();
+
+        const listFamily = useGetFetchQuery<IGetFamiliar[]>('familiares');
+
+        if(values.PARENTESCO === 5){
+
+            let validationPartern = false;
+
+            if(listFamily && listFamily?.length > 0){
+                validationPartern = !listFamily?.some(item => item.nR_SEQ_GRAU_PARENTESCO === 7);
+            }
+            if(validationPartern || !listFamily || listFamily?.length <= 0){
+                addAlert({
+                    message:
+                        'favor cadastrar um membro pai antes de cadastrar o avô/avó!',
+                    status: 'info',
+                });
+                refModal.current?.closeModal();
+                return;
+            }
+        }
+
+        const result = await ConsultaCpfRg(values.CPF, values.RG);
+        
+        setValuesForm(values);
+        refModal.current?.closeModal();
+        if (result) {
+            setPessoaFisica(result);
+            refModalOptions1.current?.openModal();
+        } else {
+            refModalOptions2.current?.openModal();
+        }
+    };
+
+    const addAcompanhante = async (values?: Form) => {
         try {
-            refModal.current?.openModal();
-            await mutateAsync({
-                cD_PESSOA_FISICA: route.params.PessoaFisica.cD_PESSOA_FISICA,
-                nR_CPF: values.CPF,
-                iE_GENDER: values.SEXO,
-                nM_PESSOA_FISICA: values.Name,
-                nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO,
-            });
-            navigation.goBack();
+            if (values) {
+                refModal.current?.openModal();
+                await mutateAsyncAddFamiliar({
+                    cD_PESSOA_FISICA:
+                        route.params.PessoaFisica.cD_PESSOA_FISICA,
+                    nR_CPF: values.CPF,
+                    iE_GENDER: values.SEXO,
+                    nM_PESSOA_FISICA: values.Name,
+                    nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO,
+                });
+                navigation.goBack();
+                queryClient.invalidateQueries('familiares');
+            }
         } catch (error) {
             refModal.current?.closeModal();
         } finally {
+            refModal.current?.closeModal();
+        }
+    };
+
+    const vincularAcompanhante = async (
+        valuesform?: Form,
+        pessoaFisica?: IPessoaFisica,
+    ) => {
+        try {
+            if (valuesform && pessoaFisica) {
+                refModal.current?.openModal();
+                await mutateAsyncVincularFamiliar({
+                    cD_PESSOA_FISICA:
+                        route.params.PessoaFisica.cD_PESSOA_FISICA,
+                    cD_PESSOA_FAMILIA: pessoaFisica.cD_PESSOA_FISICA,
+                    cD_PROFESSIONAL: usertasy.cD_PESSOA_FISICA,
+                    nM_USUARIO: 'AppMobile',
+                    nR_SEQ_GRAU_PARENTESCO: valuesform.PARENTESCO,
+                    iE_GENDER: valuesform.SEXO,
+                    nM_USUARIO_NREC: 'AppMobile',
+                });
+                refModal.current?.closeModal();
+                queryClient.invalidateQueries('familiares');
+            }
+        } catch (error) {
             refModal.current?.closeModal();
         }
     };
@@ -152,13 +247,13 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     const MyReactNativeForm = () => (
         <Formik
             initialValues={{
-                Name: '',
-                CPF: '',
-                RG: '',
+                Name: nameRef.current,
+                CPF: cpfRef.current,
+                RG: rgRef.current,
                 PARENTESCO: 0,
                 SEXO: '',
             }}
-            onSubmit={(values) => addAcompanhante(values)}
+            onSubmit={(values) => verifyAcompanhante(values)}
             validationSchema={FormSchema}>
             {({
                 handleChange,
@@ -193,7 +288,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                         (nameRef.current =
                                             item.nativeEvent.text);
                                 }}
-                                value={nameRef.current}
+                                value={values.Name}
                             />
                         </View>
                         <View style={styles.boxForm}>
@@ -233,7 +328,11 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                         setFieldValue('CPF', cpfMask(e))
                                     }
                                     keyboardType={'numeric'}
-                                    onEndEditing={handleBlur('CPF')}
+                                    onEndEditing={(item) => {
+                                        setTouched({ ...touched, ['CPF']: true }),
+                                            (cpfRef.current =
+                                                item.nativeEvent.text);
+                                    }}
                                     value={values.CPF}
                                 />
                             )}
@@ -251,34 +350,52 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     fontColor={theme.colors.TEXT_SECONDARY}
                                     onChangeText={(e) => setFieldValue('RG', e)}
                                     keyboardType={'numeric'}
-                                    onEndEditing={handleBlur('RG')}
+                                    onEndEditing={(item) => {
+                                        setTouched({ ...touched, ['RG']: true }),
+                                            (rgRef.current =
+                                                item.nativeEvent.text);
+                                    }}
                                     value={values.RG}
                                 />
                             )}
                         </View>
                         <View style={styles.boxSelect}>
                             <SelectedDropdown
-                                error={errors.PARENTESCO ? true : false}
+                                error={
+                                    errors.PARENTESCO && touched.PARENTESCO
+                                        ? true
+                                        : false
+                                }
                                 data={parentesco}
                                 placeholder="Parentesco"
                                 maxHeight={RFPercentage(25)}
                                 DropDownStyle={styles.SelectedDropdown}
-                                onChange={(value) =>
+                                onChange={(value) => {
                                     setFieldValue(
                                         'PARENTESCO',
                                         value.nR_SEQ_GRAU_PARENTESCO,
-                                    )
-                                }
+                                    ),
+                                        setTouched({
+                                            ...touched,
+                                            ['PARENTESCO']: true,
+                                        });
+                                }}
                             />
                             <SelectedDropdown
-                                error={errors.SEXO ? true : false}
+                                error={
+                                    errors.SEXO && touched.SEXO ? true : false
+                                }
                                 data={sexo}
                                 placeholder="Sexo"
                                 maxHeight={RFPercentage(15)}
                                 DropDownStyle={styles.SelectedDropdown}
-                                onChange={(value) =>
-                                    setFieldValue('SEXO', value.iE_GENDER)
-                                }
+                                onChange={(value) => {
+                                    setFieldValue('SEXO', value.iE_GENDER),
+                                        setTouched({
+                                            ...touched,
+                                            ['SEXO']: true,
+                                        });
+                                }}
                             />
                         </View>
                         <View style={styles.btnContainer}>
@@ -307,6 +424,20 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 <MyReactNativeForm />
             </View>
             <Loading ref={refModal} />
+            <ModalCentralizedOptions
+                ref={refModalOptions1}
+                onpress={() => vincularAcompanhante(valuesform, pessoaFisica)}
+                message={
+                    'O acompanhante já possui cadastro, deseja vincular-lo ao paciente ?'
+                }
+            />
+            <ModalCentralizedOptions
+                ref={refModalOptions2}
+                onpress={() => addAcompanhante(valuesform)}
+                message={
+                    'O acompanhante não possui cadastro, deseja cadastra-lo e vincular-lo ao paciente ?'
+                }
+            />
         </Pressable>
     );
 };

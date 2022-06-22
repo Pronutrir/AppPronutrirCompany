@@ -47,9 +47,10 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
         IGetFamiliar | undefined
     >();
 
-    const { data: listFamiliar, isFetching } = useGetFamiliar(
-        route.params.PessoaFisica.cD_PESSOA_FISICA,
-    );
+    const {
+        data: listFamiliar,
+        isFetching,
+    } = useGetFamiliar(route.params.PessoaFisica.cD_PESSOA_FISICA);
 
     const { mutateAsync } = useVincularFamiliar();
 
@@ -114,7 +115,9 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
     const MenuPopUpOptions = async (itemSelected: string) => {
         switch (itemSelected) {
             case 'Adicionar Acompanhante':
-                navigation.navigate('addAcompanhanteSinaisVitais', { PessoaFisica: route.params.PessoaFisica});
+                navigation.navigate('addAcompanhanteSinaisVitais', {
+                    PessoaFisica: route.params.PessoaFisica,
+                });
                 break;
             default:
                 break;
@@ -149,7 +152,6 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
                         renderItem={renderItem}
                         showsHorizontalScrollIndicator={false}
                         ListEmptyComponent={EmptyComponent}
-                        //getItemLayout={getItemLayout}
                     />
                 )}
             </View>
@@ -188,9 +190,9 @@ const createStyle = (theme: ThemeContextData) => {
             justifyContent: 'center',
         },
         menu: {
-            position: 'absolute', 
-            right: 0, 
-            marginHorizontal: 10
+            position: 'absolute',
+            right: 0,
+            marginHorizontal: 10,
         },
         cards: {
             width: (Dimensions.get('screen').width / 100) * 95,
@@ -270,7 +272,7 @@ const createStyle = (theme: ThemeContextData) => {
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
             marginHorizontal: 10,
-            textAlign: 'center'
+            textAlign: 'center',
         },
         viewEmpty: {
             justifyContent: 'center',

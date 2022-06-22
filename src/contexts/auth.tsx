@@ -26,7 +26,10 @@ interface AuthContextData {
     loading: boolean;
     getPerfis(nomeUsuario: string): UseQueryResult<IPerfis[], Error>;
     ValidationAutorizeEvolucao: () => boolean;
-    useGetFetchQuery<T extends Record<keyof T, unknown>>(key: string): T | undefined;
+    useGetFetchQuery<T extends Record<keyof T, unknown>>(
+        key: string,
+    ): T | undefined;
+    ConsultaCpfRg: (cpf?: string, rg?: string) => Promise<IPessoaFisica | undefined>;
 }
 interface IFirebaseLogin {
     email: string;
@@ -72,6 +75,25 @@ interface TokenResponse {
     integraApi: boolean;
     refreshToken: string;
 }
+export interface IPessoaFisica {
+    cD_PESSOA_FISICA: string;
+    iE_TIPO_PESSOA: number;
+    iE_FUNCIONARIO: string;
+    nM_PESSOA_FISICA: string;
+    nR_CPF: string;
+    dT_ATUALIZACAO: string;
+    dT_CADASTRO_ORIGINAL: string;
+    nR_DDD_CELULAR: string;
+    nR_TELEFONE_CELULAR: string;
+    dT_NASCIMENTO: string;
+    nM_USUARIO: string;
+    nM_USUARIO_ORIGINAL: string;
+    nR_PRONTUARIO: number;
+    nR_IDENTIDADE: string;
+}
+interface IResponsePessoaFisica {
+    result: IPessoaFisica;
+}
 
 const AuthContext = createContext({} as AuthContextData);
 
@@ -81,20 +103,25 @@ export const AuthProvider: React.FC = ({ children }) => {
     const queryClient = useQueryClient();
     const [loading, setLoading] = useState(true);
 
-    const useGetFetchQuery = <T extends Record<keyof T, unknown>>(key: string): T | undefined => {
-        return queryClient.getQueryData<T>(key);
+    const useGetFetchQuery = <T extends Record<keyof T, unknown>>(
+        key: string,
+    ): T | undefined => {
+        const result = queryClient.getQueryData<T>(key);
+        return result;
     };
 
     //consulta e retorna o token para acesso a api tasy
     const GetAuth = useCallback(async () => {
-        return ApiAuth.get<TokenResponse>('auth').then((response) => {
-            const { jwtToken, refreshToken } = response.data;
-            Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
-            saveRefreshToken(refreshToken);
-            return jwtToken;
-        }).catch((error) => {
-            console.log('Error token', error);
-        });
+        return ApiAuth.get<TokenResponse>('auth')
+            .then((response) => {
+                const { jwtToken, refreshToken } = response.data;
+                Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
+                saveRefreshToken(refreshToken);
+                return jwtToken;
+            })
+            .catch((error) => {
+                console.log('Error token', error);
+            });
     }, []);
 
     //consulta e retorna o usuário da api tasy
@@ -113,6 +140,24 @@ export const AuthProvider: React.FC = ({ children }) => {
                 }
             },
         );
+    };
+
+    //consulta pessoa fisica pelo rg || cpf
+    const ConsultaCpfRg = async (cpf?: string, rg?: string) => {
+        try {
+            if (cpf || rg) {
+                const { result } = (
+                    await Api.get<IResponsePessoaFisica>(
+                        `PessoaFisica/FilterCPFRG?${
+                            cpf ? `cpf=${cpf.replace(/[.-]/g, "")}` : ''
+                        }${rg ? `rg=${rg}` : ''}`,
+                    )
+                ).data;
+                return result;
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const consultaFirebase = async (
@@ -255,6 +300,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 getPerfis,
                 ValidationAutorizeEvolucao,
                 useGetFetchQuery,
+                ConsultaCpfRg,
             }}>
             {children}
         </AuthContext.Provider>

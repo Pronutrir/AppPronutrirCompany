@@ -108,16 +108,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT, refetch }: Pr
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={refreshing}
-                    onRefresh={async () => {
-                        setRefreshing(true);
-                        await refetch();
-                        setRefreshing(false);
-                    }}
                     ListEmptyComponent={renderItemEmpty}
-                    //onEndReached={() => console.log('teste')}
-                    //onEndReachedThreshold={0.5}
-                    //ListFooterComponent={ListFooterComponent}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)

@@ -45,8 +45,6 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const { refetch } = useGetAgendaConsultas();
 
-    //const { FilterConsultas, GetConsultas } = useContext(SinaisVitaisContext);
-
     const Item = ({ item }: { item: IConsultas; index: number }) => {
         return (
             <TouchableOpacity

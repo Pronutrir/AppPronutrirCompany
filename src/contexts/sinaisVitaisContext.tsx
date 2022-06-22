@@ -13,7 +13,6 @@ import {
     ConsultasQTReducer,
     initialStateQT,
     IstateConsultasQT,
-    IconsultaQT,
 } from '../reducers/ConsultasQTReducer';
 import {
     ConsultasReducer,

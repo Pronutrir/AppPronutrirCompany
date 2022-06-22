@@ -84,7 +84,7 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
                             : ''
                     }&semStatusAgenda='C'&codEstabelecimento=${
                         UnidadeSelected?.cD_ESTABELECIMENTO
-                    }&rows=500&cacheKey=true&cacheName=sinaisVitais+${
+                    }&rows=500&cacheKey=false&cacheName=sinaisVitais+${
                         UnidadeSelected?.dS_ESTABELECIMENTO
                     }`,
                 )

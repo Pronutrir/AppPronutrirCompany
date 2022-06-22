@@ -10,14 +10,14 @@ export interface IFamiliar {
     nM_USUARIO_ORIGINAL: string;
     nM_USUARIO: string;
     nM_PESSOA_FISICA: string;
-    nR_CPF: string;
+    nR_CPF?: string;
+    nR_IDENTIDADE?: string,
     nR_SEQ_GRAU_PARENTESCO: number;
     cD_PESSOA_FAMILIA?: string;
     iE_HABITACAO: string;
     cD_PROFESSIONAL: string;
     nM_USUARIO_NREC: string;
     iE_GENDER: string;
-    NR_IDENTIDADE: string;
 }
 interface IResponseFamiliar {
     result: IGetFamiliar[];
@@ -25,7 +25,8 @@ interface IResponseFamiliar {
 export interface IPostFamiliar {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
-    nR_CPF: string;
+    nR_CPF?: string;
+    nR_IDENTIDADE?: string,
     nR_SEQ_GRAU_PARENTESCO: number;
     iE_GENDER: string;
 }
@@ -57,16 +58,16 @@ export interface IGetFamiliar {
     nM_PROFISIONAL: string;
     dS_GRAU_PARENTESCO: string;
 }
-interface IFamiliarVincular {
+export interface IFamiliarVincular {
     nR_SEQ_GRAU_PARENTESCO: number;
     cD_PESSOA_FAMILIA: string;
     cD_PESSOA_FISICA: string;
-    iE_HABITACAO: string;
+    iE_HABITACAO?: string;
     iE_GENDER: string;
     nM_USUARIO: string;
-    dT_ATUALIZACAO: string;
+    dT_ATUALIZACAO?: string;
     cD_PROFESSIONAL: string;
-    dT_ATUALIZACAO_NREC: string;
+    dT_ATUALIZACAO_NREC?: string;
     nM_USUARIO_NREC: string;
 }
 
@@ -112,13 +113,13 @@ const useAddFamiliar = () => {
                         nM_USUARIO_ORIGINAL: 'AppMobile',
                         nM_USUARIO: 'AppMobile',
                         nM_PESSOA_FISICA: family.nM_PESSOA_FISICA,
-                        nR_CPF: family.nR_CPF.replace(/[.-]/g, ''),
+                        nR_CPF: family?.nR_CPF ? family.nR_CPF.replace(/[.-]/g, '') : undefined,
+                        nR_IDENTIDADE: family?.nR_IDENTIDADE ? family.nR_IDENTIDADE : undefined,
                         nR_SEQ_GRAU_PARENTESCO: family.nR_SEQ_GRAU_PARENTESCO,
                         iE_HABITACAO: 'N',
                         iE_GENDER: family.iE_GENDER,
                         cD_PROFESSIONAL: usertasy.cD_PESSOA_FISICA,
                         nM_USUARIO_NREC: 'AppMobile',
-                        NR_IDENTIDADE: family.nR_CPF,
                     },
                 )
             ).data;
@@ -132,7 +133,8 @@ const useAddFamiliar = () => {
                     status: 'sucess',
                 });
             },
-            onError: () => {
+            onError: (error) => {
+                console.log(error);
                 addAlert({
                     message:
                         'Error ao adicionar  os sinais vitais tente mais tarde!',
@@ -155,12 +157,10 @@ const useVincularFamiliar = () => {
                         nR_SEQ_GRAU_PARENTESCO: family.nR_SEQ_GRAU_PARENTESCO,
                         cD_PESSOA_FAMILIA: family.cD_PESSOA_FAMILIA,
                         cD_PESSOA_FISICA: family.cD_PESSOA_FISICA,
-                        iE_HABITACAO: family.iE_HABITACAO,
+                        iE_HABITACAO: 'N',
                         iE_GENDER: family.iE_GENDER,
                         nM_USUARIO: family.nM_USUARIO,
-                        dT_ATUALIZACAO: family.dT_ATUALIZACAO,
                         cD_PROFESSIONAL: family.cD_PROFESSIONAL,
-                        dT_ATUALIZACAO_NREC: family.dT_ATUALIZACAO_NREC,
                         nM_USUARIO_NREC: family.nM_USUARIO_NREC,
                     },
                 )
@@ -178,7 +178,7 @@ const useVincularFamiliar = () => {
             onError: () => {
                 addAlert({
                     message:
-                        'Error ao adicionar  os sinais vitais tente mais tarde!',
+                        'Error ao vincular os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
             },
