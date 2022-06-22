@@ -6,7 +6,7 @@ import {
     Text,
     View,
 } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
@@ -24,7 +24,6 @@ import { cpfMask } from '../../../services/validacoes';
 import Checkbox from '../../../components/checkbox/checkbox';
 import SelectedDropdown from '../../../components/selectedDropdown/SelectedDropdown';
 import {
-    IFamiliarVincular,
     IGetFamiliar,
     useAddFamiliar,
     useVincularFamiliar,
@@ -43,16 +42,19 @@ type ProfileScreenRouteProp = RouteProp<
 interface Props {
     route: ProfileScreenRouteProp;
 }
-
 interface Form {
-    Name: string;
+    NOME: string;
     CPF: string;
     RG: string;
-    PARENTESCO: number;
+    PARENTESCO: {
+        label: string,
+        nR_SEQ_GRAU_PARENTESCO: number,
+    };
     SEXO: string;
+    SELECT: string;
 }
 
-const parentesco = [
+const parentescoList = [
     { label: 'Amigo', nR_SEQ_GRAU_PARENTESCO: 2 },
     { label: 'Avô(ó)', nR_SEQ_GRAU_PARENTESCO: 5 },
     { label: 'Cônjuge/Companheira(o)', nR_SEQ_GRAU_PARENTESCO: 10 },
@@ -65,7 +67,7 @@ const parentesco = [
     { label: 'Tio(a)', nR_SEQ_GRAU_PARENTESCO: 3 },
 ];
 
-const sexo = [
+const sexoList = [
     { label: 'Feminino', iE_GENDER: 'F' },
     { label: 'Indeterminado', iE_GENDER: 'I' },
     { label: 'Masculino', iE_GENDER: 'M' },
@@ -74,7 +76,8 @@ const sexo = [
 const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     const {
-        stateAuth: { usertasy }, useGetFetchQuery
+        stateAuth: { usertasy },
+        useGetFetchQuery,
     } = useContext(AuthContext);
     const { ConsultaCpfRg } = useContext(AuthContext);
 
@@ -83,13 +86,6 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
 
     const { mutateAsync: mutateAsyncAddFamiliar } = useAddFamiliar();
     const { mutateAsync: mutateAsyncVincularFamiliar } = useVincularFamiliar();
-
-    const [document, setDocument] = useState<string | undefined>('CPF');
-
-    const nameRef = useRef<string>('');
-    const cpfRef = useRef<string>('');
-    const rgRef = useRef<string>('');
-
     const [pessoaFisica, setPessoaFisica] = useState<
         IPessoaFisica | undefined
     >();
@@ -98,24 +94,28 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     const refModalOptions1 = useRef<ModalHandles>(null);
     const refModalOptions2 = useRef<ModalHandles>(null);
 
+    const refSelected = useRef<string>('CPF');
+    const refModal = useRef<LoadHandles>(null);
+
     const theme = useTheme();
     const styles = useThemeAwareObject(createStyle);
 
-    const refModal = useRef<LoadHandles>(null);
+    
 
     const verifyAcompanhante = async (values: Form) => {
         refModal.current?.openModal();
 
         const listFamily = useGetFetchQuery<IGetFamiliar[]>('familiares');
 
-        if(values.PARENTESCO === 5){
-
+        if (values.PARENTESCO.nR_SEQ_GRAU_PARENTESCO === 5) {
             let validationPartern = false;
 
-            if(listFamily && listFamily?.length > 0){
-                validationPartern = !listFamily?.some(item => item.nR_SEQ_GRAU_PARENTESCO === 7);
+            if (listFamily && listFamily?.length > 0) {
+                validationPartern = !listFamily?.some(
+                    (item) => item.nR_SEQ_GRAU_PARENTESCO === 7,
+                );
             }
-            if(validationPartern || !listFamily || listFamily?.length <= 0){
+            if (validationPartern || !listFamily || listFamily?.length <= 0) {
                 addAlert({
                     message:
                         'favor cadastrar um membro pai antes de cadastrar o avô/avó!',
@@ -127,7 +127,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
         }
 
         const result = await ConsultaCpfRg(values.CPF, values.RG);
-        
+
         setValuesForm(values);
         refModal.current?.closeModal();
         if (result) {
@@ -148,8 +148,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     nR_CPF: values.CPF,
                     nR_IDENTIDADE: values.RG,
                     iE_GENDER: values.SEXO,
-                    nM_PESSOA_FISICA: values.Name,
-                    nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO,
+                    nM_PESSOA_FISICA: values.NOME,
+                    nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
                 });
                 navigation.goBack();
                 queryClient.invalidateQueries('familiares');
@@ -174,7 +174,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     cD_PESSOA_FAMILIA: pessoaFisica.cD_PESSOA_FISICA,
                     cD_PROFESSIONAL: usertasy.cD_PESSOA_FISICA,
                     nM_USUARIO: 'AppMobile',
-                    nR_SEQ_GRAU_PARENTESCO: valuesform.PARENTESCO,
+                    nR_SEQ_GRAU_PARENTESCO: valuesform.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
                     iE_GENDER: valuesform.SEXO,
                     nM_USUARIO_NREC: 'AppMobile',
                 });
@@ -187,25 +187,12 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
         }
     };
 
-    const setCheckBox = (isChecked: boolean, text?: string) => {
-        switch (text) {
-            case 'CPF':
-                setDocument(text);
-                break;
-            case 'RG':
-                setDocument(text);
-                break;
-            default:
-                break;
-        }
-    };
-
     const FormSchema = Yup.object().shape({
-        Name: Yup.string()
+        NOME: Yup.string()
             .required('Nome é obrigatório!')
             .matches(/(\w.+\s).+/, 'Insira o nome e sobrenome'),
         CPF: Yup.lazy(() => {
-            switch (document) {
+            switch (refSelected.current) {
                 case 'CPF':
                     return Yup.string()
                         .required('CPF é obrigatório!')
@@ -223,7 +210,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
             }
         }),
         RG: Yup.lazy(() => {
-            switch (document) {
+            console.log(refSelected.current)
+            switch (refSelected.current) {
                 case 'RG':
                     return Yup.string()
                         .required('RG é obrigatório!')
@@ -242,24 +230,23 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
         SEXO: Yup.string().required('Sexo é obrigatório!'),
     });
 
-    useEffect(() => {
-        setCheckBox(true, 'CPF');
-    }, []);
-
     const MyReactNativeForm = () => (
         <Formik
             initialValues={{
-                Name: nameRef.current,
-                CPF: cpfRef.current,
-                RG: rgRef.current,
-                PARENTESCO: 0,
+                NOME: '',
+                CPF: '',
+                RG: '',
+                PARENTESCO: {
+                    label: '',
+                    nR_SEQ_GRAU_PARENTESCO: 0,
+                },
+                TOUCHED: '', 
                 SEXO: '',
+                SELECT: 'CPF',
             }}
             onSubmit={(values) => verifyAcompanhante(values)}
             validationSchema={FormSchema}>
             {({
-                handleChange,
-                handleBlur,
                 handleSubmit,
                 values,
                 errors,
@@ -268,6 +255,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 setTouched,
             }) => (
                 <>
+                {console.log(errors.CPF)}
                     <View style={styles.containerForm}>
                         <View style={styles.boxForm}>
                             <Text style={styles.title}>
@@ -275,8 +263,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                             </Text>
                             <InputStandard
                                 error={
-                                    errors.Name && touched.Name
-                                        ? errors.Name
+                                    errors.NOME && touched.NOME
+                                        ? errors.NOME
                                         : undefined
                                 }
                                 placeholder={'Nome completo'}
@@ -284,13 +272,13 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                 activeColor={theme.colors.TEXT_PRIMARY}
                                 fontSize={theme.typography.SIZE.fontysize14}
                                 fontColor={theme.colors.TEXT_SECONDARY}
-                                onChangeText={handleChange('Name')}
-                                onEndEditing={(item) => {
-                                    setTouched({ ...touched, ['Name']: true }),
-                                        (nameRef.current =
-                                            item.nativeEvent.text);
+                                onChangeText={(item) => {
+                                    setFieldValue('NOME', item);
                                 }}
-                                value={values.Name}
+                                onEndEditing={() => {
+                                    setTouched({ ...touched, ['NOME']: true })
+                                }}
+                                value={values.NOME}
                             />
                         </View>
                         <View style={styles.boxForm}>
@@ -300,28 +288,34 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     marginBottom: 10,
                                 }}>
                                 <Checkbox
-                                    isChecked={document === 'CPF'}
+                                    isChecked={values.SELECT === 'CPF'}
                                     text="CPF"
                                     onPress={(isChecked, text) => {
-                                        setCheckBox(isChecked, text);
+                                        setFieldValue('SELECT', text);
+                                        if(text){
+                                            refSelected.current = text;
+                                        }
                                     }}
                                 />
                                 <Checkbox
-                                    isChecked={document === 'RG'}
+                                    isChecked={values.SELECT === 'RG'}
                                     text="RG"
                                     onPress={(isChecked, text) => {
-                                        setCheckBox(isChecked, text);
+                                        setFieldValue('SELECT', text);
+                                        if(text){
+                                            refSelected.current = text;
+                                        }
                                     }}
                                 />
                             </View>
-                            {document === 'CPF' && (
+                            {values.SELECT === 'CPF' && (
                                 <InputStandard
                                     error={
                                         errors.CPF && touched.CPF
                                             ? errors.CPF
                                             : undefined
                                     }
-                                    placeholder={'Documento de indentificação'}
+                                    placeholder={'Digite o CPF'}
                                     style={styles.inputText}
                                     activeColor={theme.colors.TEXT_PRIMARY}
                                     fontSize={theme.typography.SIZE.fontysize14}
@@ -330,32 +324,34 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                         setFieldValue('CPF', cpfMask(e))
                                     }
                                     keyboardType={'numeric'}
-                                    onEndEditing={(item) => {
-                                        setTouched({ ...touched, ['CPF']: true }),
-                                            (cpfRef.current =
-                                                item.nativeEvent.text);
+                                    onEndEditing={() => {
+                                        setTouched({
+                                            ...touched,
+                                            ['CPF']: true,
+                                        })
                                     }}
                                     value={values.CPF}
                                 />
                             )}
-                            {document === 'RG' && (
+                            {values.SELECT === 'RG' && (
                                 <InputStandard
                                     error={
                                         errors.RG && touched.RG
                                             ? errors.RG
                                             : undefined
                                     }
-                                    placeholder={'Documento de indentificação'}
+                                    placeholder={'Digite o RG'}
                                     style={styles.inputText}
                                     activeColor={theme.colors.TEXT_PRIMARY}
                                     fontSize={theme.typography.SIZE.fontysize14}
                                     fontColor={theme.colors.TEXT_SECONDARY}
                                     onChangeText={(e) => setFieldValue('RG', e)}
                                     keyboardType={'numeric'}
-                                    onEndEditing={(item) => {
-                                        setTouched({ ...touched, ['RG']: true }),
-                                            (rgRef.current =
-                                                item.nativeEvent.text);
+                                    onEndEditing={() => {
+                                        setTouched({
+                                            ...touched,
+                                            ['RG']: true,
+                                        })
                                     }}
                                     value={values.RG}
                                 />
@@ -364,30 +360,31 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                         <View style={styles.boxSelect}>
                             <SelectedDropdown
                                 error={
-                                    errors.PARENTESCO && touched.PARENTESCO
+                                    errors.PARENTESCO && touched.TOUCHED
                                         ? true
                                         : false
                                 }
-                                data={parentesco}
+                                data={parentescoList}
                                 placeholder="Parentesco"
                                 maxHeight={RFPercentage(25)}
                                 DropDownStyle={styles.SelectedDropdown}
                                 onChange={(value) => {
                                     setFieldValue(
                                         'PARENTESCO',
-                                        value.nR_SEQ_GRAU_PARENTESCO,
+                                        value,
                                     ),
                                         setTouched({
                                             ...touched,
-                                            ['PARENTESCO']: true,
+                                            ['TOUCHED']: true,
                                         });
                                 }}
+                                //value={values.PARENTESCO}
                             />
                             <SelectedDropdown
                                 error={
                                     errors.SEXO && touched.SEXO ? true : false
                                 }
-                                data={sexo}
+                                data={sexoList}
                                 placeholder="Sexo"
                                 maxHeight={RFPercentage(15)}
                                 DropDownStyle={styles.SelectedDropdown}
@@ -398,6 +395,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                             ['SEXO']: true,
                                         });
                                 }}
+                                //value={values.SEXO}
                             />
                         </View>
                         <View style={styles.btnContainer}>
