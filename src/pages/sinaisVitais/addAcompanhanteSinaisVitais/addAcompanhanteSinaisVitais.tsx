@@ -47,9 +47,10 @@ interface Form {
     CPF: string;
     RG: string;
     PARENTESCO: {
-        label: string,
-        nR_SEQ_GRAU_PARENTESCO: number,
+        label: string;
+        nR_SEQ_GRAU_PARENTESCO: number;
     };
+    TOUCHED: '',
     SEXO: string;
     SELECT: string;
 }
@@ -86,10 +87,22 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
 
     const { mutateAsync: mutateAsyncAddFamiliar } = useAddFamiliar();
     const { mutateAsync: mutateAsyncVincularFamiliar } = useVincularFamiliar();
+
     const [pessoaFisica, setPessoaFisica] = useState<
         IPessoaFisica | undefined
     >();
-    const [valuesform, setValuesForm] = useState<Form | undefined>();
+    const refValuesform = useRef<Form>({
+        NOME: '',
+        CPF: '',
+        RG: '',
+        SELECT: 'CPF',
+        PARENTESCO: {
+            label: '',
+            nR_SEQ_GRAU_PARENTESCO: 0,
+        },
+        TOUCHED: '',
+        SEXO: ''
+    });
 
     const refModalOptions1 = useRef<ModalHandles>(null);
     const refModalOptions2 = useRef<ModalHandles>(null);
@@ -99,8 +112,6 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
 
     const theme = useTheme();
     const styles = useThemeAwareObject(createStyle);
-
-    
 
     const verifyAcompanhante = async (values: Form) => {
         refModal.current?.openModal();
@@ -128,7 +139,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
 
         const result = await ConsultaCpfRg(values.CPF, values.RG);
 
-        setValuesForm(values);
+        refValuesform.current = values;
         refModal.current?.closeModal();
         if (result) {
             setPessoaFisica(result);
@@ -149,7 +160,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     nR_IDENTIDADE: values.RG,
                     iE_GENDER: values.SEXO,
                     nM_PESSOA_FISICA: values.NOME,
-                    nR_SEQ_GRAU_PARENTESCO: values.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
+                    nR_SEQ_GRAU_PARENTESCO:
+                        values.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
                 });
                 navigation.goBack();
                 queryClient.invalidateQueries('familiares');
@@ -174,7 +186,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     cD_PESSOA_FAMILIA: pessoaFisica.cD_PESSOA_FISICA,
                     cD_PROFESSIONAL: usertasy.cD_PESSOA_FISICA,
                     nM_USUARIO: 'AppMobile',
-                    nR_SEQ_GRAU_PARENTESCO: valuesform.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
+                    nR_SEQ_GRAU_PARENTESCO:
+                        valuesform.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
                     iE_GENDER: valuesform.SEXO,
                     nM_USUARIO_NREC: 'AppMobile',
                 });
@@ -188,62 +201,43 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     };
 
     const FormSchema = Yup.object().shape({
+        SELECT: Yup.string(),
         NOME: Yup.string()
             .required('Nome é obrigatório!')
             .matches(/(\w.+\s).+/, 'Insira o nome e sobrenome'),
-        CPF: Yup.lazy(() => {
-            switch (refSelected.current) {
-                case 'CPF':
-                    return Yup.string()
-                        .required('CPF é obrigatório!')
-                        .test(
-                            'validationCPF',
-                            'CPF inválido',
-                            (value) =>
-                                Boolean(value) &&
-                                valicacaoCPF(value?.replace(/[.-]/g, '')),
-                        );
-                    break;
-                default:
-                    return Yup.string().optional();
-                    break;
-            }
-        }),
-        RG: Yup.lazy(() => {
-            console.log(refSelected.current)
-            switch (refSelected.current) {
-                case 'RG':
-                    return Yup.string()
-                        .required('RG é obrigatório!')
-                        .max(18, 'Verifique a quantidade de caracteres');
-                    break;
-                default:
-                    return Yup.string().optional();
-                    break;
-            }
-        }),
-        PARENTESCO: Yup.number()
-            .required('Parentesco é obrigatório!')
-            .test('validation', 'Parentesco é obrigatório!', (value) =>
-                value ? value > 0 : false,
+        CPF: Yup.string()
+        .when('SELECT', {
+            is: (val: string) => val === 'CPF',
+            then: () => Yup.string()
+            .required('CPF é obrigatório!')
+            .test(
+                'validationCPF',
+                'CPF inválido',
+                (value) =>
+                    Boolean(value) && valicacaoCPF(value?.replace(/[.-]/g, '')),
             ),
+        }),
+        RG: Yup.string()
+        .when('SELECT', {
+            is: (val: string) => val === 'RG', 
+            then: () => Yup.string()
+            .required('RG é obrigatório!')
+            .max(18, 'Verifique a quantidade de caracteres')
+        }),
+        PARENTESCO: Yup.object().shape({
+            label: Yup.string().required('Sexo é obrigatório!'),
+            nR_SEQ_GRAU_PARENTESCO: Yup.number()
+                .required('Sexo é obrigatório!')
+                .test('validation', 'Parentesco é obrigatório!', (value) =>
+                    value ? value > 0 : false,
+                ),
+        }),
         SEXO: Yup.string().required('Sexo é obrigatório!'),
     });
 
     const MyReactNativeForm = () => (
         <Formik
-            initialValues={{
-                NOME: '',
-                CPF: '',
-                RG: '',
-                PARENTESCO: {
-                    label: '',
-                    nR_SEQ_GRAU_PARENTESCO: 0,
-                },
-                TOUCHED: '', 
-                SEXO: '',
-                SELECT: 'CPF',
-            }}
+            initialValues={refValuesform.current}
             onSubmit={(values) => verifyAcompanhante(values)}
             validationSchema={FormSchema}>
             {({
@@ -255,7 +249,6 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 setTouched,
             }) => (
                 <>
-                {console.log(errors.CPF)}
                     <View style={styles.containerForm}>
                         <View style={styles.boxForm}>
                             <Text style={styles.title}>
@@ -276,7 +269,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     setFieldValue('NOME', item);
                                 }}
                                 onEndEditing={() => {
-                                    setTouched({ ...touched, ['NOME']: true })
+                                    setTouched({ ...touched, ['NOME']: true });
                                 }}
                                 value={values.NOME}
                             />
@@ -292,7 +285,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     text="CPF"
                                     onPress={(isChecked, text) => {
                                         setFieldValue('SELECT', text);
-                                        if(text){
+                                        if (text) {
                                             refSelected.current = text;
                                         }
                                     }}
@@ -302,7 +295,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     text="RG"
                                     onPress={(isChecked, text) => {
                                         setFieldValue('SELECT', text);
-                                        if(text){
+                                        if (text) {
                                             refSelected.current = text;
                                         }
                                     }}
@@ -320,15 +313,16 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     activeColor={theme.colors.TEXT_PRIMARY}
                                     fontSize={theme.typography.SIZE.fontysize14}
                                     fontColor={theme.colors.TEXT_SECONDARY}
-                                    onChangeText={(e) =>
-                                        setFieldValue('CPF', cpfMask(e))
-                                    }
+                                    onChangeText={(e) => {
+                                        setFieldValue('CPF', cpfMask(e), true)
+                                        //setFieldValue('RG', '', false);
+                                    }}
                                     keyboardType={'numeric'}
                                     onEndEditing={() => {
                                         setTouched({
                                             ...touched,
                                             ['CPF']: true,
-                                        })
+                                        });
                                     }}
                                     value={values.CPF}
                                 />
@@ -345,13 +339,16 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     activeColor={theme.colors.TEXT_PRIMARY}
                                     fontSize={theme.typography.SIZE.fontysize14}
                                     fontColor={theme.colors.TEXT_SECONDARY}
-                                    onChangeText={(e) => setFieldValue('RG', e)}
+                                    onChangeText={(e) => {
+                                        setFieldValue('RG', e, true)
+                                        //setFieldValue('CPF', '', false)
+                                    }}
                                     keyboardType={'numeric'}
                                     onEndEditing={() => {
                                         setTouched({
                                             ...touched,
-                                            ['RG']: true,
-                                        })
+                                            ['RG']: false,
+                                        });
                                     }}
                                     value={values.RG}
                                 />
@@ -369,10 +366,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                 maxHeight={RFPercentage(25)}
                                 DropDownStyle={styles.SelectedDropdown}
                                 onChange={(value) => {
-                                    setFieldValue(
-                                        'PARENTESCO',
-                                        value,
-                                    ),
+                                    setFieldValue('PARENTESCO', value),
                                         setTouched({
                                             ...touched,
                                             ['TOUCHED']: true,
@@ -426,14 +420,14 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
             <Loading ref={refModal} />
             <ModalCentralizedOptions
                 ref={refModalOptions1}
-                onpress={() => vincularAcompanhante(valuesform, pessoaFisica)}
+                onpress={() => vincularAcompanhante(refValuesform.current, pessoaFisica)}
                 message={
                     'O acompanhante já possui cadastro, deseja vincular-lo ao paciente ?'
                 }
             />
             <ModalCentralizedOptions
                 ref={refModalOptions2}
-                onpress={() => addAcompanhante(valuesform)}
+                onpress={() => addAcompanhante(refValuesform.current)}
                 message={
                     'O acompanhante não possui cadastro, deseja cadastra-lo e vincular-lo ao paciente ?'
                 }
