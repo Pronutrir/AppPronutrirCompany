@@ -33,9 +33,10 @@ import SinaisVitaisContext, {
 } from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
+import { useSinaisVitaisAll, useSinaisVitaisFilter } from '../../../hooks/useSinaisVitais';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import AuthContext from '../../../contexts/auth';
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -58,12 +59,14 @@ focusManager.setEventListener((handleFocus) => {
 });
 
 const HistorySinaisVitais: React.FC = () => {
+
+    const { stateAuth: { usertasy } } = useContext(AuthContext);
+
     const styles = useThemeAwareObject(createStyles);
     const navigation = useNavigation();
     const {
         ValidationAutorizeEnfermagem,
         InativarSinaisVitais,
-        useHistoryAlerts,
         UpdateSinaisVitais,
         AddSinaisVitais,
     } = useContext(SinaisVitaisContext);
@@ -75,7 +78,7 @@ const HistorySinaisVitais: React.FC = () => {
         refetch,
         isLoading,
         isFetching,
-    } = useHistoryAlerts();
+    } = useSinaisVitaisFilter(usertasy.cD_PESSOA_FISICA);
 
     const refModalOptions = useRef<ModalHandles>(null);
     const refMenuPopUp = useRef<ModalHandlesMenu>(null);
@@ -372,7 +375,7 @@ const createStyles = (theme: ThemeContextData) => {
             alignItems: 'flex-start',
         },
         box3: {
-            marginVertical: 5,
+            margin: 5,
             justifyContent: 'flex-start',
         },
         btn: {

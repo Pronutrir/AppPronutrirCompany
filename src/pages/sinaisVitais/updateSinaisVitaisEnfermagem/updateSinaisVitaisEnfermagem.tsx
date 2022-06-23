@@ -89,6 +89,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             qT_PAM: pam <= 0 ? null : pam,
             qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
             qT_PA_SISTOLICA: pas <= 40 ? null : pas,
+            dS_OBSERVACAO: null,
         });
         refetchSinaisVitais;
         setActiveModal(false);
@@ -110,6 +111,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             qT_PAM: pam <= 0 ? null : pam,
             qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
             qT_PA_SISTOLICA: pas <= 40 ? null : pas,
+            dS_OBSERVACAO:''
         });
         setActiveModal(false);
         navigation.goBack();

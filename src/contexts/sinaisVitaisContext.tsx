@@ -43,7 +43,6 @@ interface AuthContextData {
         sinaisUpdate: IInativarSinaisVitais,
     ) => Promise<void>;
     useAlerts: (codPacient: string) => UseQueryResult<IAlertaPaciente[], unknown>;
-    useHistoryAlerts: () => UseQueryResult<IAlertaPaciente[], unknown>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -88,6 +87,7 @@ export interface SinaisVitaisPut {
     qT_FREQ_RESP?: number | null;
     cD_ESCALA_DOR?: string | null;
     qT_ESCALA_DOR?: number | null;
+    dS_OBSERVACAO: string | null;
 }
 interface ISinaisVitaisDefault {
     iE_PRESSAO: string;
@@ -148,7 +148,7 @@ const SinaisVitaisContext = createContext({} as AuthContextData);
 
 export const SinaisVitaisProvider: React.FC = ({ children }) => {
     const {
-        stateAuth: { usertasy, UnidadeSelected },
+        stateAuth: { usertasy },
         stateAuth,
     } = useContext(AuthContext);
 
@@ -156,7 +156,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const axiosSourcePFSinaisVitais = useRef<CancelTokenSource | null>(null);
 
-    const [consultasQT, dispatchConsultasQT] = useReducer(
+    const [consultasQT] = useReducer(
         ConsultasQTReducer,
         initialStateQT,
     );
@@ -406,31 +406,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         }, {  });
     };
 
-    const useHistoryAlerts = () => {
-        return useQuery(
-            'AlertaPacienteHistory',
-            async ({ signal }) => {
-                const {
-                    data: { result },
-                } = await Api.get<IAlertPacientResponse>(
-                    `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${usertasy.cD_PESSOA_FISICA},${moment().format(
-                        'YYYY-MM-DD',
-                    )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`, { signal }
-                );
-                return result;
-            },
-            {
-                enabled: true,
-                onError: () => {
-                    addAlert({
-                        message: 'Não foi possivel acessar o histórico tente mais tarde!',
-                        status: 'error',
-                    });
-                }
-            },
-        );
-    };
-
     const ValidationAutorizeEnfermagem = useCallback(() => {
         return PerfisSinaisVitaisEnfermagem?.some(
             (element: IPerfisLiberados) => {
@@ -471,7 +446,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 InativarSinaisVitais,
                 ValidationAutorizeTriagem,
                 useAlerts,
-                useHistoryAlerts,
             }}>
             {children}
         </SinaisVitaisContext.Provider>

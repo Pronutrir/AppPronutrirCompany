@@ -24,7 +24,6 @@ import ModalCentralize, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralize';
 import CardObservacao from '../components/cardObservacao/cardlObservacao';
-import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
@@ -86,6 +85,7 @@ const UpdateSinais: React.FC<Props> = ({
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
+            dS_OBSERVACAO: observacao
         });
         refetchSinaisVitais;
         setActiveModal(false);
@@ -153,6 +153,7 @@ const UpdateSinais: React.FC<Props> = ({
             setOxigenacao(
                 SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
             );
+            setObservacao(SinaisVitais.dS_OBSERVACAO);
             setActiveShimmer(true);
         } else {
             GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)

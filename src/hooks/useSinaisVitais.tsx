@@ -122,6 +122,32 @@ const useSinaisVitaisAll = () => {
     );
 };
 
+const useSinaisVitaisFilter = (cD_PESSOA_FISICA: string) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useQuery(
+        'AlertaPacienteHistory',
+        async ({ signal }) => {
+            const {
+                data: { result },
+            } = await Api.get<ResponsePFdados>(
+                `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${cD_PESSOA_FISICA},${moment().format(
+                    'YYYY-MM-DD',
+                )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`, { signal }
+            );
+            return result;
+        },
+        {
+            enabled: true,
+            onError: () => {
+                addAlert({
+                    message: 'Não foi possivel acessar o histórico tente mais tarde!',
+                    status: 'error',
+                });
+            }
+        },
+    );
+};
+
 const useSinaisVitaisHistory = (paciente: string, rows = 500) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
@@ -174,4 +200,4 @@ const _useSinaisVitaisHistory = (paciente: string) => {
     );
 };
 
-export { useSinaisVitaisAll, useSinaisVitaisHistory, _useSinaisVitaisHistory };
+export { useSinaisVitaisAll, useSinaisVitaisHistory, _useSinaisVitaisHistory, useSinaisVitaisFilter };
