@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -26,6 +26,7 @@ import ModalCentralize, {
 } from '../Modais/ModalCentralize';
 import { IUnidade, useUnidades } from '../../hooks/useEstabelecimentos';
 import { RFPercentage } from 'react-native-responsive-fontsize';
+import VersionInfo from 'react-native-version-info';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
