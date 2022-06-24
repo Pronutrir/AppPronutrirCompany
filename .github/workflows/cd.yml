@@ -44,21 +44,18 @@ jobs:
         name: app-release.aab
         path: android/app/build/outputs/bundle/release
 
-    - name: Distribute app via Firebase App Distribution
+    - name: upload artifact to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
       env:
           firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
           firebaseGroups: ${{ secrets.FIREBASE_GROUPS }}
           firebaseAppId: ${{ secrets.FIREBASE_APP_ID }}
           notes: ${{ github.event.release.body }}
-      run: |
-        yarn global add firebase-tools
-        export PATH="$(yarn global bin):$PATH"
-        firebase \
-          appdistribution:distribute android/app/build/outputs/bundle/release/app-release.aab \
-          --app $firebaseAppId \
-          --release-notes "$notes" \
-          --groups "$firebaseGroups" \
-          --token "$firebaseToken"
+      with:
+        appId: ${{ secrets.FIREBASE_APP_ID }}
+        token: ${{ secrets.FIREBASE_TOKEN }}
+        groups: ${{ secrets.FIREBASE_GROUPS }}
+        file: android/app/build/outputs/bundle/release/app-release.aab
 
     - name: send telegram message on push
       uses: appleboy/telegram-action@master
