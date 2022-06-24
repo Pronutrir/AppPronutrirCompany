@@ -315,7 +315,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     fontColor={theme.colors.TEXT_SECONDARY}
                                     onChangeText={(e) => {
                                         setFieldValue('CPF', cpfMask(e), true)
-                                        //setFieldValue('RG', '', false);
+                                        setFieldValue('RG', '');
                                     }}
                                     keyboardType={'numeric'}
                                     onEndEditing={() => {
@@ -341,7 +341,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     fontColor={theme.colors.TEXT_SECONDARY}
                                     onChangeText={(e) => {
                                         setFieldValue('RG', e, true)
-                                        //setFieldValue('CPF', '', false)
+                                        setFieldValue('CPF', '')
                                     }}
                                     keyboardType={'numeric'}
                                     onEndEditing={() => {
