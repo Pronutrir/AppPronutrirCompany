@@ -14,7 +14,10 @@ import LembreteImg from '../../assets/svg/lembrete.svg';
 import HospitalLocationSvg from '../../assets/svg/hospitalLocation.svg';
 import FotoClick from '../../assets/svg/foto.svg';
 import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
+import { ThemeContextData } from '../../contexts/themeContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import useTheme from '../../hooks/useTheme';
 
 interface Props {
     title?: string | null;
@@ -22,6 +25,8 @@ interface Props {
 }
 
 const HeaderDashBoard: React.FC<Props> = ({ onPress, title }: Props) => {
+    const theme = useTheme();
+    const styles = useThemeAwareObject(createStyles);
     const size = RFPercentage(5);
 
     const SetIcone = () => {
@@ -29,115 +34,208 @@ const HeaderDashBoard: React.FC<Props> = ({ onPress, title }: Props) => {
             case 'updateSinais':
                 return (
                     <SinaisVitaisSvg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'Convênios':
                 return (
-                    <CruzVermelha fill={'#748080'} width={size} height={size} />
+                    <CruzVermelha
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
                 );
             case 'Minhas Consultas':
                 return (
                     <ConsultasMarcadasImg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'MedicamentosRotina':
                 return (
                     <PilulaCompromido
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'Medicamentos':
                 return (
                     <PilulaComprimidoImg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'Medicamentos ativos':
                 return (
                     <PilulaComprimidoImg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'Adicionar Medicamentos':
                 return (
                     <PilulaComprimidoImg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'Editar medicamento':
                 return (
                     <PilulaComprimidoImg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'LembretesNotificacoes':
-                return <Lembrete fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Lembrete
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Perfil':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Nossas Unidades':
-                return <Hospital fill={'#748080'} width={size} height={size} />;
-            case 'Unidades':
-                return <Hospital fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Hospital
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Equipe Médica':
-                return <Equipe fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Equipe
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Busca':
                 return (
                     <LupaImg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size - 10}
                         height={size - 10}
+                        style={styles.img}
                     />
                 );
             case 'Lembrete e Notificações':
                 return (
-                    <LembreteImg fill={'#748080'} width={size} height={size} />
+                    <LembreteImg
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
                 );
             case 'Unidades de Atendimento':
                 return (
                     <HospitalLocationSvg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
             case 'Informacoes Pessoais':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Dados de Contato':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Credenciais':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Alterar senha':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Atualizar Email':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Atualizar Celular':
-                return <Avatar fill={'#748080'} width={size} height={size} />;
+                return (
+                    <Avatar
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
+                );
             case 'Foto perfil':
                 return (
-                    <FotoClick fill={'#748080'} width={size} height={size} />
+                    <FotoClick
+                        fill={theme.colors.FILL_ICONE}
+                        width={size}
+                        height={size}
+                        style={styles.img}
+                    />
                 );
             default:
                 return (
                     <SinaisVitaisSvg
-                        fill={'#748080'}
+                        fill={theme.colors.FILL_ICONE}
                         width={size}
                         height={size}
+                        style={styles.img}
                     />
                 );
         }
@@ -145,15 +243,10 @@ const HeaderDashBoard: React.FC<Props> = ({ onPress, title }: Props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.box1} />
-            <View style={styles.box2}>
-                <View style={styles.item1}>
-                    <Text style={styles.title}>{title && title}</Text>
-                    <SetIcone />
-                </View>
-                <View style={styles.item2}>
-                    <MyBackButton onPress={onPress} />
-                </View>
+            <View style={styles.box}>
+                <MyBackButton onPress={onPress} />
+                <Text style={styles.title}>{title && title}</Text>
+                <SetIcone />
             </View>
         </View>
     );
@@ -161,39 +254,31 @@ const HeaderDashBoard: React.FC<Props> = ({ onPress, title }: Props) => {
 
 export default HeaderDashBoard;
 
-const styles = StyleSheet.create({
-    container: {
-        height: (Dimensions.get('window').height / 100) * 9,
-        backgroundColor: '#E6ECEC',
-    },
-    box1: {
-        backgroundColor: 'green',
-    },
-    box2: {
-        flex: 2,
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-    },
-    item1: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 20,
-        marginVertical: 5,
-    },
-    item2: {
-        flex: 0.8,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: RFValue(20, 680),
-        color: '#666666',
-        fontWeight: 'bold',
-    },
-    img: {
-        width: 40,
-        height: 40,
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            height: (Dimensions.get('window').height / 100) * 8,
+            backgroundColor: theme.colors.BACKGROUND_2,
+        },
+        box: {
+            flex: 2,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+        },
+        title: {
+            fontSize: theme.typography.SIZE.fontysize18,
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+        },
+        img: {
+            margin: RFPercentage(1),
+        },
+    });
+
+    return styles;
+};

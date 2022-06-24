@@ -10,7 +10,6 @@ import {
     StyleSheet,
     SafeAreaView,
     Modal,
-    ViewStyle,
     Platform,
     Text,
 } from 'react-native';
@@ -20,6 +19,7 @@ import Animated, {
     interpolateColor,
     useDerivedValue,
 } from 'react-native-reanimated';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnOptions from '../buttons/BtnOptions';
@@ -128,7 +128,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                             <View
                                 style={{
                                     flexDirection: 'row',
-                                    alignItems: 'stretch',
+                                    justifyContent: 'space-around',
                                 }}>
                                 <BtnOptions
                                     valueText={'Ok'}
@@ -160,12 +160,13 @@ const createStyles = (theme: ThemeContextData) => {
             backgroundColor: theme.colors.BACKDROP,
         },
         modalView: {
+            marginHorizontal: RFPercentage(1),
             padding: 10,
             backgroundColor: theme.colors.BACKGROUND_1,
             borderRadius: 20,
             alignItems: 'center',
             justifyContent: 'center',
-            shadowColor: '#000',
+            shadowColor: theme.colors.BACKDROP,
             ...Platform.select({
                 ios: {
                     shadowOffset: {

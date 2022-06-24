@@ -1,17 +1,31 @@
-import React, { useRef, useState, useCallback, useImperativeHandle } from 'react';
-import { View, StyleSheet, SafeAreaView, Modal, Platform, ViewStyle } from 'react-native';
+import React, {
+    useRef,
+    useState,
+    useCallback,
+    useImperativeHandle,
+} from 'react';
+import {
+    View,
+    StyleSheet,
+    SafeAreaView,
+    Modal,
+    Platform,
+    ViewStyle,
+} from 'react-native';
 import Animated, {
     withTiming,
     useAnimatedStyle,
     interpolateColor,
     useDerivedValue,
 } from 'react-native-reanimated';
-
+import { ThemeContextData } from '../../contexts/themeContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     activeModal?: boolean;
     children: any;
     style?: ViewStyle;
     animationType?: 'none' | 'slide' | 'fade';
+    disableTouchOff?: boolean;
 }
 
 export interface ModalHandles {
@@ -23,9 +37,16 @@ type ThemeOpacity = 'light' | 'dark';
 
 const ModalCentralize = React.forwardRef<ModalHandles, Props>(
     (
-        { animationType = 'none', children, style, activeModal = false }: Props,
+        {
+            animationType = 'none',
+            children,
+            style,
+            activeModal = false,
+            disableTouchOff = false,
+        }: Props,
         ref,
     ) => {
+        const styles = useThemeAwareObject(createStyles);
         const _view = useRef<any>(null);
         const [active, setActive] = useState(activeModal);
         const [theme, setTheme] = useState<ThemeOpacity>('light');
@@ -72,14 +93,18 @@ const ModalCentralize = React.forwardRef<ModalHandles, Props>(
                         style={[styles.centeredView, animatedStyles]}
                         ref={_view}
                         onStartShouldSetResponder={(evt) => {
-                            evt.persist();
-                            if (
-                                evt.nativeEvent.target ===
-                                _view.current?._nativeTag
-                            ) {
-                                closeModal();
+                            if (!disableTouchOff) {
+                                evt.persist();
+                                if (
+                                    evt.nativeEvent.target ===
+                                    _view.current?._nativeTag
+                                ) {
+                                    closeModal();
+                                }
+                                return true;
+                            }else{
+                                return false;
                             }
-                            return true;
                         }}>
                         <SafeAreaView
                             style={[styles.modalView, style && { ...style }]}>
@@ -96,31 +121,34 @@ ModalCentralize.displayName = 'ModalCentralize';
 
 export default ModalCentralize;
 
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: 'rgba(0,0,0,.8)'
-    },
-    modalView: {
-        backgroundColor: "#ffff",
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: "#000",
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        centeredView: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKDROP,
+        },
+        modalView: {
+            backgroundColor: theme.colors.BACKGROUND_1,
+            borderRadius: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: '#000',
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            }
-        })
-    }
-})
+                android: {
+                    elevation: 3,
+                },
+            }),
+        },
+    });
+    return styles;
+}

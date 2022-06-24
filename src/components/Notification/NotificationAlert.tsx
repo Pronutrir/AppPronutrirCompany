@@ -5,7 +5,7 @@ import OkImg from '../../assets/svg/ok.svg';
 import Cancel from '../../assets/svg/cancel.svg';
 import InfoSvg from '../../assets/svg/informacoes.svg';
 import AlertSvg from '../../assets/svg/alerta.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import notificationGlobalContext from '../../contexts/notificationGlobalContext';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
@@ -96,7 +96,7 @@ export default function NotificationAlert() {
                         onAnimationEnd={() => disabled()}
                         easing="ease-in-out"
                         iterationCount={1}
-                        delay={6000}
+                        delay={10000}
                         style={[
                             styles.Animatable,
                             alert.status && {

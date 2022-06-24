@@ -25,22 +25,13 @@ export interface IConsultas {
     cD_ESPECIALIDADE: number;
     dS_ESPECIALIDADE: string;
     nM_GUERRA: string;
-    nR_TELEFONE?: string;
-    nR_TELEFONE_CELULAR?: string;
     dT_AGENDA: string;
-    nR_MINUTO_DURACAO?: number;
     iE_STATUS_AGENDA?: string;
     iE_CLASSIF_AGENDA?: string;
     dT_ATUALIZACAO?: string;
     nM_USUARIO?: string;
-    cD_TURNO?: string;
-    cD_CONVENIO?: number;
-    cD_CATEGORIA?: string;
-    cD_PLANO?: string;
-    dS_CONVENIO?: string;
-    dS_PLANO?: string;
     cD_ESTABELECIMENTO?: number;
-    eNDERECO?: string;
+    counT_SVMP: number;
 }
 
 export interface ISinaisVitais {
@@ -77,6 +68,38 @@ export interface ISinaisVitais {
     dT_LIBERACAO: string;
     iE_SITUACAO: string;
     nM_USUARIO: string;
+    dS_OBSERVACAO: "string";
+}
+
+export interface IAlertaPaciente {
+    nR_SEQUENCIA: 562;
+    nM_USUARIO: string;
+    iE_CONFIRMACAO: string;
+    iE_CLASSIFICACAO: string;
+    dT_ATUALIZACAO: string;
+    dT_REGISTRO: string;
+    cD_PESSOA_FISICA: string;
+    nR_SEQ_TIPO: 1;
+    dS_OBSERVACAO: string | null;
+    iE_INTENSIDADE: string;
+    nR_ATENDIMENTO: 89643;
+    dT_ATUALIZACAO_NREC: string;
+    nM_USUARIO_NREC: string;
+    dT_LIBERACAO: string;
+    nM_USUARIO_LIBERACAO: string;
+    iE_NEGA_ALERGIAS: string;
+    cD_PERFIL_ATIVO: 1997;
+    dS_MEDIC_NAO_CAD: string;
+    iE_ALERTA: string;
+    cD_SETOR_ATENDIMENTO: 75;
+    cD_PROFISSIONAL: string;
+    dS_UTC_ATUALIZACAO: string;
+    dS_UTC: string;
+    iE_LISTA_PROBLEMA: string;
+    iE_ACAO: string;
+    dS_TIPO_ALERGIA: string;
+    dS_SUBSTANCIA: string;
+    dS_REACAO: string;
 }
 
 export type ConsultasAction =

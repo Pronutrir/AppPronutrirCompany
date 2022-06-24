@@ -13,7 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 export default function consultaEmail({ navigation }) {
 
     const [modalActive, setModalActive] = useState(false);
-    const { dispatchAuth } = useContext(AuthContext);
+    const { dispatchAuth, stateAuth } = useContext(AuthContext);
 
     const Email = useRef(null);
 

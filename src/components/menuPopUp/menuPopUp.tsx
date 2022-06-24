@@ -1,14 +1,22 @@
 import React, { useState, useCallback, useImperativeHandle } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Menu, MenuItem } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
-import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import OptionsSvg from '../../assets/svg/options.svg';
+import { Color, NumberProp, SvgProps } from 'react-native-svg';
+interface IStyleSvg {
+    width: NumberProp | undefined;
+    height: NumberProp | undefined;
+    fill: Color | undefined;
+}
 interface Props {
     btnLabels?: string[];
+    BtnOptionsSvg?: React.FC<SvgProps>;
     onpress?(item: string): void;
+    styleSvg?: IStyleSvg;
+    widthMenu?: number
 }
 export interface ModalHandlesMenu {
     showMenu(): void;
@@ -16,8 +24,20 @@ export interface ModalHandlesMenu {
 }
 
 const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
-    ({ btnLabels = ['menu item1', 'menu item2'], onpress }: Props, ref) => {
-        const theme = useTheme();
+    (
+        {
+            btnLabels = ['menu item1', 'menu item2'],
+            onpress,
+            BtnOptionsSvg = OptionsSvg,
+            styleSvg = {
+                width: RFPercentage(1.5),
+                height: RFPercentage(4),
+                fill: '#737373',
+            },
+            widthMenu
+        }: Props,
+        ref,
+    ) => {
         const styles = useThemeAwareObject(createStyles);
 
         const [visible, setVisible] = useState(false);
@@ -47,23 +67,17 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
         return (
             <View style={styles.container}>
                 <Menu
+                    style={{ width: widthMenu && widthMenu }}
                     visible={visible}
-                    anchor={
-                        <OptionsSvg
-                            onPress={showMenu}
-                            width={RFPercentage(4)}
-                            height={RFPercentage(4)}
-                            fill={theme.colors.TEXT_SECONDARY}
-                        />
-                    }
+                    anchor={<BtnOptionsSvg onPress={showMenu} {...styleSvg} />}
                     onRequestClose={hideMenu}>
                     {btnLabels.map((item) => (
                         <MenuItem
                             key={item}
                             style={styles.boxItem}
-                            textStyle={styles.text}
+                            textStyle={{...styles.text, width: widthMenu && widthMenu}}
                             onPress={() => selectedItem(item)}>
-                            {item}
+                            <Text>{item}</Text>
                         </MenuItem>
                     ))}
                 </Menu>
@@ -87,7 +101,6 @@ const createStyles = (theme: ThemeContextData) => {
             paddingVertical: RFPercentage(0.5),
         },
         text: {
-            width: '100%',
             fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,

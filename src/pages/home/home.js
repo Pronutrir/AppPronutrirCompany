@@ -13,7 +13,7 @@ export default function home({ navigation }) {
 
     const theme = useColorScheme();
 
-    console.log('tema do sistema operacional => ', theme);
+    //console.log('tema do sistema operacional => ', theme);
 
     const on_handleDynamicLink = (link) => {
         if (link) {

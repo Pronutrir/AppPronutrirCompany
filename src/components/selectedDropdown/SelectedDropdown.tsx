@@ -1,84 +1,91 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Platform } from 'react-native';
+import { StyleSheet, Text, View, Platform, StyleProp, ViewStyle } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import ShimerPlaceHolderSelected from '../shimmerPlaceHolder/shimerPlaceHolderSelected';
 
-const _data = [
-    { label: 'Item 1', value: '1' },
-    { label: 'Item 2', value: '2' },
-    { label: 'Item 3', value: '3' },
-    { label: 'Item 4', value: '4' },
-    { label: 'Item 5', value: '5' },
-    { label: 'Item 6', value: '6' },
-    { label: 'Item 7', value: '7' },
-    { label: 'Item 8', value: '8' },
+const _data: Array<{ label: string }> = [
+    { label: 'Item 1' },
+    { label: 'Item 2' },
+    { label: 'Item 3' },
+    { label: 'Item 4' },
+    { label: 'Item 5' },
+    { label: 'Item 6' },
+    { label: 'Item 7' },
+    { label: 'Item 8' },
 ];
-export interface Idata {
-    label: string;
-    value: any;
-}
-interface Props {
+interface Props<T> {
     placeholder?: string;
-    data?: Idata[];
-    value?: any;
-    onChange?(item: Idata): void;
+    data?: T[];
+    value?: any; // eslint-disable-line
+    onChange?(item: T): void;
+    shimerPlaceHolder?: boolean;
+    disable?: boolean;
+    DropDownStyle?: StyleProp<ViewStyle>;
+    ContainerStyle?: StyleProp<ViewStyle>;
+    maxHeight?: number;
+    error?: boolean;
 }
 
-const SelectedDropdown: React.FC<Props> = ({
-    data = _data,
+const SelectedDropdown = <T extends { label: string }>({
+    data,
     onChange,
     value,
     placeholder,
-}: Props) => {
-    
+    shimerPlaceHolder = false,
+    disable = false,
+    DropDownStyle,
+    maxHeight = RFPercentage(45),
+    ContainerStyle,
+    error = false,
+}: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
-    const [_value, setValue] = useState(null);
+    const [_value, setValue] = useState<T | null>(null);
 
-    const renderItem = (item: any) => {
+    const renderItem = (item: T) => {
+        // eslint-disable-line
         return (
             <View style={styles.item}>
                 <Text style={styles.textItem}>{item.label}</Text>
-                {/*  {item.value === value && (
-              <AntDesign
-                style={styles.icon}
-                color="black"
-                name="Safety"
-                size={20}
-              />
-            )} */}
             </View>
         );
     };
 
-    return (
-        <Dropdown
-            search={data.length > 20 ? true : false}
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={data}
-            maxHeight={RFPercentage(45)}
-            labelField="label"
-            valueField="value"
-            placeholder={placeholder ? placeholder : 'Selecione'}
-            value={value ? value : _value}
-            onChange={(item) => {
-                if (onChange) {
-                    onChange(item);
-                } else {
-                    setValue(item.value);
-                }
-            }}
-            /*  renderLeftIcon={() => (
-          <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-        )} */
-            renderItem={renderItem}
-        />
-    );
+    if (shimerPlaceHolder) {
+        return <ShimerPlaceHolderSelected />;
+    } else {
+        return (
+            <Dropdown
+                disable={disable}
+                search={data && data.length > 20 ? true : false}
+                style={[{ ...styles.dropdown }, DropDownStyle]}
+                placeholderStyle={[styles.placeholderStyle, error && { color: 'red' }]}
+                selectedTextStyle={styles.placeholderStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                containerStyle={ContainerStyle}
+                iconStyle={styles.iconStyle}
+                data={data ?? _data}
+                maxHeight={maxHeight}
+                labelField="label"
+                valueField="value"
+                placeholder={placeholder ? placeholder : 'Selecione'}
+                value={value ? value : _value}
+                onChange={(item) => {
+                    if (onChange) {
+                        onChange(item);
+                    } else {
+                        setValue(item);
+                    }
+                }}
+                /*  renderLeftIcon={() => (
+                    <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                )} */
+                renderItem={renderItem}
+            />
+        );
+    }
 };
 
 export default SelectedDropdown;
@@ -86,11 +93,12 @@ export default SelectedDropdown;
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         dropdown: {
-            marginVertical: RFPercentage(2),
+            width: '100%',
             height: RFPercentage(6),
+            margin: RFPercentage(2),
+            alignSelf: 'center',
             backgroundColor: 'white',
             borderRadius: 10,
-            paddingHorizontal: RFPercentage(1),
             ...Platform.select({
                 ios: {
                     shadowOffset: {
@@ -116,24 +124,22 @@ const createStyles = (theme: ThemeContextData) => {
         },
         textItem: {
             flex: 1,
+            textAlign: 'center',
             color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
+            fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
         },
         placeholderStyle: {
-            color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
-            fontFamily: theme.typography.FONTES.Regular,
-            letterSpacing: theme.typography.LETTERSPACING.S,
-        },
-        selectedTextStyle: {
-            height: RFPercentage(3),
-            color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
-            fontFamily: theme.typography.FONTES.Regular,
-            letterSpacing: theme.typography.LETTERSPACING.S,
+            height:
+                Platform.OS === 'android' ? RFPercentage(5) : RFPercentage(3),
+            padding: RFPercentage(0.5),
             textAlign: 'center',
+            textAlignVertical: 'center',
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize12,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.L,
         },
         iconStyle: {
             width: RFPercentage(4),
@@ -141,11 +147,12 @@ const createStyles = (theme: ThemeContextData) => {
         },
         inputSearchStyle: {
             color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
+            fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             height: RFPercentage(6),
         },
+
     });
     return styles;
 };

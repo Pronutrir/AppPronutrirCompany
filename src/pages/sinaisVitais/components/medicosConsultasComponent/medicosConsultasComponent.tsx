@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     FlatList,
@@ -7,22 +7,24 @@ import {
     Text,
     TouchableOpacity,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
+import { ThemeContextData } from '../../../../contexts/themeContext';
+import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { IMedico } from '../../../../reducers/ConsultasReducer';
 interface Props {
     onPress(item: IFilterConsultas | null): void;
     selectedFilter?: IFilterConsultas;
+    listMedicos: IMedico[] | null | undefined;
 }
 
-const MedicosExamesComponent: React.FC<Props> = ({
+const medicosConsultasComponent: React.FC<Props> = ({
     onPress,
     selectedFilter,
+    listMedicos,
 }: Props) => {
-    const {
-        stateConsultas: { medicos },
-    } = useContext(SinaisVitaisContext);
+
+    const styles = useThemeAwareObject(createStyles);
 
     const renderItem: ListRenderItem<IMedico> = ({ item }) => (
         <View
@@ -56,7 +58,7 @@ const MedicosExamesComponent: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             <FlatList
-                data={medicos}
+                data={listMedicos}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
             />
@@ -64,34 +66,41 @@ const MedicosExamesComponent: React.FC<Props> = ({
     );
 };
 
-export default MedicosExamesComponent;
+export default medicosConsultasComponent;
 
-const styles = StyleSheet.create({
-    container: {
-        marginTop: 20,
-        marginHorizontal: 10,
-    },
-    selectTextStyle: {
-        color: '#08948A',
-        textAlign: 'center',
-        fontSize: RFValue(18, 680),
-    },
-    selectTextStyleActive: {
-        color: '#ffff',
-        textAlign: 'center',
-        fontSize: RFValue(18, 680),
-    },
-    optionContainerStyle: {
-        backgroundColor: '#fff',
-        paddingVertical: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    optionContainerStyleActive: {
-        backgroundColor: '#20cbc1',
-        paddingVertical: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 30,
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            marginTop: RFPercentage(1),
+            marginHorizontal: RFPercentage(1),
+        },
+        selectTextStyle: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize18,
+            textAlign: 'center',
+        },
+        selectTextStyleActive: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_TERTIARY,
+            fontSize: theme.typography.SIZE.fontysize18,
+            textAlign: 'center',
+        },
+        optionContainerStyle: {
+            backgroundColor: theme.colors.BACKGROUND_1,
+            paddingVertical: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        optionContainerStyleActive: {
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
+            paddingVertical: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30,
+        },
+    });
+    return styles;
+};

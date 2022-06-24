@@ -5,7 +5,6 @@ import React, {
     useReducer,
     useCallback,
 } from 'react';
-import { credenciais_Mobile } from '../credenciais';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Api from '../services/api';
@@ -17,21 +16,25 @@ import {
     LoginAction,
 } from '../reducers/UserReducer';
 import OneSignal from 'react-native-onesignal';
-import { useQuery, UseQueryResult } from 'react-query';
-import { getPerfil } from '../utils';
+import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
+import { getPerfil, getUnidade, saveRefreshToken } from '../utils';
+import ApiAuth from '../services/apiAuth';
 interface AuthContextData {
     signed: boolean;
     stateAuth: LoginState;
     dispatchAuth: React.Dispatch<LoginAction>;
     loading: boolean;
     getPerfis(nomeUsuario: string): UseQueryResult<IPerfis[], Error>;
+    ValidationAutorizeEvolucao: () => boolean;
+    useGetFetchQuery<T extends Record<keyof T, unknown>>(
+        key: string,
+    ): T | undefined;
+    ConsultaCpfRg: (cpf?: string, rg?: string) => Promise<IPessoaFisica | undefined>;
 }
-
 interface IFirebaseLogin {
     email: string;
     uid: string;
 }
-
 interface IFirestone {
     cpf: string;
     email: string;
@@ -39,7 +42,6 @@ interface IFirestone {
     nome: string;
     token: string;
 }
-
 interface ReponsePerfis {
     result: IPerfis[];
 }
@@ -56,25 +58,71 @@ interface IPerfis {
     dS_UTC: string;
     iE_HORARIO_VERAO: string;
 }
+export interface IPerfisLiberados {
+    cD_PERFIL: number;
+    dS_PERFIL: string;
+}
+
+interface TokenResponse {
+    id: number;
+    username: string;
+    dataRegistro: string;
+    dataAtualizacao: string;
+    dataHoraValidado: string;
+    dataExpira: string;
+    ativo: true;
+    jwtToken: string;
+    integraApi: boolean;
+    refreshToken: string;
+}
+export interface IPessoaFisica {
+    cD_PESSOA_FISICA: string;
+    iE_TIPO_PESSOA: number;
+    iE_FUNCIONARIO: string;
+    nM_PESSOA_FISICA: string;
+    nR_CPF: string;
+    dT_ATUALIZACAO: string;
+    dT_CADASTRO_ORIGINAL: string;
+    nR_DDD_CELULAR: string;
+    nR_TELEFONE_CELULAR: string;
+    dT_NASCIMENTO: string;
+    nM_USUARIO: string;
+    nM_USUARIO_ORIGINAL: string;
+    nR_PRONTUARIO: number;
+    nR_IDENTIDADE: string;
+}
+interface IResponsePessoaFisica {
+    result: IPessoaFisica;
+}
 
 const AuthContext = createContext({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
     const [stateAuth, dispatchAuth] = useReducer(UserReducer, initialState);
     const [usuario, setUsuario] = useState<IFirebaseLogin | null>(null);
-
+    const queryClient = useQueryClient();
     const [loading, setLoading] = useState(true);
 
-    //consulta e retorna o token para acesso a api tasy
-    const GetAuth = async () => {
-        return Api.post('Auth/login', credenciais_Mobile)
-            .then((response) => {
-                const { token } = response.data;
-                //console.log(token);
-                Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-                return token;
-            })
+    const useGetFetchQuery = <T extends Record<keyof T, unknown>>(
+        key: string,
+    ): T | undefined => {
+        const result = queryClient.getQueryData<T>(key);
+        return result;
     };
+
+    //consulta e retorna o token para acesso a api tasy
+    const GetAuth = useCallback(async () => {
+        return ApiAuth.get<TokenResponse>('auth')
+            .then((response) => {
+                const { jwtToken, refreshToken } = response.data;
+                Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
+                saveRefreshToken(refreshToken);
+                return jwtToken;
+            })
+            .catch((error) => {
+                console.log('Error token', error);
+            });
+    }, []);
 
     //consulta e retorna o usuário da api tasy
     const ConsultaCpfTasy = async (cpf: string) => {
@@ -82,12 +130,34 @@ export const AuthProvider: React.FC = ({ children }) => {
             (response) => {
                 const { result } = response.data;
                 if (result) {
+                    dispatchAuth({
+                        type: 'setUserTasy',
+                        payload: result,
+                    });
                     return result;
                 } else {
                     return null;
                 }
             },
         );
+    };
+
+    //consulta pessoa fisica pelo rg || cpf
+    const ConsultaCpfRg = async (cpf?: string, rg?: string) => {
+        try {
+            if (cpf || rg) {
+                const { result } = (
+                    await Api.get<IResponsePessoaFisica>(
+                        `PessoaFisica/FilterCPFRG?${
+                            cpf ? `cpf=${cpf.replace(/[.-]/g, "")}` : ''
+                        }${rg ? `rg=${rg}` : ''}`,
+                    )
+                ).data;
+                return result;
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const consultaFirebase = async (
@@ -105,6 +175,18 @@ export const AuthProvider: React.FC = ({ children }) => {
             return dados;
         } else {
             return null;
+        }
+    };
+
+    const getPerfilUnidadeUser = async (cD_PESSOA_FISICA: string) => {
+        const resultUnidade = await getUnidade();
+        const resultPerfil = await getPerfil();
+        if (resultPerfil?.cD_PESSOA_FISICA === cD_PESSOA_FISICA) {
+            dispatchAuth({ type: 'setUnidade', payload: resultUnidade });
+            dispatchAuth({ type: 'setPerfilApp', payload: resultPerfil });
+        } else {
+            dispatchAuth({ type: 'setUnidade', payload: null });
+            dispatchAuth({ type: 'setPerfilApp', payload: null });
         }
     };
 
@@ -129,14 +211,14 @@ export const AuthProvider: React.FC = ({ children }) => {
                         const result: UserTasy = await ConsultaCpfTasy(
                             getFireStone?.cpf,
                         );
+
+                        //verificar perfil usuário cache
+                        await getPerfilUnidadeUser(result.cD_PESSOA_FISICA);
+
                         if (result) {
                             //informa que há usuário logado
                             setUsuario({ email, uid });
                             setLoading(false);
-                            dispatchAuth({
-                                type: 'setUserTasy',
-                                payload: result,
-                            });
                         }
                         //registra o dispositivo no onesignal inclui um id externo para notificações!
                         OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
@@ -164,6 +246,41 @@ export const AuthProvider: React.FC = ({ children }) => {
         });
     };
 
+    const getPerfilAutorizeEvolucao = async () => {
+        const useRef = firestore()
+            .doc('FunctionsApp/Evolucao')
+            .collection('Perfis');
+
+        const resultPerfis: IPerfisLiberados[] = [];
+
+        await useRef.get().then((querySnapshot) => {
+            return querySnapshot.forEach((item) => {
+                resultPerfis.push({
+                    cD_PERFIL: item.get('cD_PERFIL'),
+                    dS_PERFIL: item.get('dS_PERFIL'),
+                });
+            });
+        });
+
+        return resultPerfis;
+    };
+
+    const { data: PerfisEvolucao } = useQuery(
+        'PerfisEvolucao',
+        getPerfilAutorizeEvolucao,
+    );
+
+    const ValidationAutorizeEvolucao = useCallback(() => {
+        const result = PerfisEvolucao?.some((element: IPerfisLiberados) => {
+            return element.cD_PERFIL === stateAuth.PerfilSelected?.cD_PERFIL;
+        });
+        if (result) {
+            return result;
+        } else {
+            return false;
+        }
+    }, [PerfisEvolucao, stateAuth.PerfilSelected]);
+
     useEffect(() => {
         (async () => {
             const token = await GetAuth();
@@ -173,17 +290,6 @@ export const AuthProvider: React.FC = ({ children }) => {
         })();
     }, [singIn]);
 
-    useEffect(() => {
-        (async () => {
-            const result = await getPerfil();
-            if (
-                result?.cD_PESSOA_FISICA === stateAuth?.usertasy?.cD_PESSOA_FISICA
-            ) {
-                dispatchAuth({ type: 'setPerfilApp', payload: result });
-            }
-        })();
-    }, [stateAuth.usertasy]);
-
     return (
         <AuthContext.Provider
             value={{
@@ -192,6 +298,9 @@ export const AuthProvider: React.FC = ({ children }) => {
                 stateAuth,
                 dispatchAuth,
                 getPerfis,
+                ValidationAutorizeEvolucao,
+                useGetFetchQuery,
+                ConsultaCpfRg,
             }}>
             {children}
         </AuthContext.Provider>

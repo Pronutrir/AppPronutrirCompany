@@ -10,6 +10,8 @@ import {
     Text,
 } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { ThemeContextData } from '../../contexts/themeContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
 interface Props {
     children: React.ReactNode;
@@ -33,6 +35,7 @@ const TouchableShowHide: React.FC<Props> = ({
     Show = false,
     ComponentTop,
 }: Props) => {
+    const styles = useThemeAwareObject(createStyles);
     const rotateValueHolder = useRef(new Animated.Value(0)).current;
     const [expanded, setExpanded] = useState(Show);
 
@@ -102,67 +105,74 @@ const TouchableShowHide: React.FC<Props> = ({
 
 export default memo(TouchableShowHide);
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: RFPercentage(1),
-        paddingVertical: RFPercentage(2),
-        marginVertical: RFPercentage(1),
-    },
-    button: {
-        flexDirection: 'row',
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.BACKGROUND_1,
+            padding: RFPercentage(1),
+            paddingVertical: RFPercentage(2),
+            marginVertical: RFPercentage(1),
+        },
+        button: {
+            flexDirection: 'row',
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        backgroundColor: '#fff',
-        borderRadius: 7,
-        paddingLeft: 10,
-        paddingVertical: 10,
-    },
-    buttonItem1: {
-        flex: 1,
-        alignItems: 'center',
-        paddingVertical: 10
-    },
-    buttonItem2: {
-        flex: 4,
-        alignItems: 'baseline',
-    },
-    buttonItem3: {
-        position: 'absolute',
-        right: 0,
-        alignSelf: 'center',
-        padding: 10,
-        paddingRight: 20,
-    },
-    arrowImg: {
-        width: RFPercentage(2),
-        height: RFPercentage(2),
-    },
-    Label: {
-        color: '#08948A',
-        fontSize: RFValue(18, 680),
-        marginTop: 5,
-    },
-    textLabel: {
-        color: '#7C9292',
-        fontSize: RFValue(14, 680),
-        marginTop: 5,
-    },
-    boxContainer: {
-        backgroundColor: '#EDF5F4',
-        marginTop: 3,
-        padding: 10,
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+            backgroundColor: theme.colors.BUTTON_PRIMARY,
+            borderRadius: 7,
+            paddingLeft: 10,
+            paddingVertical: 10,
+        },
+        buttonItem1: {
+            flex: 1,
+            alignItems: 'center',
+            paddingVertical: 10
+        },
+        buttonItem2: {
+            flex: 4,
+            alignItems: 'baseline',
+        },
+        buttonItem3: {
+            position: 'absolute',
+            right: 0,
+            alignSelf: 'center',
+            padding: 10,
+            paddingRight: 20,
+        },
+        arrowImg: {
+            width: RFPercentage(2),
+            height: RFPercentage(2),
+        },
+        Label: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize18,
+            marginTop: 5,
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize14,
+            marginTop: 5,
+        },
+        boxContainer: {
+            backgroundColor: theme.colors.BACKGROUND_2,
+            marginTop: 3,
+            padding: 10,
+        },
+    });
+    return styles;
+}

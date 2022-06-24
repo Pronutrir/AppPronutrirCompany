@@ -55,10 +55,7 @@ export default function consultaCpf({ navigation }) {
 
         try {
 
-            let updateTasy = null;
-            let cd_tasy = null;
             let firebaseExiste = null;
-            let cd_firebase = null;
 
             // consulta o cpf do cliente na api tasy
             const dadosTasy = await getCpf(_Cpf);

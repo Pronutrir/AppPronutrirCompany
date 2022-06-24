@@ -5,15 +5,18 @@ import {
     UserStackNavigator,
     DashBoardNavigator,
 } from './routeDashboard';
-import DrawerOpen from '../componentes/DrawerOpen';
+import DrawerOpen from '../components/drawerOpen/DrawerOpen';
 import HomeImg from '../assets/svg/Home.svg';
 import LupaImg from '../assets/svg/Lupa.svg';
 import UserImg from '../assets/svg/avatar.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
+import useTheme from '../hooks/useTheme';
+import { Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 const RouteBottom: React.FC = () => {
+    const theme = useTheme();
     /* const tabBarVisibility = ( route ) => {
         const routeName = route.state
         ? route.state.routes[route.state.index].name
@@ -29,12 +32,25 @@ const RouteBottom: React.FC = () => {
         <Tab.Navigator
             initialRouteName={'Inicio'}
             tabBarOptions={{
-                activeTintColor: '#08948A',
+                activeTintColor: theme.colors.GREENPRIMARY,
                 labelPosition: 'below-icon',
-                labelStyle: { fontSize: RFValue(12, 680), paddingBottom: 5 },
                 style: { height: RFPercentage(7) },
             }}
             screenOptions={({ route }) => ({
+                tabBarLabel: ({ color }) => {
+                    return (
+                        <Text
+                            style={{
+                                color: color,
+                                paddingBottom: 5,
+                                fontSize: theme.typography.SIZE.fontysize12,
+                                fontFamily: theme.typography.FONTES.Regular,
+                                letterSpacing: theme.typography.LETTERSPACING.S,
+                            }}>
+                            {route.name}
+                        </Text>
+                    );
+                },
                 tabBarIcon: ({ color }) => {
                     const size = RFPercentage(3);
                     switch (route.name) {

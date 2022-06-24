@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 import storage, { FirebaseStorageTypes } from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore';
 import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -23,8 +22,6 @@ interface ImagensFirebase {
 const Carousel_text: React.FC = () => {
 
     const { addNotification } = useContext(NotificationGlobalContext);
-    const [post, setPost] = useState(null);
-    const [modalActive, setModalActive] = useState(false);
     const carouselRef = useRef(null);
     const [imagens, setImagens] = useState<ImagensFirebase[]>([]);
     //const [postagens, setPostagens] = useState([]);

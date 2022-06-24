@@ -76,7 +76,7 @@ const Index: React.FC = () => {
         ); */
 
         //Method for handling notifications opened
-       /*  OneSignal.setNotificationOpenedHandler((notification) => {
+        /*  OneSignal.setNotificationOpenedHandler((notification) => {
             console.log('OneSignal: notification opened:', notification);
         }); */
     }, []);

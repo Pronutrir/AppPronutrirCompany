@@ -39,7 +39,6 @@ interface IImgInsta {
 
 const MyCarousel: React.FC = () => {
     const { addNotification } = useContext(NotificationGlobalContext);
-    const windowWidth = useWindowDimensions().width;
     const windowHeight = useWindowDimensions().height;
 
     const [post, setPost] = useState<IInstagram | null>(null);
@@ -53,16 +52,23 @@ const MyCarousel: React.FC = () => {
         modalInstaRef.current?.openModal();
     };
 
-    const filterPostagens = (post: IInstagram) => {
-        return post.caption.includes('#pronutrirparceiros');
+    const filterPostagens = (post: IInstagram, value: string) => {
+        return post.caption.includes(value);
     };
 
     const getPostagemInsta = () => {
-        Api.get('Social/GetFeedsInst')
+        Api.get<IInstagram[]>('Social/GetFeedsInst')
             .then((response) => {
                 const { data } = response;
                 if (data) {
-                    setPostagensInsta(data.filter(filterPostagens));
+                    const result = data.filter((item) => filterPostagens(item, '#pronutrirparceiros'));
+                    if(result.length !== 0){
+                        setPostagensInsta(result);
+                    }else{
+                        const result2 = data.filter((item) => filterPostagens(item, '#pronutrironcologia'));
+                        setPostagensInsta(result2);
+                    }
+                    
                 }
             })
             .catch(() => {

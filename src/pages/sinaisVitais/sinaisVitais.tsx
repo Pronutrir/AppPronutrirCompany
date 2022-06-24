@@ -3,7 +3,6 @@ import React, {
     useRef,
     useCallback,
     useEffect,
-    useContext,
 } from 'react';
 import {
     Text,
@@ -12,15 +11,13 @@ import {
     TouchableOpacity,
     useWindowDimensions,
     ListRenderItem,
-    ViewToken,
 } from 'react-native';
-import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
-import EndSinaisVitais from './endSinaisVitais';
 import { HistorySinaisVitais } from './historySinaisVitais/historySinaisVitais';
 import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais';
 import SinaisVitaisGerais from './sinaisVItaisGerais/sinaisVitaisGerais';
-import styles from './style';
+import createStyles from './style';
 interface PagesSinaisVitais {
     Index: number;
     Name: string;
@@ -30,12 +27,9 @@ interface PagesSinaisVitais {
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
 const SinaisVitais: React.FC = () => {
-    const {
-        GetConsultasQT,
-        GetAllSinaisVitais,
-        stateConsultas: { flag, medicos },
-        stateConsultasQT: { consultasQT, flagQT },
-    } = useContext(SinaisVitaisContext);
+
+    const styles = useThemeAwareObject(createStyles);
+
     const refFlatlist = useRef<FlatList>(null);
     const refFlatlistMenu = useRef<FlatList>(null);
     const refView0 = useRef<TouchableOpacity>(null);
@@ -67,7 +61,7 @@ const SinaisVitais: React.FC = () => {
         },
     ]);
 
-    const getItemLayout = (data: any, index: any) => {
+    const getItemLayout = (data: PagesSinaisVitais[] | null | undefined, index: number) => {
         return {
             length: deviceWidth.width,
             offset: deviceWidth.width * index,
@@ -126,30 +120,6 @@ const SinaisVitais: React.FC = () => {
         }
     }, []);
 
-    const onViewableItemsChangedMenu = React.useCallback(
-        (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
-            const { changed } = info;
-            const [viewableItem] = changed;
-            const { index, isViewable } = viewableItem;
-            if (index) {
-                selected(index, 'scrollToIndexMenu');
-            }
-        },
-        [selected],
-    );
-
-    /* const onViewableItemsChanged = React.useCallback(
-        (info: { viewableItems: ViewToken[]; changed: ViewToken[] }): void => {
-            const { changed } = info;
-            const [viewableItem] = changed;
-            const { index, isViewable } = viewableItem;
-            if (index) {
-                selected(index, 'scrollToIndexMenu');
-            }
-        },
-        [selected],
-    ); */
-
     const renderPagesItem: ListRenderItem<PagesSinaisVitais> = ({
         item: { Name },
     }) => {
@@ -176,12 +146,6 @@ const SinaisVitais: React.FC = () => {
             </Text>
         </View>
     );
-
-    useEffect(() => {
-        if (consultasQT.length === 0 && !flagQT) {
-            GetConsultasQT();
-        }
-    }, [GetConsultasQT, flagQT, consultasQT]);
 
     useEffect(() => {
         selected(0, 'scrollToIndex');

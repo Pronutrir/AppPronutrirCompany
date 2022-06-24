@@ -37,6 +37,17 @@ const valicacaoCPF = (strCPF) => {
 
 }
 
+const rgMask = (value) => {
+    if (value) {
+        return value
+        .replace(/\D/g, '') //substitui qualquer caractere que não seja número por nada.
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')// captura 2 grupos de numero o primeiro de 3 números 
+        .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+        //.replace(/(-\d{2})\d+?$/, '$1')// captura 2 números seguidos de um traço, ou seja, os três últimos caracteres do CPF e não deixa ser digitado mais nada.
+    }
+}
+
 const cpfMask = (value) => {
     if (value) {
         return value
@@ -44,7 +55,7 @@ const cpfMask = (value) => {
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d)/, '$1.$2')// captura 2 grupos de numero o primeiro de 3 números 
         .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-        .replace(/(-\d{2})\d+?$/, '$1')// captura 2 números seguidos de um traço, ou seja, os três últimos caracteres do CPF e não deixa ser digitado mais nada.
+        //.replace(/(-\d{2})\d+?$/, '$1')// captura 2 números seguidos de um traço, ou seja, os três últimos caracteres do CPF e não deixa ser digitado mais nada.
     }
 }
 

@@ -19,7 +19,7 @@ import {
     ListRenderItem,
 } from 'react-native';
 import Cancel from '../../assets/svg/cancel.svg';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import moment from 'moment';
 import { IInstagram } from '../carrosel/Carousel_Instagram';
 import Carousel, {

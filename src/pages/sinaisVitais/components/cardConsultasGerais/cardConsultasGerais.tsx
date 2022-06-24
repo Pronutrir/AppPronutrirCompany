@@ -8,7 +8,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import HistorySvg from '../../../../assets/svg/historico.svg';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import { useNavigation } from '@react-navigation/native';
@@ -18,6 +18,8 @@ import SinaisVitaisContext, {
     IPFSinaisVitais,
 } from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
+import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../../../contexts/themeContext';
 
 interface Props {
     dataSourcePFsinaisVitais?: IPFSinaisVitais[] | null;
@@ -30,7 +32,11 @@ const CardConsultasGerais: React.FC<Props> = ({
     setState,
     state,
 }: Props) => {
-    const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
+    
+    const styles = useThemeAwareObject(createStyles);
+
+    const { SearchPFSinaisVitais, ValidationAutorizeEnfermagem } =
+        useContext(SinaisVitaisContext);
     //const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
@@ -77,9 +83,17 @@ const CardConsultasGerais: React.FC<Props> = ({
     const Item = ({ item }: { item: IPFSinaisVitais; index: number }) => {
         return (
             <TouchableOpacity
-                onPress={() =>
-                    navigation.navigate('UpdateSinais', { PessoaFisica: item })
-                }
+                onPress={() => {
+                    if (ValidationAutorizeEnfermagem()) {
+                        navigation.navigate('UpdateSinaisVitaisEnfermagem', {
+                            PessoaFisica: item,
+                        });
+                    } else {
+                        navigation.navigate('UpdateSinais', {
+                            PessoaFisica: item,
+                        });
+                    }
+                }}
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
                     <HistorySvg
@@ -154,12 +168,6 @@ const CardConsultasGerais: React.FC<Props> = ({
                         renderItem({ item, index })
                     }
                     keyExtractor={(item, index) => index.toString()}
-                    //refreshing={refreshing}
-                    /*  onRefresh={async () => {
-                        setRefreshing(true);
-                        await GetConsultasQT();
-                        setRefreshing(false);
-                    }} */
                     ListEmptyComponent={renderItemEmpty}
                     onEndReached={LoadingSearch}
                     onEndReachedThreshold={0.3}
@@ -172,57 +180,63 @@ const CardConsultasGerais: React.FC<Props> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: 10,
-    },
-    cardStyle: {
-        flex: 1,
-        padding: 10,
-    },
-    titleLabel: {
-        alignSelf: 'flex-start',
-        paddingLeft: 10,
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    box1: {
-        flex: 0.5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 3,
-    },
-    box2: {
-        flex: 5,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        margin: 3,
-    },
-    loading: {
-        margin: 10,
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#fff',
-    },
-});
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            marginTop: 10,
+        },
+        cardStyle: {
+            flex: 1,
+            padding: 10,
+        },
+        titleLabel: {
+            alignSelf: 'flex-start',
+            paddingLeft: 10,
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 3,
+        },
+        box2: {
+            flex: 5,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            margin: 3,
+        },
+        loading: {
+            margin: 10,
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
+        },
+    });
+    return styles;
+};
 
 export default memo(CardConsultasGerais);

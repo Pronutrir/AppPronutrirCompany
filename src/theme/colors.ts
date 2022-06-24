@@ -1,12 +1,10 @@
-import { withRepeat } from "react-native-reanimated";
-
 const YELLOW = '#f1c40f';
 const BLUE = '#2c3e50';
 const EMERALD = '#2ecc71';
 const ALIZARIN = '#e74c3c';
 
 const GREENPRIMARY= '#038C7F';
-const GREENLIGHT = '#88BFBF';
+const GREENLIGHT = '#20c4cb';
 const GREENDARK = '#038C8C';
 
 const BROWNPRIMARY = '#737373';
@@ -31,6 +29,7 @@ export interface IColor {
     TEXT_PRIMARY: string,
     TEXT_SECONDARY: string,
     TEXT_TERTIARY: string,
+    FILL_ICONE: string,
     GREENPRIMARY: string;
     GREENLIGHT: string;
     GREENDARK: string;
@@ -40,6 +39,9 @@ export interface IColor {
     DARKLIGHT: string;
     BLACK: string;
     WHITE: string;
+    BUTTON_PRIMARY: string;
+    BUTTON_SECUNDARY: string;
+    BUTTON_TERTIARY: string;
 }
 
 export interface IThemeColors {
@@ -54,42 +56,52 @@ const common = {
     ERROR: ALIZARIN,
 };
 
+const BntColor = {
+    BUTTON_PRIMARY: WHITE,
+    BUTTON_SECUNDARY: GREENLIGHT,
+    BUTTON_TERTIARY: "",
+}
+
 const light: IColor = {
     ...common,
+    ...BntColor,
+    BACKGROUND_1: WHITE,
+    BACKGROUND_2: BROWNLIGHT,
+    BACKDROP: OPACITY,
+    TEXT_PRIMARY: GREENDARK,
+    TEXT_SECONDARY: BROWNPRIMARY,
+    TEXT_TERTIARY: WHITE,
+    FILL_ICONE: BROWNPRIMARY,
+    GREENPRIMARY: GREENPRIMARY,
+    GREENLIGHT: GREENLIGHT,
+    GREENDARK: GREENDARK,
+    BROWNPRIMARY: BROWNPRIMARY,
+    BROWNLIGHT: BROWNLIGHT,
+    BROWNDARK: BROWNDARK,
+    DARKLIGHT: DARKLIGHT,
+    BLACK: BLACK,
+    WHITE: WHITE,
+};
+
+const dark: IColor = {
+    ...common,
+    ...BntColor,
     BACKGROUND_1: WHITE,
     BACKGROUND_2: BROWNLIGHT,
     BACKDROP: OPACITY,
     TEXT_PRIMARY: GREENPRIMARY,
     TEXT_SECONDARY: BROWNPRIMARY,
-    TEXT_TERTIARY: '#FFFF',
-    GREENPRIMARY: '#038C7F',
-    GREENLIGHT: '#88BFBF',
-    GREENDARK: '#038C8C',
-    BROWNPRIMARY: '#737373',
-    BROWNLIGHT: '#F2F2F2',
-    BROWNDARK: '#565759',
-    DARKLIGHT: "#2D2C40",
-    BLACK: '#262626',
-    WHITE: '#FFFF',
-};
-
-const dark: IColor = {
-    ...common,
-    BACKGROUND_1: '#FFFF',
-    BACKGROUND_2: '#F2F2F2',
-    BACKDROP: OPACITY,
-    TEXT_PRIMARY: '#038C8C',
-    TEXT_SECONDARY: '#737373',
-    TEXT_TERTIARY: '#FFFF',
-    GREENPRIMARY: '#038C7F',
-    GREENLIGHT: '#88BFBF',
-    GREENDARK: '#038C8C',
-    BROWNPRIMARY: '#737373',
-    BROWNLIGHT: '#F2F2F2',
-    BROWNDARK: '#565759',
-    DARKLIGHT: "#2D2C40",
-    BLACK: '#262626',
-    WHITE: '#FFFF',
+    TEXT_TERTIARY: WHITE,
+    FILL_ICONE: BROWNPRIMARY,
+    GREENPRIMARY: GREENPRIMARY,
+    GREENLIGHT: GREENLIGHT,
+    GREENDARK: GREENDARK,
+    BROWNPRIMARY: BROWNPRIMARY,
+    BROWNLIGHT: BROWNLIGHT,
+    BROWNDARK: BROWNDARK,
+    DARKLIGHT: DARKLIGHT,
+    BLACK: BLACK,
+    WHITE: WHITE,
 };
 
 export const colors: IThemeColors = { light, dark };

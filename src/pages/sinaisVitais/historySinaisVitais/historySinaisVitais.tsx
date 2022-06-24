@@ -4,6 +4,7 @@ import React, {
     useCallback,
     memo,
     useRef,
+    useEffect,
 } from 'react';
 import {
     Text,
@@ -12,15 +13,19 @@ import {
     Platform,
     StyleSheet,
     Dimensions,
+    AppState,
 } from 'react-native';
+import { focusManager } from 'react-query';
 import CardSimples from '../../../components/Cards/CardSimples';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import HistorySvg from '../../../assets/svg/historico.svg';
 import ModalCentralizedOptions, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralizedOptions';
-import MenuPopUp, { ModalHandlesMenu } from '../../../components/menuPopUp/menuPopUp';
-import Loading from '../../../components/Loading/Loading';
+import MenuPopUp, {
+    ModalHandlesMenu,
+} from '../../../components/menuPopUp/menuPopUp';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext, {
@@ -28,6 +33,10 @@ import SinaisVitaisContext, {
 } from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
+import { useSinaisVitaisAll, useSinaisVitaisFilter } from '../../../hooks/useSinaisVitais';
+import { ThemeContextData } from '../../../contexts/themeContext';
+import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import AuthContext from '../../../contexts/auth';
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -38,34 +47,55 @@ interface Parms {
     index: number;
 }
 
+focusManager.setEventListener((handleFocus) => {
+    const subscription = AppState.addEventListener('change', (state) => {
+        handleFocus(state === 'active');
+    });
+
+    return () => {
+        subscription;
+        //subscription.remove()
+    };
+});
+
 const HistorySinaisVitais: React.FC = () => {
+
+    const { stateAuth: { usertasy } } = useContext(AuthContext);
+
+    const styles = useThemeAwareObject(createStyles);
     const navigation = useNavigation();
     const {
-        GetAllSinaisVitais,
         ValidationAutorizeEnfermagem,
         InativarSinaisVitais,
-        stateConsultas: { sinaisVitais },
-        dispatchConsultas,
+        UpdateSinaisVitais,
+        AddSinaisVitais,
     } = useContext(SinaisVitaisContext);
-    
-    const refModalBotom = useRef<ModalHandles>(null);
-    const refMenuBotom = useRef<ModalHandlesMenu>(null);
 
-    const [activeModal, setActiveModal] = useState<boolean>(false);
+    const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
-    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const {
+        data: historySinaisVitais,
+        refetch,
+        isLoading,
+        isFetching,
+    } = useSinaisVitaisFilter(usertasy.cD_PESSOA_FISICA);
+
+    const refModalOptions = useRef<ModalHandles>(null);
+    const refMenuPopUp = useRef<ModalHandlesMenu>(null);
+    const refLoading = useRef<LoadHandles>(null);
+
     const [selectedSinais, setSelectedSinais] =
         useState<IInativarSinaisVitais>();
 
     const setSelectedSinaisInativar = (item: IInativarSinaisVitais) => {
-        refModalBotom.current?.openModal();
+        setTimeout(
+            () => {
+                refModalOptions.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+        );
         setSelectedSinais(item);
     };
-
-    /* const setSelectedSinaisDeletar = (item: sinaisVitaisUpdate) => {
-        setActiveModalDel(true);
-        setSelectedSinais(item);
-    }; */
 
     const RedirectNavigation = (item: ISinaisVitais) => {
         if (ValidationAutorizeEnfermagem()) {
@@ -83,10 +113,15 @@ const HistorySinaisVitais: React.FC = () => {
 
     const InativarSinalVital = async () => {
         if (selectedSinais) {
-            setActiveModal(true);
+            setTimeout(
+                () => {
+                    refLoading.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
             await InativarSinaisVitais(selectedSinais);
-            await GetAllSinaisVitais();
-            setActiveModal(false);
+            await refetchSinaisVitais();
+            refLoading.current?.closeModal();
         }
     };
 
@@ -192,7 +227,7 @@ const HistorySinaisVitais: React.FC = () => {
                         <Text style={styles.textLabel}>Data: </Text>
                         <Text style={styles.text}>{`${moment(
                             item.dT_SINAL_VITAL,
-                        ).format('DD-MM-YYYY [às] hh:mm')}`}</Text>
+                        ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
                     </View>
                     <View style={styles.item}>
                         <View style={styles.SubItem}>
@@ -226,16 +261,19 @@ const HistorySinaisVitais: React.FC = () => {
                 </View>
                 <View style={styles.box3}>
                     <MenuPopUp
-                        ref={refMenuBotom}
+                        ref={refMenuPopUp}
                         btnLabels={['Editar', 'Excluir']}
-                        onpress={(label) => {refMenuBotom.current?.hideMenu(), MenuPopUpOptions(label, item)}}
+                        onpress={(label) => {
+                            refMenuPopUp.current?.hideMenu(),
+                                MenuPopUpOptions(label, item);
+                        }}
                     />
                 </View>
             </View>
         );
     });
 
-    Item.displayName = "Item";
+    Item.displayName = 'Item';
 
     const renderItem = useCallback(
         ({ item, index }: { item: ISinaisVitais; index: number }) => {
@@ -259,114 +297,113 @@ const HistorySinaisVitais: React.FC = () => {
         [],
     );
 
+    useEffect(() => {
+        refetch();
+    }, [UpdateSinaisVitais, AddSinaisVitais]);
+
     return (
         <View style={styles.container}>
-            {sinaisVitais ? (
+            {!isFetching ? (
                 <FlatList
-                    data={sinaisVitais}
+                    data={historySinaisVitais}
                     renderItem={renderItemCall}
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={refreshing}
-                    onRefresh={async () => {
-                        setRefreshing(true);
-                        dispatchConsultas({type: 'delSinaisVitais'});
-                        await GetAllSinaisVitais();
-                        setRefreshing(false);
-                    }}
+                    refreshing={isLoading}
+                    onRefresh={refetch}
                     ListEmptyComponent={renderItemEmpty}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
-            <Loading activeModal={activeModal} />
+            <Loading ref={refLoading} />
             <ModalCentralizedOptions
                 animationType={'slide'}
-                ref={refModalBotom}
+                ref={refModalOptions}
                 message={'Deseja inativar este Sinal Vital ?'}
                 onpress={() => InativarSinalVital()}
             />
-            {/* <ModalCentralizedOptions
-                activeModal={activeModalDel}
-                message={'Deseja deletar este Sinal Vital ?'}
-                onpress={() => DeleteSinaisVitais(selectedSinais.nR_SEQUENCIA)}
-                setActiveModal={setActiveModalDel}
-            /> */}
         </View>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: Dimensions.get('screen').width,
-        paddingVertical: 10,
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    cardStyle: {
-        flex: 1,
-    },
-    textLabel: {
-        color: '#1E707D',
-        fontSize: RFValue(16, 680),
-        fontWeight: 'bold',
-    },
-    text: {
-        color: '#666666',
-        fontSize: RFValue(16, 680),
-    },
-    item: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginVertical: RFPercentage(0.5),
-    },
-    SubItem: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-    box1: {
-        flex: 0.7,
-        paddingTop: 10,
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-    },
-    box2: {
-        flex: 5,
-        margin: 10,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-    },
-    box3: {
-        marginVertical: 5,
-        justifyContent: 'flex-start',
-    },
-    btn: {
-        width: RFPercentage(5),
-        height: RFPercentage(5),
-        padding: 5,
-        marginHorizontal: 5,
-        marginVertical: RFPercentage(2),
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 30,
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            width: Dimensions.get('screen').width,
+            paddingVertical: 10,
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_2,
+        },
+        cardStyle: {
+            flex: 1,
+        },
+        textLabel: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_PRIMARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
+        item: {
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginVertical: RFPercentage(0.5),
+        },
+        SubItem: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        box1: {
+            flex: 0.7,
+            paddingTop: 10,
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+        },
+        box2: {
+            flex: 5,
+            margin: 10,
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+        },
+        box3: {
+            margin: 5,
+            justifyContent: 'flex-start',
+        },
+        btn: {
+            width: RFPercentage(5),
+            height: RFPercentage(5),
+            padding: 5,
+            marginHorizontal: 5,
+            marginVertical: RFPercentage(2),
+            backgroundColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+        },
+    });
+    return styles;
+};
 
 export { HistorySinaisVitais };

@@ -7,6 +7,8 @@ import React, {
 } from 'react';
 import { View, StyleSheet, Modal, Dimensions, ModalProps } from 'react-native';
 import AnimatedLottieView from 'lottie-react-native';
+import { ThemeContextData } from '../../contexts/themeContext';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface modalProps extends ModalProps {
     activeModal?: boolean;
 }
@@ -17,6 +19,7 @@ export interface LoadHandles {
 
 const Loading = React.forwardRef<LoadHandles, modalProps>(
     ({ activeModal, ...rest }: modalProps, ref) => {
+        const styles = useThemeAwareObject(createStyles);
         const [active, setActive] = useState(false);
         const size = Dimensions.get('screen').width / 8;
 
@@ -68,30 +71,34 @@ Loading.displayName = "Loading";
 
 export default memo(Loading);
 
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,.6)',
-    },
-    modalView: {
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        centeredView: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.colors.BACKDROP,
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    modalImg: {
-        width: Dimensions.get('screen').width / 10,
-        height: Dimensions.get('screen').width / 10,
-    },
-});
+        modalView: {
+            backgroundColor: theme.colors.BACKGROUND_1,
+            borderRadius: 20,
+            padding: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: '#000',
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+        },
+        modalImg: {
+            width: Dimensions.get('screen').width / 10,
+            height: Dimensions.get('screen').width / 10,
+        },
+    });
+    return styles;
+}
+

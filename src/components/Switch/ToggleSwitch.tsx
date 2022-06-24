@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Switch } from 'react-native';
-import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
@@ -29,7 +28,7 @@ const ToggleSwitch: React.FC<Props> = ({ onpress, Enabled = false }: Props) => {
                     false: theme.colors.BROWNPRIMARY,
                     true: theme.colors.GREENDARK,
                 }}
-                thumbColor={isEnabled ? theme.colors.WHITE : '#f4f3f4'}
+                thumbColor={isEnabled ? theme.colors.WHITE : theme.colors.BROWNLIGHT}
                 ios_backgroundColor={theme.colors.BROWNPRIMARY}
                 onValueChange={toggleSwitch}
                 value={isEnabled}
@@ -41,7 +40,7 @@ const ToggleSwitch: React.FC<Props> = ({ onpress, Enabled = false }: Props) => {
 
 export default ToggleSwitch;
 
-const createStyles = (theme: ThemeContextData) => {
+const createStyles = () => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,

@@ -1,5 +1,6 @@
-import React, { createContext, useState, useCallback } from 'react';
-
+import React, { createContext, useState, useCallback, useEffect } from 'react';
+import NetInfo from '@react-native-community/netinfo';
+import { onlineManager } from 'react-query';
 interface ErrorContextData {
     alert: Notification | null;
     addAlert(notification: Notification): void;
@@ -47,6 +48,30 @@ const NotificationGlobalProvider: React.FC = ({ children }) => {
         ),
         removeNotification: useCallback(() => removeNotification(), []),
     };
+
+    onlineManager.setEventListener((setOnline) => {
+        return NetInfo.addEventListener((state) => {
+            setOnline(Boolean(state.isConnected));
+        });
+    });
+
+    useEffect(() => {
+        // Subscribe
+        const unsubscribe = NetInfo.addEventListener((state) => {
+            if(!state.isConnected){
+                addNotification({
+                    message: 'Falha na conexão com a internet, verifique sua conexão!',
+                    status: 'error',
+                });
+            }
+            console.log('Connection type', state.type);
+            console.log('Is connected?', state.isConnected);
+        });
+        return () => {
+            // Unsubscribe
+            unsubscribe();
+        };
+    }, []);
 
     return (
         <NotificationGlobalContext.Provider value={contextValue}>

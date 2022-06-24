@@ -20,7 +20,15 @@ import UpdateSinais from '../pages/sinaisVitais/updateSinaisVitais/updateSinais'
 import { IPFSinaisVitais } from '../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../reducers/ConsultasReducer';
 import UpdateSinaisVitaisEnfermagem from '../pages/sinaisVitais/updateSinaisVitaisEnfermagem/updateSinaisVitaisEnfermagem';
-import EvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem';
+import EvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/evolucaoEnfermagem';
+import SearchPessoaFisica from '../pages/evolucao/evolucaoEnfermagem/searchPessoaFisica';
+import EndSinaisVitais from '../pages/sinaisVitais/endSinaisVitais';
+import HistoryEvolucao from '../pages/evolucao/evolucaoEnfermagem/historyEvolucao';
+import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
+import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updateEvolucaoEnfermagem';
+import { IEvolucaoHistory } from '../hooks/useEvolucao';
+import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
+import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -55,7 +63,33 @@ export type RootStackParamList = {
         PessoaFisica: IPFSinaisVitais;
         SinaisVitais: ISinaisVitais;
     };
-    EvolucaoEnfermagem: undefined;
+    EvolucaoEnfermagem: {
+        PessoaFisica: IPFSinaisVitais;
+    };
+    SearchPessoaFisica: undefined;
+    EndSinaisVitais: {
+        Paciente: string;
+        Tipo: string;
+    };
+    HistoryEvolucao: undefined;
+    IndexEvolucao: undefined;
+    UpdateEvolucaoEnfermagem: {
+        Evolucao: IEvolucaoHistory;
+    };
+    AcompanhateSinaisVitais: {
+        PessoaFisica: {
+            nM_PESSOA_FISICA: string;
+            dT_NASCIMENTO: string;
+            cD_PESSOA_FISICA: string,
+        };
+    };
+    addAcompanhanteSinaisVitais: {
+        PessoaFisica: {
+            nM_PESSOA_FISICA: string;
+            dT_NASCIMENTO: string;
+            cD_PESSOA_FISICA: string,
+        };
+    }
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -145,7 +179,42 @@ const InitialStackNavigator = () => {
             <Stack.Screen
                 name="EvolucaoEnfermagem"
                 component={EvolucaoEnfermagem}
-                options={{ title: 'Evolução Enfermagem' }}
+                options={{ title: 'Evolucao Enfermagem' }}
+            />
+            <Stack.Screen
+                name="SearchPessoaFisica"
+                component={SearchPessoaFisica}
+                options={{ title: 'Evolucão Enfermagem' }}
+            />
+            <Stack.Screen
+                name="EndSinaisVitais"
+                component={EndSinaisVitais}
+                options={{ title: 'Histórico sinais vitais' }}
+            />
+            <Stack.Screen
+                name="HistoryEvolucao"
+                component={HistoryEvolucao}
+                options={{ title: 'Histórico evolução' }}
+            />
+            <Stack.Screen
+                name="UpdateEvolucaoEnfermagem"
+                component={UpdateEvolucaoEnfermagem}
+                options={{ title: 'Atualizar evolução' }}
+            />
+            <Stack.Screen
+                name="IndexEvolucao"
+                component={IndexEvolucao}
+                options={{ title: 'Evolucão Enfermagem' }}
+            />
+            <Stack.Screen
+                name="AcompanhateSinaisVitais"
+                component={AcompanhateSinaisVitais}
+                options={{ title: 'Vincular acompanhante' }}
+            />
+            <Stack.Screen
+                name="addAcompanhanteSinaisVitais"
+                component={addAcompanhanteSinaisVitais}
+                options={{ title: 'Adicionar acompanhante' }}
             />
         </Stack.Navigator>
     );

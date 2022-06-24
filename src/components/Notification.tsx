@@ -5,10 +5,14 @@ import OkImg from '../assets/svg/ok.svg';
 import Cancel from '../assets/svg/cancel.svg';
 import InfoSvg from '../assets/svg/informacoes.svg';
 import AlertSvg from '../assets/svg/alerta.svg';
-import { RFValue } from 'react-native-responsive-fontsize';
 import notificationGlobalContext from '../contexts/notificationGlobalContext';
+import { ThemeContextData } from '../contexts/themeContext';
+import { useThemeAwareObject } from '../hooks/useThemedStyles';
+import useTheme from '../hooks/useTheme';
 
 export default function Notification() {
+    const theme = useTheme();
+    const styles = useThemeAwareObject(createStyles);
     const { notification, removeNotification } = useContext(
         notificationGlobalContext,
     );
@@ -22,38 +26,38 @@ export default function Notification() {
     const buttomType = () => {
         switch (notification?.status) {
             case 'sucess':
-                return '#388e3c';
+                return theme.colors.SUCCESS;
 
             case 'error':
-                return '#dc2c2c';
+                return theme.colors.ERROR;
 
             case 'warning':
-                return '#f57c00';
+                return theme.colors.WARNING;
 
             case 'info':
-                return '#1976d2';
+                return theme.colors.INFOR;
 
             default:
-                return '#648dae';
+                return theme.colors.INFOR;
         }
     };
 
     const ImgType = () => {
         switch (notification?.status) {
             case 'sucess':
-                return <OkImg fill={'#fff'} width={size} height={size} />;
+                return <OkImg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
 
             case 'error':
-                return <Cancel fill={'#fff'} width={size} height={size} />;
+                return <Cancel fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
 
             case 'warning':
-                return <AlertSvg fill={'#fff'} width={size} height={size} />;
+                return <AlertSvg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
 
             case 'info':
-                return <InfoSvg fill={'#fff'} width={size} height={size} />;
+                return <InfoSvg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
 
             default:
-                return <OkImg fill={'#fff'} width={size} height={size} />;
+                return <OkImg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
         }
     };
 
@@ -97,64 +101,69 @@ export default function Notification() {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        width: Dimensions.get('screen').width,
-        height: Dimensions.get('screen').height / 12,
-        flexDirection: 'row',
-        alignSelf: 'flex-end',
-        position: 'absolute',
-        bottom: 0,
-        zIndex: 1,
-        marginBottom: 70,
-    },
-    box1: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    box2: {
-        width: '20%',
-        height: '100%',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingRight: 10,
-        elevation: 3,
-    },
-    Animatable: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        ...Platform.select({
-            ios: {
-                shadowOffset: {
-                    width: 0,
-                    height: 5,
+const createStyles = (theme: ThemeContextData) => {
+    const styles = StyleSheet.create({
+        container: {
+            width: Dimensions.get('screen').width,
+            height: Dimensions.get('screen').height / 12,
+            flexDirection: 'row',
+            alignSelf: 'flex-end',
+            position: 'absolute',
+            bottom: 0,
+            zIndex: 1,
+            marginBottom: 70,
+        },
+        box1: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        box2: {
+            width: '20%',
+            height: '100%',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            paddingRight: 10,
+            elevation: 3,
+        },
+        Animatable: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
                 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-            },
-            android: {
-                elevation: 3,
-            },
-        }),
-        paddingStart: 10,
-        paddingTop: 3,
-        paddingBottom: 3,
-        flexDirection: 'row',
-        borderTopRightRadius: 10,
-        borderBottomEndRadius: 10,
-    },
-    item1: {
-        width: '10%',
-    },
-    item2: {
-        width: '90%',
-    },
-    text: {
-        color: '#ffF',
-        fontSize: RFValue(14, 680),
-        padding: 5,
-        fontWeight: 'bold',
-    },
-});
+                android: {
+                    elevation: 3,
+                },
+            }),
+            paddingStart: 10,
+            paddingTop: 3,
+            paddingBottom: 3,
+            flexDirection: 'row',
+            borderTopRightRadius: 10,
+            borderBottomEndRadius: 10,
+        },
+        item1: {
+            width: '10%',
+        },
+        item2: {
+            width: '90%',
+        },
+        text: {
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_TERTIARY,
+            fontSize: theme.typography.SIZE.fontysize14,
+            padding: 5,
+            fontWeight: 'bold',
+        },
+    });
+    return styles;
+}

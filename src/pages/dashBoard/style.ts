@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native'
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 
 const createStyles = (theme: ThemeContextData) => {
@@ -18,6 +19,21 @@ const createStyles = (theme: ThemeContextData) => {
             flexDirection: 'row',
             justifyContent: 'space-around',
             flexWrap: 'wrap',
+        },
+        selectedUnidade: {
+            position: 'absolute',
+            right: 0,
+            paddingHorizontal: 5,
+            width: RFPercentage(20),
+            height: RFPercentage(6),
+            zIndex: 1,
+        },
+        DropDownStyle:{ 
+            height: RFPercentage(3.5), 
+            backgroundColor: theme.colors.BACKGROUND_2 
+        },
+        ContainerStyle: {
+            backgroundColor: theme.colors.BACKGROUND_2
         },
         imgPost: {
             width: '80%',

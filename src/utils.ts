@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IUnidade } from './hooks/useEstabelecimentos';
 import { IPerfis } from './reducers/UserReducer';
 
 export async function getUser() {
@@ -6,11 +7,29 @@ export async function getUser() {
     return user != null ? JSON.parse(user) : null;
 }
 
-export async function saveUser(useToken: any) {
+export async function saveRefreshToken(refreshToken: string) {
+    await AsyncStorage.setItem('@RefreshToken', JSON.stringify(refreshToken));
+}
+
+export async function getRefreshToken() {
+    const refreshtoken = await AsyncStorage.getItem('@RefreshToken');
+    return refreshtoken != null ? JSON.parse(refreshtoken) : null;
+}
+
+export async function mergeRefreshToken(refreshToken: string) {
+    if (AsyncStorage.mergeItem)
+        await AsyncStorage?.mergeItem('@RefreshToken', JSON.stringify(refreshToken));
+}
+
+export async function deleteRefreshToken() {
+    await AsyncStorage.removeItem('@RefreshToken');
+}
+
+export async function saveUser(useToken: string) {
     await AsyncStorage.setItem('@User', JSON.stringify(useToken));
 }
 
-export async function store(useToken: any) {
+export async function store(useToken: string) {
     return await AsyncStorage.setItem('@User', useToken);
 }
 
@@ -18,7 +37,7 @@ export async function deleteUser() {
     await AsyncStorage.removeItem('@User');
 }
 
-export async function mergeUser(useToken: any) {
+export async function mergeUser(useToken: string) {
     if (AsyncStorage.mergeItem)
         await AsyncStorage?.mergeItem('@User', JSON.stringify(useToken));
 }
@@ -39,6 +58,15 @@ export async function mergerUserTasy(userTasy: any) {
 
 export async function deleteUserTasy() {
     await AsyncStorage.removeItem('@UserTasy');
+}
+
+export async function saveUnidade(Unidade: IUnidade) {
+    await AsyncStorage.setItem('@Unidade', JSON.stringify(Unidade));
+}
+
+export async function getUnidade(): Promise<IUnidade> {
+    const user = await AsyncStorage.getItem('@Unidade');
+    return user != null ? JSON.parse(user) : null;
 }
 
 export async function savePerfil(Perfil: IPerfis) {

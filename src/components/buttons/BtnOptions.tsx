@@ -7,7 +7,6 @@ import {
     Platform,
     Pressable,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
     useAnimatedStyle,
@@ -17,20 +16,21 @@ import Animated, {
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
 interface Props {
-    valueText: string;
-    onPress(): void;
+    valueText?: string;
+    onPress?(): void;
     disable?: boolean;
 }
 
 const BtnOptions: React.FC<Props> = ({
-    valueText,
-    onPress,
-    disable,
+    valueText = 'text',
+    onPress = () => {''},
+    disable = false,
 }: Props) => {
     const styleOpacity = useSharedValue(1);
 
@@ -69,9 +69,10 @@ const BtnOptions: React.FC<Props> = ({
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
-            padding: 10,
+            padding: RFPercentage(1),
             justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: theme.colors.BACKGROUND_1,
         },
         text: {
             fontSize: theme.typography.SIZE.fontysize14,

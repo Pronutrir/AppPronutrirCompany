@@ -37,7 +37,7 @@ const BtnDashboardComponent: React.FC<Props> = ({
             onPress={() => onpress()}>
             <View style={styles.img_btnHotrizontal}>
                 <ImgSVG
-                    fill={theme.colors.TEXT_SECONDARY}
+                    fill={theme.colors.FILL_ICONE}
                     width={RFPercentage(5)}
                     height={RFPercentage(5)}
                 />
