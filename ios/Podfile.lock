@@ -736,7 +736,7 @@ PODS:
     - React-Core
   - react-native-date-picker (3.4.3):
     - React-Core
-  - react-native-image-picker (4.7.3):
+  - react-native-image-picker (4.8.3):
     - React-Core
   - react-native-netinfo (9.0.0):
     - React-Core
@@ -853,7 +853,7 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNReanimated (2.4.1):
+  - RNReanimated (2.8.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -861,7 +861,6 @@ PODS:
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React
     - React-callinvoker
     - React-Core
     - React-Core/DevSupport
@@ -1194,6 +1193,6 @@ SPEC CHECKSUMS:
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   Yoga: c11abbf5809216c91fcd62f5571078b83d9b6720
 
-PODFILE CHECKSUM: 2b361e2c034e054d54cbdf96df11478fb87ac4fc
+PODFILE CHECKSUM: 461c4e0917ff5eeabbeed0b910852afc56a44943
 
 COCOAPODS: 1.11.3
