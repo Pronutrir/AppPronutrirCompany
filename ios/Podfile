@@ -16,6 +16,8 @@ target 'AppPronutrirCompany' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
 
+  pod 'react-native-version-info', :path => '../node_modules/react-native-version-info'
+
   target 'AppPronutrirCompanyTests' do
     inherit! :complete
     # Pods for testing

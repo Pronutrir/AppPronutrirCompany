@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - main
 
 jobs:
   teste:
@@ -21,6 +22,17 @@ jobs:
       - name: Run CI with Lefthook
         run: |
           yarn lefthook run ci-hook
+    
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} created commit testes:
+            tests message: test passed successfully!
+            
+            Repository: ${{ github.repository }}
 #      - name: Run test
 #        run: |
 #          yarn test-ci

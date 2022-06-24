@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -26,6 +26,7 @@ import ModalCentralize, {
 } from '../Modais/ModalCentralize';
 import { IUnidade, useUnidades } from '../../hooks/useEstabelecimentos';
 import { RFPercentage } from 'react-native-responsive-fontsize';
+import VersionInfo from 'react-native-version-info';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
@@ -138,7 +139,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     onPress={() => notificationRef.current?.openNotification()}>
                     <Text style={styles.text3}>Sair</Text>
                 </TouchableOpacity>
-                <Text style={styles.text2}>Versão 1.5</Text>
+                <Text style={styles.text2}>Versão {VersionInfo.appVersion}</Text>
             </View>
             <NotificationMultOptions
                 ref={notificationRef}
