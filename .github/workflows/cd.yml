@@ -56,7 +56,7 @@ jobs:
         token: ${{ secrets.FIREBASE_TOKEN }}
         groups: ${{ secrets.FIREBASE_GROUPS }}
         file: android/app/build/outputs/bundle/release/app-release.aab
-        releaseNotes: "$notes"
+        releaseNotes: ${{ github.event.release.body }}
 
     - name: send telegram message on push
       uses: appleboy/telegram-action@master

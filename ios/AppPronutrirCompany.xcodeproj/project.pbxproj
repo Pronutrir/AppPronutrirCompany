@@ -23,13 +23,13 @@
 		83E020182CAD44375BDA16E6 /* libPods-AppPronutrirCompany-AppPronutrirCompanyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2F6C49B956A7C885620AB5 /* libPods-AppPronutrirCompany-AppPronutrirCompanyTests.a */; };
 		870865313E62480AA2AA37C4 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 53661E4725B14C89AA4592C7 /* Roboto-MediumItalic.ttf */; };
 		A197C4A0060E4AD98A70F272 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5201192031744362B5ACD92D /* Roboto-Regular.ttf */; };
+		A986D011E1AA69F5195C9D78 /* libPods-AppPronutrirCompany.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BC60D7A779325DA38AE00DD4 /* libPods-AppPronutrirCompany.a */; };
 		B205348B38064FD39BDD7E0B /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 616E6C01BD504D94AD1EB0D8 /* Roboto-Light.ttf */; };
 		C58479827DC746AE9276661E /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EAF876FAE824D8BB713EAD0 /* Roboto-BlackItalic.ttf */; };
 		D0FB7D2CF9DA42F5ADA19BC5 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49A9B93EB0B74C34B745A904 /* Roboto-Italic.ttf */; };
 		D491EFF448064F2E93764D25 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBCE4C999E0C475B85F37FD9 /* Roboto-Bold.ttf */; };
 		D965FBE6E689451EA6CDE9C5 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2C1C2DD479774E74AC63C968 /* Roboto-ThinItalic.ttf */; };
 		F36A3631D26240208921F7CC /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3123C9C8B82E4E98A1DDD574 /* Roboto-Black.ttf */; };
-		F5932725DFC5252C0DB21DCF /* libPods-AppPronutrirCompany.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BC60D7A779325DA38AE00DD4 /* libPods-AppPronutrirCompany.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,19 +113,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F5932725DFC5252C0DB21DCF /* libPods-AppPronutrirCompany.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5855BA16268E006D009D6551 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				304C8DD559BD6DFF1E1509FB /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F696BF876A5D1D08B4E55DE5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A986D011E1AA69F5195C9D78 /* libPods-AppPronutrirCompany.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,13 +282,13 @@
 				6F6CBF143284B275AA73C8BF /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
-				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				5855BA24268E006D009D6551 /* Embed App Extensions */,
 				BBFACA822113E406ECF21E87 /* [CP] Embed Pods Frameworks */,
 				426BC1FF8AE62CBE1394FD8B /* [CP] Copy Pods Resources */,
 				5FEB792B8419BFBD10E65DD9 /* [CP-User] [RNFB] Core Configuration */,
+				F696BF876A5D1D08B4E55DE5 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -691,7 +691,7 @@
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				INFOPLIST_FILE = AppPronutrirCompany/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -707,6 +707,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "AppPronutrirCompany-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -723,7 +724,7 @@
 				DEVELOPMENT_TEAM = NN4H9B2Q2B;
 				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = AppPronutrirCompany/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -738,6 +739,7 @@
 				PRODUCT_NAME = AppPronutrirCompany;
 				SWIFT_OBJC_BRIDGING_HEADER = "AppPronutrirCompany-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -859,7 +861,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -917,7 +919,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
