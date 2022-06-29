@@ -37,7 +37,7 @@ const refreshToken = async (baseURL: string, tokenHeads: AxiosRequestHeaders) =>
         const rfToken: string = await getRefreshToken();
 
         if (expired) {
-            const { data: { jwtToken, refreshToken } } = await axios.post<TokenResponse>(`https://webapppronutrir.com.br:5646/api/v1/Auth/refreshtoken`, {token: rfToken});
+            const { data: { jwtToken, refreshToken } } = await axios.post<TokenResponse>(`https://servicesapppronutrir.com.br/usershield/api/v1/Auth/refreshtoken`, {token: rfToken});
             api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
             await deleteRefreshToken();
             await saveRefreshToken(refreshToken);

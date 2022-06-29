@@ -1,6 +1,6 @@
 import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
-import { View, Image, ImageBackground } from 'react-native';
+import { View, ImageBackground } from 'react-native';
 import LogoNameSvg from '../../assets/svg/logoName.svg';
 
 import styles from './style'

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Routes from './routes/index';
-import { Text } from 'react-native';
+import { Platform, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
 import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';
@@ -9,12 +9,21 @@ import NotificationCentralized from './components/Notification/NotificationCentr
 import OneSignal from 'react-native-onesignal';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './contexts/themeContext';
+import CodePush from 'react-native-code-push';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
 
 // Create a client
 const queryClient = new QueryClient();
+
+const CodePushOptions = Platform.OS === 'android' ? {
+    checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+    mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+    updateDialog: {
+      appendReleaseDescription: true,
+      title: "Uma nova atualização está disponível!"
+  }} : null
 
 const Index: React.FC = () => {
     /*  async function registerAppWithFCM() {
@@ -98,5 +107,4 @@ const Index: React.FC = () => {
         </NavigationContainer>
     );
 };
-
-export default Index;
+export default Platform.OS === 'android' ? CodePush(CodePushOptions)(Index) : Index;

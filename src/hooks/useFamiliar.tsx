@@ -6,6 +6,7 @@ import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
 export interface IFamiliar {
     cD_PESSOA_FISICA: string;
+    dT_NASCIMENTO: string;
     iE_TIPO_PESSOA: number;
     nM_USUARIO_ORIGINAL: string;
     nM_USUARIO: string;
@@ -25,6 +26,7 @@ interface IResponseFamiliar {
 export interface IPostFamiliar {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
+    dT_NASCIMENTO: string;
     nR_CPF?: string;
     nR_IDENTIDADE?: string,
     nR_SEQ_GRAU_PARENTESCO: number;
@@ -109,6 +111,7 @@ const useAddFamiliar = () => {
                     `PessoaFisicaFamilia/PostPfEscortFamily`,
                     {
                         cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
+                        dT_NASCIMENTO: family.dT_NASCIMENTO,
                         iE_TIPO_PESSOA: 2,
                         nM_USUARIO_ORIGINAL: 'AppMobile',
                         nM_USUARIO: 'AppMobile',

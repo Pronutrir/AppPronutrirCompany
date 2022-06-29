@@ -20,7 +20,7 @@ import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { valicacaoCPF } from '../../../services/validacaoCpf';
-import { cpfMask } from '../../../services/validacoes';
+import { cpfMask, DateMask } from '../../../services/validacoes';
 import Checkbox from '../../../components/checkbox/checkbox';
 import SelectedDropdown from '../../../components/selectedDropdown/SelectedDropdown';
 import {
@@ -44,13 +44,14 @@ interface Props {
 }
 interface Form {
     NOME: string;
+    NASCIMENTO: string;
     CPF: string;
     RG: string;
     PARENTESCO: {
         label: string;
         nR_SEQ_GRAU_PARENTESCO: number;
     };
-    TOUCHED: '',
+    TOUCHED: '';
     SEXO: string;
     SELECT: string;
 }
@@ -93,6 +94,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     >();
     const refValuesform = useRef<Form>({
         NOME: '',
+        NASCIMENTO: '',
         CPF: '',
         RG: '',
         SELECT: 'CPF',
@@ -101,7 +103,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
             nR_SEQ_GRAU_PARENTESCO: 0,
         },
         TOUCHED: '',
-        SEXO: ''
+        SEXO: '',
     });
 
     const refModalOptions1 = useRef<ModalHandles>(null);
@@ -157,6 +159,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     cD_PESSOA_FISICA:
                         route.params.PessoaFisica.cD_PESSOA_FISICA,
                     nR_CPF: values.CPF,
+                    dT_NASCIMENTO: values.NASCIMENTO,
                     nR_IDENTIDADE: values.RG,
                     iE_GENDER: values.SEXO,
                     nM_PESSOA_FISICA: values.NOME,
@@ -205,24 +208,35 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
         NOME: Yup.string()
             .required('Nome é obrigatório!')
             .matches(/(\w.+\s).+/, 'Insira o nome e sobrenome'),
-        CPF: Yup.string()
-        .when('SELECT', {
-            is: (val: string) => val === 'CPF',
-            then: () => Yup.string()
-            .required('CPF é obrigatório!')
-            .test(
-                'validationCPF',
-                'CPF inválido',
-                (value) =>
-                    Boolean(value) && valicacaoCPF(value?.replace(/[.-]/g, '')),
+        NASCIMENTO: Yup.string()
+            .required('Data de nascimento é obrigatória!')
+            .matches(
+                /([0-2][0-9]|3[0-1])\/(0[0-9]|1[0-2])\/[0-9]{4}/,
+                'Insira uma data valida',
+            )
+            .test('validation', 'Insira uma data valida', (value) => {
+                return value ? Boolean(!(value.length > 10)) : false ;
+            },
             ),
+        CPF: Yup.string().when('SELECT', {
+            is: (val: string) => val === 'CPF',
+            then: () =>
+                Yup.string()
+                    .required('CPF é obrigatório!')
+                    .test(
+                        'validationCPF',
+                        'CPF inválido',
+                        (value) =>
+                            Boolean(value) &&
+                            valicacaoCPF(value?.replace(/[.-]/g, '')),
+                    ),
         }),
-        RG: Yup.string()
-        .when('SELECT', {
-            is: (val: string) => val === 'RG', 
-            then: () => Yup.string()
-            .required('RG é obrigatório!')
-            .max(18, 'Verifique a quantidade de caracteres')
+        RG: Yup.string().when('SELECT', {
+            is: (val: string) => val === 'RG',
+            then: () =>
+                Yup.string()
+                    .required('RG é obrigatório!')
+                    .max(18, 'Verifique a quantidade de caracteres'),
         }),
         PARENTESCO: Yup.object().shape({
             label: Yup.string().required('Sexo é obrigatório!'),
@@ -273,6 +287,28 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                 }}
                                 value={values.NOME}
                             />
+                            <InputStandard
+                                error={
+                                    errors.NASCIMENTO && touched.NASCIMENTO
+                                        ? errors.NASCIMENTO
+                                        : undefined
+                                }
+                                placeholder={'Data de nascimento'}
+                                style={styles.inputText}
+                                activeColor={theme.colors.TEXT_PRIMARY}
+                                fontSize={theme.typography.SIZE.fontysize14}
+                                fontColor={theme.colors.TEXT_SECONDARY}
+                                onChangeText={(item) => {
+                                    setFieldValue('NASCIMENTO', DateMask(item));
+                                }}
+                                onEndEditing={() => {
+                                    setTouched({
+                                        ...touched,
+                                        ['NASCIMENTO']: true,
+                                    });
+                                }}
+                                value={values.NASCIMENTO}
+                            />
                         </View>
                         <View style={styles.boxForm}>
                             <View
@@ -314,7 +350,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     fontSize={theme.typography.SIZE.fontysize14}
                                     fontColor={theme.colors.TEXT_SECONDARY}
                                     onChangeText={(e) => {
-                                        setFieldValue('CPF', cpfMask(e), true)
+                                        setFieldValue('CPF', cpfMask(e), true);
                                         setFieldValue('RG', '');
                                     }}
                                     keyboardType={'numeric'}
@@ -340,8 +376,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                     fontSize={theme.typography.SIZE.fontysize14}
                                     fontColor={theme.colors.TEXT_SECONDARY}
                                     onChangeText={(e) => {
-                                        setFieldValue('RG', e, true)
-                                        setFieldValue('CPF', '')
+                                        setFieldValue('RG', e, true);
+                                        setFieldValue('CPF', '');
                                     }}
                                     keyboardType={'numeric'}
                                     onEndEditing={() => {
@@ -420,7 +456,9 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
             <Loading ref={refModal} />
             <ModalCentralizedOptions
                 ref={refModalOptions1}
-                onpress={() => vincularAcompanhante(refValuesform.current, pessoaFisica)}
+                onpress={() =>
+                    vincularAcompanhante(refValuesform.current, pessoaFisica)
+                }
                 message={
                     'O acompanhante já possui cadastro, deseja vincular-lo ao paciente ?'
                 }
@@ -450,7 +488,7 @@ const createStyle = (theme: ThemeContextData) => {
             backgroundColor: theme.colors.BACKGROUND_1,
             padding: RFPercentage(1),
             paddingVertical: RFPercentage(2),
-            marginTop: RFPercentage(2),
+            marginTop: RFPercentage(1),
         },
         containerForm: {
             width: '100%',
@@ -458,14 +496,14 @@ const createStyle = (theme: ThemeContextData) => {
             justifyContent: 'space-between',
         },
         boxForm: {
-            marginVertical: 20,
+            marginVertical: RFPercentage(2),
         },
         boxSelect: {
             flexDirection: 'row',
             justifyContent: 'center',
         },
         title: {
-            margin: 10,
+            marginVertical: RFPercentage(1),
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
@@ -474,12 +512,12 @@ const createStyle = (theme: ThemeContextData) => {
         },
         btnContainer: {
             width: '100%',
-            marginTop: RFPercentage(5),
+            marginTop: RFPercentage(2),
             alignSelf: 'flex-end',
             height: RFPercentage(10),
         },
         inputText: {
-            marginBottom: 20,
+            marginVertical: RFPercentage(2),
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
