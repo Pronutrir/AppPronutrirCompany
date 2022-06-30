@@ -187,7 +187,7 @@ android {
                 }
             }
             // Note: CodePush updates shouldn't be tested in Debug mode as they're overriden by the RN packager. However, because CodePush checks for updates in all modes, we must supply a key.
-            resValue "string", "CodePushDeploymentKey", '"6wmFL6DJbGOO81G1UR7eoy2Cb1Gz2VfJlf424"'
+            resValue "string", "CodePushDeploymentKey", '"i6xGfJthviBt6PYoKbEqQCersnZmaW_wu04wZ"'
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -195,7 +195,7 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            resValue "string", "CodePushDeploymentKey", '"ZvggXK8iz9rn8sc2pKvyUwoygsga7s0bMwq1J"'
+            resValue "string", "CodePushDeploymentKey", '"rug1Mw4eTps2GSxEsMNR-8-eYtf8--zB-Yjp"'
         }
     }
 

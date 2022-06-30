@@ -298,6 +298,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                 activeColor={theme.colors.TEXT_PRIMARY}
                                 fontSize={theme.typography.SIZE.fontysize14}
                                 fontColor={theme.colors.TEXT_SECONDARY}
+                                keyboardType={'numeric'}
                                 onChangeText={(item) => {
                                     setFieldValue('NASCIMENTO', DateMask(item));
                                 }}

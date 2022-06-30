@@ -62,7 +62,7 @@ const useUnidades = () => {
             onError: () => {
                 addAlert({
                     message:
-                        'Error ao carregar os estabelecimentos, tenta mais tarde!',
+                        'Error ao carregar os estabelecimentos, tentar mais tarde!',
                     status: 'error',
                 });
             },

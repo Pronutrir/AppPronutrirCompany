@@ -1,4 +1,5 @@
 import { AxiosResponse } from 'axios';
+import moment from 'moment';
 import { useContext } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import AuthContext from '../contexts/auth';
@@ -110,8 +111,8 @@ const useAddFamiliar = () => {
                 await Api.post<any, AxiosResponse<any, any>, IFamiliar>(
                     `PessoaFisicaFamilia/PostPfEscortFamily`,
                     {
-                        cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
-                        dT_NASCIMENTO: family.dT_NASCIMENTO,
+                        cD_PESSOA_FISICA: family.cD_PESSOA_FISICA,
+                        dT_NASCIMENTO: moment(family.dT_NASCIMENTO, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                         iE_TIPO_PESSOA: 2,
                         nM_USUARIO_ORIGINAL: 'AppMobile',
                         nM_USUARIO: 'AppMobile',

@@ -116,7 +116,7 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
             staleTime : 60 * 30000, // 30 minuto
             onError: () => {
                 addAlert({
-                    message: 'Error ao carregar as agendas, tenta mais tarde!',
+                    message: 'Error ao carregar as agendas, tentar mais tarde!',
                     status: 'error',
                 });
             },
