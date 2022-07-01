@@ -30,6 +30,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         DropDownStyle:{ 
             height: RFPercentage(3.5), 
+            width: RFPercentage(20),
             backgroundColor: theme.colors.BACKGROUND_2 
         },
         ContainerStyle: {

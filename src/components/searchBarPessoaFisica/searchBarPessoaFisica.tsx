@@ -30,10 +30,10 @@ interface Ifilter {
 }
 
 const filterDefault = [
-    { filter: 'NOME PACIENTE', placeHolder: 'Pesquise o nome do paciente' },
+    { filter: 'NOME PACIENTE', placeHolder: 'Nome do paciente' },
     {
         filter: 'DATA DE NASCIMENTO',
-        placeHolder: 'Pesquise a data de nascimento',
+        placeHolder: 'Data de nascimento',
     },
 ];
 

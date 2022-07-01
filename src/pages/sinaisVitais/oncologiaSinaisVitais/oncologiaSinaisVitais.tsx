@@ -96,7 +96,7 @@ const OncologiaSinaisVitais = () => {
         <View style={styles.container}>
             <SearchBar
                 darkMode
-                placeholder="Pesquise o nome do paciente"
+                placeholder="Nome do paciente"
                 spinnerVisibility={state.spinnerVisibility}
                 style={styles.SearchBarStyle}
                 textInputStyle={styles.textInputStyle}

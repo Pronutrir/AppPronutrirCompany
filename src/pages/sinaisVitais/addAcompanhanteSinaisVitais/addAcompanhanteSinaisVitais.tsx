@@ -34,6 +34,7 @@ import ModalCentralizedOptions, {
 } from '../../../components/Modais/ModalCentralizedOptions';
 import { useQueryClient } from 'react-query';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -215,9 +216,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 'Insira uma data valida',
             )
             .test('validation', 'Insira uma data valida', (value) => {
-                return value ? Boolean(!(value.length > 10)) : false ;
-            },
-            ),
+                return value ? Boolean(!(value.length > 10)) : false;
+            }),
         CPF: Yup.string().when('SELECT', {
             is: (val: string) => val === 'CPF',
             then: () =>
@@ -264,7 +264,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
             }) => (
                 <>
                     <View style={styles.containerForm}>
-                        <View style={styles.boxForm}>
+                        <View>
                             <Text style={styles.title}>
                                 Dados do acompanhante
                             </Text>
@@ -311,7 +311,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                 value={values.NASCIMENTO}
                             />
                         </View>
-                        <View style={styles.boxForm}>
+                        <View>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -444,8 +444,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     );
 
     return (
-        <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <View style={styles.box}>
+        <ScrollView style={styles.container}>
+            <View style={styles.boxCard}>
                 <Text style={styles.title}>Paciente</Text>
                 <PessoaFisicaComponent
                     PessoaFisica={route.params.PessoaFisica}
@@ -471,7 +471,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                     'O acompanhante não possui cadastro, deseja cadastra-lo e vincular-lo ao paciente ?'
                 }
             />
-        </Pressable>
+        </ScrollView>
     );
 };
 
@@ -481,30 +481,34 @@ const createStyle = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            alignItems: 'center',
             backgroundColor: theme.colors.BACKGROUND_2,
         },
-        box: {
+        boxCard: {
+            flex: 0.5,
             width: '100%',
             backgroundColor: theme.colors.BACKGROUND_1,
             padding: RFPercentage(1),
-            paddingVertical: RFPercentage(2),
+            marginTop: RFPercentage(1),
+            justifyContent: 'center',
+        },
+        box: {
+            flex: 2,
+            width: '100%',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            padding: RFPercentage(1),
+            paddingVertical: RFPercentage(5),
             marginTop: RFPercentage(1),
         },
         containerForm: {
             width: '100%',
-            paddingHorizontal: RFPercentage(3),
+            paddingHorizontal: RFPercentage(1),
             justifyContent: 'space-between',
-        },
-        boxForm: {
-            marginVertical: RFPercentage(2),
         },
         boxSelect: {
             flexDirection: 'row',
             justifyContent: 'center',
         },
         title: {
-            marginVertical: RFPercentage(1),
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
