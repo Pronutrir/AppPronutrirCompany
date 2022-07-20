@@ -85,7 +85,7 @@ const UpdateSinais: React.FC<Props> = ({
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
-            dS_OBSERVACAO: observacao
+            dS_OBSERVACAO: observacao,
         });
         refetchSinaisVitais;
         setActiveModal(false);
@@ -177,7 +177,6 @@ const UpdateSinais: React.FC<Props> = ({
             }
         });
         refPesoMediaPaciente.current = Math.round(mediaPeso / element.length);
-        console.log(Math.round(mediaPeso / element.length));
     };
 
     const variacaoPercentualPaciente = () => {
@@ -195,10 +194,13 @@ const UpdateSinais: React.FC<Props> = ({
 
     const modalOptions = () => {
         refModalCentralizeVariacaoPeso.current?.closeModal();
-        setTimeout(() => {
-            refModalOptions.current?.openModal();
-        }, Platform.OS === 'ios' ? 500 : 0);
-    }
+        setTimeout(
+            () => {
+                refModalOptions.current?.openModal();
+            },
+            Platform.OS === 'ios' ? 500 : 0,
+        );
+    };
 
     useEffect(() => {
         if (historicoSinaisVitais) {

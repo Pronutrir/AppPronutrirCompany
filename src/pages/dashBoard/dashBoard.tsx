@@ -23,14 +23,18 @@ const DashBoard: React.FC = () => {
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
     const { ValidationAutorizeTriagem } = useContext(SinaisVitaisContext);
-    const { ValidationAutorizeEvolucao, stateAuth: { UnidadeSelected }, dispatchAuth } = useContext(AuthContext);
+    const {
+        ValidationAutorizeEvolucao,
+        stateAuth: { UnidadeSelected },
+        dispatchAuth,
+    } = useContext(AuthContext);
 
     const { data: unidades } = useUnidades();
 
     const queryClient = useQueryClient();
 
     const SelectedUnidadeApp = async (item: IUnidade) => {
-        if(UnidadeSelected?.cD_ESTABELECIMENTO !== item.cD_ESTABELECIMENTO){
+        if (UnidadeSelected?.cD_ESTABELECIMENTO !== item.cD_ESTABELECIMENTO) {
             setTimeout(() => {
                 dispatchAuth({ type: 'setUnidadeDaSh', payload: item });
             }, 500);
@@ -42,14 +46,13 @@ const DashBoard: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={{ flex: 1 }}>
-                <View
-                    style={styles.selectedUnidade}>
+                <View style={styles.selectedUnidade}>
                     <SelectedDropdown
                         DropDownStyle={styles.DropDownStyle}
                         placeholder={'UNIDADE'}
                         data={unidades}
                         maxHeight={RFPercentage(20)}
-                        ContainerStyle = {styles.ContainerStyle}
+                        ContainerStyle={styles.ContainerStyle}
                         value={UnidadeSelected}
                         onChange={({ value }) => SelectedUnidadeApp(value)}
                     />

@@ -32,6 +32,7 @@ interface Props {
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
+
     const styles = useThemeAwareObject(createStyles);
 
     const loadingRef = useRef<LoadHandles>(null);
@@ -203,8 +204,8 @@ const createStyles = (theme: ThemeContextData) => {
             alignItems: 'center',
         },
         imgLogo: {
-            width: Dimensions.get('screen').width / 5,
-            height: Dimensions.get('screen').width / 5,
+            width: RFPercentage(8),
+            height: RFPercentage(8),
         },
         ContainerStyle: {
             //justifyContent: 'center',

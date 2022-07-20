@@ -1,9 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, ScrollView, Text } from 'react-native';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { View, ScrollView, Text, Platform } from 'react-native';
 import createStyles from './style';
 import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
-import ModalCentralizedOptions from '../../../components/Modais/ModalCentralizedOptions';
+import ModalCentralizedOptions, {
+    ModalHandles as ModalHandlesOptions,
+} from '../../../components/Modais/ModalCentralizedOptions';
 import Loading from '../../../components/Loading/Loading';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
@@ -14,9 +16,15 @@ import TouchableShowHide from '../../../components/TouchableShowHide/TouchableSh
 import EscalaDorComponent from '../components/escalaDorComponent/escalaDorComponent';
 import ToggleSwitch from '../../../components/Switch/ToggleSwitch';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
-import { useSinaisVitaisAll } from '../../../hooks/useSinaisVitais';
+import {
+    ISinaisVitais,
+    useSinaisVitaisAll,
+    useSinaisVitaisHistory,
+} from '../../../hooks/useSinaisVitais';
 import BtnRadius from '../../../components/buttons/BtnRadius';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
+import ModalCentralize from '../../../components/Modais/ModalCentralize';
+import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -33,18 +41,23 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
     const navigation = useNavigation();
-    const {
-        AddSinaisVitais,
-        GetSinaisVitais,
-        UpdateSinaisVitais,
-    } = useContext(SinaisVitaisContext);
+    const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais } =
+        useContext(SinaisVitaisContext);
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
+    const { data: historicoSinaisVitais } = useSinaisVitaisHistory(
+        PessoaFisica.nM_PESSOA_FISICA,
+        3,
+    );
+
+    const refPesoMediaPaciente = useRef<number | null>(null);
+
+    const refModalOptions = useRef<ModalHandlesOptions>(null);
+    const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
+
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
-    const [activeModalOptions, setActiveModalOptions] =
-        useState<boolean>(false);
 
     const [disabledAntropometria, setDisabledAntropometria] = useState(true);
     const [disabledSinaisVitais, setDisabledSinaisVitais] = useState(false);
@@ -111,7 +124,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             qT_PAM: pam <= 0 ? null : pam,
             qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
             qT_PA_SISTOLICA: pas <= 40 ? null : pas,
-            dS_OBSERVACAO:''
+            dS_OBSERVACAO: '',
         });
         setActiveModal(false);
         navigation.goBack();
@@ -125,6 +138,45 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
             return 0;
         }
     };
+
+    const mediaPesoPaciente = (element: ISinaisVitais[]) => {
+        let mediaPeso = 0;
+        element?.map((item) => {
+            if (item?.qT_PESO) {
+                mediaPeso = mediaPeso + item.qT_PESO;
+            }
+        });
+        refPesoMediaPaciente.current = Math.round(mediaPeso / element.length);
+    };
+
+    const VariacaoPercentualPaciente = () => {
+        if (refPesoMediaPaciente.current && Peso) {
+            const percentual = (Peso / refPesoMediaPaciente.current - 1) * 100;
+            if (percentual > 10 || percentual < -10) {
+                refModalCentralizeVariacaoPeso.current?.openModal();
+            } else {
+                refModalOptions.current?.openModal();
+            }
+        } else {
+            refModalOptions.current?.openModal();
+        }
+    };
+
+    const modalOptions = () => {
+        refModalCentralizeVariacaoPeso.current?.closeModal();
+        setTimeout(
+            () => {
+                refModalOptions.current?.openModal();
+            },
+            Platform.OS === 'ios' ? 500 : 0,
+        );
+    };
+
+    useEffect(() => {
+        if (historicoSinaisVitais) {
+            mediaPesoPaciente(historicoSinaisVitais);
+        }
+    }, [historicoSinaisVitais]);
 
     useEffect(() => {
         if (SinaisVitais) {
@@ -179,12 +231,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                         backgroundColor: 'white',
                     }}
                     size={3}
-                    onPress={() => {navigation.navigate('EndSinaisVitais', {
-                        Paciente: SinaisVitais?.nM_PESSOA_FISICA
-                        ? SinaisVitais?.nM_PESSOA_FISICA
-                        : PessoaFisica?.nM_PESSOA_FISICA,
-                        Tipo: 'day'
-                    })}}
+                    onPress={() => {
+                        navigation.navigate('EndSinaisVitais', {
+                            Paciente: SinaisVitais?.nM_PESSOA_FISICA
+                                ? SinaisVitais?.nM_PESSOA_FISICA
+                                : PessoaFisica?.nM_PESSOA_FISICA,
+                            Tipo: 'day',
+                        });
+                    }}
                 />
                 <ModalAlertPaciente
                     codPacient={
@@ -415,7 +469,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                                     labelBtn={
                                         SinaisVitais ? 'Atualizar' : 'Adicionar'
                                     }
-                                    onPress={() => setActiveModalOptions(true)}
+                                    onPress={() => VariacaoPercentualPaciente()}
                                     enabled={ChangerProperty()}
                                 />
                             </View>
@@ -426,9 +480,14 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                 </View>
             </ScrollView>
             <Loading activeModal={activeModal} />
+            <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
+                <CardAlertaPesoPaciente
+                    historicoSinaisVitais={historicoSinaisVitais}
+                    onpress={() => modalOptions()}
+                />
+            </ModalCentralize>
             <ModalCentralizedOptions
-                activeModal={activeModalOptions}
-                setActiveModal={setActiveModalOptions}
+                ref={refModalOptions}
                 message={
                     SinaisVitais
                         ? 'Deseja atualizar os Sinais Vitais ?'

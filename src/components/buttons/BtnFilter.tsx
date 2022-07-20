@@ -10,16 +10,17 @@ import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     name?: string;
     styleText?: TextStyle;
-    onPress(): void;
+    onPress?(): void;
     active?: boolean;
 }
 
 const BtnFilter: React.FC<Props> = ({
     name = 'teste',
-    onPress,
-    active,
+    onPress = () => {
+        ('');
+    },
+    active = true,
 }: Props) => {
-
     const styles = useThemeAwareObject(createStyles);
 
     const styleOpacity = useSharedValue(1);

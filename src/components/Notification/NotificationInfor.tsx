@@ -13,7 +13,10 @@ interface Props {
     iconeTop?: React.FC<SvgProps>;
 }
 
-const NotificationInfor: React.FC<Props> = ({ msn = 'teste', iconeTop = Credencial }: Props) => {
+const NotificationInfor: React.FC<Props> = ({
+    msn = 'teste',
+    iconeTop = Credencial,
+}: Props) => {
     const styles = useThemeAwareObject(createStyles);
     const modalInforRef = useRef<ModalHandles>(null);
     return (
@@ -23,7 +26,11 @@ const NotificationInfor: React.FC<Props> = ({ msn = 'teste', iconeTop = Credenci
                 onPress={() => modalInforRef.current?.openModal()}>
                 <InformationSvg width={20} height={20} fill="red" />
             </TouchableOpacity>
-            <ModalBottomInfor ref={modalInforRef} message={msn} IconeTop={iconeTop} />
+            <ModalBottomInfor
+                ref={modalInforRef}
+                message={msn}
+                IconeTop={iconeTop}
+            />
         </>
     );
 };

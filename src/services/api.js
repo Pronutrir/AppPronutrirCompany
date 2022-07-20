@@ -143,15 +143,18 @@ axios.interceptors.response.use(
 
 api.interceptors.request.use(async (req) => {
     try {
-        const tokenUpdated = await refreshToken(req.baseURL, req.headers['common']);
-        if(tokenUpdated){
+        const tokenUpdated = await refreshToken(
+            req.baseURL,
+            req.headers['common'],
+        );
+        if (tokenUpdated) {
             req.headers.Authorization = `Bearer ${tokenUpdated}`;
         }
     } catch (error) {
         console.log(error);
         return Promise.reject(error);
-    }finally{
-        return req;  
+    } finally {
+        return req;
     }
 });
 
