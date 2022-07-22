@@ -26,7 +26,7 @@ const _data: Array<{ label: string }> = [
 interface Props<T> {
     placeholder?: string;
     data?: T[];
-    value?: string | null; // eslint-disable-line
+    value?: any | null; // eslint-disable-line
     onChange?(item: T): void;
     shimerPlaceHolder?: boolean;
     disable?: boolean;

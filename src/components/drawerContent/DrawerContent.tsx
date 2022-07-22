@@ -27,13 +27,15 @@ import ModalCentralize, {
 import { IUnidade, useUnidades } from '../../hooks/useEstabelecimentos';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import VersionInfo from 'react-native-version-info';
+import { useQueryClient } from 'react-query';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
-
     const styles = useThemeAwareObject(createStyles);
+
+    const queryClient = useQueryClient();
 
     const loadingRef = useRef<LoadHandles>(null);
     const notificationRef = useRef<ModalHandles>(null);
@@ -56,6 +58,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         auth()
             .signOut()
             .then(() => {
+                queryClient.clear();
                 dispatchAuth({ type: 'delUser', payload: '' });
                 loadingRef.current?.openModal();
             })
@@ -87,7 +90,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         setTimeout(() => {
             loadingRef.current?.openModal();
         }, 500);
-        
+
         setTimeout(() => {
             loadingRef.current?.closeModal();
             navigation.closeDrawer();
@@ -101,7 +104,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     }, []);
 
     useEffect(() => {
-        if (UnidadeSelected && PerfilSelected === null ) {
+        if (UnidadeSelected && PerfilSelected === null) {
             modalSelectPerfisRef.current?.openModal();
         }
     }, [UnidadeSelected]);
@@ -140,7 +143,9 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     onPress={() => notificationRef.current?.openNotification()}>
                     <Text style={styles.text3}>Sair</Text>
                 </TouchableOpacity>
-                <Text style={styles.text2}>Versão {VersionInfo.appVersion}</Text>
+                <Text style={styles.text2}>
+                    Versão {VersionInfo.appVersion}
+                </Text>
             </View>
             <NotificationMultOptions
                 ref={notificationRef}

@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
@@ -46,9 +46,11 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
 
     const [acompanhante, setAcompanhante] = useState<IFamiliar | undefined>();
 
-    const { data: listFamiliar, isFetching } = useGetFamiliar(
-        route.params.PessoaFisica.cD_PESSOA_FISICA,
-    );
+    const {
+        data: listFamiliar,
+        isFetching,
+        refetch,
+    } = useGetFamiliar(route.params.PessoaFisica.cD_PESSOA_FISICA);
 
     const { mutateAsync } = useVincularFamiliar();
 
@@ -143,6 +145,10 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
                 break;
         }
     };
+
+    /*  useEffect(() => {
+        refetch();
+    }, []); */
 
     return (
         <View style={styles.container}>

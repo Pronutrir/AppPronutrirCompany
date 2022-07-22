@@ -75,6 +75,7 @@ const useGetFamiliar = (codPfPaciente: string) => {
             return result;
         },
         {
+            /* enabled: false, */
             onError: () => {
                 addAlert({
                     message:
