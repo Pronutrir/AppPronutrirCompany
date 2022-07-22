@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Platform, StyleProp, ViewStyle } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Platform,
+    StyleProp,
+    ViewStyle,
+} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -19,7 +26,7 @@ const _data: Array<{ label: string }> = [
 interface Props<T> {
     placeholder?: string;
     data?: T[];
-    value?: any; // eslint-disable-line
+    value?: string | null; // eslint-disable-line
     onChange?(item: T): void;
     shimerPlaceHolder?: boolean;
     disable?: boolean;
@@ -32,7 +39,7 @@ interface Props<T> {
 const SelectedDropdown = <T extends { label: string }>({
     data,
     onChange,
-    value,
+    value = null,
     placeholder,
     shimerPlaceHolder = false,
     disable = false,
@@ -42,7 +49,7 @@ const SelectedDropdown = <T extends { label: string }>({
     error = false,
 }: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
-    const [_value, setValue] = useState<T | null>(null);
+    const [_value, setValue] = useState(value);
 
     const renderItem = (item: T) => {
         // eslint-disable-line
@@ -61,7 +68,10 @@ const SelectedDropdown = <T extends { label: string }>({
                 disable={disable}
                 search={data && data.length > 20 ? true : false}
                 style={[{ ...styles.dropdown }, DropDownStyle]}
-                placeholderStyle={[styles.placeholderStyle, error && { color: 'red' }]}
+                placeholderStyle={[
+                    styles.placeholderStyle,
+                    error && { color: 'red' },
+                ]}
                 selectedTextStyle={styles.placeholderStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 containerStyle={ContainerStyle}
@@ -152,7 +162,6 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             height: RFPercentage(6),
         },
-
     });
     return styles;
 };

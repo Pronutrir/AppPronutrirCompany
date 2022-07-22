@@ -184,8 +184,10 @@ const EndSinaisVitais: React.FC<Props> = ({
         item: ISinaisVitais;
         index: number;
     }) => (
-        <CardSimples key={index} styleCardContainer={styles.cardStyle}>
-            <Item key={index} item={item} index={index} />
+        <CardSimples
+            key={index.toString()}
+            styleCardContainer={styles.cardStyle}>
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 

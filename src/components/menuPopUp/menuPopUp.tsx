@@ -16,7 +16,7 @@ interface Props {
     BtnOptionsSvg?: React.FC<SvgProps>;
     onpress?(item: string): void;
     styleSvg?: IStyleSvg;
-    widthMenu?: number
+    widthMenu?: number;
 }
 export interface ModalHandlesMenu {
     showMenu(): void;
@@ -34,7 +34,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                 height: RFPercentage(4),
                 fill: '#737373',
             },
-            widthMenu
+            widthMenu,
         }: Props,
         ref,
     ) => {
@@ -73,9 +73,12 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                     onRequestClose={hideMenu}>
                     {btnLabels.map((item) => (
                         <MenuItem
-                            key={item}
+                            key={item.toString()}
                             style={styles.boxItem}
-                            textStyle={{...styles.text, width: widthMenu && widthMenu}}
+                            textStyle={{
+                                ...styles.text,
+                                width: widthMenu && widthMenu,
+                            }}
                             onPress={() => selectedItem(item)}>
                             <Text>{item}</Text>
                         </MenuItem>

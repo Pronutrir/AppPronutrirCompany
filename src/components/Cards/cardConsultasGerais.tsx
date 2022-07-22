@@ -32,11 +32,9 @@ const CardConsultasGerais: React.FC<Props> = ({
     state,
     onPress,
 }: Props) => {
-
     const styles = useThemeAwareObject(createStyles);
 
-    const { SearchPFSinaisVitais } =
-        useContext(SinaisVitaisContext);
+    const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
 
     const LoadingSearch = async () => {
         if (state.continue && state.dataSource.length >= 10) {
@@ -86,7 +84,7 @@ const CardConsultasGerais: React.FC<Props> = ({
     }) => {
         return (
             <TouchableOpacity
-                key={index}
+                key={index.toString()}
                 onPress={() => onPress(item)}
                 style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={styles.box1}>
@@ -122,8 +120,10 @@ const CardConsultasGerais: React.FC<Props> = ({
         item: IPFSinaisVitais;
         index: number;
     }) => (
-        <CardSimples key={index} styleCardContainer={styles.cardStyle}>
-            <Item key={index} item={item} index={index} />
+        <CardSimples
+            key={index.toString()}
+            styleCardContainer={styles.cardStyle}>
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 
@@ -194,14 +194,14 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_PRIMARY,
             fontSize: theme.typography.SIZE.fontysize16,
-            textAlignVertical: 'center'
+            textAlignVertical: 'center',
         },
         text: {
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
-            textAlignVertical: 'center'
+            textAlignVertical: 'center',
         },
         item: {
             flex: 1,
@@ -234,6 +234,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};
 
 export default memo(CardConsultasGerais);

@@ -1,4 +1,4 @@
-import React, { memo, useState, useContext } from 'react';
+import React, { memo, useContext } from 'react';
 import {
     View,
     FlatList,
@@ -17,25 +17,21 @@ import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
-import { QueryObserverResult } from 'react-query';
-import { IAgendaQT } from '../../../../hooks/useAgendaQt';
 interface Props {
     dataSourceQT?: IconsultaQT[] | null | undefined;
-    refetch<T extends Record<keyof T, unknown>>(): Promise<QueryObserverResult<IAgendaQT[], unknown>>;
 }
 
-const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT, refetch }: Props) => {
-
+const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
     const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
-    const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const navigation = useNavigation();
 
-    const Item = ({ item }: { item: IconsultaQT; index: number }) => {
+    const Item = ({ item, index }: { item: IconsultaQT; index: number }) => {
         return (
             <TouchableOpacity
+                key={index.toString()}
                 onPress={() => {
                     if (ValidationAutorizeEnfermagem()) {
                         navigation.navigate('UpdateSinaisVitaisEnfermagem', {
@@ -89,7 +85,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT, refetch }: Pr
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={item.cD_PESSOA_FISICA} item={item} index={index} />
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 
@@ -168,7 +164,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
-
+};
 
 export default memo(CardConsultasQTComponent);

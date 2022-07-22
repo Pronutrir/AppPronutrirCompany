@@ -33,7 +33,10 @@ import SinaisVitaisContext, {
 } from '../../../contexts/sinaisVitaisContext';
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { useSinaisVitaisAll, useSinaisVitaisFilter } from '../../../hooks/useSinaisVitais';
+import {
+    useSinaisVitaisAll,
+    useSinaisVitaisFilter,
+} from '../../../hooks/useSinaisVitais';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import AuthContext from '../../../contexts/auth';
@@ -59,8 +62,9 @@ focusManager.setEventListener((handleFocus) => {
 });
 
 const HistorySinaisVitais: React.FC = () => {
-
-    const { stateAuth: { usertasy } } = useContext(AuthContext);
+    const {
+        stateAuth: { usertasy },
+    } = useContext(AuthContext);
 
     const styles = useThemeAwareObject(createStyles);
     const navigation = useNavigation();
@@ -138,11 +142,17 @@ const HistorySinaisVitais: React.FC = () => {
         }
     };
 
-    const ComplementoEnfermagem = ({ item }: { item: ISinaisVitais }) => {
+    const ComplementoEnfermagem = ({
+        item,
+        index,
+    }: {
+        item: ISinaisVitais;
+        index: number;
+    }) => {
         if (ValidationAutorizeEnfermagem()) {
             return (
                 <>
-                    <View style={styles.item}>
+                    <View key={index.toString()} style={styles.item}>
                         <View style={styles.SubItem}>
                             <Text style={styles.textLabel}>
                                 Pressão arterial sistólica:{' '}
@@ -205,81 +215,89 @@ const HistorySinaisVitais: React.FC = () => {
         }
     };
 
-    const Item = memo<Parms>(({ item }) => {
-        return (
-            <View style={{ flexDirection: 'row' }}>
-                <View style={styles.box1}>
-                    <HistorySvg
-                        width={RFPercentage(5)}
-                        height={RFPercentage(5)}>
-                        Botão
-                    </HistorySvg>
+    const Item = memo<Parms>(
+        ({ item, index }: { item: ISinaisVitais; index: number }) => {
+            return (
+                <View key={index.toString()} style={{ flexDirection: 'row' }}>
+                    <View style={styles.box1}>
+                        <HistorySvg
+                            width={RFPercentage(5)}
+                            height={RFPercentage(5)}>
+                            Botão
+                        </HistorySvg>
+                    </View>
+                    <View style={styles.box2}>
+                        <View style={styles.item}>
+                            <Text style={styles.textLabel}>Paciente: </Text>
+                            <Text
+                                style={
+                                    styles.text
+                                }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
+                        </View>
+                        <View style={styles.item}>
+                            <Text style={styles.textLabel}>Data: </Text>
+                            <Text style={styles.text}>{`${moment(
+                                item.dT_SINAL_VITAL,
+                            ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
+                        </View>
+                        <View style={styles.item}>
+                            <View style={styles.SubItem}>
+                                <Text style={styles.textLabel}>Altura: </Text>
+                                <Text style={styles.text}>{`${
+                                    item?.qT_ALTURA_CM ?? ''
+                                }`}</Text>
+                            </View>
+                            <View style={styles.SubItem}>
+                                <Text style={styles.textLabel}>
+                                    Oxigenação:{' '}
+                                </Text>
+                                <Text style={styles.text}>{`${
+                                    item?.qT_SATURACAO_O2 ?? ''
+                                }`}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.item}>
+                            <View style={styles.SubItem}>
+                                <Text style={styles.textLabel}>Peso: </Text>
+                                <Text style={styles.text}>{`${
+                                    item?.qT_PESO ?? ''
+                                }`}</Text>
+                            </View>
+                            <View style={styles.SubItem}>
+                                <Text style={styles.textLabel}>
+                                    Temperatura:{' '}
+                                </Text>
+                                <Text style={styles.text}>{`${
+                                    item?.qT_TEMP ?? ''
+                                }`}</Text>
+                            </View>
+                        </View>
+                        <ComplementoEnfermagem item={item} index={index} />
+                    </View>
+                    <View style={styles.box3}>
+                        <MenuPopUp
+                            ref={refMenuPopUp}
+                            btnLabels={['Editar', 'Excluir']}
+                            onpress={(label) => {
+                                refMenuPopUp.current?.hideMenu(),
+                                    MenuPopUpOptions(label, item);
+                            }}
+                        />
+                    </View>
                 </View>
-                <View style={styles.box2}>
-                    <View style={styles.item}>
-                        <Text style={styles.textLabel}>Paciente: </Text>
-                        <Text
-                            style={
-                                styles.text
-                            }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
-                    </View>
-                    <View style={styles.item}>
-                        <Text style={styles.textLabel}>Data: </Text>
-                        <Text style={styles.text}>{`${moment(
-                            item.dT_SINAL_VITAL,
-                        ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
-                    </View>
-                    <View style={styles.item}>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Altura: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.qT_ALTURA_CM ?? ''
-                            }`}</Text>
-                        </View>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Oxigenação: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.qT_SATURACAO_O2 ?? ''
-                            }`}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.item}>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Peso: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.qT_PESO ?? ''
-                            }`}</Text>
-                        </View>
-                        <View style={styles.SubItem}>
-                            <Text style={styles.textLabel}>Temperatura: </Text>
-                            <Text style={styles.text}>{`${
-                                item?.qT_TEMP ?? ''
-                            }`}</Text>
-                        </View>
-                    </View>
-                    <ComplementoEnfermagem item={item} />
-                </View>
-                <View style={styles.box3}>
-                    <MenuPopUp
-                        ref={refMenuPopUp}
-                        btnLabels={['Editar', 'Excluir']}
-                        onpress={(label) => {
-                            refMenuPopUp.current?.hideMenu(),
-                                MenuPopUpOptions(label, item);
-                        }}
-                    />
-                </View>
-            </View>
-        );
-    });
+            );
+        },
+    );
 
     Item.displayName = 'Item';
 
     const renderItem = useCallback(
         ({ item, index }: { item: ISinaisVitais; index: number }) => {
             return (
-                <CardSimples styleCardContainer={styles.cardStyle}>
-                    <Item key={item.nM_USUARIO} item={item} index={index} />
+                <CardSimples
+                    key={index.toString()}
+                    styleCardContainer={styles.cardStyle}>
+                    <Item key={index.toString()} item={item} index={index} />
                 </CardSimples>
             );
         },

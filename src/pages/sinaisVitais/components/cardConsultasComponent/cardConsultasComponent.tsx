@@ -13,9 +13,7 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { IConsultas } from '../../../../reducers/ConsultasReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import {
-    IFilterConsultas,
-} from '../../../../contexts/sinaisVitaisContext';
+import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import CheckPVSinaisVitaisComponent from '../checkPVSinaisVitaisComponent/checkPVSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
@@ -45,9 +43,10 @@ const CardConsultasComponent: React.FC<Props> = ({
 
     const { refetch } = useGetAgendaConsultas();
 
-    const Item = ({ item }: { item: IConsultas; index: number }) => {
+    const Item = ({ item, index }: { item: IConsultas; index: number }) => {
         return (
             <TouchableOpacity
+                key={index.toString()}
                 onPress={() =>
                     navigation.navigate('UpdateSinais', { PessoaFisica: item })
                 }
@@ -106,7 +105,7 @@ const CardConsultasComponent: React.FC<Props> = ({
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={item.cD_PESSOA_FISICA} item={item} index={index} />
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 
@@ -138,7 +137,8 @@ const CardConsultasComponent: React.FC<Props> = ({
                                 nM_GUERRA: selectFilter.current.nM_GUERRA
                                     ? selectFilter.current.nM_GUERRA
                                     : null,
-                                dS_ESPECIALIDADE: selectFilter.current.dS_ESPECIALIDADE
+                                dS_ESPECIALIDADE: selectFilter.current
+                                    .dS_ESPECIALIDADE
                                     ? selectFilter.current.dS_ESPECIALIDADE
                                     : null,
                             });

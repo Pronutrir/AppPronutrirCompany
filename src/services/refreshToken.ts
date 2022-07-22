@@ -1,8 +1,12 @@
-import axios, { AxiosRequestHeaders } from "axios";
-import moment from "moment";
-import { decode } from "react-native-pure-jwt";
-import { deleteRefreshToken, getRefreshToken, saveRefreshToken } from "../utils";
-import api from "./api";
+import axios, { AxiosRequestHeaders } from 'axios';
+import moment from 'moment';
+import { decode } from 'react-native-pure-jwt';
+import {
+    deleteRefreshToken,
+    getRefreshToken,
+    saveRefreshToken,
+} from '../utils';
+import api from './api';
 
 interface TokenResponse {
     id: number;
@@ -17,12 +21,16 @@ interface TokenResponse {
     refreshToken: string;
 }
 
-const refreshToken = async (baseURL: string, tokenHeads: AxiosRequestHeaders) => {
+const refreshToken = async (tokenHeads: AxiosRequestHeaders) => {
     const { Authorization } = tokenHeads;
-    if (typeof (Authorization) === 'string') {
-        const { payload } = await decode(Authorization.replace('Bearer ', ''), 'teste', {
-            skipValidation: true // to skip signature and exp verification
-        });
+    if (typeof Authorization === 'string') {
+        const { payload } = await decode(
+            Authorization.replace('Bearer ', ''),
+            'teste',
+            {
+                skipValidation: true, // to skip signature and exp verification
+            },
+        );
 
         type ObjectKey = keyof typeof payload;
 
@@ -32,12 +40,18 @@ const refreshToken = async (baseURL: string, tokenHeads: AxiosRequestHeaders) =>
 
         //console.log(moment.unix(exp).diff(moment(), 'seconds'));
 
-        const expired = moment.unix(exp).diff(moment(), 'seconds') < 60;
+        const expired = moment.unix(exp).diff(moment(), 'seconds') < 100;
 
         const rfToken: string = await getRefreshToken();
 
         if (expired) {
-            const { data: { jwtToken, refreshToken } } = await axios.post<TokenResponse>(`https://servicesapppronutrir.com.br/usershield/api/v1/Auth/refreshtoken`, {token: rfToken});
+            console.log(' ==> token expirado ');
+            const {
+                data: { jwtToken, refreshToken },
+            } = await axios.post<TokenResponse>(
+                `https://servicesapppronutrir.com.br/usershield/api/v1/Auth/refreshtoken`,
+                { token: rfToken },
+            );
             api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
             await deleteRefreshToken();
             await saveRefreshToken(refreshToken);

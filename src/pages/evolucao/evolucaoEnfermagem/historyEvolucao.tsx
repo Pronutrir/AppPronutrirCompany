@@ -189,7 +189,7 @@ const HistoryEvolucao: React.FC = () => {
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={index} item={item} index={index} />
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 

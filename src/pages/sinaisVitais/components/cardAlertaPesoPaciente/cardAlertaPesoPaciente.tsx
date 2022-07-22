@@ -23,8 +23,8 @@ const CardAlertaPesoPaciente = ({ historicoSinaisVitais, onpress }: Props) => {
             <View>
                 {historicoSinaisVitais?.map((item, index) => {
                     return (
-                        <View style={styles.box} key={index}>
-                            <View style={styles.item} key={index}>
+                        <View style={styles.box} key={index.toString()}>
+                            <View style={styles.item} key={index.toString()}>
                                 <Text style={styles.label}>Peso: </Text>
                                 <Text style={styles.text}>{item.qT_PESO}</Text>
                             </View>
