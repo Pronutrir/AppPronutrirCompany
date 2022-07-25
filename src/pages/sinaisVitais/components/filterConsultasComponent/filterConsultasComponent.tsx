@@ -7,7 +7,6 @@ interface Props {
     onpress(item: BtnExames): void;
     selectedFilter: IFilterConsultas;
 }
-
 interface BtnExames {
     name: string;
     prop: string;
