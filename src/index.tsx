@@ -6,7 +6,6 @@ import { AuthProvider } from './contexts/auth';
 import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';
 import NotificationAlert from './components/Notification/NotificationAlert';
 import NotificationCentralized from './components/Notification/NotificationCentralized';
-import OneSignal from 'react-native-onesignal';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './contexts/themeContext';
 import CodePush from 'react-native-code-push';
@@ -52,10 +51,10 @@ const Index: React.FC = () => {
         Text.defaultProps.allowFontScaling = false;
 
         //OneSignal Init Code
-        OneSignal.setLogLevel(6, 0);
+        /* OneSignal.setLogLevel(6, 0);
         OneSignal.setAppId('2c990bbc-f7ab-404f-9b95-ef981885ff18');
         OneSignal.setLogLevel(6, 0);
-        OneSignal.setRequiresUserPrivacyConsent(false);
+        OneSignal.setRequiresUserPrivacyConsent(false); */
         //END OneSignal Init Code
 
         /* OneSignal.setRequiresUserPrivacyConsent(false);
@@ -64,9 +63,9 @@ const Index: React.FC = () => {
         }); */
 
         //Prompt for push on iOS
-        OneSignal.promptForPushNotificationsWithUserResponse((response) => {
+        /* OneSignal.promptForPushNotificationsWithUserResponse((response) => {
             console.log('Prompt response:', response);
-        });
+        }); */
 
         //Method for handling notifications received while app in foreground
         /* OneSignal.setNotificationWillShowInForegroundHandler(

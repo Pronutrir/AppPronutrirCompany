@@ -35,6 +35,6 @@ target 'AppPronutrirCompany' do
   #end
 end
 
-target 'OneSignalNotificationServiceExtension' do
+=begin target 'OneSignalNotificationServiceExtension' do
   pod 'OneSignal', '>= 3.0', '< 4.0'
-end
+end =end
