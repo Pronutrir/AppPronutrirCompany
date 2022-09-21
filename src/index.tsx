@@ -16,13 +16,14 @@ import CodePush from 'react-native-code-push';
 // Create a client
 const queryClient = new QueryClient();
 
-const CodePushOptions = Platform.OS === 'android' ? {
+const CodePushOptions = {
     checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
     mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
     updateDialog: {
-      appendReleaseDescription: true,
-      title: "Uma nova atualização está disponível!"
-  }} : null
+        appendReleaseDescription: true,
+        title: 'Uma nova atualização está disponível!',
+    },
+};
 
 const Index: React.FC = () => {
     /*  async function registerAppWithFCM() {
@@ -106,4 +107,4 @@ const Index: React.FC = () => {
         </NavigationContainer>
     );
 };
-export default Platform.OS === 'android' ? CodePush(CodePushOptions)(Index) : Index;
+export default CodePush(CodePushOptions)(Index);
