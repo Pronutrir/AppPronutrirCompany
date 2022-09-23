@@ -146,10 +146,6 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
         }
     };
 
-    /*  useEffect(() => {
-        refetch();
-    }, []); */
-
     return (
         <View style={styles.container}>
             <View style={styles.box}>

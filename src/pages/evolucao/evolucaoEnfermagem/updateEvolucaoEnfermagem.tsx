@@ -74,6 +74,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 </View>
                 {EvolucaoFilter ? (
                     <RichComponent
+                        disabled={Boolean(Evolucao.dT_LIBERACAO)}
                         shimerPlaceHolder={isFetching}
                         initialContentHTML={EvolucaoFilter.dS_EVOLUCAO}
                         onChanger={(item) => {
@@ -88,7 +89,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                     <ShimmerPlaceHolderText />
                 )}
             </View>
-            {evolucao?.dS_EVOLUCAO && (
+            {Boolean(!Evolucao.dT_LIBERACAO) && (
                 <BtnOptions
                     valueText={'Atualizar'}
                     onPress={() => addUpdateEvolucaoEnfermagem()}

@@ -1,5 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import {
+    StyleSheet,
+    SafeAreaView,
+    View,
+    useWindowDimensions,
+} from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
@@ -17,6 +22,7 @@ import {
 import moment from 'moment';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import AuthContext from '../../../contexts/auth';
+import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -88,10 +94,28 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
-                    <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
+                    <View
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}>
+                        <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
+                        <MenuPopUp
+                            btnLabels={['Histórico']}
+                            onpress={() =>
+                                navigation.navigate('HistoryEvolucao', {
+                                    Filter: {
+                                        codPessoaFisica:
+                                            PessoaFisica.cD_PESSOA_FISICA,
+                                    },
+                                })
+                            }
+                        />
+                    </View>
                     <SelectedNotaText
                         onPressTipoNota={(item) =>
                             setTipoEvolucao(item.cD_TIPO_EVOLUCAO)
@@ -117,7 +141,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 />
             )}
             <Loading ref={refModal} />
-        </SafeAreaView>
+        </View>
     );
 };
 

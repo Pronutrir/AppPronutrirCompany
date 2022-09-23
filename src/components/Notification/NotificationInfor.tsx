@@ -49,19 +49,6 @@ const createStyles = (theme: ThemeContextData) => {
             borderColor: theme.colors.GREENDARK,
             alignItems: 'center',
             justifyContent: 'center',
-            ...Platform.select({
-                ios: {
-                    shadowOffset: {
-                        width: 0,
-                        height: 5,
-                    },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 6,
-                },
-                android: {
-                    elevation: 3,
-                },
-            }),
         },
         text: {
             fontFamily: theme.typography.FONTES.Regular,

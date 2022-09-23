@@ -98,6 +98,7 @@ const createStyles = (theme: ThemeContextData) => {
         container: {
             justifyContent: 'center',
             alignItems: 'center',
+            paddingHorizontal: RFPercentage(1),
         },
         boxItem: {
             marginVertical: RFPercentage(0.5),

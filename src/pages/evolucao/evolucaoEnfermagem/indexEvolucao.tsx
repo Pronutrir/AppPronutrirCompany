@@ -13,7 +13,6 @@ import SearchPessoaFisica from './searchPessoaFisica';
 import HistoryEvolucao from './historyEvolucao';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
-
 interface PagesSinaisVitais {
     Index: number;
     Name: string;
@@ -23,7 +22,6 @@ interface PagesSinaisVitais {
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
 const IndexEvolucao: React.FC = () => {
-
     const styles = useThemeAwareObject(createStyles);
 
     const refFlatlistMenu = useRef<FlatList>(null);
@@ -44,7 +42,10 @@ const IndexEvolucao: React.FC = () => {
         },
     ]);
 
-    const getItemLayout = (data: PagesSinaisVitais[] | null | undefined, index: number) => {
+    const getItemLayout = (
+        data: PagesSinaisVitais[] | null | undefined,
+        index: number,
+    ) => {
         return {
             length: Dimensions.get('screen').width,
             offset: Dimensions.get('screen').width * index,
@@ -99,12 +100,20 @@ const IndexEvolucao: React.FC = () => {
             return <SearchPessoaFisica />;
         }
         if (Name === 'Histórico') {
-            return <HistoryEvolucao />;
+            return (
+                <HistoryEvolucao
+                    route={{
+                        key: '',
+                        name: 'HistoryEvolucao',
+                        params: { Filter: { codMedico: '159969' } },
+                    }}
+                />
+            );
         } else {
             return null;
         }
     };
-    
+
     useEffect(() => {
         selected(0, 'scrollToIndex');
     }, [selected]);
@@ -201,4 +210,3 @@ const createStyles = (theme: ThemeContextData) => {
     });
     return styles;
 };
-

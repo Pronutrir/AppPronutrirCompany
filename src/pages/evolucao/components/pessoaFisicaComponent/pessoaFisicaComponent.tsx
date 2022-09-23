@@ -3,15 +3,15 @@ import React from 'react';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import moment from 'moment';
-interface IPessoaFisica{
+interface IPessoaFisica {
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO: string;
 }
 interface Props {
-    PessoaFisica: IPessoaFisica
+    PessoaFisica: IPessoaFisica;
 }
 
-const PessoaFisicaComponent = ({ PessoaFisica }:Props) => {
+const PessoaFisicaComponent = ({ PessoaFisica }: Props) => {
     const styles = useThemeAwareObject(createStyles);
     return (
         <View>
@@ -53,14 +53,14 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_PRIMARY,
             fontSize: theme.typography.SIZE.fontysize16,
-            textAlignVertical: 'center'
+            textAlignVertical: 'center',
         },
         text: {
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
-            textAlignVertical: 'center'
+            textAlignVertical: 'center',
         },
     });
     return styles;

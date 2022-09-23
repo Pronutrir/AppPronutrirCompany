@@ -29,7 +29,6 @@ export interface ITextDefault {
 export interface IEvolucaoHistoryResponse {
     result: IEvolucaoHistory[];
 }
-
 export interface IEvolucaoFilterHistoryResponse {
     result: IEvolucaoHistory;
 }
@@ -82,6 +81,10 @@ interface IEvolucaoliberacao {
     cD_EVOLUCAO: number;
     nM_USUARIO: string;
 }
+export interface IFilterHistoryEvolucao {
+    codMedico?: string;
+    codPessoaFisica?: string;
+}
 
 const useAddEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
@@ -110,7 +113,10 @@ const useUpdateEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
         (item: IEvolucaoHistory) => {
-            return Api.put(`EvolucaoPaciente/PutEvolucaoPaciente/${item.cD_EVOLUCAO}`, item);
+            return Api.put(
+                `EvolucaoPaciente/PutEvolucaoPaciente/${item.cD_EVOLUCAO}`,
+                item,
+            );
         },
         {
             onSuccess: () => {
@@ -156,23 +162,28 @@ const useDeleteEvoluçaoEnfermagem = () => {
 
 const useNotasClinicas = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
-    return useQuery('tiposNotas', async () => {
-        const {
-            data: { result },
-        } = await Api.get<ItipoNotasResponse>(
-            `TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
-        );
-        return result.map((item) => {
-            return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
-        });
-    },{
-        onError: () => {
-            addAlert({
-                message: 'Error ao consultar notas clinicas tente mais tarde!',
-                status: 'error',
+    return useQuery(
+        'tiposNotas',
+        async () => {
+            const {
+                data: { result },
+            } = await Api.get<ItipoNotasResponse>(
+                `TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
+            );
+            return result.map((item) => {
+                return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
             });
         },
-    });
+        {
+            onError: () => {
+                addAlert({
+                    message:
+                        'Error ao consultar notas clinicas tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
 };
 
 const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
@@ -189,11 +200,12 @@ const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
                 return { label: item.dS_TITULO, value: item };
             });
         },
-        { 
+        {
             enabled: Boolean(cD_TIPO_EVOLUCAO),
             onError: () => {
                 addAlert({
-                    message: 'Error ao consultar textos padrões tente mais tarde!',
+                    message:
+                        'Error ao consultar textos padrões tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -227,25 +239,30 @@ const useEvolucaoTextDefault = (value: number | null) => {
     );
 };
 
-const useHistoryEvolucao = (codMedico: string) => {
+const useHistoryEvolucao = (filter: IFilterHistoryEvolucao) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
-        ['historyEvolucao', codMedico],
+        ['historyEvolucao', filter],
         async () => {
             const {
                 data: { result },
             } = await Api.get<IEvolucaoHistoryResponse>(
-                `EvolucaoPaciente/ListarEvolucaoPaciente?codMedico=${codMedico}`,
+                `EvolucaoPaciente/ListarEvolucaoPaciente?${
+                    filter.codMedico ? `codMedico=${filter.codMedico}` : ''
+                }${
+                    filter.codPessoaFisica
+                        ? `codPessoaFisica=${filter.codPessoaFisica}`
+                        : ''
+                }`,
             );
             return result;
         },
         {
-            //enabled: false,
-            staleTime : 60 * 30000, // 30 minuto
+            enabled: Boolean(filter.codMedico || filter.codPessoaFisica),
+            //staleTime: 60 * 30000, // 30 minuto
             onError: () => {
                 addAlert({
-                    message:
-                        'Error ao listar os evoluções tente mais tarde!',
+                    message: 'Error ao listar os evoluções tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -268,8 +285,7 @@ const useFilterHistoryEvolucao = (idEvolucao: number) => {
         {
             onError: () => {
                 addAlert({
-                    message:
-                        'Error ao listar os evoluções tente mais tarde!',
+                    message: 'Error ao listar os evoluções tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -282,7 +298,8 @@ const useLiberarEvolucao = () => {
     return useMutation(
         (Evolucao: IEvolucaoliberacao) => {
             return Api.put(
-                `EvolucaoPaciente/LiberarEvolucaoPaciente/${Evolucao.cD_EVOLUCAO}`, Evolucao,
+                `EvolucaoPaciente/LiberarEvolucaoPaciente/${Evolucao.cD_EVOLUCAO}`,
+                Evolucao,
             );
         },
         {
