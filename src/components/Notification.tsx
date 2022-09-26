@@ -45,19 +45,49 @@ export default function Notification() {
     const ImgType = () => {
         switch (notification?.status) {
             case 'sucess':
-                return <OkImg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
+                return (
+                    <OkImg
+                        fill={theme.colors.BACKGROUND_1}
+                        width={size}
+                        height={size}
+                    />
+                );
 
             case 'error':
-                return <Cancel fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
+                return (
+                    <Cancel
+                        fill={theme.colors.BACKGROUND_1}
+                        width={size}
+                        height={size}
+                    />
+                );
 
             case 'warning':
-                return <AlertSvg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
+                return (
+                    <AlertSvg
+                        fill={theme.colors.BACKGROUND_1}
+                        width={size}
+                        height={size}
+                    />
+                );
 
             case 'info':
-                return <InfoSvg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
+                return (
+                    <InfoSvg
+                        fill={theme.colors.BACKGROUND_1}
+                        width={size}
+                        height={size}
+                    />
+                );
 
             default:
-                return <OkImg fill={theme.colors.BACKGROUND_1} width={size} height={size} />;
+                return (
+                    <OkImg
+                        fill={theme.colors.BACKGROUND_1}
+                        width={size}
+                        height={size}
+                    />
+                );
         }
     };
 
@@ -166,4 +196,4 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};

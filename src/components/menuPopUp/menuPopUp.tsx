@@ -17,6 +17,7 @@ interface Props {
     onpress?(item: string): void;
     styleSvg?: IStyleSvg;
     widthMenu?: number;
+    btnVisible?: boolean;
 }
 export interface ModalHandlesMenu {
     showMenu(): void;
@@ -34,6 +35,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                 height: RFPercentage(4),
                 fill: '#737373',
             },
+            btnVisible = true,
             widthMenu,
         }: Props,
         ref,
@@ -69,7 +71,11 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                 <Menu
                     style={{ width: widthMenu && widthMenu }}
                     visible={visible}
-                    anchor={<BtnOptionsSvg onPress={showMenu} {...styleSvg} />}
+                    anchor={
+                        btnVisible ? (
+                            <BtnOptionsSvg onPress={showMenu} {...styleSvg} />
+                        ) : null
+                    }
                     onRequestClose={hideMenu}>
                     {btnLabels.map((item) => (
                         <MenuItem

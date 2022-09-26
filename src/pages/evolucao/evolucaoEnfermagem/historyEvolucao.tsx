@@ -5,7 +5,6 @@ import {
     Text,
     View,
     Platform,
-    Pressable,
 } from 'react-native';
 import React, { useContext, useRef, useState } from 'react';
 import {
@@ -34,6 +33,7 @@ import ModalCentralizedOptions, {
 import NotificationInfor from '../../../components/Notification/NotificationInfor';
 import Infomation from '../../../assets/svg/informacoes.svg';
 import { RootStackParamList } from '../../../routes/routeDashboard';
+import PressableRipple from '../../../components/ripple/PressableRipple';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'HistoryEvolucao'>;
 interface Props {
@@ -43,7 +43,7 @@ interface Props {
 const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
-    const refMenuBotom = useRef<ModalHandlesMenu>(null);
+
     const refModal = useRef<LoadHandles>(null);
     const refModalBotom = useRef<ModalHandles>(null);
 
@@ -129,15 +129,18 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
     };
 
     const Item = ({ item }: { item: IEvolucaoHistory; index: number }) => {
+        const refMenuBotom = useRef<ModalHandlesMenu>(null);
         return (
-            <Pressable
-                onPress={() => console.log('onPress')}
-                onLongPress={() => console.log('onLongPress')}
-                style={{ flexDirection: 'row', paddingVertical: 10 }}>
-                <NotificationInfor
-                    msn="Somente estará disponível para edição ou exclusão as evoluções que não estiverem liberadas."
-                    iconeTop={Infomation}
-                />
+            <PressableRipple
+                pressableProps={{
+                    onLongPress: () => refMenuBotom.current?.showMenu(),
+                    onPress: () =>
+                        navigation.navigate('UpdateEvolucaoEnfermagem', {
+                            Evolucao: item,
+                        }),
+                }}
+                childrenStyle={{ flexDirection: 'row' }}
+                style={{ flex: 1 }}>
                 <View style={styles.box1}>
                     <HistorySvg
                         width={RFPercentage(5)}
@@ -159,11 +162,16 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
                             item.dT_EVOLUCAO,
                         ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
                     </View>
+                    <View style={styles.item}>
+                        <Text style={styles.textLabel}>Profissional: </Text>
+                        <Text style={styles.text}>{item.nM_PROFISSIONAL}</Text>
+                    </View>
                 </View>
                 <View style={styles.box3}>
                     <View style={{ alignItems: 'flex-end' }}>
                         <MenuPopUp
                             ref={refMenuBotom}
+                            btnVisible={false}
                             btnLabels={
                                 item.dT_LIBERACAO
                                     ? ['Visualizar']
@@ -179,7 +187,7 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
                         <CheckEvolucaoComponent Item={item.dT_LIBERACAO} />
                     </View>
                 </View>
-            </Pressable>
+            </PressableRipple>
         );
     };
 
@@ -204,21 +212,33 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
     return (
         <View style={styles.container}>
             {data ? (
-                <FlatList
-                    data={data}
-                    renderItem={({ item, index }) =>
-                        renderItem({ item, index })
-                    }
-                    keyExtractor={(item, index) => index.toString()}
-                    refreshing={isFetching}
-                    onRefresh={() => {
-                        refetch();
-                    }}
-                    ListEmptyComponent={renderItemEmpty}
-                    //ListFooterComponent={renderFooter}
-                    //onEndReached={loadMore}
-                    //onEndReachedThreshold={0.5}
-                />
+                <>
+                    <View
+                        style={{
+                            margin: RFPercentage(1),
+                            marginBottom: RFPercentage(2.5),
+                        }}>
+                        <NotificationInfor
+                            msn="Somente estará disponível para edição ou exclusão as evoluções que não estiverem liberadas."
+                            iconeTop={Infomation}
+                        />
+                    </View>
+                    <FlatList
+                        data={data}
+                        renderItem={({ item, index }) =>
+                            renderItem({ item, index })
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                        refreshing={isFetching}
+                        onRefresh={() => {
+                            refetch();
+                        }}
+                        ListEmptyComponent={renderItemEmpty}
+                        //ListFooterComponent={renderFooter}
+                        //onEndReached={loadMore}
+                        //onEndReachedThreshold={0.5}
+                    />
+                </>
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
@@ -254,6 +274,7 @@ const createStyles = (theme: ThemeContextData) => {
             margin: 3,
         },
         box3: {
+            margin: 10,
             justifyContent: 'space-between',
         },
         cardStyle: {
