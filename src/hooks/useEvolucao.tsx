@@ -1,8 +1,11 @@
+import { AxiosResponse } from 'axios';
 import { useContext } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
+import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
 export interface IEvolucao {
+    cD_EVOLUCAO?: number;
     dT_EVOLUCAO?: string;
     iE_TIPO_EVOLUCAO?: number;
     iE_SITUACAO?: string;
@@ -11,6 +14,11 @@ export interface IEvolucao {
     nM_USUARIO?: string;
     cD_PESSOA_FISICA?: string;
     dS_EVOLUCAO?: string;
+}
+export interface IEvolucaoResponse {
+    message: string;
+    result: IEvolucao;
+    statusCode: 200;
 }
 export interface ITextDefaultResponse {
     result: ITextDefault[];
@@ -90,7 +98,10 @@ const useAddEvoluçaoEnfermagem = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useMutation(
         (item: IEvolucao) => {
-            return Api.post(`EvolucaoPaciente/PostEvolucaoPaciente`, item);
+            return Api.post<any, AxiosResponse<IEvolucaoResponse>, IEvolucao>(
+                `EvolucaoPaciente/PostEvolucaoPaciente`,
+                item,
+            );
         },
         {
             onSuccess: () => {
@@ -189,13 +200,14 @@ const useNotasClinicas = () => {
 const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
-        'defaltText',
+        'defaultText',
         async () => {
             const {
                 data: { result },
             } = await Api.get<ITextDefaultResponse>(
                 `TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?codNotasClinicas=${cD_TIPO_EVOLUCAO}&pagina=1&rows=100`,
             );
+
             return result.map((item) => {
                 return { label: item.dS_TITULO, value: item };
             });
@@ -241,9 +253,12 @@ const useEvolucaoTextDefault = (value: number | null) => {
 
 const useHistoryEvolucao = (filter: IFilterHistoryEvolucao) => {
     const { addAlert } = useContext(NotificationGlobalContext);
-    return useQuery(
+    const {
+        stateAuth: { usertasy },
+    } = useContext(AuthContext);
+    return useInfiniteQuery(
         ['historyEvolucao', filter],
-        async () => {
+        async ({ pageParam = 1 }) => {
             const {
                 data: { result },
             } = await Api.get<IEvolucaoHistoryResponse>(
@@ -253,13 +268,29 @@ const useHistoryEvolucao = (filter: IFilterHistoryEvolucao) => {
                     filter.codPessoaFisica
                         ? `codPessoaFisica=${filter.codPessoaFisica}`
                         : ''
-                }`,
+                }&pagina=${pageParam}&rows=8`,
             );
-            return result;
+            return result.filter((item) => {
+                if (
+                    !item.dT_LIBERACAO &&
+                    item.cD_MEDICO !== usertasy.cD_PESSOA_FISICA
+                ) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
         },
         {
             enabled: Boolean(filter.codMedico || filter.codPessoaFisica),
             //staleTime: 60 * 30000, // 30 minuto
+            getNextPageParam: (lastPage, pages) => {
+                if (lastPage?.length < 6) {
+                    return null;
+                } else {
+                    return pages.length + 1;
+                }
+            },
             onError: () => {
                 addAlert({
                     message: 'Error ao listar os evoluções tente mais tarde!',

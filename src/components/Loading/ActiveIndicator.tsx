@@ -3,9 +3,10 @@ import React from 'react';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import useTheme from '../../hooks/useTheme';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 type Props = {
-    active?: boolean
+    active?: boolean;
 };
 
 const ActiveIndicator = ({ active = false }: Props) => {
@@ -17,23 +18,23 @@ const ActiveIndicator = ({ active = false }: Props) => {
     }
     return (
         <View style={styles.loading}>
-            <ActivityIndicator size={'large'} color={theme.colors.GREENPRIMARY} />
+            <ActivityIndicator
+                size={'large'}
+                color={theme.colors.GREENPRIMARY}
+            />
         </View>
     );
 };
 
 export default ActiveIndicator;
 
-const createStyles = (theme: ThemeContextData) => {
+const createStyles = () => {
     const styles = StyleSheet.create({
         loading: {
-            margin: 10,
+            margin: RFPercentage(2),
             width: '100%',
             height: '100%',
-            backgroundColor: theme.colors.BACKGROUND_1,
         },
     });
     return styles;
 };
-
-

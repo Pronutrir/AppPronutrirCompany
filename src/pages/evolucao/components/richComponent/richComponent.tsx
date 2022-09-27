@@ -210,7 +210,7 @@ const RichComponent: React.FC<Props> = ({
                             actions.line,
                             actions.keyboard,
                             //actions.insertImage,
-                            //actions.foreColor,
+                            actions.foreColor,
                             //actions.hiliteColor,
                             /* 'insertEmoji',
                     'insertHTML',

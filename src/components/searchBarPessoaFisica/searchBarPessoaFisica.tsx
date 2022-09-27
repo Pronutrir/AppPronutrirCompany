@@ -41,8 +41,7 @@ interface Props {
     reset?: boolean;
 }
 
-const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }:Props) => {
-    
+const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
     const navigation = useNavigation();
@@ -179,10 +178,10 @@ const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }:Props) => {
     }, []);
 
     useEffect(() => {
-        if(reset){
+        if (reset) {
             Onclean();
         }
-    },[reset])
+    }, [reset]);
 
     return (
         <View style={styles.container}>

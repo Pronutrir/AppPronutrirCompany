@@ -1,13 +1,15 @@
-import { StyleSheet, Dimensions, Platform } from "react-native";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { ThemeContextData } from "../../contexts/themeContext";
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { RFPercentage } from 'react-native-responsive-fontsize';
+import { ThemeContextData } from '../../contexts/themeContext';
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
             width: Dimensions.get('screen').width,
-            padding: RFPercentage(1),
+            paddingHorizontal: RFPercentage(2),
+            paddingVertical: RFPercentage(1),
+            alignItems: 'center',
         },
         SearchBarStyle: {
             width: '95%',
@@ -45,25 +47,25 @@ const createStyles = (theme: ThemeContextData) => {
                 ios: {
                     shadowOffset: {
                         width: 0,
-                        height: 5
+                        height: 5,
                     },
                     shadowOpacity: 0.2,
                     shadowRadius: 6,
                 },
                 android: {
                     elevation: 3,
-                }
-            })
+                },
+            }),
         },
         loading: {
-            width: "100%",
-            height: "100%",
-            backgroundColor: '#fff'
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#fff',
         },
         item: {
             flex: 1,
             marginBottom: 10,
-            paddingVertical: 10
+            paddingVertical: 10,
         },
         descricao: {
             fontFamily: theme.typography.FONTES.Bold,
@@ -81,7 +83,5 @@ const createStyles = (theme: ThemeContextData) => {
     });
     return styles;
 };
-
-
 
 export default createStyles;

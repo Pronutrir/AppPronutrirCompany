@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useImperativeHandle } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Menu, MenuItem } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -69,11 +69,19 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
         return (
             <View style={styles.container}>
                 <Menu
-                    style={{ width: widthMenu && widthMenu }}
+                    style={{
+                        width: widthMenu && widthMenu,
+                    }}
                     visible={visible}
                     anchor={
                         btnVisible ? (
-                            <BtnOptionsSvg onPress={showMenu} {...styleSvg} />
+                            <TouchableOpacity
+                                onPress={showMenu}
+                                style={{
+                                    padding: RFPercentage(0.8),
+                                }}>
+                                <BtnOptionsSvg {...styleSvg} />
+                            </TouchableOpacity>
                         ) : null
                     }
                     onRequestClose={hideMenu}>

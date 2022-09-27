@@ -15,6 +15,9 @@ import {
 } from '../../../hooks/useEvolucao';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import ShimmerPlaceHolderText from '../../../components/shimmerPlaceHolder/shimerPlaceHolderText';
+import ModalCentralizedOptions, {
+    ModalHandles as ModalHandlesCentralizedOptions,
+} from '../../../components/Modais/ModalCentralizedOptions';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -31,6 +34,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 }: Props) => {
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
+    const refModalCentralizedOptions =
+        useRef<ModalHandlesCentralizedOptions>(null);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
@@ -45,13 +50,16 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         useUpdateEvoluçaoEnfermagem();
 
     const addUpdateEvolucaoEnfermagem = async () => {
-        refModal.current?.openModal();
+        //refModal.current?.openModal();
         try {
-            await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
-            refModal.current?.closeModal();
-            navigation.goBack();
+            setTimeout(() => {
+                refModalCentralizedOptions.current?.openModal();
+            }, 5000);
+            //await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
+            //refModal.current?.closeModal();
+            //navigation.goBack();
         } catch (error) {
-            refModal.current?.closeModal();
+            //refModal.current?.closeModal();
         }
     };
 
@@ -96,6 +104,11 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 />
             )}
             <Loading ref={refModal} />
+            <ModalCentralizedOptions
+                ref={refModalCentralizedOptions}
+                message="Deseja liberar esta evolução ?"
+                onpress={() => console.log()}
+            />
         </SafeAreaView>
     );
 };

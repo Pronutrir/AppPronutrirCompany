@@ -67,7 +67,12 @@ const SelectedDropdown = <T extends { label: string }>({
             <Dropdown
                 disable={disable}
                 search={data && data.length > 20 ? true : false}
-                style={[{ ...styles.dropdown }, DropDownStyle]}
+                style={[
+                    disable
+                        ? { ...styles.dropdownDisable }
+                        : { ...styles.dropdown },
+                    DropDownStyle,
+                ]}
                 placeholderStyle={[
                     styles.placeholderStyle,
                     error && { color: 'red' },
@@ -104,10 +109,10 @@ const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         dropdown: {
             width: '100%',
+            backgroundColor: theme.colors.BACKGROUND_1,
             height: RFPercentage(6),
             margin: RFPercentage(2),
             alignSelf: 'center',
-            backgroundColor: 'white',
             borderRadius: 10,
             ...Platform.select({
                 ios: {
@@ -122,6 +127,28 @@ const createStyles = (theme: ThemeContextData) => {
                     elevation: 3,
                 },
             }),
+        },
+        dropdownDisable: {
+            width: '100%',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            height: RFPercentage(6),
+            margin: RFPercentage(2),
+            alignSelf: 'center',
+            borderRadius: 10,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
+            opacity: 0.5,
         },
         icon: {
             marginRight: 5,

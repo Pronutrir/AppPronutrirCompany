@@ -13,6 +13,8 @@ import SearchPessoaFisica from './searchPessoaFisica';
 import HistoryEvolucao from './historyEvolucao';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../routes/routeDashboard';
 interface PagesSinaisVitais {
     Index: number;
     Name: string;
@@ -21,7 +23,16 @@ interface PagesSinaisVitais {
 
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
-const IndexEvolucao: React.FC = () => {
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'IndexEvolucao'>;
+interface Props {
+    route: ProfileScreenRouteProp;
+}
+
+const IndexEvolucao: React.FC<Props> = ({
+    route: {
+        params: { Index },
+    },
+}: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
     const refFlatlistMenu = useRef<FlatList>(null);
@@ -115,8 +126,8 @@ const IndexEvolucao: React.FC = () => {
     };
 
     useEffect(() => {
-        selected(0, 'scrollToIndex');
-    }, [selected]);
+        selected(Index, 'scrollToIndex');
+    }, [Index]);
 
     return (
         <View style={styles.container}>

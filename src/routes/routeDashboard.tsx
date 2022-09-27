@@ -74,7 +74,9 @@ export type RootStackParamList = {
     HistoryEvolucao: {
         Filter: IFilterHistoryEvolucao;
     };
-    IndexEvolucao: undefined;
+    IndexEvolucao: {
+        Index: number;
+    };
     UpdateEvolucaoEnfermagem: {
         Evolucao: IEvolucaoHistory;
     };
@@ -205,6 +207,7 @@ const InitialStackNavigator = () => {
             />
             <Stack.Screen
                 name="IndexEvolucao"
+                initialParams={{ Index: 0 }}
                 component={IndexEvolucao}
                 options={{ title: 'Evolucão' }}
             />

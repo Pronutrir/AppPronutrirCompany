@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import SelectedDropdown from '../../../../components/selectedDropdown/SelectedDropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import { ItipoNotas, ITextDefault, useEvolucaoTextDefaultReduzidos, useNotasClinicas } from '../../../../hooks/useEvolucao';
+import {
+    ItipoNotas,
+    ITextDefault,
+    useEvolucaoTextDefaultReduzidos,
+    useNotasClinicas,
+} from '../../../../hooks/useEvolucao';
 import { QueryCache } from 'react-query';
+import { boolean } from 'yup';
 interface Props {
     onPressTipoNota(value: ItipoNotas): void;
     onPressTextPadrao(value: ITextDefault): void;
@@ -13,21 +19,25 @@ const SelectedNotaText: React.FC<Props> = ({
     onPressTipoNota,
     onPressTextPadrao,
 }: Props) => {
-
     const queryCache = new QueryCache();
 
     const [tipoNotasclinica, setTipoNotasClinica] = useState<string>();
 
-    const { data: listTipoNotas, isFetching: isFetchingNotas } = useNotasClinicas();
+    const { data: listTipoNotas, isFetching: isFetchingNotas } =
+        useNotasClinicas();
 
-    const { data: listTextDefault, isFetching: isFetchingText, refetch } = useEvolucaoTextDefaultReduzidos(tipoNotasclinica);
+    const {
+        data: listTextDefault,
+        isFetching: isFetchingText,
+        refetch,
+    } = useEvolucaoTextDefaultReduzidos(tipoNotasclinica);
 
     const selectNotasClinicas = (itemEvolucao: ItipoNotas) => {
-        if(itemEvolucao.cD_TIPO_EVOLUCAO){
+        if (itemEvolucao.cD_TIPO_EVOLUCAO) {
             setTipoNotasClinica(itemEvolucao.cD_TIPO_EVOLUCAO);
-            onPressTipoNota(itemEvolucao)
+            onPressTipoNota(itemEvolucao);
         }
-    }
+    };
 
     useEffect(() => {
         refetch();
@@ -45,8 +55,11 @@ const SelectedNotaText: React.FC<Props> = ({
                 <SelectedDropdown
                     placeholder="Tipo de nota"
                     data={listTipoNotas}
-                    onChange={({ itemEvolucao }) => selectNotasClinicas(itemEvolucao)}
+                    onChange={({ itemEvolucao }) =>
+                        selectNotasClinicas(itemEvolucao)
+                    }
                     shimerPlaceHolder={isFetchingNotas}
+                    disable={false}
                 />
             </View>
             <View style={styles.box}>
@@ -55,13 +68,14 @@ const SelectedNotaText: React.FC<Props> = ({
                     data={listTextDefault}
                     onChange={({ value }) => onPressTextPadrao(value)}
                     shimerPlaceHolder={isFetchingText}
+                    disable={listTextDefault?.length === 0}
                 />
             </View>
         </View>
     );
 };
 
-export default SelectedNotaText;
+export default memo(SelectedNotaText);
 
 const styles = StyleSheet.create({
     container: {

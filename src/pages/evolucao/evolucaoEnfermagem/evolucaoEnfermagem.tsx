@@ -1,10 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-    StyleSheet,
-    SafeAreaView,
-    View,
-    useWindowDimensions,
-} from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
@@ -18,11 +13,15 @@ import {
     useEvolucaoTextDefault,
     useAddEvoluçaoEnfermagem,
     IEvolucao,
+    useLiberarEvolucao,
 } from '../../../hooks/useEvolucao';
 import moment from 'moment';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import AuthContext from '../../../contexts/auth';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
+import ModalCentralizedOptions, {
+    ModalHandles as ModalHandlesCentralizedOptions,
+} from '../../../components/Modais/ModalCentralizedOptions';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -44,11 +43,15 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     } = useContext(AuthContext);
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
+    const refModalCentralizedOptions =
+        useRef<ModalHandlesCentralizedOptions>(null);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
 
     const [evolucao, setEvolucao] = useState<IEvolucao | null>();
+
+    const evolucaoLiberacao = useRef<IEvolucao>();
 
     const [defaultText, setDefaultText] = useState<number | null>(null);
 
@@ -57,6 +60,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
         useAddEvoluçaoEnfermagem();
+
+    const { mutateAsync: mutateAsyncLiberarEvolucao } = useLiberarEvolucao();
 
     const setTipoEvolucao = (item: string) => {
         if (item) {
@@ -76,14 +81,44 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     const addEvolucaoEnfermagem = async (evolucao: IEvolucao) => {
         try {
             refModal.current?.openModal();
-            await mutateAsyncEvoluçaoEnfermagem(evolucao);
+            const { result } = (await mutateAsyncEvoluçaoEnfermagem(evolucao))
+                .data;
+            evolucaoLiberacao.current = result;
             refModal.current?.closeModal();
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'RouteBottom' }, { name: 'IndexEvolucao' }],
-            });
+            setTimeout(
+                () => {
+                    refModalCentralizedOptions.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
         } catch (error) {
             refModal.current?.closeModal();
+        }
+    };
+
+    const onLiberarEvolucao = async () => {
+        if (
+            evolucaoLiberacao.current &&
+            evolucaoLiberacao.current.cD_EVOLUCAO &&
+            evolucaoLiberacao.current.nM_USUARIO
+        ) {
+            setTimeout(
+                () => {
+                    refModal.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
+            await mutateAsyncLiberarEvolucao({
+                cD_EVOLUCAO: evolucaoLiberacao.current.cD_EVOLUCAO,
+                nM_USUARIO: evolucaoLiberacao.current.nM_USUARIO,
+            });
+            navigation.navigate({
+                name: 'IndexEvolucao',
+                params: { Index: 1 },
+            });
+            refModal.current?.closeModal();
+        } else {
+            console.log('teste');
         }
     };
 
@@ -141,6 +176,11 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 />
             )}
             <Loading ref={refModal} />
+            <ModalCentralizedOptions
+                ref={refModalCentralizedOptions}
+                message="Deseja liberar esta evolução ?"
+                onpress={() => onLiberarEvolucao()}
+            />
         </View>
     );
 };

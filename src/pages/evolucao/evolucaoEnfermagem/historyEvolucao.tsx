@@ -34,6 +34,7 @@ import NotificationInfor from '../../../components/Notification/NotificationInfo
 import Infomation from '../../../assets/svg/informacoes.svg';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import PressableRipple from '../../../components/ripple/PressableRipple';
+import ActiveIndicator from '../../../components/Loading/ActiveIndicator';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'HistoryEvolucao'>;
 interface Props {
@@ -55,7 +56,14 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
         },
     } = useContext(AuthContext);
 
-    const { data, refetch, isFetching } = useHistoryEvolucao({
+    const {
+        data,
+        refetch,
+        isFetching,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useHistoryEvolucao({
         codPessoaFisica: route?.params.Filter.codPessoaFisica,
         codMedico: route?.params.Filter.codMedico,
     });
@@ -128,12 +136,21 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
         }
     };
 
+    const activeMenuPopUp = (ref: React.RefObject<ModalHandlesMenu>) => {
+        setTimeout(
+            () => {
+                ref.current?.showMenu();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+        );
+    };
+
     const Item = ({ item }: { item: IEvolucaoHistory; index: number }) => {
         const refMenuBotom = useRef<ModalHandlesMenu>(null);
         return (
             <PressableRipple
                 pressableProps={{
-                    onLongPress: () => refMenuBotom.current?.showMenu(),
+                    onLongPress: () => activeMenuPopUp(refMenuBotom),
                     onPress: () =>
                         navigation.navigate('UpdateEvolucaoEnfermagem', {
                             Evolucao: item,
@@ -191,6 +208,12 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
         );
     };
 
+    const loadMore = () => {
+        if (hasNextPage) {
+            fetchNextPage();
+        }
+    };
+
     const renderItem = ({
         item,
         index,
@@ -209,6 +232,10 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
         </CardSimples>
     );
 
+    const renderFooter = () => {
+        return <ActiveIndicator active={isFetchingNextPage} />;
+    };
+
     return (
         <View style={styles.container}>
             {data ? (
@@ -224,7 +251,7 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
                         />
                     </View>
                     <FlatList
-                        data={data}
+                        data={data?.pages.map((page) => page).flat()}
                         renderItem={({ item, index }) =>
                             renderItem({ item, index })
                         }
@@ -234,9 +261,9 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
                             refetch();
                         }}
                         ListEmptyComponent={renderItemEmpty}
-                        //ListFooterComponent={renderFooter}
-                        //onEndReached={loadMore}
-                        //onEndReachedThreshold={0.5}
+                        ListFooterComponent={renderFooter}
+                        onEndReached={loadMore}
+                        onEndReachedThreshold={0.5}
                     />
                 </>
             ) : (
