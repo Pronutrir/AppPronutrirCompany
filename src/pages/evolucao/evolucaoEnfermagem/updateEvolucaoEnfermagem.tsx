@@ -50,16 +50,16 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         useUpdateEvoluçaoEnfermagem();
 
     const addUpdateEvolucaoEnfermagem = async () => {
-        //refModal.current?.openModal();
+        refModal.current?.openModal();
         try {
             setTimeout(() => {
                 refModalCentralizedOptions.current?.openModal();
             }, 5000);
-            //await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
-            //refModal.current?.closeModal();
-            //navigation.goBack();
+            await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
+            refModal.current?.closeModal();
+            navigation.goBack();
         } catch (error) {
-            //refModal.current?.closeModal();
+            refModal.current?.closeModal();
         }
     };
 

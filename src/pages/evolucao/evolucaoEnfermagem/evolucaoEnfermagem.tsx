@@ -22,6 +22,7 @@ import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import ModalCentralizedOptions, {
     ModalHandles as ModalHandlesCentralizedOptions,
 } from '../../../components/Modais/ModalCentralizedOptions';
+import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -122,6 +123,25 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         }
     };
 
+    const MenuPopUpOptions = async (itemSelected: string) => {
+        switch (itemSelected) {
+            case 'Histórico':
+                navigation.navigate('HistoryEvolucao', {
+                    Filter: {
+                        codPessoaFisica: PessoaFisica.cD_PESSOA_FISICA,
+                    },
+                });
+                break;
+            case 'Sinais vitais':
+                navigation.navigate('UpdateSinais', {
+                    PessoaFisica: PessoaFisica,
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
     useEffect(() => {
         return () => {
             queryCache.clear();
@@ -132,6 +152,9 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
         <View style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
+                    <ModalAlertPaciente
+                        codPacient={PessoaFisica?.cD_PESSOA_FISICA}
+                    />
                     <View
                         style={{
                             width: '100%',
@@ -140,15 +163,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                         }}>
                         <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
                         <MenuPopUp
-                            btnLabels={['Histórico']}
-                            onpress={() =>
-                                navigation.navigate('HistoryEvolucao', {
-                                    Filter: {
-                                        codPessoaFisica:
-                                            PessoaFisica.cD_PESSOA_FISICA,
-                                    },
-                                })
-                            }
+                            btnLabels={['Histórico', 'Sinais vitais']}
+                            onpress={(item) => MenuPopUpOptions(item)}
                         />
                     </View>
                     <SelectedNotaText
