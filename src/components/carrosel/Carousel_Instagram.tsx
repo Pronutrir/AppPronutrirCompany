@@ -60,15 +60,23 @@ const MyCarousel: React.FC = () => {
         Api.get<IInstagram[]>('Social/GetFeedsInst')
             .then((response) => {
                 const { data } = response;
-                if (data) {
-                    const result = data.filter((item) => filterPostagens(item, '#pronutrirparceiros'));
-                    if(result.length !== 0){
+
+                const mediaType_img = data.filter(
+                    (item) => item.media_type !== 'VIDEO',
+                );
+
+                if (mediaType_img) {
+                    const result = mediaType_img.filter((item) =>
+                        filterPostagens(item, '#pronutrirparceiros'),
+                    );
+                    if (result.length !== 0) {
                         setPostagensInsta(result);
-                    }else{
-                        const result2 = data.filter((item) => filterPostagens(item, '#pronutrironcologia'));
+                    } else {
+                        const result2 = mediaType_img.filter((item) =>
+                            filterPostagens(item, '#pronutrironcologia'),
+                        );
                         setPostagensInsta(result2);
                     }
-                    
                 }
             })
             .catch(() => {
