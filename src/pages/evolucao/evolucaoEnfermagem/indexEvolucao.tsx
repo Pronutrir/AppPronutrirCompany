@@ -7,7 +7,13 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import SearchPessoaFisica from './searchPessoaFisica';
 import HistoryEvolucao from './historyEvolucao';
@@ -15,6 +21,7 @@ import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
+import AuthContext from '../../../contexts/auth';
 interface PagesSinaisVitais {
     Index: number;
     Name: string;
@@ -34,6 +41,10 @@ const IndexEvolucao: React.FC<Props> = ({
     },
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
+
+    const {
+        stateAuth: { usertasy },
+    } = useContext(AuthContext);
 
     const refFlatlistMenu = useRef<FlatList>(null);
     const refFlatlist = useRef<FlatList>(null);
@@ -116,7 +127,9 @@ const IndexEvolucao: React.FC<Props> = ({
                     route={{
                         key: '',
                         name: 'HistoryEvolucao',
-                        params: { Filter: { codMedico: '159969' } },
+                        params: {
+                            Filter: { codMedico: usertasy.cD_PESSOA_FISICA },
+                        },
                     }}
                 />
             );
