@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Routes from './routes/index';
-import { Platform, Text } from 'react-native';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
 import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';

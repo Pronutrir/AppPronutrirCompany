@@ -12,7 +12,7 @@ const RouteDrawer: React.FC = () => {
             drawerContent={({ navigation }) => (
                 <DrawerContent navigation={navigation} />
             )}
-            drawerStyle={{ 
+            drawerStyle={{
                 flex: 1,
                 width: RFPercentage(40),
             }}>

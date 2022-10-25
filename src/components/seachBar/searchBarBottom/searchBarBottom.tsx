@@ -1,5 +1,5 @@
 import React, { useCallback, useImperativeHandle, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SearchBar from 'react-native-dynamic-search-bar';
 import createStyles from './style';
@@ -58,7 +58,7 @@ const SearchBarBottom = React.forwardRef<ModalHandles, Props>(
                 <View
                     style={{
                         position: 'absolute',
-                        bottom: keyboardHeight,
+                        bottom: Platform.OS === 'ios' ? keyboardHeight : 0,
                     }}>
                     <View>
                         <SearchBar
