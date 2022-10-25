@@ -42,7 +42,9 @@ interface AuthContextData {
     InativarSinaisVitais: (
         sinaisUpdate: IInativarSinaisVitais,
     ) => Promise<void>;
-    useAlerts: (codPacient: string) => UseQueryResult<IAlertaPaciente[], unknown>;
+    useAlerts: (
+        codPacient: string,
+    ) => UseQueryResult<IAlertaPaciente[], unknown>;
 }
 export interface IFilterConsultas {
     codMedico?: number | null;
@@ -52,6 +54,7 @@ export interface IFilterConsultas {
     dataInicio?: string | null;
     dataFinal?: string | null;
     pagina?: number | null;
+    filterWord?: string | null;
 }
 export interface IFilterPF {
     queryNome?: string | null;
@@ -156,10 +159,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
     const axiosSourcePFSinaisVitais = useRef<CancelTokenSource | null>(null);
 
-    const [consultasQT] = useReducer(
-        ConsultasQTReducer,
-        initialStateQT,
-    );
+    const [consultasQT] = useReducer(ConsultasQTReducer, initialStateQT);
 
     const [stateConsultas, dispatchConsultas] = useReducer(
         ConsultasReducer,
@@ -396,14 +396,18 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     );
 
     const useAlerts = (codPacient: string) => {
-        return useQuery('AlertaPaciente', async () => {
-            const {
-                data: { result },
-            } = await Api.get<IAlertPacientResponse>(
-                `AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=${codPacient}`,
-            );
-            return result.filter(item => item.iE_ALERTA === "S");
-        }, {  });
+        return useQuery(
+            'AlertaPaciente',
+            async () => {
+                const {
+                    data: { result },
+                } = await Api.get<IAlertPacientResponse>(
+                    `AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=${codPacient}`,
+                );
+                return result.filter((item) => item.iE_ALERTA === 'S');
+            },
+            {},
+        );
     };
 
     const ValidationAutorizeEnfermagem = useCallback(() => {

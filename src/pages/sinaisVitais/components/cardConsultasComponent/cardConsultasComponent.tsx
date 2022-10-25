@@ -50,7 +50,10 @@ const CardConsultasComponent: React.FC<Props> = ({
                 onPress={() =>
                     navigation.navigate('UpdateSinais', { PessoaFisica: item })
                 }
-                style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                style={{
+                    flexDirection: 'row',
+                    paddingVertical: RFPercentage(1),
+                }}>
                 <View style={styles.box1}>
                     <CheckPVSinaisVitaisComponent Item={item.counT_SVMP} />
                     <HistorySvg

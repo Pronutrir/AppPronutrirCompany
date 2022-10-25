@@ -34,7 +34,7 @@ const RouteBottom: React.FC = () => {
             tabBarOptions={{
                 activeTintColor: theme.colors.GREENPRIMARY,
                 labelPosition: 'below-icon',
-                style: { height: RFPercentage(7) },
+                /* style: { height: RFPercentage(7) }, */
             }}
             screenOptions={({ route }) => ({
                 tabBarLabel: ({ color }) => {
@@ -42,7 +42,7 @@ const RouteBottom: React.FC = () => {
                         <Text
                             style={{
                                 color: color,
-                                paddingBottom: 5,
+                                /* paddingBottom: 5, */
                                 fontSize: theme.typography.SIZE.fontysize12,
                                 fontFamily: theme.typography.FONTES.Regular,
                                 letterSpacing: theme.typography.LETTERSPACING.S,
@@ -52,7 +52,7 @@ const RouteBottom: React.FC = () => {
                     );
                 },
                 tabBarIcon: ({ color }) => {
-                    const size = RFPercentage(3);
+                    const size = RFPercentage(2);
                     switch (route.name) {
                         case 'Inicio':
                             return (
