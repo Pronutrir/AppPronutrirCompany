@@ -2,10 +2,9 @@ import React, { memo } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import BtnFilter from '../../../../components/buttons/BtnFilter';
-import { IFilterConsultas } from '../../../../contexts/sinaisVitaisContext';
 interface Props {
     onpress(item: BtnExames): void;
-    selectedFilter: IFilterConsultas;
+    selectedFilter: string;
 }
 interface BtnExames {
     name: string;
@@ -22,19 +21,6 @@ const filterConsultasComponent: React.FC<Props> = ({
         { name: 'Paciente', prop: 'paciente' },
     ];
 
-    const activeBtn = (item: string) => {
-        if (selectedFilter?.dS_ESPECIALIDADE && item === 'Especialidade') {
-            return true;
-        }
-        if (selectedFilter?.nM_GUERRA && item === 'Médico') {
-            return true;
-        }
-        if (selectedFilter?.filterWord && item === 'Paciente') {
-            return true;
-        }
-        return false;
-    };
-
     return (
         <View style={styles.container}>
             {ItensButton.map((element) => {
@@ -45,7 +31,7 @@ const filterConsultasComponent: React.FC<Props> = ({
                         onPress={() => {
                             onpress(element);
                         }}
-                        active={activeBtn(element.name)}
+                        active={element.name === selectedFilter}
                     />
                 );
             })}

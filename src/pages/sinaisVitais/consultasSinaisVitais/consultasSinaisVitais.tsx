@@ -29,6 +29,7 @@ const ConsultasSinaisVitais: React.FC = () => {
     const [activeModal, setActiveModal] = useState(false);
 
     const [wordFiter, setWordFilter] = useState('');
+    const [filterSelected, setFilterSelected] = useState('');
 
     const selectFilter = useRef<IFilterConsultas>({
         codEspecialidade: null,
@@ -39,6 +40,7 @@ const ConsultasSinaisVitais: React.FC = () => {
         nM_GUERRA: null,
         dS_ESPECIALIDADE: null,
     });
+
     const [listConsultas, setListConsutas] = useState<
         IAgendaConsulta[] | null | undefined
     >(listAgendasConsultas?.result);
@@ -71,14 +73,12 @@ const ConsultasSinaisVitais: React.FC = () => {
                 selectFilter.current = {
                     ...selectFilter.current,
                     dS_ESPECIALIDADE: null,
-                    filterWord: null,
                 };
             }
             if (item.dS_ESPECIALIDADE) {
                 selectFilter.current = {
                     ...selectFilter.current,
                     nM_GUERRA: null,
-                    filterWord: null,
                 };
             }
             setActiveModal(false);
@@ -97,6 +97,7 @@ const ConsultasSinaisVitais: React.FC = () => {
     };
 
     const selectedFilter = (value: string) => {
+        setFilterSelected(value);
         if (value === 'Paciente') {
             refSearchBarBottom.current?.openInput();
         } else {
@@ -135,24 +136,13 @@ const ConsultasSinaisVitais: React.FC = () => {
         const filterStateConsultas = stateConsultas?.result.filter((item) =>
             item.nM_PACIENTE.toLowerCase().includes(word.toLowerCase()),
         );
-        selectFilter.current = {
-            ...selectFilter.current,
-            dS_ESPECIALIDADE: null,
-            nM_GUERRA: null,
-            filterWord: 'Paciente',
-        };
         setListConsutas(filterStateConsultas);
         setWordFilter(word);
     };
 
     const clear = (word: string) => {
         if (!word) {
-            selectFilter.current = {
-                ...selectFilter.current,
-                dS_ESPECIALIDADE: null,
-                nM_GUERRA: null,
-                filterWord: null,
-            };
+            setFilterSelected('');
             refSearchBarBottom.current?.closeInput();
         } else {
             refSearchBarBottom.current?.closeInput();
@@ -167,7 +157,7 @@ const ConsultasSinaisVitais: React.FC = () => {
         <View style={styles.container}>
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
-                selectedFilter={selectFilter.current}
+                selectedFilter={filterSelected}
             />
             <CardConsultasComponent
                 dataSourceConsultas={listConsultas}
