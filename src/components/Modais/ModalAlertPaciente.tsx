@@ -10,7 +10,6 @@ import React, {
 import {
     View,
     StyleSheet,
-    SafeAreaView,
     Modal,
     ViewStyle,
     TouchableOpacity,
@@ -305,8 +304,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
                                 }
                                 return true;
                             }}>
-                            <SafeAreaView
-                                style={[styles.modalView, styleModal]}>
+                            <View style={[styles.modalView, styleModal]}>
                                 <Text style={styles.Titulo}>
                                     Alergias/Reações adversas
                                 </Text>
@@ -319,7 +317,7 @@ const ModalAlertPaciente = React.forwardRef<ModalHandles, Props>(
                                         }
                                     />
                                 )}
-                            </SafeAreaView>
+                            </View>
                             <TouchableOpacity
                                 style={styles.btnCloser}
                                 onPress={() => closeModal()}>

@@ -7,7 +7,6 @@ import React, {
 import {
     View,
     StyleSheet,
-    SafeAreaView,
     Modal,
     ViewStyle,
     TouchableOpacity,
@@ -40,7 +39,6 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
         { animationType = 'none', children, style, activeModal = false }: Props,
         ref,
     ) => {
-
         const styles = useThemeAwareObject(createStyles);
 
         const _view = useRef<any>(null);
@@ -98,11 +96,10 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
                             }
                             return true;
                         }}>
-                        <SafeAreaView
-                            style={[styles.modalView, style && { ...style }]}>
+                        <View style={[styles.modalView, style && { ...style }]}>
                             {children}
-                        </SafeAreaView>
-                        <SafeAreaView>
+                        </View>
+                        <View>
                             <TouchableOpacity
                                 onPress={() => closeModal()}
                                 style={[styles.modalView, styles.btnCloser]}>
@@ -110,7 +107,7 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
                                     Fechar
                                 </Text>
                             </TouchableOpacity>
-                        </SafeAreaView>
+                        </View>
                     </Animated.View>
                 </Modal>
             </View>
@@ -118,7 +115,7 @@ const ModalBottom = React.forwardRef<ModalHandles, Props>(
     },
 );
 
-ModalBottom.displayName = "ModalBottom";
+ModalBottom.displayName = 'ModalBottom';
 
 export default ModalBottom;
 

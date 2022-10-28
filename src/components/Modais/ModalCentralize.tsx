@@ -4,14 +4,7 @@ import React, {
     useCallback,
     useImperativeHandle,
 } from 'react';
-import {
-    View,
-    StyleSheet,
-    SafeAreaView,
-    Modal,
-    Platform,
-    ViewStyle,
-} from 'react-native';
+import { View, StyleSheet, Modal, Platform, ViewStyle } from 'react-native';
 import Animated, {
     withTiming,
     useAnimatedStyle,
@@ -102,14 +95,13 @@ const ModalCentralize = React.forwardRef<ModalHandles, Props>(
                                     closeModal();
                                 }
                                 return true;
-                            }else{
+                            } else {
                                 return false;
                             }
                         }}>
-                        <SafeAreaView
-                            style={[styles.modalView, style && { ...style }]}>
+                        <View style={[styles.modalView, style && { ...style }]}>
                             {children}
-                        </SafeAreaView>
+                        </View>
                     </Animated.View>
                 </Modal>
             </View>
@@ -151,4 +143,4 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};

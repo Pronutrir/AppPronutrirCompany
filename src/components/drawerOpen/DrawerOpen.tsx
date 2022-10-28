@@ -4,7 +4,6 @@ import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import BotaoMenu from '../../assets/svg/BotaoMenu.svg';
-import { RFPercentage } from 'react-native-responsive-fontsize';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -21,8 +20,8 @@ export default function DrawerOpen() {
             <View style={styles.btnItem}>
                 <BotaoMenu
                     fill={theme.colors.FILL_ICONE}
-                    width={RFPercentage(3)}
-                    height={RFPercentage(2)}
+                    width={20}
+                    height={20}
                 />
             </View>
             <View style={styles.btnItem}>
@@ -41,11 +40,10 @@ const createStyles = (theme: ThemeContextData) => {
             alignItems: 'center',
         },
         text: {
-            fontSize: theme.typography.SIZE.fontysize12,
+            fontSize: theme.typography.SIZE.fontysize10,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
-            //paddingBottom: 5,
         },
         btnItem: {
             flex: 1,

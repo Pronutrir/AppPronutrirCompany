@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import { useWindowDimensions, ListRenderItem } from 'react-native';
+import { useWindowDimensions, ListRenderItem, View } from 'react-native';
 import Carousel, {
     ParallaxImage,
     AdditionalParallaxProps,
@@ -9,7 +9,6 @@ import {
     StyleSheet,
     TouchableOpacity,
     Platform,
-    SafeAreaView,
 } from 'react-native';
 import ModalInstagram from '../Modais/ModalInstagram';
 import Api from '../../services/api';
@@ -115,7 +114,7 @@ const MyCarousel: React.FC = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Carousel
                 layout={'default'}
                 ref={carouselRef}
@@ -132,7 +131,7 @@ const MyCarousel: React.FC = () => {
                 loop={true}
             />
             {post && <ModalInstagram ref={modalInstaRef} postagem={post} />}
-        </SafeAreaView>
+        </View>
     );
 };
 

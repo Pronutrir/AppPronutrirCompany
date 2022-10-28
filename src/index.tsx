@@ -9,6 +9,7 @@ import NotificationCentralized from './components/Notification/NotificationCentr
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './contexts/themeContext';
 import CodePush from 'react-native-code-push';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
@@ -91,20 +92,22 @@ const Index: React.FC = () => {
     }, []);
 
     return (
-        <NavigationContainer>
-            {/* contexto disponível para toda aplicação */}
-            <ThemeProvider>
-                <QueryClientProvider client={queryClient}>
-                    <NotificationGlobalProvider>
-                        <AuthProvider>
-                            <Routes />
-                            <NotificationCentralized />
-                            <NotificationAlert />
-                        </AuthProvider>
-                    </NotificationGlobalProvider>
-                </QueryClientProvider>
-            </ThemeProvider>
-        </NavigationContainer>
+        <SafeAreaProvider>
+            <NavigationContainer>
+                {/* contexto disponível para toda aplicação */}
+                <ThemeProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <NotificationGlobalProvider>
+                            <AuthProvider>
+                                <Routes />
+                                <NotificationCentralized />
+                                <NotificationAlert />
+                            </AuthProvider>
+                        </NotificationGlobalProvider>
+                    </QueryClientProvider>
+                </ThemeProvider>
+            </NavigationContainer>
+        </SafeAreaProvider>
     );
 };
 export default CodePush(CodePushOptions)(Index);

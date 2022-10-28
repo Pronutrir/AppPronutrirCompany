@@ -1,5 +1,5 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const styles = StyleSheet.create({
     container: {
@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     box1: {
-        flex: 1,
+        flex: 1.5,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -27,49 +27,49 @@ const styles = StyleSheet.create({
         width: 130,
         height: 120,
     },
-    logo:{
+    logo: {
         resizeMode: 'contain',
         width: Dimensions.get('screen').width,
-        height: Dimensions.get('screen').height / 10
+        height: Dimensions.get('screen').height / 10,
     },
     imgFoto: {
         resizeMode: 'contain',
     },
     Btn: {
         margin: 20,
-        width: Dimensions.get('screen').width / 100 * 60,
+        width: (Dimensions.get('screen').width / 100) * 60,
         height: 40,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 30,
         ...Platform.select({
-            android:{
-                elevation: 3
+            android: {
+                elevation: 3,
             },
-            ios:{
-                shadowOffset:{
+            ios: {
+                shadowOffset: {
                     width: 0,
-                    height: 5
+                    height: 5,
                 },
                 shadowOpacity: 0.2,
                 shadowRadius: 2,
             },
-            default:{
-                elevation: 3
-            }
-        })
+            default: {
+                elevation: 3,
+            },
+        }),
     },
     text: {
         color: '#1E707D',
         fontSize: RFValue(20, 680),
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
-    img:{
+    img: {
         width: Dimensions.get('screen').width,
         height: Dimensions.get('screen').height / 10,
-        paddingHorizontal: 10
-    }
-})
+        paddingHorizontal: 10,
+    },
+});
 
-export default styles
+export default styles;
