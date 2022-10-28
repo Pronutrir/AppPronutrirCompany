@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     Platform,
 } from 'react-native';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -37,10 +37,11 @@ const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
+            bottom: 0,
             justifyContent: 'center',
             alignItems: 'center',
-            borderTopWidth: 0.5,
-            borderTopColor: theme.colors.BROWNPRIMARY,
+            position: 'absolute',
+            width: '100%',
         },
         text: {
             fontFamily: theme.typography.FONTES.Bold,
@@ -78,6 +79,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};
 
 export default Btnprosseguir;

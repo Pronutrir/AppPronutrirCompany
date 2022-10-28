@@ -6,8 +6,6 @@ import {
     Keyboard,
     KeyboardAvoidingView,
     Platform,
-    Dimensions,
-    PixelRatio,
 } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
