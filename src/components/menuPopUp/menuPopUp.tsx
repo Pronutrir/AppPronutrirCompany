@@ -1,4 +1,9 @@
-import React, { useState, useCallback, useImperativeHandle } from 'react';
+import React, {
+    useState,
+    useCallback,
+    useImperativeHandle,
+    useEffect,
+} from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Menu, MenuItem } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -18,6 +23,8 @@ interface Props {
     styleSvg?: IStyleSvg;
     widthMenu?: number;
     btnVisible?: boolean;
+    showItemSelected?: boolean;
+    ItemSelected?: string;
 }
 export interface ModalHandlesMenu {
     showMenu(): void;
@@ -37,14 +44,20 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
             },
             btnVisible = true,
             widthMenu,
+            showItemSelected = false,
+            ItemSelected = '',
         }: Props,
         ref,
     ) => {
         const styles = useThemeAwareObject(createStyles);
 
         const [visible, setVisible] = useState(false);
+        const [selected, setSelected] = useState('');
 
         const selectedItem = (item: string) => {
+            if (showItemSelected) {
+                setSelected(item);
+            }
             setVisible(false);
             if (onpress) {
                 onpress(item);
@@ -65,6 +78,10 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                 hideMenu,
             };
         });
+
+        useEffect(() => {
+            setSelected(ItemSelected);
+        }, []);
 
         return (
             <View style={styles.container}>
@@ -88,7 +105,11 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                     {btnLabels.map((item) => (
                         <MenuItem
                             key={item.toString()}
-                            style={styles.boxItem}
+                            style={
+                                selected === item
+                                    ? styles.boxItemSelected
+                                    : styles.boxItem
+                            }
                             textStyle={{
                                 ...styles.text,
                                 width: widthMenu && widthMenu,
@@ -117,6 +138,11 @@ const createStyles = (theme: ThemeContextData) => {
         boxItem: {
             marginVertical: RFPercentage(0.5),
             paddingVertical: RFPercentage(0.5),
+        },
+        boxItemSelected: {
+            marginVertical: RFPercentage(0.5),
+            paddingVertical: RFPercentage(0.5),
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
         },
         text: {
             fontSize: theme.typography.SIZE.fontysize14,

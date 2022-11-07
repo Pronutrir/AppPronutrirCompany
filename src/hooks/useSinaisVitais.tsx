@@ -114,7 +114,8 @@ const useSinaisVitaisAll = () => {
             placeholderData: initialSinaisVitais,
             onError: () => {
                 addAlert({
-                    message: 'Error ao listar os sinais vitais tente mais tarde!',
+                    message:
+                        'Error ao listar os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -132,7 +133,8 @@ const useSinaisVitaisFilter = (cD_PESSOA_FISICA: string) => {
             } = await Api.get<ResponsePFdados>(
                 `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${cD_PESSOA_FISICA},${moment().format(
                     'YYYY-MM-DD',
-                )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`, { signal }
+                )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`,
+                { signal },
             );
             return result;
         },
@@ -140,23 +142,49 @@ const useSinaisVitaisFilter = (cD_PESSOA_FISICA: string) => {
             enabled: true,
             onError: () => {
                 addAlert({
-                    message: 'Não foi possivel acessar o histórico tente mais tarde!',
+                    message:
+                        'Não foi possivel acessar o histórico tente mais tarde!',
                     status: 'error',
                 });
-            }
+            },
         },
     );
 };
 
-const useSinaisVitaisHistory = (paciente: string, rows = 500) => {
+interface filterSinaisVitais {
+    dataInicio?: string | null;
+    dataFinal?: string | null;
+    pagina?: number | null;
+    rows?: number | null;
+    status?: string | null;
+    nomePaciente?: string | null;
+    cdPaciente?: number | null;
+}
+
+//?dataInicio=2022-07-19&dataFinal=2022-07-19&pagina=1&rows=10&status=A&nomePaciente=williame%20correia%20de%20lima&cdPaciente=159969
+//paciente: string, rows = 500
+
+const useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
-        ['SinaisVitaisHistory', paciente],
+        ['SinaisVitaisHistory', filter.cdPaciente],
         async () => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=${rows}`,
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
+                    filter.dataInicio ? `=${filter.dataInicio}` : ''
+                }&dataFinal${
+                    filter.dataFinal ? `=${filter.dataFinal}` : ''
+                }&pagina=${filter.pagina ?? 1}&rows=${
+                    filter.rows ?? 100
+                }&status${
+                    filter.status ? `=${filter.status}` : ''
+                }&nomePaciente${
+                    filter.nomePaciente ? `=${filter.nomePaciente}` : ''
+                }&cdPaciente${
+                    filter.cdPaciente ? `=${filter.cdPaciente}` : ''
+                }`,
             );
             return result.sort((a, b) => {
                 return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
@@ -167,9 +195,11 @@ const useSinaisVitaisHistory = (paciente: string, rows = 500) => {
             });
         },
         {
-            onError: () => {
+            onError: (error) => {
+                console.log(error);
                 addAlert({
-                    message: 'Error ao listar os sinais vitais tente mais tarde!',
+                    message:
+                        'Error ao listar os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -177,27 +207,51 @@ const useSinaisVitaisHistory = (paciente: string, rows = 500) => {
     );
 };
 
-const _useSinaisVitaisHistory = (paciente: string) => {
+const _useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
     return useInfiniteQuery(
         'SinaisVitaisHistory',
         async ({ pageParam = 1 }) => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=${pageParam}&rows=10`,
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
+                    filter.dataInicio ? `=${filter.dataInicio}` : ''
+                }&dataFinal${
+                    filter.dataFinal ? `=${filter.dataFinal}` : ''
+                }&pagina=${pageParam}&rows=${filter.rows ?? 10}&status${
+                    filter.status ? `=${filter.status}` : ''
+                }&nomePaciente${
+                    filter.nomePaciente ? `=${filter.nomePaciente}` : ''
+                }&cdPaciente${
+                    filter.cdPaciente ? `=${filter.cdPaciente}` : ''
+                }`,
             );
             return result;
         },
         {
             getNextPageParam: (lastPage, pages) => {
-                if(lastPage?.length < 10){
+                if (lastPage?.length < 10) {
                     return null;
-                }else{
-                    return pages.length + 1
+                } else {
+                    return pages.length + 1;
                 }
+            },
+            onError: (error) => {
+                console.log(error);
+                addAlert({
+                    message:
+                        'Error ao listar os sinais vitais tente mais tarde!',
+                    status: 'error',
+                });
             },
         },
     );
 };
 
-export { useSinaisVitaisAll, useSinaisVitaisHistory, _useSinaisVitaisHistory, useSinaisVitaisFilter };
+export {
+    useSinaisVitaisAll,
+    useSinaisVitaisHistory,
+    _useSinaisVitaisHistory,
+    useSinaisVitaisFilter,
+};

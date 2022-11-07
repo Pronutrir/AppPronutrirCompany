@@ -1,5 +1,12 @@
-import React, { memo, useContext, useEffect, useState } from 'react';
-import { View, FlatList, Text, StyleSheet, Dimensions } from 'react-native';
+import React, { memo, useContext, useEffect, useRef, useState } from 'react';
+import {
+    View,
+    FlatList,
+    Text,
+    StyleSheet,
+    Dimensions,
+    Platform,
+} from 'react-native';
 import HistorySvg from '../../assets/svg/historico.svg';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../components/Cards/CardSimples';
@@ -14,15 +21,18 @@ import { RouteProp } from '@react-navigation/native';
 import ActiveIndicator from '../../components/Loading/ActiveIndicator';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
-import Checkbox from '../../components/checkbox/checkbox';
 import SinaisVitaisContext from '../../contexts/sinaisVitaisContext';
+import MenuPopUp from '../../components/menuPopUp/menuPopUp';
+import ModalFiltroData, {
+    ModalHandles,
+} from '../../components/Modais/ModalFiltroData';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'EndSinaisVitais'>;
 interface Props {
     route: ProfileScreenRouteProp;
 }
 
-type IFilter = 'day' | 'all';
+type IFilter = 'Diario' | 'Todos' | 'Periodo';
 
 const EndSinaisVitais: React.FC<Props> = ({
     route: {
@@ -34,8 +44,11 @@ const EndSinaisVitais: React.FC<Props> = ({
     const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
 
     const [checkboxFilter, setCheckboxFilter] = useState<IFilter>(
-        ValidationAutorizeEnfermagem() ? 'day' : 'all',
+        ValidationAutorizeEnfermagem() ? 'Diario' : 'Todos',
     );
+
+    const ModalFiltroDataRef = useRef<ModalHandles>(null);
+    const [filterAgenda, setFilterAgenda] = useState<null>(null);
 
     const {
         data: historySinalVitais,
@@ -44,10 +57,10 @@ const EndSinaisVitais: React.FC<Props> = ({
         hasNextPage,
         fetchNextPage,
         isFetchingNextPage,
-    } = _useSinaisVitaisHistory(Paciente);
+    } = _useSinaisVitaisHistory({ nomePaciente: Paciente });
 
     const loadMore = () => {
-        if (hasNextPage && checkboxFilter === 'all') {
+        if (hasNextPage && checkboxFilter === 'Todos') {
             fetchNextPage();
         }
     };
@@ -205,7 +218,7 @@ const EndSinaisVitais: React.FC<Props> = ({
         value: IFilter,
     ): ISinaisVitais[] | undefined => {
         let result = historySinalVitais?.pages.map((page) => page).flat();
-        if (value === 'day') {
+        if (value === 'Diario') {
             result = result?.filter(
                 ({ dT_SINAL_VITAL }) =>
                     moment(dT_SINAL_VITAL).format('YYYY-MM-DD') ===
@@ -213,6 +226,25 @@ const EndSinaisVitais: React.FC<Props> = ({
             );
         }
         return result;
+    };
+
+    const selectedOptions = (item: string) => {
+        switch (item) {
+            case 'Diario':
+                setCheckboxFilter('Diario');
+                break;
+            case 'Todos':
+                setCheckboxFilter('Todos');
+                break;
+            case 'Periodo':
+                setTimeout(
+                    () => {
+                        ModalFiltroDataRef.current?.openModal();
+                    },
+                    Platform.OS === 'ios' ? 500 : 0,
+                );
+                break;
+        }
     };
 
     useEffect(() => {
@@ -223,33 +255,31 @@ const EndSinaisVitais: React.FC<Props> = ({
 
     return (
         <View style={styles.container}>
-            <Text style={[styles.textLabel, styles.titleLabel]}>
-                Ultimos sinais vitais adicionados!
-            </Text>
+            <View
+                style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}>
+                <Text style={[styles.textLabel, styles.titleLabel]}>
+                    Ultimos sinais vitais adicionados!
+                </Text>
+                <MenuPopUp
+                    btnLabels={['Diario', 'Todos', 'Periodo']}
+                    onpress={(item) => selectedOptions(item)}
+                    showItemSelected={true}
+                    ItemSelected={checkboxFilter}
+                />
+            </View>
             {!isLoading ? (
                 <>
-                    <View style={styles.BoxCheckbox}>
-                        <Checkbox
-                            isChecked={checkboxFilter === 'day' ? true : false}
-                            text="Diário"
-                            onPress={() => setCheckboxFilter('day')}
-                        />
-                        <Checkbox
-                            isChecked={checkboxFilter === 'all' ? true : false}
-                            text="Todos"
-                            onPress={() => setCheckboxFilter('all')}
-                        />
-                    </View>
+                    <View style={styles.BoxCheckbox}></View>
                     <FlatList
                         data={historySinaisVitaisFilter(checkboxFilter)}
                         renderItem={({ item, index }) =>
                             renderItem({ item, index })
                         }
                         keyExtractor={(item, index) => index.toString()}
-                        /* refreshing={isFetching}
-                    onRefresh={() => {
-                        refetch;
-                    }} */
                         ListEmptyComponent={renderItemEmpty}
                         ListFooterComponent={renderFooter}
                         onEndReached={loadMore}
@@ -259,6 +289,23 @@ const EndSinaisVitais: React.FC<Props> = ({
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
+            <ModalFiltroData
+                ref={ModalFiltroDataRef}
+                clear={() => {
+                    setFilterAgenda(null);
+                    ModalFiltroDataRef.current?.closeModal();
+                }}
+                onPress={(initialDate, endDate) => {
+                    /* setFilterAgenda({
+                        label: 'Data_inicio_fim',
+                        filterDate: {
+                            dataInicio: initialDate,
+                            dataFim: endDate,
+                        },
+                    }); */
+                    ModalFiltroDataRef.current?.closeModal();
+                }}
+            />
         </View>
     );
 };
@@ -279,18 +326,24 @@ const createStyles = (theme: ThemeContextData) => {
         titleLabel: {
             alignSelf: 'flex-start',
             paddingLeft: 10,
+            textAlignVertical: 'center',
+            ...Platform.select({
+                ios: {
+                    lineHeight: RFPercentage(6), // as same as height
+                },
+            }),
         },
         textLabel: {
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_PRIMARY,
-            fontSize: theme.typography.SIZE.fontysize16,
+            fontSize: theme.typography.SIZE.fontysize14,
         },
         text: {
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
-            fontSize: theme.typography.SIZE.fontysize16,
+            fontSize: theme.typography.SIZE.fontysize14,
         },
         item: {
             flex: 1,
@@ -307,6 +360,7 @@ const createStyles = (theme: ThemeContextData) => {
         box1: {
             flex: 0.5,
             margin: 3,
+            alignItems: 'center',
         },
         box2: {
             flex: 5,
@@ -316,6 +370,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         BoxCheckbox: {
             flexDirection: 'row',
+            justifyContent: 'space-around',
             margin: 10,
         },
         Checkbox: {

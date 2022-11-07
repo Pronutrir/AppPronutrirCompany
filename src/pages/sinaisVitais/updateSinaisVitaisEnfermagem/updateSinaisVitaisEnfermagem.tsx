@@ -46,10 +46,9 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
-    const { data: historicoSinaisVitais } = useSinaisVitaisHistory(
-        PessoaFisica.nM_PESSOA_FISICA,
-        3,
-    );
+    const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
+        nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    });
 
     const refPesoMediaPaciente = useRef<number | null>(null);
 

@@ -46,10 +46,9 @@ const UpdateSinais: React.FC<Props> = ({
     const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais } =
         useContext(SinaisVitaisContext);
 
-    const { data: historicoSinaisVitais } = useSinaisVitaisHistory(
-        PessoaFisica.nM_PESSOA_FISICA,
-        3,
-    );
+    const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
+        nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    });
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
