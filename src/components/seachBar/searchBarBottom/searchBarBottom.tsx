@@ -55,32 +55,24 @@ const SearchBarBottom = React.forwardRef<ModalHandles, Props>(
 
         if (inputShow) {
             return (
-                <View
-                    style={{
-                        position: 'absolute',
-                        bottom: Platform.OS === 'ios' ? keyboardHeight : 0,
-                    }}>
-                    <View>
-                        <SearchBar
-                            darkMode
-                            placeholder={placeholder}
-                            spinnerVisibility={false}
-                            style={styles.SearchBarStyle}
-                            textInputStyle={styles.textInputStyle}
-                            spinnerSize={RFValue(20, 680)}
-                            clearIconImageStyle={styles.clearIconImageStyle}
-                            searchIconImageStyle={styles.searchIconImageStyle}
-                            onChangeText={onChangeText}
-                            onClearPress={onClearPress}
-                            selectionColor={theme.colors.BACKGROUND_1}
-                            value={value}
-                            keyboardType={'default'}
-                            returnKeyType={'search'}
-                            autoFocus={true}
-                            onBlur={onBlur}
-                        />
-                    </View>
-                </View>
+                <SearchBar
+                    darkMode
+                    placeholder={placeholder}
+                    spinnerVisibility={false}
+                    style={styles.SearchBarStyle}
+                    textInputStyle={styles.textInputStyle}
+                    spinnerSize={RFValue(20, 680)}
+                    clearIconImageStyle={styles.clearIconImageStyle}
+                    searchIconImageStyle={styles.searchIconImageStyle}
+                    onChangeText={onChangeText}
+                    onClearPress={onClearPress}
+                    selectionColor={theme.colors.BACKGROUND_1}
+                    value={value}
+                    keyboardType={'default'}
+                    returnKeyType={'search'}
+                    autoFocus={true}
+                    onBlur={onBlur}
+                />
             );
         } else {
             return null;

@@ -1,5 +1,14 @@
 import React, { useRef, useState, useContext } from 'react';
-import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, Dimensions } from 'react-native';
+import {
+    Text,
+    View,
+    Pressable,
+    TextInput,
+    ImageBackground,
+    Keyboard,
+    KeyboardAvoidingView,
+    Dimensions,
+} from 'react-native';
 
 import styles from './style';
 import Loading from '../../components/Loading/Loading';
@@ -11,7 +20,6 @@ import BackButton from '../../components/buttons/BackButton';
 import firestore from '@react-native-firebase/firestore';
 
 export default function consultaEmail({ navigation }) {
-
     const [modalActive, setModalActive] = useState(false);
     const { dispatchAuth, stateAuth } = useContext(AuthContext);
 
@@ -21,28 +29,33 @@ export default function consultaEmail({ navigation }) {
         if (email) {
             const usersRef = firestore().collection('users');
 
-            const emailExiste = await usersRef.where('email', '==', email).get();
+            const emailExiste = await usersRef
+                .where('email', '==', email)
+                .get();
 
-            return emailExiste.empty
+            return emailExiste.empty;
         }
-    }
+    };
 
     const FormSchema = Yup.object().shape({
-        Email: Yup
-            .string()
+        Email: Yup.string()
             .required('Email é obrigatório!')
             .email('Por favor digite um Email válido!')
-            .test('validationEmail', 'E-mail já está em uso', value => validacaoEmail(value)),
-    })
+            .test('validationEmail', 'E-mail já está em uso', (value) =>
+                validacaoEmail(value),
+            ),
+    });
 
     const setEmail = (value) => {
-        dispatchAuth({ type: 'UpdateUserTasyEmail', payload: value.Email })
-        navigation.navigate('ConsultaConfimarEmail')
-    }
+        dispatchAuth({ type: 'UpdateUserTasyEmail', payload: value.Email });
+        navigation.navigate('ConsultaConfimarEmail');
+    };
 
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
+            <ImageBackground
+                style={styles.BackgroundImage}
+                source={require('../../assets/imagens/logoBackgroud.png')}>
                 <View style={{ marginTop: 20 }}>
                     <BackButton onPress={() => navigation.goBack()} />
                 </View>
@@ -50,21 +63,34 @@ export default function consultaEmail({ navigation }) {
                     initialValues={{
                         Email: '',
                     }}
-                    onSubmit={values => {
+                    onSubmit={(values) => {
                         setEmail(values);
                     }}
-                    validationSchema={FormSchema}
-                >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                        <View style={{ flex: 1 }} >
+                    validationSchema={FormSchema}>
+                    {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                        isValid,
+                    }) => (
+                        <View style={{ flex: 1 }}>
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
-                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={Platform.OS === "ios" ? 120 : -180}
-                            >
+                                behavior={Platform.OS === 'ios' && 'padding'}
+                                keyboardVerticalOffset={
+                                    Platform.OS === 'ios' ? 105 : 0
+                                }>
                                 <View style={styles.box1}>
-                                    <Text style={styles.textInfo}>Informe seu Email</Text>
-                                    <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
+                                    <Text style={styles.textInfo}>
+                                        Informe seu Email
+                                    </Text>
+                                    <Text style={styles.text}>
+                                        Informe os dados para validar seu acesso
+                                        !
+                                    </Text>
                                     <TextInput
                                         ref={Email}
                                         style={styles.input}
@@ -75,7 +101,11 @@ export default function consultaEmail({ navigation }) {
                                         autoCapitalize={'none'}
                                         maxLength={40}
                                     />
-                                    {(touched.Email && errors.Email) && <Text style={styles.Error}>{errors.Email}</Text>}
+                                    {touched.Email && errors.Email && (
+                                        <Text style={styles.Error}>
+                                            {errors.Email}
+                                        </Text>
+                                    )}
                                 </View>
                                 <View style={styles.box2}>
                                     <Btnprosseguir
@@ -90,6 +120,6 @@ export default function consultaEmail({ navigation }) {
                     )}
                 </Formik>
             </ImageBackground>
-        </Pressable >
-    )
+        </Pressable>
+    );
 }

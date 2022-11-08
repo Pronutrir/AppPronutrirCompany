@@ -44,7 +44,7 @@ const Index: React.FC = () => {
             style={{ flex: 1, backgroundColor: theme.colors.BACKGROUND_1 }}
             edges={Platform.OS == 'android' ? ['top'] : ['bottom', 'top']}>
             <StatusBar
-                backgroundColor={'white'}
+                backgroundColor={theme.colors.BACKGROUND_1}
                 barStyle="dark-content"
                 translucent={false}
             />
