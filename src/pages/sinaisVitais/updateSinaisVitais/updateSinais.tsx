@@ -113,7 +113,7 @@ const UpdateSinais: React.FC<Props> = ({
                     Paciente: SinaisVitais?.nM_PESSOA_FISICA
                         ? SinaisVitais?.nM_PESSOA_FISICA
                         : PessoaFisica?.nM_PESSOA_FISICA,
-                    Tipo: 'all',
+                    Tipo: 'Todos',
                 });
                 break;
             case 'Acompanhantes':

@@ -49,6 +49,23 @@ export interface ISinaisVitais {
     dT_ATUALIZACAO_NREC?: string;
     dS_OBSERVACAO?: string;
 }
+export interface IFilterSinaisVitais {
+    dataInicio?: string | null;
+    dataFinal?: string | null;
+    pagina?: number | null;
+    rows?: number | null;
+    status?: string | null;
+    nomePaciente?: string | null;
+    cdPaciente?: number | null;
+}
+
+export interface IFilterSinaisVitaisProfissional {
+    dataInicio: string | null;
+    dataFinal: string | null;
+    pagina?: number | null;
+    rows?: number | null;
+    cd_pessoa_fisica: string;
+}
 
 const initialSinaisVitais: ISinaisVitais[] = [
     {
@@ -123,23 +140,33 @@ const useSinaisVitaisAll = () => {
     );
 };
 
-const useSinaisVitaisFilter = (cD_PESSOA_FISICA: string) => {
+const useSinaisVitaisFilter = (filter: IFilterSinaisVitaisProfissional) => {
     const { addAlert } = useContext(NotificationGlobalContext);
-    return useQuery(
-        'AlertaPacienteHistory',
-        async ({ signal }) => {
+    return useInfiniteQuery(
+        ['AlertaPacienteHistory', filter],
+        async ({ pageParam = 1 }) => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${cD_PESSOA_FISICA},${moment().format(
+                `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${
+                    filter.cd_pessoa_fisica
+                }${`,${moment(filter.dataInicio).format(
                     'YYYY-MM-DD',
-                )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`,
-                { signal },
+                )}`}${`,${filter.dataFinal}`}?pagina=${pageParam}&rows=${
+                    filter.rows ?? 10
+                }`,
             );
-            return result;
+            return result.filter((item) => item.iE_SITUACAO != 'I');
         },
         {
             enabled: true,
+            getNextPageParam: (lastPage, pages) => {
+                if (lastPage?.length < 10) {
+                    return null;
+                } else {
+                    return pages.length + 1;
+                }
+            },
             onError: () => {
                 addAlert({
                     message:
@@ -151,20 +178,7 @@ const useSinaisVitaisFilter = (cD_PESSOA_FISICA: string) => {
     );
 };
 
-interface filterSinaisVitais {
-    dataInicio?: string | null;
-    dataFinal?: string | null;
-    pagina?: number | null;
-    rows?: number | null;
-    status?: string | null;
-    nomePaciente?: string | null;
-    cdPaciente?: number | null;
-}
-
-//?dataInicio=2022-07-19&dataFinal=2022-07-19&pagina=1&rows=10&status=A&nomePaciente=williame%20correia%20de%20lima&cdPaciente=159969
-//paciente: string, rows = 500
-
-const useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
+const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
         ['SinaisVitaisHistory', filter.cdPaciente],
@@ -186,13 +200,15 @@ const useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
                     filter.cdPaciente ? `=${filter.cdPaciente}` : ''
                 }`,
             );
-            return result.sort((a, b) => {
-                return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
-                    ? -1
-                    : a.dT_SINAL_VITAL < b.dT_SINAL_VITAL
-                    ? 1
-                    : 0;
-            });
+            return result
+                .sort((a, b) => {
+                    return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
+                        ? -1
+                        : a.dT_SINAL_VITAL < b.dT_SINAL_VITAL
+                        ? 1
+                        : 0;
+                })
+                .filter((item) => item.iE_SITUACAO != 'I');
         },
         {
             onError: (error) => {
@@ -207,16 +223,18 @@ const useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
     );
 };
 
-const _useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
+const _useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useInfiniteQuery(
-        'SinaisVitaisHistory',
+        ['SinaisVitaisHistory', filter],
         async ({ pageParam = 1 }) => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
                 `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
-                    filter.dataInicio ? `=${filter.dataInicio}` : ''
+                    filter.dataInicio
+                        ? `=${moment(filter.dataInicio).format('YYYY-MM-DD')}`
+                        : ''
                 }&dataFinal${
                     filter.dataFinal ? `=${filter.dataFinal}` : ''
                 }&pagina=${pageParam}&rows=${filter.rows ?? 10}&status${
@@ -227,9 +245,10 @@ const _useSinaisVitaisHistory = (filter: filterSinaisVitais) => {
                     filter.cdPaciente ? `=${filter.cdPaciente}` : ''
                 }`,
             );
-            return result;
+            return result.filter((item) => item.iE_SITUACAO != 'I');
         },
         {
+            enabled: true,
             getNextPageParam: (lastPage, pages) => {
                 if (lastPage?.length < 10) {
                     return null;

@@ -114,7 +114,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     //consulta e retorna o token para acesso a api tasy
     const GetAuth = useCallback(async () => {
-        return ApiAuth.get<TokenResponse>('auth')
+        return ApiAuth.get<TokenResponse>('auth/authToken')
             .then((response) => {
                 const { jwtToken, refreshToken } = response.data;
                 Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;

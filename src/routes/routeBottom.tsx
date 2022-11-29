@@ -9,7 +9,6 @@ import DrawerOpen from '../components/drawerOpen/DrawerOpen';
 import HomeImg from '../assets/svg/Home.svg';
 import LupaImg from '../assets/svg/Lupa.svg';
 import UserImg from '../assets/svg/avatar.svg';
-import { RFPercentage } from 'react-native-responsive-fontsize';
 import useTheme from '../hooks/useTheme';
 import { Text } from 'react-native';
 import { useKeyboardHeight } from '../hooks/useKeyboardHeight';

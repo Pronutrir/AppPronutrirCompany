@@ -232,10 +232,10 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     size={3}
                     onPress={() => {
                         navigation.navigate('EndSinaisVitais', {
-                            Paciente: SinaisVitais?.nM_PESSOA_FISICA
-                                ? SinaisVitais?.nM_PESSOA_FISICA
-                                : PessoaFisica?.nM_PESSOA_FISICA,
-                            Tipo: 'day',
+                            Paciente: SinaisVitais?.cD_PACIENTE
+                                ? SinaisVitais?.cD_PACIENTE
+                                : PessoaFisica?.cD_PESSOA_FISICA,
+                            Tipo: 'Diario',
                         });
                     }}
                 />

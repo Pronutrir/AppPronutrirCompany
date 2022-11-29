@@ -38,8 +38,8 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
             onpress,
             BtnOptionsSvg = OptionsSvg,
             styleSvg = {
-                width: RFPercentage(1.5),
-                height: RFPercentage(4),
+                width: RFPercentage(1),
+                height: RFPercentage(3),
                 fill: '#737373',
             },
             btnVisible = true,

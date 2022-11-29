@@ -6,13 +6,12 @@ import BackImg from '../../assets/svg/arrowLeft.svg';
 import moment from 'moment';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-
+import useTheme from '../../hooks/useTheme';
 interface Props {
     activeModal?: boolean;
     selectedDay?(date: DateOptions): void;
     type?: Type;
 }
-
 export interface DateOptions {
     tipo?: Type;
     date: string;
@@ -22,6 +21,7 @@ export type Type = 'valueInitial' | 'valueEnd';
 
 const CalendarPerson: React.FC<Props> = ({ selectedDay, type }: Props) => {
     const styles = useThemeAwareObject(createStyles);
+    const theme = useTheme();
 
     const SelectedDate = (date: DateOptions) => {
         if (selectedDay) {
@@ -95,16 +95,16 @@ const CalendarPerson: React.FC<Props> = ({ selectedDay, type }: Props) => {
                 textDayFontWeight: '300',
                 textMonthFontWeight: 'bold',
                 textDayHeaderFontWeight: '300',
-                textDayFontSize: 18,
-                textMonthFontSize: 18,
-                textDayHeaderFontSize: 18,
+                textDayFontSize: theme.typography.SIZE.fontysize14,
+                textMonthFontSize: theme.typography.SIZE.fontysize14,
+                textDayHeaderFontSize: theme.typography.SIZE.fontysize14,
             }}
             current={moment().format('YYYY-MM-DD')}
             //minDate={new Date().toDateString()}
             onDayPress={(day: any) =>
                 SelectedDate({
                     tipo: type,
-                    date: moment(day.dateString).format('DD-MM-YYYY'),
+                    date: day.dateString,
                 })
             }
             enableSwipeMonths={true}

@@ -8,7 +8,7 @@ export function useKeyboardHeight() {
         const showSubscription = Keyboard.addListener('keyboardDidShow', (e) =>
             setKeyboardHeight(e.endCoordinates.height),
         );
-        const hideSubscription = Keyboard.addListener('keyboardWillHide', () =>
+        const hideSubscription = Keyboard.addListener('keyboardDidHide', () =>
             setKeyboardHeight(0),
         );
         return () => {

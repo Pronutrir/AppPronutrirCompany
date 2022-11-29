@@ -3,9 +3,8 @@ import React, {
     useRef,
     useCallback,
     useImperativeHandle,
-    useContext,
 } from 'react';
-import { View, StyleSheet, Modal } from 'react-native';
+import { View, StyleSheet, Modal, Text } from 'react-native';
 import moment from 'moment';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
@@ -16,13 +15,10 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import BtnOptions from '../buttons/BtnOptions';
-import NotificationGlobalContext from '../../contexts/notificationGlobalContext';
-import { RFPercentage } from 'react-native-responsive-fontsize';
 import { TextInputMask } from 'react-native-masked-text';
-import CalendarPerson, { Type, DateOptions } from '../calendar/calendarPerson';
+import CalendarPerson, { Type } from '../calendar/calendarPerson';
 import { useKeyboardHeight } from '../../hooks/useKeyboardHeight';
-import useTheme from '../../hooks/useTheme';
-
+import { RFPercentage } from 'react-native-responsive-fontsize';
 interface Props {
     activeModal?: any;
     setActiveModal?: any;
@@ -37,6 +33,7 @@ export interface ModalHandles {
 }
 
 type ThemeOpacity = 'light' | 'dark';
+type TypeFilterDate = 'SameOrBefore' | 'SameOrAfter';
 
 const ModalFiltroData = React.forwardRef<ModalHandles, Props>(
     (
@@ -48,17 +45,21 @@ const ModalFiltroData = React.forwardRef<ModalHandles, Props>(
         }: Props,
         ref,
     ) => {
-        const _theme = useTheme();
         const keyboardHeight = useKeyboardHeight();
-
         const styles = useThemeAwareObject(createStyles);
-        const { addAlert } = useContext(NotificationGlobalContext);
 
         const [active, setActive] = useState(activeModal);
         const [theme, setTheme] = useState<ThemeOpacity>('light');
 
-        const [initialvalue, setInitialvalue] = useState<string>();
-        const [endvalue, setEndvalue] = useState<string>();
+        // options date
+        const [dateInitial, setDateInitial] = useState(
+            moment().format('DD/MM/YYYY'),
+        );
+        const [dateEnd, setDateEnd] = useState(moment().format('DD/MM/YYYY'));
+
+        const [dateType, setDateType] = useState<Type>();
+        // end potions date
+
         const _view = useRef<any>(null);
 
         const closeModal = useCallback(() => {
@@ -77,32 +78,62 @@ const ModalFiltroData = React.forwardRef<ModalHandles, Props>(
             };
         });
 
-        const SelectedDay = (day: DateOptions) => {
-            if (day.tipo === 'valueInitial') {
-                setInitialvalue(moment(day.date).format('YYYY-MM-DD'));
-            }
-            if (day.tipo === 'valueEnd') {
-                setEndvalue(moment(day.date).format('YYYY-MM-DD'));
+        const validacao = () => {
+            if (dateInitial && dateEnd) {
+                onPress(dateInitial, dateEnd);
             }
         };
 
-        const validacao = () => {
-            if (initialvalue && endvalue) {
-                if (moment(initialvalue).isBefore(endvalue)) {
-                    onPress(initialvalue, endvalue);
+        function checkIsSameOrBefore(
+            type: TypeFilterDate,
+            date1: string,
+            date2: string,
+        ) {
+            switch (type) {
+                case 'SameOrBefore':
+                    return moment(date1).isSameOrBefore(date2);
+                case 'SameOrAfter':
+                    return moment(date1).isSameOrAfter(date2);
+            }
+        }
+
+        const ValidateDateErros = () => {
+            if (dateType === 'valueInitial') {
+                if (
+                    checkIsSameOrBefore(
+                        'SameOrBefore',
+                        moment(dateInitial, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                        moment(dateEnd, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                    )
+                ) {
+                    return null;
                 } else {
-                    addAlert({
-                        message:
-                            'A Data final tem que ser maior que a data inicial!',
-                        status: 'info',
-                    });
+                    return (
+                        <Text style={styles.Error}>
+                            {
+                                'A Data inicial tem que ser menor ou igual a data final!'
+                            }
+                        </Text>
+                    );
                 }
             } else {
-                addAlert({
-                    message:
-                        'A Data final tem que ser maior que a data inicial!',
-                    status: 'info',
-                });
+                if (
+                    checkIsSameOrBefore(
+                        'SameOrAfter',
+                        moment(dateEnd, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                        moment(dateInitial, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                    )
+                ) {
+                    return null;
+                } else {
+                    return (
+                        <Text style={styles.Error}>
+                            {
+                                'A Data final tem que ser maior ou igual a data inicial!'
+                            }
+                        </Text>
+                    );
+                }
             }
         };
 
@@ -120,12 +151,6 @@ const ModalFiltroData = React.forwardRef<ModalHandles, Props>(
                 backgroundColor,
             };
         });
-
-        const [dateInitial, setDateInitial] = useState(
-            moment().format('DD-MM-YYYY'),
-        );
-        const [dateEnd, setDateEnd] = useState(moment().format('DD-MM-YYYY'));
-        const [dateType, setDateType] = useState<Type>();
 
         return (
             <View>
@@ -151,47 +176,74 @@ const ModalFiltroData = React.forwardRef<ModalHandles, Props>(
                         <View
                             style={[
                                 styles.modalView,
-                                /* { bottom: keyboardHeight }, */
+                                {
+                                    bottom: keyboardHeight,
+                                },
                             ]}>
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={styles.box}>
                                     <TextInputMask
-                                        style={styles.inputDate}
+                                        style={[
+                                            styles.inputDate,
+                                            dateType === 'valueInitial' &&
+                                                styles.inputDateSelected,
+                                        ]}
                                         type="datetime"
+                                        options={{
+                                            format: 'DD/MM/YYYY',
+                                        }}
                                         placeholder="Data inicial"
                                         onFocus={() =>
                                             setDateType('valueInitial')
                                         }
-                                        /* onChangeText={(text) =>
+                                        onChangeText={(text) =>
                                             setDateInitial(text)
-                                        } */
+                                        }
                                         value={dateInitial}
                                         keyboardType="numeric"
                                         showSoftInputOnFocus={false}
                                     />
                                     <TextInputMask
-                                        style={styles.inputDate}
+                                        style={[
+                                            styles.inputDate,
+                                            dateType === 'valueEnd' &&
+                                                styles.inputDateSelected,
+                                        ]}
                                         type="datetime"
+                                        options={{
+                                            format: 'DD/MM/YYYY',
+                                        }}
                                         placeholder="Data final"
                                         onFocus={() => setDateType('valueEnd')}
-                                        /* onChangeText={(text) =>
+                                        onChangeText={(text) =>
                                             setDateEnd(text)
-                                        } */
+                                        }
                                         value={dateEnd}
-                                        keyboardType="ascii-capable"
+                                        keyboardType="numeric"
                                         showSoftInputOnFocus={false}
                                     />
                                 </View>
                             </View>
+                            <ValidateDateErros />
                             <CalendarPerson
                                 type={dateType}
                                 selectedDay={(item) => {
                                     switch (item.tipo) {
                                         case 'valueInitial':
-                                            setDateInitial(item.date);
+                                            setDateInitial(
+                                                moment(
+                                                    item.date,
+                                                    'YYYY-MM-DD',
+                                                ).format('DD/MM/YYYY'),
+                                            );
                                             break;
                                         case 'valueEnd':
-                                            setDateEnd(item.date);
+                                            setDateEnd(
+                                                moment(
+                                                    item.date,
+                                                    'YYYY-MM-DD',
+                                                ).format('DD/MM/YYYY'),
+                                            );
                                             break;
                                         default:
                                             break;
@@ -201,7 +253,7 @@ const ModalFiltroData = React.forwardRef<ModalHandles, Props>(
                             <View style={styles.boxBtn}>
                                 <BtnOptions
                                     valueText="Ok"
-                                    disable={Boolean(initialvalue && endvalue)}
+                                    disable={Boolean(!dateInitial || !dateEnd)}
                                     onPress={() => validacao()}
                                 />
                                 <BtnOptions
@@ -279,8 +331,12 @@ const createStyles = (theme: ThemeContextData) => {
             color: theme.colors.TEXT_SECONDARY,
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
-            fontSize: theme.typography.SIZE.fontysize18,
+            fontSize: theme.typography.SIZE.fontysize14,
             textAlign: 'center',
+        },
+        inputDateSelected: {
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
+            color: theme.colors.TEXT_TERTIARY,
         },
         boxBtn: {
             flexDirection: 'row',
@@ -299,6 +355,11 @@ const createStyles = (theme: ThemeContextData) => {
         calendario: {
             width: '100%',
             borderRadius: 10,
+        },
+        Error: {
+            color: 'red',
+            fontSize: theme.typography.SIZE.fontysize12,
+            alignSelf: 'center',
         },
     });
     return styles;
