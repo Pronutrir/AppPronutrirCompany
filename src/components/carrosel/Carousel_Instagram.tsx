@@ -126,6 +126,7 @@ const MyCarousel: React.FC = () => {
                 keyExtractor={(item, index) => index.toString()}
                 hasParallaxImages={true}
                 autoplay={true}
+                autoplayInterval={10000}
                 enableMomentum={false}
                 lockScrollWhileSnapping={true}
                 loop={true}

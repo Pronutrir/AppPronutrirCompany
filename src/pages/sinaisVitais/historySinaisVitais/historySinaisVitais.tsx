@@ -328,7 +328,7 @@ const HistorySinaisVitais: React.FC = () => {
                 </CardSimples>
             );
         },
-        [],
+        [checkboxFilter],
     );
 
     const renderItemEmpty = () => (
@@ -339,7 +339,7 @@ const HistorySinaisVitais: React.FC = () => {
 
     const renderItemCall = useCallback(
         ({ item, index }) => renderItem({ item, index }),
-        [],
+        [checkboxFilter],
     );
 
     const renderFooter = () => {
