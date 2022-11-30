@@ -69,7 +69,11 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
     const RefactoryPerfisData = () => {
         const result = usuariO_FUNCIONARIO_PERFIL.map((element) => {
-            return { label: element.dS_PERFIL, value: element };
+            return {
+                index: element.cD_PERFIL.toString(),
+                label: element.dS_PERFIL,
+                value: element,
+            };
         });
         return result.sort((a, b) => {
             return a.label < b.label ? -1 : a.label > b.label ? 1 : 0;
@@ -133,7 +137,11 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                 <SelectedDropdown
                     data={RefactoryPerfisData()}
                     onChange={({ value }) => SelectedPerfilApp(value)}
-                    value={PerfilSelected}
+                    value={{
+                        index: PerfilSelected?.cD_PERFIL.toString(),
+                        label: PerfilSelected?.dS_PERFIL,
+                        value: PerfilSelected,
+                    }}
                     placeholder={'Perfil do App'}
                 />
             </View>
@@ -161,7 +169,13 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     <SelectedDropdown
                         data={unidades}
                         onChange={({ value }) => SelectedUnidadeApp(value)}
-                        value={PerfilSelected}
+                        value={{
+                            index: UnidadeSelected?.cD_ESTABELECIMENTO,
+                            label: UnidadeSelected?.dS_ESTABELECIMENTO
+                                .replace('PRONUTRIR ', '')
+                                .replace('- ', ''),
+                            value: UnidadeSelected,
+                        }}
                         placeholder={'Selecione a unidade'}
                         maxHeight={RFPercentage(20)}
                         ContainerStyle={styles.ContainerStyle}
@@ -176,7 +190,11 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     <SelectedDropdown
                         data={RefactoryPerfisData()}
                         onChange={({ value }) => SelectedPerfilApp(value)}
-                        value={PerfilSelected}
+                        value={{
+                            index: PerfilSelected?.cD_PERFIL.toString(),
+                            label: PerfilSelected?.dS_PERFIL,
+                            value: PerfilSelected,
+                        }}
                         placeholder={'Perfil do App'}
                     />
                 </View>
