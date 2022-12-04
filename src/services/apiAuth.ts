@@ -4,7 +4,7 @@ const ApiAuth = axios.create({
     //teste
     //baseURL: 'http://52.171.215.196:8000/',
     //producao
-    baseURL: 'https://servicesapppronutrir.com.br/agentauthtest/api/v1/',
+    baseURL: 'https://servicesapppronutrir.com.br/agentauth/api/v1/',
     //testeauth
     //baseURL: 'https://webapppronutrir.com.br:2300/api/v1/'
     headers: {
