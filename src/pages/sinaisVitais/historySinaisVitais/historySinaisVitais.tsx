@@ -241,7 +241,9 @@ const HistorySinaisVitais: React.FC = () => {
     const Item = memo<Parms>(
         ({ item, index }: { item: ISinaisVitais; index: number }) => {
             return (
-                <View key={index.toString()} style={{ flexDirection: 'row' }}>
+                <View
+                    key={index.toString()}
+                    style={{ flexDirection: 'row', padding: RFPercentage(1) }}>
                     <View style={styles.box1}>
                         <HistorySvg
                             width={RFPercentage(5)}
@@ -483,7 +485,6 @@ const createStyles = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
         },
@@ -496,8 +497,8 @@ const createStyles = (theme: ThemeContextData) => {
         box1: {
             flex: 0.7,
             paddingTop: 10,
-            justifyContent: 'center',
-            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
         },
         box2: {
             flex: 5,

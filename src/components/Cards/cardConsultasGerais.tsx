@@ -204,7 +204,6 @@ const createStyles = (theme: ThemeContextData) => {
             textAlignVertical: 'center',
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
         },

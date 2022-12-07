@@ -336,7 +336,9 @@ const UpdateSinais: React.FC<Props> = ({
             />
             <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
                 <CardAlertaPesoPaciente
-                    historicoSinaisVitais={historicoSinaisVitais}
+                    historicoSinaisVitais={historicoSinaisVitais?.filter(
+                        (item, index) => index <= 2,
+                    )}
                     onpress={() => modalOptions()}
                 />
             </ModalCentralize>

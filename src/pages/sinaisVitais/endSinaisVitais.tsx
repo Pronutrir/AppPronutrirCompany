@@ -249,7 +249,9 @@ const EndSinaisVitais: React.FC<Props> = ({
 
     const Item = ({ item, index }: { item: ISinaisVitais; index: number }) => {
         return (
-            <View key={index.toString()} style={{ flexDirection: 'row' }}>
+            <View
+                key={index.toString()}
+                style={{ flexDirection: 'row', padding: 10 }}>
                 <View style={styles.box1}>
                     <HistorySvg
                         width={RFPercentage(5)}
@@ -488,7 +490,6 @@ const createStyles = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
             marginVertical: RFPercentage(0.5),
@@ -503,7 +504,7 @@ const createStyles = (theme: ThemeContextData) => {
             flex: 0.7,
             paddingTop: 10,
             justifyContent: 'flex-start',
-            alignItems: 'flex-start',
+            alignItems: 'center',
         },
         box2: {
             flex: 5,

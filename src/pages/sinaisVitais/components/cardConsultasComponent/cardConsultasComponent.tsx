@@ -185,7 +185,6 @@ const createStyles = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
         },
