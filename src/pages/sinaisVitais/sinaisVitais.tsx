@@ -1,9 +1,4 @@
-import React, {
-    useState,
-    useRef,
-    useCallback,
-    useEffect,
-} from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
     Text,
     View,
@@ -11,6 +6,7 @@ import {
     TouchableOpacity,
     useWindowDimensions,
     ListRenderItem,
+    Dimensions,
 } from 'react-native';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';
@@ -27,7 +23,6 @@ interface PagesSinaisVitais {
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
 const SinaisVitais: React.FC = () => {
-
     const styles = useThemeAwareObject(createStyles);
 
     const refFlatlist = useRef<FlatList>(null);
@@ -61,7 +56,10 @@ const SinaisVitais: React.FC = () => {
         },
     ]);
 
-    const getItemLayout = (data: PagesSinaisVitais[] | null | undefined, index: number) => {
+    const getItemLayout = (
+        data: PagesSinaisVitais[] | null | undefined,
+        index: number,
+    ) => {
         return {
             length: deviceWidth.width,
             offset: deviceWidth.width * index,
@@ -91,7 +89,7 @@ const SinaisVitais: React.FC = () => {
             scrollToIndex(index);
         }
         //if (type === 'scrollToIndexMenu') {
-            scrollToIndexMenu(index);
+        scrollToIndexMenu(index);
         //}
 
         if (index === 0) {

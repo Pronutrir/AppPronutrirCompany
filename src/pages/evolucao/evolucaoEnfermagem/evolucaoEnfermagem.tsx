@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
@@ -13,10 +13,16 @@ import {
     useEvolucaoTextDefault,
     useAddEvoluçaoEnfermagem,
     IEvolucao,
+    useLiberarEvolucao,
 } from '../../../hooks/useEvolucao';
 import moment from 'moment';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import AuthContext from '../../../contexts/auth';
+import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
+import ModalCentralizedOptions, {
+    ModalHandles as ModalHandlesCentralizedOptions,
+} from '../../../components/Modais/ModalCentralizedOptions';
+import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -38,11 +44,15 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     } = useContext(AuthContext);
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
+    const refModalCentralizedOptions =
+        useRef<ModalHandlesCentralizedOptions>(null);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
 
     const [evolucao, setEvolucao] = useState<IEvolucao | null>();
+
+    const evolucaoLiberacao = useRef<IEvolucao>();
 
     const [defaultText, setDefaultText] = useState<number | null>(null);
 
@@ -51,6 +61,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 
     const { mutateAsync: mutateAsyncEvoluçaoEnfermagem } =
         useAddEvoluçaoEnfermagem();
+
+    const { mutateAsync: mutateAsyncLiberarEvolucao } = useLiberarEvolucao();
 
     const setTipoEvolucao = (item: string) => {
         if (item) {
@@ -70,14 +82,63 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     const addEvolucaoEnfermagem = async (evolucao: IEvolucao) => {
         try {
             refModal.current?.openModal();
-            await mutateAsyncEvoluçaoEnfermagem(evolucao);
+            const { result } = (await mutateAsyncEvoluçaoEnfermagem(evolucao))
+                .data;
+            evolucaoLiberacao.current = result;
             refModal.current?.closeModal();
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'RouteBottom' }, { name: 'IndexEvolucao' }],
-            });
+            setTimeout(
+                () => {
+                    refModalCentralizedOptions.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
         } catch (error) {
             refModal.current?.closeModal();
+        }
+    };
+
+    const onLiberarEvolucao = async () => {
+        if (
+            evolucaoLiberacao.current &&
+            evolucaoLiberacao.current.cD_EVOLUCAO &&
+            evolucaoLiberacao.current.nM_USUARIO
+        ) {
+            setTimeout(
+                () => {
+                    refModal.current?.openModal();
+                },
+                Platform.OS === 'android' ? 0 : 500,
+            );
+            await mutateAsyncLiberarEvolucao({
+                cD_EVOLUCAO: evolucaoLiberacao.current.cD_EVOLUCAO,
+                nM_USUARIO: evolucaoLiberacao.current.nM_USUARIO,
+            });
+            navigation.navigate({
+                name: 'IndexEvolucao',
+                params: { Index: 1 },
+            });
+            refModal.current?.closeModal();
+        } else {
+            console.log('teste');
+        }
+    };
+
+    const MenuPopUpOptions = async (itemSelected: string) => {
+        switch (itemSelected) {
+            case 'Histórico':
+                navigation.navigate('HistoryEvolucao', {
+                    Filter: {
+                        codPessoaFisica: PessoaFisica.cD_PESSOA_FISICA,
+                    },
+                });
+                break;
+            case 'Sinais vitais':
+                navigation.navigate('UpdateSinais', {
+                    PessoaFisica: PessoaFisica,
+                });
+                break;
+            default:
+                break;
         }
     };
 
@@ -88,10 +149,24 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
-                    <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
+                    <ModalAlertPaciente
+                        codPacient={PessoaFisica?.cD_PESSOA_FISICA}
+                    />
+                    <View
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}>
+                        <PessoaFisicaComponent PessoaFisica={PessoaFisica} />
+                        <MenuPopUp
+                            btnLabels={['Histórico', 'Sinais vitais']}
+                            onpress={(item) => MenuPopUpOptions(item)}
+                        />
+                    </View>
                     <SelectedNotaText
                         onPressTipoNota={(item) =>
                             setTipoEvolucao(item.cD_TIPO_EVOLUCAO)
@@ -117,7 +192,12 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 />
             )}
             <Loading ref={refModal} />
-        </SafeAreaView>
+            <ModalCentralizedOptions
+                ref={refModalCentralizedOptions}
+                message="Deseja liberar esta evolução ?"
+                onpress={() => onLiberarEvolucao()}
+            />
+        </View>
     );
 };
 

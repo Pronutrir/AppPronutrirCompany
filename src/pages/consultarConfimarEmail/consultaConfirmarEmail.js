@@ -1,5 +1,14 @@
 import React, { useRef, useState, useContext } from 'react';
-import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, Dimensions } from 'react-native';
+import {
+    Text,
+    View,
+    Pressable,
+    TextInput,
+    ImageBackground,
+    Keyboard,
+    KeyboardAvoidingView,
+    Dimensions,
+} from 'react-native';
 
 import styles from './style';
 import Loading from '../../components/Loading/Loading';
@@ -8,10 +17,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AuthContext from '../../contexts/auth';
 import BackButton from '../../components/buttons/BackButton';
-import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
+import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 
 export default function consultaConfirmarEmail({ navigation }) {
-
     const { stateAuth } = useContext(AuthContext);
     const [modalActive, setModalActive] = useState(false);
 
@@ -23,20 +31,24 @@ export default function consultaConfirmarEmail({ navigation }) {
         } else {
             return false;
         }
-    }
+    };
 
     const FormSchema = Yup.object().shape({
-        ConfEmail: Yup
-            .string()
+        ConfEmail: Yup.string()
             .required('Email é obrigatório!')
             .email('Por favor digite um Email válido!')
-            .oneOf([stateAuth.usertasy.dS_EMAIL], 'Os e-mails digitados são diferentes')
+            .oneOf(
+                [stateAuth.usertasy.dS_EMAIL],
+                'Os e-mails digitados são diferentes',
+            ),
         //.test('validationEmail', 'Os e-mails digitados são diferentes!', value => value && validacaoEmail(value)),
-    })
+    });
 
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
+            <ImageBackground
+                style={styles.BackgroundImage}
+                source={require('../../assets/imagens/logoBackgroud.png')}>
                 <View>
                     <BackButton onPress={() => navigation.goBack()} />
                 </View>
@@ -44,21 +56,34 @@ export default function consultaConfirmarEmail({ navigation }) {
                     initialValues={{
                         ConfEmail: '',
                     }}
-                    onSubmit={values => {
+                    onSubmit={(values) => {
                         navigation.navigate('ConsultaCelular');
                     }}
-                    validationSchema={FormSchema}
-                >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                        <View style={{ flex: 1 }} >
+                    validationSchema={FormSchema}>
+                    {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                        isValid,
+                    }) => (
+                        <View style={{ flex: 1 }}>
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
-                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={Platform.OS === "ios" ? 110 : -180}
-                            >
+                                behavior={Platform.OS === 'ios' && 'padding'}
+                                keyboardVerticalOffset={
+                                    Platform.OS === 'ios' ? 105 : 0
+                                }>
                                 <View style={styles.box1}>
-                                    <Text style={styles.textInfo}>Confirme seu Email</Text>
-                                    <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
+                                    <Text style={styles.textInfo}>
+                                        Confirme seu Email
+                                    </Text>
+                                    <Text style={styles.text}>
+                                        Informe os dados para validar seu acesso
+                                        !
+                                    </Text>
                                     <TextInput
                                         ref={ConfEmail}
                                         style={styles.input}
@@ -69,7 +94,11 @@ export default function consultaConfirmarEmail({ navigation }) {
                                         autoCapitalize={'none'}
                                         maxLength={40}
                                     />
-                                    {(touched.ConfEmail && errors.ConfEmail) && <Text style={styles.Error}>{errors.ConfEmail}</Text>}
+                                    {touched.ConfEmail && errors.ConfEmail && (
+                                        <Text style={styles.Error}>
+                                            {errors.ConfEmail}
+                                        </Text>
+                                    )}
                                 </View>
                                 <View style={styles.box2}>
                                     <Btnprosseguir
@@ -84,6 +113,6 @@ export default function consultaConfirmarEmail({ navigation }) {
                     )}
                 </Formik>
             </ImageBackground>
-        </Pressable >
-    )
+        </Pressable>
+    );
 }

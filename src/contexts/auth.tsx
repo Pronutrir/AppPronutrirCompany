@@ -15,7 +15,6 @@ import {
     LoginState,
     LoginAction,
 } from '../reducers/UserReducer';
-import OneSignal from 'react-native-onesignal';
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import { getPerfil, getUnidade, saveRefreshToken } from '../utils';
 import ApiAuth from '../services/apiAuth';
@@ -29,7 +28,10 @@ interface AuthContextData {
     useGetFetchQuery<T extends Record<keyof T, unknown>>(
         key: string,
     ): T | undefined;
-    ConsultaCpfRg: (cpf?: string, rg?: string) => Promise<IPessoaFisica | undefined>;
+    ConsultaCpfRg: (
+        cpf?: string,
+        rg?: string,
+    ) => Promise<IPessoaFisica | undefined>;
 }
 interface IFirebaseLogin {
     email: string;
@@ -112,7 +114,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     //consulta e retorna o token para acesso a api tasy
     const GetAuth = useCallback(async () => {
-        return ApiAuth.get<TokenResponse>('auth')
+        return ApiAuth.get<TokenResponse>('auth/authToken')
             .then((response) => {
                 const { jwtToken, refreshToken } = response.data;
                 Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
@@ -149,7 +151,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 const { result } = (
                     await Api.get<IResponsePessoaFisica>(
                         `PessoaFisica/FilterCPFRG?${
-                            cpf ? `cpf=${cpf.replace(/[.-]/g, "")}` : ''
+                            cpf ? `cpf=${cpf.replace(/[.-]/g, '')}` : ''
                         }${rg ? `rg=${rg}` : ''}`,
                     )
                 ).data;
@@ -221,9 +223,9 @@ export const AuthProvider: React.FC = ({ children }) => {
                             setLoading(false);
                         }
                         //registra o dispositivo no onesignal inclui um id externo para notificações!
-                        OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
+                        //OneSignal.setExternalUserId(result.cD_PESSOA_FISICA);
                         //Adiciona uma tag para diferenciar as aplicações mobile
-                        OneSignal.sendTag('NameApp', 'pronutrirCompany');
+                        //OneSignal.sendTag('NameApp', 'pronutrirCompany');
                     }
                 } else {
                     setLoading(false);

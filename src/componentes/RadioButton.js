@@ -1,53 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import {
+    Text,
+    View,
+    TouchableOpacity,
+    StyleSheet,
+    Dimensions,
+} from 'react-native';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function RadioButton({ options, Width_full, selection, enable }) {
-
+export default function RadioButton({
+    options,
+    Width_full,
+    selection,
+    enable,
+}) {
     const [value, setValue] = useState();
 
-    const select = item => {
+    const select = (item) => {
         if (item.key != value) {
-            setValue(value => value = item.key)
+            setValue((value) => (value = item.key));
             if (selection) {
                 selection(item);
             }
         }
-    }
+    };
 
     useEffect(() => {
-        setValue('')
-    }, [enable])
+        setValue('');
+    }, [enable]);
 
     return (
         <View style={Width_full ? styles.container : styles.container2}>
-            {options.map(item => {
+            {options.map((item) => {
                 return (
-                    <View key={item.key} style={Width_full ? styles.buttonContainer : styles.buttonContainer2}>
+                    <View
+                        key={item.key.toString()}
+                        style={
+                            Width_full
+                                ? styles.buttonContainer
+                                : styles.buttonContainer2
+                        }>
                         <TouchableOpacity
                             style={styles.circle}
                             onPress={() => select(item)}
-                            disabled={!enable}
-                        >
-                            {value === item.key && <View style={styles.checkedCircle} />}
+                            disabled={!enable}>
+                            {value === item.key && (
+                                <View style={styles.checkedCircle} />
+                            )}
                         </TouchableOpacity>
-                        <Text style={enable ? styles.text : styles.textDisbled}>{item.text}</Text>
+                        <Text style={enable ? styles.text : styles.textDisbled}>
+                            {item.text}
+                        </Text>
                     </View>
                 );
             })}
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     container2: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     buttonContainer: {
         width: '95%',
@@ -87,9 +106,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         fontSize: RFValue(16, 680),
         color: '#7C9292',
-        opacity: 0.5
+        opacity: 0.5,
     },
     disabled: {
-        opacity: 0.5
-    }
-})
+        opacity: 0.5,
+    },
+});

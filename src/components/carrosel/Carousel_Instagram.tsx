@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import { useWindowDimensions, ListRenderItem } from 'react-native';
+import { useWindowDimensions, ListRenderItem, View } from 'react-native';
 import Carousel, {
     ParallaxImage,
     AdditionalParallaxProps,
@@ -9,7 +9,6 @@ import {
     StyleSheet,
     TouchableOpacity,
     Platform,
-    SafeAreaView,
 } from 'react-native';
 import ModalInstagram from '../Modais/ModalInstagram';
 import Api from '../../services/api';
@@ -60,15 +59,23 @@ const MyCarousel: React.FC = () => {
         Api.get<IInstagram[]>('Social/GetFeedsInst')
             .then((response) => {
                 const { data } = response;
-                if (data) {
-                    const result = data.filter((item) => filterPostagens(item, '#pronutrirparceiros'));
-                    if(result.length !== 0){
+
+                const mediaType_img = data.filter(
+                    (item) => item.media_type !== 'VIDEO',
+                );
+
+                if (mediaType_img) {
+                    const result = mediaType_img.filter((item) =>
+                        filterPostagens(item, '#pronutrirparceiros'),
+                    );
+                    if (result.length !== 0) {
                         setPostagensInsta(result);
-                    }else{
-                        const result2 = data.filter((item) => filterPostagens(item, '#pronutrironcologia'));
+                    } else {
+                        const result2 = mediaType_img.filter((item) =>
+                            filterPostagens(item, '#pronutrironcologia'),
+                        );
                         setPostagensInsta(result2);
                     }
-                    
                 }
             })
             .catch(() => {
@@ -107,7 +114,7 @@ const MyCarousel: React.FC = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Carousel
                 layout={'default'}
                 ref={carouselRef}
@@ -119,12 +126,13 @@ const MyCarousel: React.FC = () => {
                 keyExtractor={(item, index) => index.toString()}
                 hasParallaxImages={true}
                 autoplay={true}
+                autoplayInterval={10000}
                 enableMomentum={false}
                 lockScrollWhileSnapping={true}
                 loop={true}
             />
             {post && <ModalInstagram ref={modalInstaRef} postagem={post} />}
-        </SafeAreaView>
+        </View>
     );
 };
 

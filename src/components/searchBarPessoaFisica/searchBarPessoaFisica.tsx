@@ -30,10 +30,10 @@ interface Ifilter {
 }
 
 const filterDefault = [
-    { filter: 'NOME PACIENTE', placeHolder: 'Pesquise o nome do paciente' },
+    { filter: 'NOME PACIENTE', placeHolder: 'Nome do paciente' },
     {
         filter: 'DATA DE NASCIMENTO',
-        placeHolder: 'Pesquise a data de nascimento',
+        placeHolder: 'Data de nascimento',
     },
 ];
 
@@ -41,8 +41,7 @@ interface Props {
     reset?: boolean;
 }
 
-const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }:Props) => {
-    
+const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
     const navigation = useNavigation();
@@ -179,10 +178,10 @@ const SinaisVitaisGerais: React.FC<Props> = ({ reset = false }:Props) => {
     }, []);
 
     useEffect(() => {
-        if(reset){
+        if (reset) {
             Onclean();
         }
-    },[reset])
+    }, [reset]);
 
     return (
         <View style={styles.container}>

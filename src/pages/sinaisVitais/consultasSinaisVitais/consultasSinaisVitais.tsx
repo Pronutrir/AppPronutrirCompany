@@ -9,17 +9,28 @@ import ModalBottom, {
 } from '../../../components/Modais/ModalBottom';
 import { IFilterConsultas } from '../../../contexts/sinaisVitaisContext';
 import EspecialidadeConsultasComponent from '../components/especialidadeConsultasComponent/especialidadeConsultasComponent';
-import { useGetAgendaConsultas, IAgendaConsulta, IResultAgendaConsultas } from '../../../hooks/useAgendaConsultas';
+import {
+    useGetAgendaConsultas,
+    IAgendaConsulta,
+    IResultAgendaConsultas,
+} from '../../../hooks/useAgendaConsultas';
 import AuthContext from '../../../contexts/auth';
+import SearchBarBottom, {
+    ModalHandles as ModalHandlesSearchBarBottom,
+} from '../../../components/seachBar/searchBarBottom/searchBarBottom';
 
 const ConsultasSinaisVitais: React.FC = () => {
-
     const { data: listAgendasConsultas, isFetching } = useGetAgendaConsultas();
     const { useGetFetchQuery } = useContext(AuthContext);
 
+    const refSearchBarBottom = useRef<ModalHandlesSearchBarBottom>(null);
     const refModalBottom = useRef<ModalHandles>(null);
     const [selectedModal, setSelectedModal] = useState<string | null>(null);
     const [activeModal, setActiveModal] = useState(false);
+
+    const [wordFiter, setWordFilter] = useState('');
+    const [filterSelected, setFilterSelected] = useState('');
+
     const selectFilter = useRef<IFilterConsultas>({
         codEspecialidade: null,
         codMedico: null,
@@ -29,14 +40,21 @@ const ConsultasSinaisVitais: React.FC = () => {
         nM_GUERRA: null,
         dS_ESPECIALIDADE: null,
     });
-    const [listConsultas, setListConsutas] = useState<IAgendaConsulta[] | null | undefined>(listAgendasConsultas?.result);
 
-    const filterConsultas = (item?: IFilterConsultas): IAgendaConsulta[] | undefined => {
-        const stateConsultas = useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
-        if(item){
-            if (stateConsultas?.result && (item?.dS_ESPECIALIDADE)) {
+    const [listConsultas, setListConsutas] = useState<
+        IAgendaConsulta[] | null | undefined
+    >(listAgendasConsultas?.result);
+
+    const filterConsultas = (
+        item?: IFilterConsultas,
+    ): IAgendaConsulta[] | undefined => {
+        const stateConsultas =
+            useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
+        if (item) {
+            if (stateConsultas?.result && item?.dS_ESPECIALIDADE) {
                 return stateConsultas.result.filter(
-                    (element) => element.dS_ESPECIALIDADE === item.dS_ESPECIALIDADE,
+                    (element) =>
+                        element.dS_ESPECIALIDADE === item.dS_ESPECIALIDADE,
                 );
             }
             if (stateConsultas?.result && item?.nM_GUERRA) {
@@ -44,7 +62,7 @@ const ConsultasSinaisVitais: React.FC = () => {
                     (element) => element.nM_GUERRA === item.nM_GUERRA,
                 );
             }
-        }else{
+        } else {
             return stateConsultas?.result;
         }
     };
@@ -66,7 +84,7 @@ const ConsultasSinaisVitais: React.FC = () => {
             setActiveModal(false);
             selectFilter.current = { ...selectFilter.current, ...item };
             refModalBottom.current?.closeModal();
-            setListConsutas(filterConsultas(item))
+            setListConsutas(filterConsultas(item));
         } else {
             selectFilter.current = {
                 ...selectFilter.current,
@@ -79,9 +97,14 @@ const ConsultasSinaisVitais: React.FC = () => {
     };
 
     const selectedFilter = (value: string) => {
-        setSelectedModal(value);
-        setActiveModal(true);
-        refModalBottom.current?.openModal();
+        setFilterSelected(value);
+        if (value === 'Paciente') {
+            refSearchBarBottom.current?.openInput();
+        } else {
+            setSelectedModal(value);
+            setActiveModal(true);
+            refModalBottom.current?.openModal();
+        }
     };
 
     const SelectedModal = ({ item }: { item: string | null }) => {
@@ -107,15 +130,34 @@ const ConsultasSinaisVitais: React.FC = () => {
         }
     };
 
-    useEffect(() =>{
+    const filterWord = (word: string) => {
+        const stateConsultas =
+            useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
+        const filterStateConsultas = stateConsultas?.result.filter((item) =>
+            item.nM_PACIENTE.toLowerCase().includes(word.toLowerCase()),
+        );
+        setListConsutas(filterStateConsultas);
+        setWordFilter(word);
+    };
+
+    const clear = (word: string) => {
+        if (!word) {
+            setFilterSelected('');
+            refSearchBarBottom.current?.closeInput();
+        } else {
+            refSearchBarBottom.current?.closeInput();
+        }
+    };
+
+    useEffect(() => {
         setListConsutas(listAgendasConsultas?.result);
-    },[listAgendasConsultas]);
+    }, [listAgendasConsultas]);
 
     return (
         <View style={styles.container}>
             <FilterConsultasComponent
                 onpress={(item) => selectedFilter(item.name)}
-                selectedFilter={selectFilter.current}
+                selectedFilter={filterSelected}
             />
             <CardConsultasComponent
                 dataSourceConsultas={listConsultas}
@@ -129,6 +171,14 @@ const ConsultasSinaisVitais: React.FC = () => {
                 animationType={'slide'}>
                 <SelectedModal item={selectedModal} />
             </ModalBottom>
+            <SearchBarBottom
+                ref={refSearchBarBottom}
+                placeholder={'Nome do paciente'}
+                onChangeText={filterWord}
+                onBlur={() => clear(wordFiter)}
+                //onClearPress={filterWord}
+                value={wordFiter}
+            />
         </View>
     );
 };

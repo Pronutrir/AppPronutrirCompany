@@ -5,14 +5,7 @@ import React, {
     useImperativeHandle,
     useEffect,
 } from 'react';
-import {
-    View,
-    StyleSheet,
-    SafeAreaView,
-    Modal,
-    Platform,
-    Text,
-} from 'react-native';
+import { View, StyleSheet, Modal, Text } from 'react-native';
 import Animated, {
     withTiming,
     useAnimatedStyle,
@@ -59,7 +52,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
         const closeModal = useCallback(() => {
             setTheme('light');
             setActive(false);
-            if(setActiveModal){
+            if (setActiveModal) {
                 setActiveModal(false);
             }
         }, []);
@@ -81,7 +74,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
         });
 
         useEffect(() => {
-            setActive(activeModal)
+            setActive(activeModal);
         }, [activeModal]);
 
         const progress = useDerivedValue(() => {
@@ -119,7 +112,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                             }
                             return true;
                         }}>
-                        <SafeAreaView style={styles.modalView}>
+                        <View style={styles.modalView}>
                             <View style={styles.menssage}>
                                 <Text style={styles.textMenssage}>
                                     {message}
@@ -129,6 +122,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                                 style={{
                                     flexDirection: 'row',
                                     justifyContent: 'space-around',
+                                    margin: 10,
                                 }}>
                                 <BtnOptions
                                     valueText={'Ok'}
@@ -139,7 +133,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                                     onPress={() => closeModal()}
                                 />
                             </View>
-                        </SafeAreaView>
+                        </View>
                     </Animated.View>
                 </Modal>
             </View>
@@ -166,20 +160,6 @@ const createStyles = (theme: ThemeContextData) => {
             borderRadius: 20,
             alignItems: 'center',
             justifyContent: 'center',
-            shadowColor: theme.colors.BACKDROP,
-            ...Platform.select({
-                ios: {
-                    shadowOffset: {
-                        width: 0,
-                        height: 5,
-                    },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 6,
-                },
-                android: {
-                    elevation: 3,
-                },
-            }),
         },
         menssage: {},
         textMenssage: {

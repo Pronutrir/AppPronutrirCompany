@@ -24,20 +24,27 @@ import { ThemeContextData } from '../../../contexts/themeContext';
 import MenuPopUp, {
     ModalHandlesMenu,
 } from '../../../components/menuPopUp/menuPopUp';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import CheckEvolucaoComponent from '../components/checkEvolucaoComponent/checkEvolucaoComponent';
-import { useServerHour } from '../../../hooks/useServerHour';
 import ModalCentralizedOptions, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralizedOptions';
 import NotificationInfor from '../../../components/Notification/NotificationInfor';
 import Infomation from '../../../assets/svg/informacoes.svg';
+import { RootStackParamList } from '../../../routes/routeDashboard';
+import PressableRipple from '../../../components/ripple/PressableRipple';
+import ActiveIndicator from '../../../components/Loading/ActiveIndicator';
 
-const HistoryEvolucao: React.FC = () => {
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'HistoryEvolucao'>;
+interface Props {
+    route: ProfileScreenRouteProp;
+}
+
+const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
     const navigation = useNavigation();
     const styles = useThemeAwareObject(createStyles);
-    const refMenuBotom = useRef<ModalHandlesMenu>(null);
+
     const refModal = useRef<LoadHandles>(null);
     const refModalBotom = useRef<ModalHandles>(null);
 
@@ -45,21 +52,21 @@ const HistoryEvolucao: React.FC = () => {
 
     const {
         stateAuth: {
-            usertasy: { cD_PESSOA_FISICA, nM_USUARIO },
+            usertasy: { nM_USUARIO },
         },
     } = useContext(AuthContext);
 
-    const { data, refetch, isFetching } = useHistoryEvolucao(cD_PESSOA_FISICA);
-
-    const { data: serverDataHour } = useServerHour();
-
-    const optionsPopUp = (EVOLUCAO: IEvolucaoHistory) => {
-        return (
-            (moment(serverDataHour).diff(EVOLUCAO.dT_EVOLUCAO, 'hours') < 24 &&
-                Boolean(EVOLUCAO.dT_LIBERACAO)) ||
-            Boolean(!EVOLUCAO.dT_LIBERACAO)
-        );
-    };
+    const {
+        data,
+        refetch,
+        isFetching,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useHistoryEvolucao({
+        codPessoaFisica: route?.params.Filter.codPessoaFisica,
+        codMedico: route?.params.Filter.codMedico,
+    });
 
     const { mutateAsync: mutateAsyncDeleteEvoluçaoEnfermagem } =
         useDeleteEvoluçaoEnfermagem();
@@ -100,6 +107,11 @@ const HistoryEvolucao: React.FC = () => {
         item: IEvolucaoHistory,
     ) => {
         switch (itemSelected) {
+            case 'Visualizar':
+                navigation.navigate('UpdateEvolucaoEnfermagem', {
+                    Evolucao: item,
+                });
+                break;
             case 'Liberar':
                 await onLiberarEvolucao(item);
                 break;
@@ -124,9 +136,28 @@ const HistoryEvolucao: React.FC = () => {
         }
     };
 
+    const activeMenuPopUp = (ref: React.RefObject<ModalHandlesMenu>) => {
+        setTimeout(
+            () => {
+                ref.current?.showMenu();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+        );
+    };
+
     const Item = ({ item }: { item: IEvolucaoHistory; index: number }) => {
+        const refMenuBotom = useRef<ModalHandlesMenu>(null);
         return (
-            <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
+            <PressableRipple
+                pressableProps={{
+                    onLongPress: () => activeMenuPopUp(refMenuBotom),
+                    onPress: () =>
+                        navigation.navigate('UpdateEvolucaoEnfermagem', {
+                            Evolucao: item,
+                        }),
+                }}
+                childrenStyle={{ flexDirection: 'row' }}
+                style={{ flex: 1 }}>
                 <View style={styles.box1}>
                     <HistorySvg
                         width={RFPercentage(5)}
@@ -142,43 +173,45 @@ const HistoryEvolucao: React.FC = () => {
                                 styles.text
                             }>{`${item.nM_PACIENTE.toUpperCase()}`}</Text>
                     </View>
-                    {/* <View style={styles.item}>
-                        <Text style={styles.textLabel}>Data de nascimento: </Text>
-                        <Text style={styles.text}>{`${moment(
-                            dT_NASCIMENTO,
-                        ).format('DD-MM-YYYY')}`}</Text>
-                    </View> */}
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Data da evolução: </Text>
                         <Text style={styles.text}>{`${moment(
                             item.dT_EVOLUCAO,
                         ).format('DD-MM-YYYY [às] HH:mm')}`}</Text>
                     </View>
+                    <View style={styles.item}>
+                        <Text style={styles.textLabel}>Profissional: </Text>
+                        <Text style={styles.text}>{item.nM_PROFISSIONAL}</Text>
+                    </View>
                 </View>
                 <View style={styles.box3}>
                     <View style={{ alignItems: 'flex-end' }}>
-                        {optionsPopUp(item) ? (
-                            <MenuPopUp
-                                ref={refMenuBotom}
-                                btnLabels={['Liberar', 'Editar', 'Excluir']}
-                                onpress={(label) => {
-                                    refMenuBotom.current?.hideMenu(),
-                                        MenuPopUpOptions(label, item);
-                                }}
-                            />
-                        ) : (
-                            <NotificationInfor
-                                msn="Somente estará disponível para edição ou exclusão ás evoluções que não estiverem liberadas, após a liberação das evoluções só será possível fazer alterações até o prazo de 24 horas!"
-                                iconeTop={Infomation}
-                            />
-                        )}
+                        <MenuPopUp
+                            ref={refMenuBotom}
+                            btnVisible={false}
+                            btnLabels={
+                                item.dT_LIBERACAO
+                                    ? ['Visualizar']
+                                    : ['Liberar', 'Editar', 'Excluir']
+                            }
+                            onpress={(label) => {
+                                refMenuBotom.current?.hideMenu(),
+                                    MenuPopUpOptions(label, item);
+                            }}
+                        />
                     </View>
                     <View>
                         <CheckEvolucaoComponent Item={item.dT_LIBERACAO} />
                     </View>
                 </View>
-            </View>
+            </PressableRipple>
         );
+    };
+
+    const loadMore = () => {
+        if (hasNextPage) {
+            fetchNextPage();
+        }
     };
 
     const renderItem = ({
@@ -189,7 +222,7 @@ const HistoryEvolucao: React.FC = () => {
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={index} item={item} index={index} />
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 
@@ -199,24 +232,40 @@ const HistoryEvolucao: React.FC = () => {
         </CardSimples>
     );
 
+    const renderFooter = () => {
+        return <ActiveIndicator active={isFetchingNextPage} />;
+    };
+
     return (
         <View style={styles.container}>
             {data ? (
-                <FlatList
-                    data={data}
-                    renderItem={({ item, index }) =>
-                        renderItem({ item, index })
-                    }
-                    keyExtractor={(item, index) => index.toString()}
-                    refreshing={isFetching}
-                    onRefresh={() => {
-                        refetch();
-                    }}
-                    ListEmptyComponent={renderItemEmpty}
-                    //ListFooterComponent={renderFooter}
-                    //onEndReached={loadMore}
-                    //onEndReachedThreshold={0.5}
-                />
+                <>
+                    <View
+                        style={{
+                            margin: RFPercentage(1),
+                            marginBottom: RFPercentage(2.5),
+                        }}>
+                        <NotificationInfor
+                            msn="Somente estará disponível para edição ou exclusão as evoluções que não estiverem liberadas."
+                            iconeTop={Infomation}
+                        />
+                    </View>
+                    <FlatList
+                        data={data?.pages.map((page) => page).flat()}
+                        renderItem={({ item, index }) =>
+                            renderItem({ item, index })
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                        refreshing={isFetching}
+                        onRefresh={() => {
+                            refetch();
+                        }}
+                        ListEmptyComponent={renderItemEmpty}
+                        ListFooterComponent={renderFooter}
+                        onEndReached={loadMore}
+                        onEndReachedThreshold={0.5}
+                    />
+                </>
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
@@ -252,6 +301,7 @@ const createStyles = (theme: ThemeContextData) => {
             margin: 3,
         },
         box3: {
+            margin: 10,
             justifyContent: 'space-between',
         },
         cardStyle: {
@@ -259,7 +309,6 @@ const createStyles = (theme: ThemeContextData) => {
             padding: RFPercentage(0.5),
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
             marginVertical: RFPercentage(0.5),

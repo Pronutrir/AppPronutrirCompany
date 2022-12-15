@@ -32,7 +32,6 @@ const CardConsultasGerais: React.FC<Props> = ({
     setState,
     state,
 }: Props) => {
-    
     const styles = useThemeAwareObject(createStyles);
 
     const { SearchPFSinaisVitais, ValidationAutorizeEnfermagem } =
@@ -130,7 +129,7 @@ const CardConsultasGerais: React.FC<Props> = ({
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>
-            <Item key={index} item={item} index={index} />
+            <Item key={index.toString()} item={item} index={index} />
         </CardSimples>
     );
 
@@ -207,7 +206,6 @@ const createStyles = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
         },

@@ -1,92 +1,81 @@
 import { AxiosResponse } from 'axios';
-import moment from 'moment';
 import { useContext } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
 export interface IFamiliar {
-    cD_PESSOA_FISICA: string;
-    dT_NASCIMENTO: string;
-    iE_TIPO_PESSOA: number;
-    nM_USUARIO_ORIGINAL: string;
-    nM_USUARIO: string;
-    nM_PESSOA_FISICA: string;
-    nR_CPF?: string;
-    nR_IDENTIDADE?: string,
-    nR_SEQ_GRAU_PARENTESCO: number;
-    cD_PESSOA_FAMILIA?: string;
-    iE_HABITACAO: string;
-    cD_PROFESSIONAL: string;
-    nM_USUARIO_NREC: string;
-    iE_GENDER: string;
+    cod_Grau_Parentesco: number;
+    cod_Pf_Familiar: number;
+    cod_Pf_Paciente: string;
+    cod_Pf_Profissional: string;
+    nm_Usuario: string;
+    nm_Usuario_Reg: string;
+    desc_Grau_Parentesco: string;
+    dt_Atualizacao: string;
+    dt_Registro: string;
+    id_Familiar: number;
+    ie_Sexo: string;
+    ie_Situacao: string;
+    nm_Paciente: string;
+    nm_Profissional: string;
+    pessoaFisicaSimplificadoSqlServer: IFamiliarSimples;
+}
+export interface IFamiliarSimples {
+    dt_Atualizacao?: string;
+    dt_Registro?: string;
+    id_Pessoa_Fisica?: 1;
+    nm_Pessoa_Fisica?: string;
+    dt_Nascimento?: string;
+    nr_CPF?: string;
+    nr_Identidade?: string;
 }
 interface IResponseFamiliar {
-    result: IGetFamiliar[];
+    result: IFamiliar[];
+    statusCode: number;
+    message: string;
 }
 export interface IPostFamiliar {
-    cD_PESSOA_FISICA: string;
-    nM_PESSOA_FISICA: string;
-    dT_NASCIMENTO: string;
-    nR_CPF?: string;
-    nR_IDENTIDADE?: string,
-    nR_SEQ_GRAU_PARENTESCO: number;
-    iE_GENDER: string;
+    nm_Pessoa_Fisica: string;
+    dt_Nascimento: string;
+    nr_CPF?: string | null;
+    nr_Identidade?: string | null;
+    nr_Ddd?: string | null;
+    nr_Telefone_Celular?: string | null;
+    nm_Usuario?: string | null;
+    nm_Usuario_Reg?: string | null;
+    cod_Grau_Parentesco?: number | null;
+    cod_Pf_Familiar?: number | null;
+    cod_Pf_Paciente?: string | null;
+    cod_Pf_Profissional?: string | null;
+    ie_Sexo?: string | null;
 }
-export interface IGetFamiliar {
-    nR_SEQ_GRAU_PARENTESCO: number;
-    cD_PESSOA_FAMILIA: string;
-    cD_PESSOA_FISICA: string;
-    nR_SEQUENCIA: number;
-    iE_HABITACAO: string;
-    nM_USUARIO: string;
-    dT_ATUALIZACAO: string;
-    sI_FAMILIARITY: string;
-    sI_SITUATION: string;
-    sI_INLAW: string;
-    sI_BLOOD_TYPE: string;
-    sI_RH_FACTOR: string;
-    sI_KEY_PERSON: string;
-    nR_SEQ_MEMBER_SUP: number;
-    iE_DESCONHECIDA: string;
-    dT_ATUALIZACAO_NREC: string;
-    nM_USUARIO_NREC: string;
-    dT_DEATH: string;
-    cD_OCCUPATION: number;
-    iE_GENDER: string;
-    qT_AGE: number;
-    cD_PROFESSIONAL: string;
-    nM_ACOMPANHANTE: string;
-    nM_PACIENTE: string;
-    nM_PROFISIONAL: string;
-    dS_GRAU_PARENTESCO: string;
-}
-export interface IFamiliarVincular {
-    nR_SEQ_GRAU_PARENTESCO: number;
-    cD_PESSOA_FAMILIA: string;
-    cD_PESSOA_FISICA: string;
-    iE_HABITACAO?: string;
-    iE_GENDER: string;
-    nM_USUARIO: string;
-    dT_ATUALIZACAO?: string;
-    cD_PROFESSIONAL: string;
-    dT_ATUALIZACAO_NREC?: string;
-    nM_USUARIO_NREC: string;
+interface IFamiliarVincularPost {
+    cod_Grau_Parentesco?: number;
+    cod_Pf_Familiar: number;
+    cod_Pf_Paciente: string;
+    cod_Pf_Profissional: string;
+    nm_Usuario: string;
+    nm_Usuario_Reg?: string;
+    dt_Atualizacao?: string;
+    dt_Registro?: string;
+    ie_Situacao?: string;
+    ie_Sexo?: string;
 }
 
 const useGetFamiliar = (codPfPaciente: string) => {
     const { addAlert } = useContext(NotificationGlobalContext);
     return useQuery(
-        'familiares',
+        ['familiares', codPfPaciente],
         async () => {
             const { result } = (
                 await Api.get<IResponseFamiliar>(
-                    `PessoaFisicaFamilia/ListPfFamily?codPfPaciente=${codPfPaciente}&distinct=true&page=1&rows=100`,
+                    `PessoaFisicaFamiliaSqlServer/ListPfFamilySql?codPfPaciente=${codPfPaciente}&distinct=true&page=1&rows=100`,
                 )
             ).data;
             return result;
         },
         {
+            /* enabled: false, */
             onError: () => {
                 addAlert({
                     message:
@@ -101,41 +90,30 @@ const useGetFamiliar = (codPfPaciente: string) => {
 const useAddFamiliar = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
 
-    const {
-        stateAuth: { usertasy },
-    } = useContext(AuthContext);
-
     return useMutation(
         async (family: IPostFamiliar) => {
             const result = (
-                await Api.post<any, AxiosResponse<any, any>, IFamiliar>(
-                    `PessoaFisicaFamilia/PostPfEscortFamily`,
-                    {
-                        cD_PESSOA_FISICA: family.cD_PESSOA_FISICA,
-                        dT_NASCIMENTO: moment(family.dT_NASCIMENTO, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                        iE_TIPO_PESSOA: 2,
-                        nM_USUARIO_ORIGINAL: 'AppMobile',
-                        nM_USUARIO: 'AppMobile',
-                        nM_PESSOA_FISICA: family.nM_PESSOA_FISICA,
-                        nR_CPF: family?.nR_CPF ? family.nR_CPF.replace(/[.-]/g, '') : undefined,
-                        nR_IDENTIDADE: family?.nR_IDENTIDADE ? family.nR_IDENTIDADE : undefined,
-                        nR_SEQ_GRAU_PARENTESCO: family.nR_SEQ_GRAU_PARENTESCO,
-                        iE_HABITACAO: 'N',
-                        iE_GENDER: family.iE_GENDER,
-                        cD_PROFESSIONAL: usertasy.cD_PESSOA_FISICA,
-                        nM_USUARIO_NREC: 'AppMobile',
-                    },
+                await Api.post<any, AxiosResponse<any, any>, IPostFamiliar>(
+                    `PessoaFisicaFamiliaSqlServer/PostPfEscortFamilySql`,
+                    family,
                 )
             ).data;
             return result;
         },
         {
-            onSuccess: () => {
-                addAlert({
-                    message:
-                        'Acompanhante adicionado com sucesso!',
-                    status: 'sucess',
-                });
+            onSuccess: (dataResult) => {
+                const { MSG } = dataResult;
+                if (
+                    MSG ===
+                    'A Pessoa fisica já possui cadastro na base de dados!'
+                ) {
+                    return;
+                } else {
+                    addAlert({
+                        message: 'Acompanhante adicionado com sucesso!',
+                        status: 'sucess',
+                    });
+                }
             },
             onError: (error) => {
                 console.log(error);
@@ -153,33 +131,25 @@ const useVincularFamiliar = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
 
     return useMutation(
-        async (family: IFamiliarVincular) => {
+        async (family: IFamiliarVincularPost) => {
             const result = (
-                await Api.post<any, AxiosResponse<any, any>, IFamiliarVincular>(
-                    `PessoaFisicaFamilia/PostPfFamily`,
-                    {
-                        nR_SEQ_GRAU_PARENTESCO: family.nR_SEQ_GRAU_PARENTESCO,
-                        cD_PESSOA_FAMILIA: family.cD_PESSOA_FAMILIA,
-                        cD_PESSOA_FISICA: family.cD_PESSOA_FISICA,
-                        iE_HABITACAO: 'N',
-                        iE_GENDER: family.iE_GENDER,
-                        nM_USUARIO: family.nM_USUARIO,
-                        cD_PROFESSIONAL: family.cD_PROFESSIONAL,
-                        nM_USUARIO_NREC: family.nM_USUARIO_NREC,
-                    },
-                )
+                await Api.post<
+                    any,
+                    AxiosResponse<any, any>,
+                    IFamiliarVincularPost
+                >(`PessoaFisicaFamiliaSqlServer/PostPfFamilySql`, family)
             ).data;
             return result;
         },
         {
             onSuccess: () => {
                 addAlert({
-                    message:
-                        'Acompanhante vinculado com sucesso!',
+                    message: 'Acompanhante vinculado com sucesso!',
                     status: 'sucess',
                 });
             },
-            onError: () => {
+            onError: (error) => {
+                console.log(error);
                 addAlert({
                     message:
                         'Error ao vincular os sinais vitais tente mais tarde!',

@@ -46,10 +46,9 @@ const UpdateSinais: React.FC<Props> = ({
     const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais } =
         useContext(SinaisVitaisContext);
 
-    const { data: historicoSinaisVitais } = useSinaisVitaisHistory(
-        PessoaFisica.nM_PESSOA_FISICA,
-        3,
-    );
+    const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
+        nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    });
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
@@ -85,7 +84,7 @@ const UpdateSinais: React.FC<Props> = ({
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
-            dS_OBSERVACAO: observacao
+            dS_OBSERVACAO: observacao,
         });
         refetchSinaisVitais;
         setActiveModal(false);
@@ -114,7 +113,7 @@ const UpdateSinais: React.FC<Props> = ({
                     Paciente: SinaisVitais?.nM_PESSOA_FISICA
                         ? SinaisVitais?.nM_PESSOA_FISICA
                         : PessoaFisica?.nM_PESSOA_FISICA,
-                    Tipo: 'all',
+                    Tipo: 'Todos',
                 });
                 break;
             case 'Acompanhantes':
@@ -177,7 +176,6 @@ const UpdateSinais: React.FC<Props> = ({
             }
         });
         refPesoMediaPaciente.current = Math.round(mediaPeso / element.length);
-        console.log(Math.round(mediaPeso / element.length));
     };
 
     const variacaoPercentualPaciente = () => {
@@ -195,10 +193,13 @@ const UpdateSinais: React.FC<Props> = ({
 
     const modalOptions = () => {
         refModalCentralizeVariacaoPeso.current?.closeModal();
-        setTimeout(() => {
-            refModalOptions.current?.openModal();
-        }, Platform.OS === 'ios' ? 500 : 0);
-    }
+        setTimeout(
+            () => {
+                refModalOptions.current?.openModal();
+            },
+            Platform.OS === 'ios' ? 500 : 0,
+        );
+    };
 
     useEffect(() => {
         if (historicoSinaisVitais) {
@@ -335,7 +336,9 @@ const UpdateSinais: React.FC<Props> = ({
             />
             <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
                 <CardAlertaPesoPaciente
-                    historicoSinaisVitais={historicoSinaisVitais}
+                    historicoSinaisVitais={historicoSinaisVitais?.filter(
+                        (item, index) => index <= 2,
+                    )}
                     onpress={() => modalOptions()}
                 />
             </ModalCentralize>

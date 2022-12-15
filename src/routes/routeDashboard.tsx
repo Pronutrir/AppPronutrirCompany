@@ -26,7 +26,7 @@ import EndSinaisVitais from '../pages/sinaisVitais/endSinaisVitais';
 import HistoryEvolucao from '../pages/evolucao/evolucaoEnfermagem/historyEvolucao';
 import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
 import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updateEvolucaoEnfermagem';
-import { IEvolucaoHistory } from '../hooks/useEvolucao';
+import { IEvolucaoHistory, IFilterHistoryEvolucao } from '../hooks/useEvolucao';
 import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
 import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 
@@ -71,8 +71,12 @@ export type RootStackParamList = {
         Paciente: string;
         Tipo: string;
     };
-    HistoryEvolucao: undefined;
-    IndexEvolucao: undefined;
+    HistoryEvolucao: {
+        Filter: IFilterHistoryEvolucao;
+    };
+    IndexEvolucao: {
+        Index: number;
+    };
     UpdateEvolucaoEnfermagem: {
         Evolucao: IEvolucaoHistory;
     };
@@ -80,16 +84,16 @@ export type RootStackParamList = {
         PessoaFisica: {
             nM_PESSOA_FISICA: string;
             dT_NASCIMENTO: string;
-            cD_PESSOA_FISICA: string,
+            cD_PESSOA_FISICA: string;
         };
     };
     addAcompanhanteSinaisVitais: {
         PessoaFisica: {
             nM_PESSOA_FISICA: string;
             dT_NASCIMENTO: string;
-            cD_PESSOA_FISICA: string,
+            cD_PESSOA_FISICA: string;
         };
-    }
+    };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -179,12 +183,12 @@ const InitialStackNavigator = () => {
             <Stack.Screen
                 name="EvolucaoEnfermagem"
                 component={EvolucaoEnfermagem}
-                options={{ title: 'Evolucao Enfermagem' }}
+                options={{ title: 'Evolução' }}
             />
             <Stack.Screen
                 name="SearchPessoaFisica"
                 component={SearchPessoaFisica}
-                options={{ title: 'Evolucão Enfermagem' }}
+                options={{ title: 'Evolucão' }}
             />
             <Stack.Screen
                 name="EndSinaisVitais"
@@ -199,12 +203,13 @@ const InitialStackNavigator = () => {
             <Stack.Screen
                 name="UpdateEvolucaoEnfermagem"
                 component={UpdateEvolucaoEnfermagem}
-                options={{ title: 'Atualizar evolução' }}
+                options={{ title: 'Evolução' }}
             />
             <Stack.Screen
                 name="IndexEvolucao"
+                initialParams={{ Index: 0 }}
                 component={IndexEvolucao}
-                options={{ title: 'Evolucão Enfermagem' }}
+                options={{ title: 'Evolucão' }}
             />
             <Stack.Screen
                 name="AcompanhateSinaisVitais"

@@ -1,7 +1,7 @@
 import {
     Dimensions,
-    Keyboard,
-    Pressable,
+    Platform,
+    ScrollView,
     StyleSheet,
     Text,
     View,
@@ -20,20 +20,21 @@ import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { valicacaoCPF } from '../../../services/validacaoCpf';
-import { cpfMask, DateMask } from '../../../services/validacoes';
+import { cpfMask, DateMask, foneMask } from '../../../services/validacoes';
 import Checkbox from '../../../components/checkbox/checkbox';
 import SelectedDropdown from '../../../components/selectedDropdown/SelectedDropdown';
 import {
-    IGetFamiliar,
+    IFamiliarSimples,
     useAddFamiliar,
     useVincularFamiliar,
 } from '../../../hooks/useFamiliar';
-import AuthContext, { IPessoaFisica } from '../../../contexts/auth';
-import ModalCentralizedOptions, {
+import AuthContext from '../../../contexts/auth';
+/* import { useQueryClient } from 'react-query'; */
+import moment from 'moment';
+import ModalCentralize, {
     ModalHandles,
-} from '../../../components/Modais/ModalCentralizedOptions';
-import { useQueryClient } from 'react-query';
-import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
+} from '../../../components/Modais/ModalCentralize';
+import CardDuplicidadeAcompanhante from '../components/cardDuplicidadeAcompanhante/cardDuplicidadeAcompanhante';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -45,28 +46,38 @@ interface Props {
 interface Form {
     NOME: string;
     NASCIMENTO: string;
-    CPF: string;
-    RG: string;
-    PARENTESCO: {
-        label: string;
+    FONE?: string;
+    CPF?: string;
+    RG?: string;
+    PARENTESCO?: {
+        label: string | null;
         nR_SEQ_GRAU_PARENTESCO: number;
     };
     TOUCHED: '';
-    SEXO: string;
+    SEXO?: {
+        label: string | null;
+        iE_GENDER: string;
+    };
     SELECT: string;
 }
 
 const parentescoList = [
-    { label: 'Amigo', nR_SEQ_GRAU_PARENTESCO: 2 },
-    { label: 'Avô(ó)', nR_SEQ_GRAU_PARENTESCO: 5 },
-    { label: 'Cônjuge/Companheira(o)', nR_SEQ_GRAU_PARENTESCO: 10 },
-    { label: 'Cunhado(a)', nR_SEQ_GRAU_PARENTESCO: 9 },
-    { label: 'Irmã(o)', nR_SEQ_GRAU_PARENTESCO: 1 },
-    { label: 'Mãe', nR_SEQ_GRAU_PARENTESCO: 6 },
-    { label: 'Pai', nR_SEQ_GRAU_PARENTESCO: 7 },
-    { label: 'Primo(a)', nR_SEQ_GRAU_PARENTESCO: 4 },
-    { label: 'Sobrinho(a)', nR_SEQ_GRAU_PARENTESCO: 8 },
-    { label: 'Tio(a)', nR_SEQ_GRAU_PARENTESCO: 3 },
+    { value: 1, label: 'Pai', nR_SEQ_GRAU_PARENTESCO: 1 },
+    { value: 2, label: 'Mãe', nR_SEQ_GRAU_PARENTESCO: 2 },
+    { value: 3, label: 'Filho', nR_SEQ_GRAU_PARENTESCO: 3 },
+    { value: 4, label: 'Primo(a)', nR_SEQ_GRAU_PARENTESCO: 4 },
+    { value: 5, label: 'Tio(a)', nR_SEQ_GRAU_PARENTESCO: 5 },
+    { value: 6, label: 'Avô(ó)', nR_SEQ_GRAU_PARENTESCO: 6 },
+    { value: 7, label: 'Irmã(o)', nR_SEQ_GRAU_PARENTESCO: 7 },
+    { value: 8, label: 'Cunhado(a)', nR_SEQ_GRAU_PARENTESCO: 8 },
+    { value: 9, label: 'Sobrinho(a)', nR_SEQ_GRAU_PARENTESCO: 9 },
+    { value: 10, label: 'Amigo', nR_SEQ_GRAU_PARENTESCO: 10 },
+    { value: 11, label: 'Bisavô(ó)', nR_SEQ_GRAU_PARENTESCO: 11 },
+    { value: 12, label: 'Neto(a)', nR_SEQ_GRAU_PARENTESCO: 12 },
+    { value: 13, label: 'Bisneto(a)', nR_SEQ_GRAU_PARENTESCO: 13 },
+    { value: 14, label: 'Sogro(a)', nR_SEQ_GRAU_PARENTESCO: 14 },
+    { value: 15, label: 'Genro(a)', nR_SEQ_GRAU_PARENTESCO: 15 },
+    { value: 16, label: 'Cônjuge/Companheira(o)', nR_SEQ_GRAU_PARENTESCO: 16 },
 ];
 
 const sexoList = [
@@ -76,38 +87,19 @@ const sexoList = [
 ];
 
 const addAcompanhanteSinaisVitais = ({ route }: Props) => {
-    const { addAlert } = useContext(NotificationGlobalContext);
     const {
         stateAuth: { usertasy },
-        useGetFetchQuery,
     } = useContext(AuthContext);
-    const { ConsultaCpfRg } = useContext(AuthContext);
 
-    const queryClient = useQueryClient();
+    /* const queryClient = useQueryClient(); */
     const navigation = useNavigation();
 
     const { mutateAsync: mutateAsyncAddFamiliar } = useAddFamiliar();
     const { mutateAsync: mutateAsyncVincularFamiliar } = useVincularFamiliar();
 
-    const [pessoaFisica, setPessoaFisica] = useState<
-        IPessoaFisica | undefined
-    >();
-    const refValuesform = useRef<Form>({
-        NOME: '',
-        NASCIMENTO: '',
-        CPF: '',
-        RG: '',
-        SELECT: 'CPF',
-        PARENTESCO: {
-            label: '',
-            nR_SEQ_GRAU_PARENTESCO: 0,
-        },
-        TOUCHED: '',
-        SEXO: '',
-    });
-
     const refModalOptions1 = useRef<ModalHandles>(null);
-    const refModalOptions2 = useRef<ModalHandles>(null);
+    const [dadosDuplicidade, SetDadosDuplicidade] =
+        useState<IFamiliarSimples | null>(null);
 
     const refSelected = useRef<string>('CPF');
     const refModal = useRef<LoadHandles>(null);
@@ -115,91 +107,103 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     const theme = useTheme();
     const styles = useThemeAwareObject(createStyle);
 
-    const verifyAcompanhante = async (values: Form) => {
-        refModal.current?.openModal();
-
-        const listFamily = useGetFetchQuery<IGetFamiliar[]>('familiares');
-
-        if (values.PARENTESCO.nR_SEQ_GRAU_PARENTESCO === 5) {
-            let validationPartern = false;
-
-            if (listFamily && listFamily?.length > 0) {
-                validationPartern = !listFamily?.some(
-                    (item) => item.nR_SEQ_GRAU_PARENTESCO === 7,
-                );
-            }
-            if (validationPartern || !listFamily || listFamily?.length <= 0) {
-                addAlert({
-                    message:
-                        'favor cadastrar um membro pai antes de cadastrar o avô/avó!',
-                    status: 'info',
-                });
-                refModal.current?.closeModal();
-                return;
-            }
-        }
-
-        const result = await ConsultaCpfRg(values.CPF, values.RG);
-
-        refValuesform.current = values;
-        refModal.current?.closeModal();
-        if (result) {
-            setPessoaFisica(result);
-            refModalOptions1.current?.openModal();
-        } else {
-            refModalOptions2.current?.openModal();
-        }
-    };
+    const refValuesform = useRef<Form>({
+        NOME: '',
+        NASCIMENTO: '',
+        FONE: '',
+        CPF: '',
+        RG: '',
+        SELECT: 'CPF',
+        PARENTESCO: {
+            label: null,
+            nR_SEQ_GRAU_PARENTESCO: 0,
+        },
+        TOUCHED: '',
+        SEXO: {
+            label: null,
+            iE_GENDER: '',
+        },
+    });
 
     const addAcompanhante = async (values?: Form) => {
         try {
             if (values) {
+                refValuesform.current = values;
                 refModal.current?.openModal();
-                await mutateAsyncAddFamiliar({
-                    cD_PESSOA_FISICA:
-                        route.params.PessoaFisica.cD_PESSOA_FISICA,
-                    nR_CPF: values.CPF,
-                    dT_NASCIMENTO: values.NASCIMENTO,
-                    nR_IDENTIDADE: values.RG,
-                    iE_GENDER: values.SEXO,
-                    nM_PESSOA_FISICA: values.NOME,
-                    nR_SEQ_GRAU_PARENTESCO:
-                        values.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
+                const { MSG, DADOS } = await mutateAsyncAddFamiliar({
+                    cod_Pf_Paciente: route.params.PessoaFisica.cD_PESSOA_FISICA,
+                    cod_Pf_Profissional: usertasy.cD_PESSOA_FISICA,
+                    dt_Nascimento: moment(
+                        values.NASCIMENTO,
+                        'DD-MM-YYYY',
+                    ).format('YYYY-MM-DD'),
+                    nm_Pessoa_Fisica: values.NOME.trim(),
+                    nr_CPF: values.CPF ? values.CPF.replace(/[.-]/g, '') : null,
+                    nr_Identidade: values.RG ? values.RG : null,
+                    ie_Sexo: values.SEXO ? values.SEXO.iE_GENDER : null,
+                    nr_Ddd: values.FONE
+                        ? values.FONE.replace(/[() -]/g, '').substring(0, 2)
+                        : null,
+                    nr_Telefone_Celular: values.FONE
+                        ? values.FONE.replace(/[() -]/g, '').substring(2, 12)
+                        : null,
+                    cod_Grau_Parentesco: values?.PARENTESCO
+                        ?.nR_SEQ_GRAU_PARENTESCO
+                        ? values?.PARENTESCO?.nR_SEQ_GRAU_PARENTESCO
+                        : null,
+                    nm_Usuario: 'AppMobile',
                 });
-                navigation.goBack();
-                queryClient.invalidateQueries('familiares');
+                refModal.current?.closeModal();
+                if (
+                    MSG ===
+                        'A Pessoa fisica já possui cadastro na base de dados!' &&
+                    DADOS
+                ) {
+                    SetDadosDuplicidade({ ...DADOS });
+                    setTimeout(
+                        () => {
+                            refModalOptions1.current?.openModal();
+                        },
+                        Platform.OS === 'android' ? 0 : 500,
+                    );
+                } else {
+                    navigation.goBack();
+                }
             }
         } catch (error) {
-            refModal.current?.closeModal();
-        } finally {
             refModal.current?.closeModal();
         }
     };
 
-    const vincularAcompanhante = async (
-        valuesform?: Form,
-        pessoaFisica?: IPessoaFisica,
-    ) => {
-        try {
-            if (valuesform && pessoaFisica) {
-                refModal.current?.openModal();
-                await mutateAsyncVincularFamiliar({
-                    cD_PESSOA_FISICA:
-                        route.params.PessoaFisica.cD_PESSOA_FISICA,
-                    cD_PESSOA_FAMILIA: pessoaFisica.cD_PESSOA_FISICA,
-                    cD_PROFESSIONAL: usertasy.cD_PESSOA_FISICA,
-                    nM_USUARIO: 'AppMobile',
-                    nR_SEQ_GRAU_PARENTESCO:
-                        valuesform.PARENTESCO.nR_SEQ_GRAU_PARENTESCO,
-                    iE_GENDER: valuesform.SEXO,
-                    nM_USUARIO_NREC: 'AppMobile',
-                });
-                refModal.current?.closeModal();
-                queryClient.invalidateQueries('familiares');
-                navigation.goBack();
-            }
-        } catch (error) {
+    const VincularAcompanhante = async (valuesform: Form) => {
+        setTimeout(
+            () => {
+                refModalOptions1.current?.closeModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+        );
+        if (dadosDuplicidade?.id_Pessoa_Fisica) {
+            refModal.current?.openModal();
+            await mutateAsyncVincularFamiliar({
+                cod_Pf_Familiar: dadosDuplicidade?.id_Pessoa_Fisica,
+                cod_Grau_Parentesco:
+                    valuesform.PARENTESCO?.nR_SEQ_GRAU_PARENTESCO,
+                cod_Pf_Paciente: route.params.PessoaFisica.cD_PESSOA_FISICA,
+                cod_Pf_Profissional: usertasy.cD_PESSOA_FISICA,
+                nm_Usuario: 'AppMobile',
+                ie_Sexo: valuesform.SEXO?.iE_GENDER,
+            });
             refModal.current?.closeModal();
+            navigation.goBack();
+        }
+    };
+
+    const validacaoTelefone = (value: string | null | undefined) => {
+        const telefone = value ? value.replace(/[" "()-]/g, '') : '';
+        if (telefone && (telefone.length >= 10 || telefone.length >= 11)) {
+            return true;
+        } else {
+            return false;
         }
     };
 
@@ -215,44 +219,25 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 'Insira uma data valida',
             )
             .test('validation', 'Insira uma data valida', (value) => {
-                return value ? Boolean(!(value.length > 10)) : false ;
-            },
-            ),
-        CPF: Yup.string().when('SELECT', {
-            is: (val: string) => val === 'CPF',
-            then: () =>
-                Yup.string()
-                    .required('CPF é obrigatório!')
-                    .test(
-                        'validationCPF',
-                        'CPF inválido',
-                        (value) =>
-                            Boolean(value) &&
-                            valicacaoCPF(value?.replace(/[.-]/g, '')),
-                    ),
+                return value ? Boolean(!(value.length > 10)) : false;
+            }),
+        FONE: Yup.string().test(
+            'validationTelefone',
+            'Telefone inválido',
+            (value) => (value !== undefined ? validacaoTelefone(value) : true),
+        ),
+        CPF: Yup.string().test('validationCpf', 'CPF inválido', (value) => {
+            return value !== undefined
+                ? valicacaoCPF(value?.replace(/[.-]/g, ''))
+                : true;
         }),
-        RG: Yup.string().when('SELECT', {
-            is: (val: string) => val === 'RG',
-            then: () =>
-                Yup.string()
-                    .required('RG é obrigatório!')
-                    .max(18, 'Verifique a quantidade de caracteres'),
-        }),
-        PARENTESCO: Yup.object().shape({
-            label: Yup.string().required('Sexo é obrigatório!'),
-            nR_SEQ_GRAU_PARENTESCO: Yup.number()
-                .required('Sexo é obrigatório!')
-                .test('validation', 'Parentesco é obrigatório!', (value) =>
-                    value ? value > 0 : false,
-                ),
-        }),
-        SEXO: Yup.string().required('Sexo é obrigatório!'),
+        RG: Yup.string().max(18, 'Verifique a quantidade de caracteres'),
     });
 
     const MyReactNativeForm = () => (
         <Formik
             initialValues={refValuesform.current}
-            onSubmit={(values) => verifyAcompanhante(values)}
+            onSubmit={(values) => addAcompanhante(values)}
             validationSchema={FormSchema}>
             {({
                 handleSubmit,
@@ -264,7 +249,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
             }) => (
                 <>
                     <View style={styles.containerForm}>
-                        <View style={styles.boxForm}>
+                        <View>
                             <Text style={styles.title}>
                                 Dados do acompanhante
                             </Text>
@@ -287,31 +272,59 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                 }}
                                 value={values.NOME}
                             />
-                            <InputStandard
-                                error={
-                                    errors.NASCIMENTO && touched.NASCIMENTO
-                                        ? errors.NASCIMENTO
-                                        : undefined
-                                }
-                                placeholder={'Data de nascimento'}
-                                style={styles.inputText}
-                                activeColor={theme.colors.TEXT_PRIMARY}
-                                fontSize={theme.typography.SIZE.fontysize14}
-                                fontColor={theme.colors.TEXT_SECONDARY}
-                                keyboardType={'numeric'}
-                                onChangeText={(item) => {
-                                    setFieldValue('NASCIMENTO', DateMask(item));
-                                }}
-                                onEndEditing={() => {
-                                    setTouched({
-                                        ...touched,
-                                        ['NASCIMENTO']: true,
-                                    });
-                                }}
-                                value={values.NASCIMENTO}
-                            />
+                            <View style={styles.boxInput}>
+                                <InputStandard
+                                    error={
+                                        errors.NASCIMENTO && touched.NASCIMENTO
+                                            ? errors.NASCIMENTO
+                                            : undefined
+                                    }
+                                    placeholder={'Data de nascimento'}
+                                    style={styles.inputTextRow}
+                                    activeColor={theme.colors.TEXT_PRIMARY}
+                                    fontSize={theme.typography.SIZE.fontysize14}
+                                    fontColor={theme.colors.TEXT_SECONDARY}
+                                    keyboardType={'numeric'}
+                                    onChangeText={(item) => {
+                                        setFieldValue(
+                                            'NASCIMENTO',
+                                            DateMask(item),
+                                        );
+                                    }}
+                                    onEndEditing={() => {
+                                        setTouched({
+                                            ...touched,
+                                            ['NASCIMENTO']: true,
+                                        });
+                                    }}
+                                    value={values.NASCIMENTO}
+                                />
+                                <InputStandard
+                                    error={
+                                        errors.FONE && touched.FONE
+                                            ? errors.FONE
+                                            : undefined
+                                    }
+                                    placeholder={'Telefone'}
+                                    style={styles.inputTextRow}
+                                    activeColor={theme.colors.TEXT_PRIMARY}
+                                    fontSize={theme.typography.SIZE.fontysize14}
+                                    fontColor={theme.colors.TEXT_SECONDARY}
+                                    keyboardType={'numeric'}
+                                    onChangeText={(item) => {
+                                        setFieldValue('FONE', foneMask(item));
+                                    }}
+                                    onEndEditing={() => {
+                                        setTouched({
+                                            ...touched,
+                                            ['FONE']: true,
+                                        });
+                                    }}
+                                    value={values.FONE}
+                                />
+                            </View>
                         </View>
-                        <View style={styles.boxForm}>
+                        <View>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -399,7 +412,11 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                         : false
                                 }
                                 data={parentescoList}
-                                placeholder="Parentesco"
+                                placeholder={
+                                    refValuesform.current.PARENTESCO?.label
+                                        ? refValuesform.current.PARENTESCO.label
+                                        : 'Parentesco'
+                                }
                                 maxHeight={RFPercentage(25)}
                                 DropDownStyle={styles.SelectedDropdown}
                                 onChange={(value) => {
@@ -409,24 +426,26 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                                             ['TOUCHED']: true,
                                         });
                                 }}
-                                //value={values.PARENTESCO}
                             />
                             <SelectedDropdown
                                 error={
                                     errors.SEXO && touched.SEXO ? true : false
                                 }
                                 data={sexoList}
-                                placeholder="Sexo"
+                                placeholder={
+                                    refValuesform.current.SEXO?.label
+                                        ? refValuesform.current.SEXO?.label
+                                        : 'Sexo'
+                                }
                                 maxHeight={RFPercentage(15)}
                                 DropDownStyle={styles.SelectedDropdown}
                                 onChange={(value) => {
-                                    setFieldValue('SEXO', value.iE_GENDER),
+                                    setFieldValue('SEXO', value),
                                         setTouched({
                                             ...touched,
                                             ['SEXO']: true,
                                         });
                                 }}
-                                //value={values.SEXO}
                             />
                         </View>
                         <View style={styles.btnContainer}>
@@ -444,8 +463,8 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     );
 
     return (
-        <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <View style={styles.box}>
+        <ScrollView style={styles.container}>
+            <View style={styles.boxCard}>
                 <Text style={styles.title}>Paciente</Text>
                 <PessoaFisicaComponent
                     PessoaFisica={route.params.PessoaFisica}
@@ -455,23 +474,16 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 <MyReactNativeForm />
             </View>
             <Loading ref={refModal} />
-            <ModalCentralizedOptions
-                ref={refModalOptions1}
-                onpress={() =>
-                    vincularAcompanhante(refValuesform.current, pessoaFisica)
-                }
-                message={
-                    'O acompanhante já possui cadastro, deseja vincular-lo ao paciente ?'
-                }
-            />
-            <ModalCentralizedOptions
-                ref={refModalOptions2}
-                onpress={() => addAcompanhante(refValuesform.current)}
-                message={
-                    'O acompanhante não possui cadastro, deseja cadastra-lo e vincular-lo ao paciente ?'
-                }
-            />
-        </Pressable>
+            <ModalCentralize ref={refModalOptions1}>
+                <CardDuplicidadeAcompanhante
+                    historicoSinaisVitais={dadosDuplicidade}
+                    onPressOK={() =>
+                        VincularAcompanhante(refValuesform.current)
+                    }
+                    onPressCancel={() => refModalOptions1.current?.closeModal()}
+                />
+            </ModalCentralize>
+        </ScrollView>
     );
 };
 
@@ -481,30 +493,39 @@ const createStyle = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            alignItems: 'center',
             backgroundColor: theme.colors.BACKGROUND_2,
         },
-        box: {
+        boxCard: {
+            flex: 0.5,
             width: '100%',
             backgroundColor: theme.colors.BACKGROUND_1,
             padding: RFPercentage(1),
-            paddingVertical: RFPercentage(2),
             marginTop: RFPercentage(1),
+            justifyContent: 'center',
+        },
+        box: {
+            flex: 2,
+            width: '100%',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            padding: RFPercentage(1),
+            paddingVertical: RFPercentage(5),
+            marginTop: RFPercentage(1),
+        },
+        boxInput: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
         },
         containerForm: {
             width: '100%',
-            paddingHorizontal: RFPercentage(3),
+            paddingHorizontal: RFPercentage(1),
             justifyContent: 'space-between',
-        },
-        boxForm: {
-            marginVertical: RFPercentage(2),
         },
         boxSelect: {
             flexDirection: 'row',
             justifyContent: 'center',
         },
         title: {
-            marginVertical: RFPercentage(1),
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
@@ -524,11 +545,27 @@ const createStyle = (theme: ThemeContextData) => {
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
         },
+        inputTextRow: {
+            width: (Dimensions.get('screen').width / 100) * 45,
+            paddingHorizontal: RFPercentage(1),
+            marginVertical: RFPercentage(2),
+            fontFamily: theme.typography.FONTES.Bold,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            fontSize: theme.typography.SIZE.fontysize16,
+        },
         text: {
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
+        },
+        textMenssage: {
+            fontSize: theme.typography.SIZE.fontysize16,
+            fontFamily: theme.typography.FONTES.Regular,
+            letterSpacing: theme.typography.LETTERSPACING.S,
+            color: theme.colors.TEXT_SECONDARY,
+            padding: 20,
         },
         SelectedDropdown: {
             width: (Dimensions.get('screen').width / 10) * 4,

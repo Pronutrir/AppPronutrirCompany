@@ -1,9 +1,4 @@
-import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import AnimatedLottieView from 'lottie-react-native';
@@ -85,7 +80,7 @@ const EscalaDorComponent: React.FC<Props> = ({
                     {item.btn.map((element, index) => {
                         return (
                             <TouchableOpacity
-                                key={index}
+                                key={index.toString()}
                                 disabled={disabled}
                                 style={styles.btn}
                                 onPress={() => onpress(element)}>
@@ -104,7 +99,7 @@ const EscalaDorComponent: React.FC<Props> = ({
     return (
         <View style={styles.container}>
             {escalaDeDor.map((item) => {
-                return <CardEscalaDor key={item.id} item={item} />;
+                return <CardEscalaDor key={item.id.toString()} item={item} />;
             })}
         </View>
     );

@@ -7,7 +7,6 @@ import React, {
 import {
     View,
     StyleSheet,
-    SafeAreaView,
     Modal,
     ViewStyle,
     Text,
@@ -50,7 +49,7 @@ const ModalBottomInfor = React.forwardRef<ModalHandles, Props>(
             ContainerStyle,
             animationType = 'none',
             message = 'Adicione seu texto',
-            IconeTop = Credencial
+            IconeTop = Credencial,
         }: Props,
         ref,
     ) => {
@@ -112,7 +111,7 @@ const ModalBottomInfor = React.forwardRef<ModalHandles, Props>(
                             }
                             return true;
                         }}>
-                        <SafeAreaView
+                        <View
                             style={[
                                 styles.modalView,
                                 ContainerStyle && { ...ContainerStyle },
@@ -127,8 +126,11 @@ const ModalBottomInfor = React.forwardRef<ModalHandles, Props>(
                             <View style={styles.box}>
                                 <Text style={styles.text}>{message}</Text>
                             </View>
-                            <BtnOptions valueText='Ok' onPress={() => closeModal()} />
-                        </SafeAreaView>
+                            <BtnOptions
+                                valueText="Ok"
+                                onPress={() => closeModal()}
+                            />
+                        </View>
                     </Animated.View>
                 </Modal>
             </View>
@@ -222,5 +224,4 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
-
+};

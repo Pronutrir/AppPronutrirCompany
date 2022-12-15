@@ -7,13 +7,21 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import SearchPessoaFisica from './searchPessoaFisica';
 import HistoryEvolucao from './historyEvolucao';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../contexts/themeContext';
-
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../routes/routeDashboard';
+import AuthContext from '../../../contexts/auth';
 interface PagesSinaisVitais {
     Index: number;
     Name: string;
@@ -22,9 +30,21 @@ interface PagesSinaisVitais {
 
 type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
-const IndexEvolucao: React.FC = () => {
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'IndexEvolucao'>;
+interface Props {
+    route: ProfileScreenRouteProp;
+}
 
+const IndexEvolucao: React.FC<Props> = ({
+    route: {
+        params: { Index },
+    },
+}: Props) => {
     const styles = useThemeAwareObject(createStyles);
+
+    const {
+        stateAuth: { usertasy },
+    } = useContext(AuthContext);
 
     const refFlatlistMenu = useRef<FlatList>(null);
     const refFlatlist = useRef<FlatList>(null);
@@ -44,7 +64,10 @@ const IndexEvolucao: React.FC = () => {
         },
     ]);
 
-    const getItemLayout = (data: PagesSinaisVitais[] | null | undefined, index: number) => {
+    const getItemLayout = (
+        data: PagesSinaisVitais[] | null | undefined,
+        index: number,
+    ) => {
         return {
             length: Dimensions.get('screen').width,
             offset: Dimensions.get('screen').width * index,
@@ -99,15 +122,25 @@ const IndexEvolucao: React.FC = () => {
             return <SearchPessoaFisica />;
         }
         if (Name === 'Histórico') {
-            return <HistoryEvolucao />;
+            return (
+                <HistoryEvolucao
+                    route={{
+                        key: '',
+                        name: 'HistoryEvolucao',
+                        params: {
+                            Filter: { codMedico: usertasy.cD_PESSOA_FISICA },
+                        },
+                    }}
+                />
+            );
         } else {
             return null;
         }
     };
-    
+
     useEffect(() => {
-        selected(0, 'scrollToIndex');
-    }, [selected]);
+        selected(Index, 'scrollToIndex');
+    }, [Index]);
 
     return (
         <View style={styles.container}>
@@ -201,4 +234,3 @@ const createStyles = (theme: ThemeContextData) => {
     });
     return styles;
 };
-

@@ -29,7 +29,9 @@ interface Props {
 
 const BtnOptions: React.FC<Props> = ({
     valueText = 'text',
-    onPress = () => {''},
+    onPress = () => {
+        ('');
+    },
     disable = false,
 }: Props) => {
     const styleOpacity = useSharedValue(1);
@@ -52,12 +54,15 @@ const BtnOptions: React.FC<Props> = ({
                     (styleOpacity.value = withTiming(1, { duration: 100 }))
                 }
                 disabled={disable}
-                style={styles.btn}
+                style={[styles.btn, disable && styles.disabledBtn]}
                 onPress={onPress}>
                 <Animated.View style={[styles.viewBtn, animatedStyles]}>
                     <LinearGradient
                         style={styles.linearGradient}
-                        colors={[theme.colors.GREENPRIMARY, theme.colors.GREENLIGHT]}>
+                        colors={[
+                            theme.colors.GREENPRIMARY,
+                            theme.colors.GREENLIGHT,
+                        ]}>
                         <Text style={styles.text}>{valueText}</Text>
                     </LinearGradient>
                 </Animated.View>
@@ -117,6 +122,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};
 
 export default memo(BtnOptions);

@@ -49,6 +49,23 @@ export interface ISinaisVitais {
     dT_ATUALIZACAO_NREC?: string;
     dS_OBSERVACAO?: string;
 }
+export interface IFilterSinaisVitais {
+    dataInicio?: string | null;
+    dataFinal?: string | null;
+    pagina?: number | null;
+    rows?: number | null;
+    status?: string | null;
+    nomePaciente?: string | null;
+    cdPaciente?: number | null;
+}
+
+export interface IFilterSinaisVitaisProfissional {
+    dataInicio: string | null;
+    dataFinal: string | null;
+    pagina?: number | null;
+    rows?: number | null;
+    cd_pessoa_fisica: string;
+}
 
 const initialSinaisVitais: ISinaisVitais[] = [
     {
@@ -114,7 +131,8 @@ const useSinaisVitaisAll = () => {
             placeholderData: initialSinaisVitais,
             onError: () => {
                 addAlert({
-                    message: 'Error ao listar os sinais vitais tente mais tarde!',
+                    message:
+                        'Error ao listar os sinais vitais tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -122,82 +140,137 @@ const useSinaisVitaisAll = () => {
     );
 };
 
-const useSinaisVitaisFilter = (cD_PESSOA_FISICA: string) => {
+const useSinaisVitaisFilter = (filter: IFilterSinaisVitaisProfissional) => {
     const { addAlert } = useContext(NotificationGlobalContext);
-    return useQuery(
-        'AlertaPacienteHistory',
-        async ({ signal }) => {
-            const {
-                data: { result },
-            } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${cD_PESSOA_FISICA},${moment().format(
-                    'YYYY-MM-DD',
-                )},${moment().format('YYYY-MM-DD')}?pagina=1&rows=100`, { signal }
-            );
-            return result;
-        },
-        {
-            enabled: true,
-            onError: () => {
-                addAlert({
-                    message: 'Não foi possivel acessar o histórico tente mais tarde!',
-                    status: 'error',
-                });
-            }
-        },
-    );
-};
-
-const useSinaisVitaisHistory = (paciente: string, rows = 500) => {
-    const { addAlert } = useContext(NotificationGlobalContext);
-    return useQuery(
-        ['SinaisVitaisHistory', paciente],
-        async () => {
-            const {
-                data: { result },
-            } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=1&rows=${rows}`,
-            );
-            return result.sort((a, b) => {
-                return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
-                    ? -1
-                    : a.dT_SINAL_VITAL < b.dT_SINAL_VITAL
-                    ? 1
-                    : 0;
-            });
-        },
-        {
-            onError: () => {
-                addAlert({
-                    message: 'Error ao listar os sinais vitais tente mais tarde!',
-                    status: 'error',
-                });
-            },
-        },
-    );
-};
-
-const _useSinaisVitaisHistory = (paciente: string) => {
     return useInfiniteQuery(
-        'SinaisVitaisHistory',
+        ['AlertaPacienteHistory', filter],
         async ({ pageParam = 1 }) => {
             const {
                 data: { result },
             } = await Api.get<ResponsePFdados>(
-                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente/${paciente}?pagina=${pageParam}&rows=10`,
+                `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${
+                    filter.cd_pessoa_fisica
+                }${`,${moment(filter.dataInicio).format(
+                    'YYYY-MM-DD',
+                )}`}${`,${filter.dataFinal}`}?pagina=${pageParam}&rows=${
+                    filter.rows ?? 10
+                }`,
             );
-            return result;
+            return result.filter((item) => item.iE_SITUACAO != 'I');
         },
         {
+            enabled: true,
             getNextPageParam: (lastPage, pages) => {
-                if(lastPage?.length < 10){
+                if (lastPage?.length < 10) {
                     return null;
-                }else{
-                    return pages.length + 1
+                } else {
+                    return pages.length + 1;
                 }
+            },
+            onError: () => {
+                addAlert({
+                    message:
+                        'Não foi possivel acessar o histórico tente mais tarde!',
+                    status: 'error',
+                });
             },
         },
     );
 };
 
-export { useSinaisVitaisAll, useSinaisVitaisHistory, _useSinaisVitaisHistory, useSinaisVitaisFilter };
+const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useQuery(
+        ['SinaisVitaisHistory', filter.cdPaciente],
+        async () => {
+            const {
+                data: { result },
+            } = await Api.get<ResponsePFdados>(
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
+                    filter.dataInicio ? `=${filter.dataInicio}` : ''
+                }&dataFinal${
+                    filter.dataFinal ? `=${filter.dataFinal}` : ''
+                }&pagina=${filter.pagina ?? 1}&rows=${
+                    filter.rows ?? 100
+                }&status${
+                    filter.status ? `=${filter.status}` : ''
+                }&nomePaciente${
+                    filter.nomePaciente ? `=${filter.nomePaciente}` : ''
+                }&cdPaciente${
+                    filter.cdPaciente ? `=${filter.cdPaciente}` : ''
+                }`,
+            );
+            return result
+                .sort((a, b) => {
+                    return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
+                        ? -1
+                        : a.dT_SINAL_VITAL < b.dT_SINAL_VITAL
+                        ? 1
+                        : 0;
+                })
+                .filter((item) => item.iE_SITUACAO != 'I');
+        },
+        {
+            onError: (error) => {
+                console.log(error);
+                addAlert({
+                    message:
+                        'Error ao listar os sinais vitais tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+const _useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useInfiniteQuery(
+        ['SinaisVitaisHistory', filter],
+        async ({ pageParam = 1 }) => {
+            const {
+                data: { result },
+            } = await Api.get<ResponsePFdados>(
+                `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
+                    filter.dataInicio
+                        ? `=${moment(filter.dataInicio).format('YYYY-MM-DD')}`
+                        : ''
+                }&dataFinal${
+                    filter.dataFinal ? `=${filter.dataFinal}` : ''
+                }&pagina=${pageParam}&rows=${filter.rows ?? 10}&status${
+                    filter.status ? `=${filter.status}` : ''
+                }&nomePaciente${
+                    filter.nomePaciente ? `=${filter.nomePaciente}` : ''
+                }&cdPaciente${
+                    filter.cdPaciente ? `=${filter.cdPaciente}` : ''
+                }`,
+            );
+            return result.filter((item) => item.iE_SITUACAO != 'I');
+        },
+        {
+            enabled: true,
+            getNextPageParam: (lastPage, pages) => {
+                if (lastPage?.length < 10) {
+                    return null;
+                } else {
+                    return pages.length + 1;
+                }
+            },
+            onError: (error) => {
+                console.log(error);
+                addAlert({
+                    message:
+                        'Error ao listar os sinais vitais tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+export {
+    useSinaisVitaisAll,
+    useSinaisVitaisHistory,
+    _useSinaisVitaisHistory,
+    useSinaisVitaisFilter,
+};

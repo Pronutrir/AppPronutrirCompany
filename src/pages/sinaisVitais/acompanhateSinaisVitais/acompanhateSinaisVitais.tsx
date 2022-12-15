@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
@@ -16,7 +16,7 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import {
-    IGetFamiliar,
+    IFamiliar,
     useGetFamiliar,
     useVincularFamiliar,
 } from '../../../hooks/useFamiliar';
@@ -26,6 +26,7 @@ import ModalCentralizedOptions, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralizedOptions';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
+import moment from 'moment';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -43,22 +44,32 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
     const refModal = useRef<LoadHandles>(null);
     const refModalOptions = useRef<ModalHandles>(null);
 
-    const [acompanhante, setAcompanhante] = useState<
-        IGetFamiliar | undefined
-    >();
+    const [acompanhante, setAcompanhante] = useState<IFamiliar | undefined>();
 
     const {
         data: listFamiliar,
         isFetching,
+        refetch,
     } = useGetFamiliar(route.params.PessoaFisica.cD_PESSOA_FISICA);
 
     const { mutateAsync } = useVincularFamiliar();
 
-    const vincularAcompanhante = async (item?: IGetFamiliar) => {
+    const vincularAcompanhante = async (item?: IFamiliar) => {
         try {
             if (item) {
                 refModal.current?.openModal();
-                await mutateAsync(item);
+                await mutateAsync({
+                    cod_Grau_Parentesco: item.cod_Grau_Parentesco,
+                    cod_Pf_Familiar: item.cod_Pf_Familiar,
+                    cod_Pf_Paciente: item.cod_Pf_Paciente,
+                    cod_Pf_Profissional: item.cod_Pf_Profissional,
+                    dt_Atualizacao: item.dt_Atualizacao,
+                    dt_Registro: item.dt_Registro,
+                    ie_Sexo: item.ie_Sexo,
+                    ie_Situacao: item.ie_Situacao,
+                    nm_Usuario: item.nm_Usuario,
+                    nm_Usuario_Reg: item.nm_Usuario_Reg,
+                });
                 refModal.current?.closeModal();
             }
         } catch (error) {
@@ -66,12 +77,12 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
         }
     };
 
-    const addAcompanhante = (item: IGetFamiliar) => {
+    const addAcompanhante = (item: IFamiliar) => {
         refModalOptions.current?.openModal();
         setAcompanhante(item);
     };
 
-    const renderItem: ListRenderItem<IGetFamiliar> = ({ item }) => {
+    const renderItem: ListRenderItem<IFamiliar> = ({ item }) => {
         return (
             <TouchableOpacity
                 onPress={() => addAcompanhante(item)}
@@ -89,14 +100,25 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
                         <Text
                             style={
                                 styles.text
-                            }>{`${item?.nM_ACOMPANHANTE.toUpperCase()}`}</Text>
+                            }>{`${item?.pessoaFisicaSimplificadoSqlServer?.nm_Pessoa_Fisica?.toUpperCase()}`}</Text>
+                    </View>
+                    <View style={styles.item}>
+                        <Text style={styles.textLabel}>
+                            Data de nascimento:{' '}
+                        </Text>
+                        <Text style={styles.text}>
+                            {moment(
+                                item.pessoaFisicaSimplificadoSqlServer
+                                    .dt_Nascimento,
+                            ).format('DD-MM-YYYY')}
+                        </Text>
                     </View>
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>
                             Grau de parentesco:{' '}
                         </Text>
                         <Text style={styles.text}>
-                            {item.dS_GRAU_PARENTESCO}
+                            {item.desc_Grau_Parentesco}
                         </Text>
                     </View>
                 </View>
@@ -244,7 +266,6 @@ const createStyle = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
             marginVertical: RFPercentage(0.5),

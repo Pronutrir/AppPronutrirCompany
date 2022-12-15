@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import Routes from './routes/index';
-import { Platform, Text } from 'react-native';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './contexts/auth';
 import { NotificationGlobalProvider } from './contexts/notificationGlobalContext';
 import NotificationAlert from './components/Notification/NotificationAlert';
 import NotificationCentralized from './components/Notification/NotificationCentralized';
-import OneSignal from 'react-native-onesignal';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './contexts/themeContext';
 import CodePush from 'react-native-code-push';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
@@ -17,13 +17,14 @@ import CodePush from 'react-native-code-push';
 // Create a client
 const queryClient = new QueryClient();
 
-const CodePushOptions = Platform.OS === 'android' ? {
+const CodePushOptions = {
     checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
     mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
     updateDialog: {
-      appendReleaseDescription: true,
-      title: "Uma nova atualização está disponível!"
-  }} : null
+        appendReleaseDescription: true,
+        title: 'Uma nova atualização está disponível!',
+    },
+};
 
 const Index: React.FC = () => {
     /*  async function registerAppWithFCM() {
@@ -52,10 +53,10 @@ const Index: React.FC = () => {
         Text.defaultProps.allowFontScaling = false;
 
         //OneSignal Init Code
-        OneSignal.setLogLevel(6, 0);
+        /* OneSignal.setLogLevel(6, 0);
         OneSignal.setAppId('2c990bbc-f7ab-404f-9b95-ef981885ff18');
         OneSignal.setLogLevel(6, 0);
-        OneSignal.setRequiresUserPrivacyConsent(false);
+        OneSignal.setRequiresUserPrivacyConsent(false); */
         //END OneSignal Init Code
 
         /* OneSignal.setRequiresUserPrivacyConsent(false);
@@ -64,9 +65,9 @@ const Index: React.FC = () => {
         }); */
 
         //Prompt for push on iOS
-        OneSignal.promptForPushNotificationsWithUserResponse((response) => {
+        /* OneSignal.promptForPushNotificationsWithUserResponse((response) => {
             console.log('Prompt response:', response);
-        });
+        }); */
 
         //Method for handling notifications received while app in foreground
         /* OneSignal.setNotificationWillShowInForegroundHandler(
@@ -91,20 +92,22 @@ const Index: React.FC = () => {
     }, []);
 
     return (
-        <NavigationContainer>
-            {/* contexto disponível para toda aplicação */}
-            <ThemeProvider>
-                <QueryClientProvider client={queryClient}>
-                    <NotificationGlobalProvider>
-                        <AuthProvider>
-                            <Routes />
-                            <NotificationCentralized />
-                            <NotificationAlert />
-                        </AuthProvider>
-                    </NotificationGlobalProvider>
-                </QueryClientProvider>
-            </ThemeProvider>
-        </NavigationContainer>
+        <SafeAreaProvider>
+            <NavigationContainer>
+                {/* contexto disponível para toda aplicação */}
+                <ThemeProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <NotificationGlobalProvider>
+                            <AuthProvider>
+                                <Routes />
+                                <NotificationCentralized />
+                                <NotificationAlert />
+                            </AuthProvider>
+                        </NotificationGlobalProvider>
+                    </QueryClientProvider>
+                </ThemeProvider>
+            </NavigationContainer>
+        </SafeAreaProvider>
     );
 };
-export default Platform.OS === 'android' ? CodePush(CodePushOptions)(Index) : Index;
+export default CodePush(CodePushOptions)(Index);

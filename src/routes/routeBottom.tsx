@@ -9,14 +9,17 @@ import DrawerOpen from '../components/drawerOpen/DrawerOpen';
 import HomeImg from '../assets/svg/Home.svg';
 import LupaImg from '../assets/svg/Lupa.svg';
 import UserImg from '../assets/svg/avatar.svg';
-import { RFPercentage } from 'react-native-responsive-fontsize';
 import useTheme from '../hooks/useTheme';
 import { Text } from 'react-native';
+import { useKeyboardHeight } from '../hooks/useKeyboardHeight';
 
 const Tab = createBottomTabNavigator();
 
 const RouteBottom: React.FC = () => {
+    const keyboardHeight = useKeyboardHeight();
+
     const theme = useTheme();
+
     /* const tabBarVisibility = ( route ) => {
         const routeName = route.state
         ? route.state.routes[route.state.index].name
@@ -28,13 +31,15 @@ const RouteBottom: React.FC = () => {
         return true;
     }  */
 
+    console.log(keyboardHeight);
+
     return (
         <Tab.Navigator
             initialRouteName={'Inicio'}
             tabBarOptions={{
                 activeTintColor: theme.colors.GREENPRIMARY,
                 labelPosition: 'below-icon',
-                style: { height: RFPercentage(7) },
+                //style: { height: RFPercentage(7) },
             }}
             screenOptions={({ route }) => ({
                 tabBarLabel: ({ color }) => {
@@ -42,8 +47,8 @@ const RouteBottom: React.FC = () => {
                         <Text
                             style={{
                                 color: color,
-                                paddingBottom: 5,
-                                fontSize: theme.typography.SIZE.fontysize12,
+                                /* paddingBottom: 5, */
+                                fontSize: theme.typography.SIZE.fontysize10,
                                 fontFamily: theme.typography.FONTES.Regular,
                                 letterSpacing: theme.typography.LETTERSPACING.S,
                             }}>
@@ -52,7 +57,7 @@ const RouteBottom: React.FC = () => {
                     );
                 },
                 tabBarIcon: ({ color }) => {
-                    const size = RFPercentage(3);
+                    const size = 20;
                     switch (route.name) {
                         case 'Inicio':
                             return (
@@ -90,19 +95,9 @@ const RouteBottom: React.FC = () => {
                     tabBarButton: () => <DrawerOpen />,
                 })}
             />
-            <Tab.Screen
-                name="Inicio"
-                component={DashBoardNavigator}
-                /* options={({ route }) => ({
-                    tabBarVisible: tabBarVisibility(route)
-                })} */
-            />
+            <Tab.Screen name="Inicio" component={DashBoardNavigator} />
             <Tab.Screen name="Busca" component={BuscaStackNavigator} />
-            <Tab.Screen
-                name="Perfil"
-                component={UserStackNavigator}
-                //options={{ tabBarVisible: false }}
-            />
+            <Tab.Screen name="Perfil" component={UserStackNavigator} />
         </Tab.Navigator>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
@@ -15,6 +15,9 @@ import {
 } from '../../../hooks/useEvolucao';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import ShimmerPlaceHolderText from '../../../components/shimmerPlaceHolder/shimerPlaceHolderText';
+import ModalCentralizedOptions, {
+    ModalHandles as ModalHandlesCentralizedOptions,
+} from '../../../components/Modais/ModalCentralizedOptions';
 
 type ProfileScreenRouteProp = RouteProp<
     RootStackParamList,
@@ -31,6 +34,8 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
 }: Props) => {
     const navigation = useNavigation();
     const refModal = useRef<LoadHandles>(null);
+    const refModalCentralizedOptions =
+        useRef<ModalHandlesCentralizedOptions>(null);
     const styles = useThemeAwareObject(createStyles);
 
     const queryCache = new QueryCache();
@@ -47,6 +52,9 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     const addUpdateEvolucaoEnfermagem = async () => {
         refModal.current?.openModal();
         try {
+            setTimeout(() => {
+                refModalCentralizedOptions.current?.openModal();
+            }, 5000);
             await mutateAsyncUpdateEvoluçaoEnfermagem(evolucao);
             refModal.current?.closeModal();
             navigation.goBack();
@@ -62,7 +70,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
                     <PessoaFisicaComponent
@@ -74,6 +82,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 </View>
                 {EvolucaoFilter ? (
                     <RichComponent
+                        disabled={Boolean(Evolucao.dT_LIBERACAO)}
                         shimerPlaceHolder={isFetching}
                         initialContentHTML={EvolucaoFilter.dS_EVOLUCAO}
                         onChanger={(item) => {
@@ -88,14 +97,19 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                     <ShimmerPlaceHolderText />
                 )}
             </View>
-            {evolucao?.dS_EVOLUCAO && (
+            {Boolean(!Evolucao.dT_LIBERACAO) && (
                 <BtnOptions
                     valueText={'Atualizar'}
                     onPress={() => addUpdateEvolucaoEnfermagem()}
                 />
             )}
             <Loading ref={refModal} />
-        </SafeAreaView>
+            <ModalCentralizedOptions
+                ref={refModalCentralizedOptions}
+                message="Deseja liberar esta evolução ?"
+                onpress={() => console.log()}
+            />
+        </View>
     );
 };
 

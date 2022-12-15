@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Platform, StyleProp, ViewStyle } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Platform,
+    StyleProp,
+    ViewStyle,
+} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ShimerPlaceHolderSelected from '../shimmerPlaceHolder/shimerPlaceHolderSelected';
 
-const _data: Array<{ label: string }> = [
-    { label: 'Item 1' },
-    { label: 'Item 2' },
-    { label: 'Item 3' },
-    { label: 'Item 4' },
-    { label: 'Item 5' },
-    { label: 'Item 6' },
-    { label: 'Item 7' },
-    { label: 'Item 8' },
+const _data: Array<{ label: string; value: string }> = [
+    { label: 'Item 1', value: '1' },
+    { label: 'Item 2', value: '2' },
+    { label: 'Item 3', value: '3' },
+    { label: 'Item 4', value: '4' },
+    { label: 'Item 5', value: '5' },
+    { label: 'Item 6', value: '6' },
+    { label: 'Item 7', value: '7' },
+    { label: 'Item 8', value: '8' },
 ];
 interface Props<T> {
     placeholder?: string;
     data?: T[];
-    value?: any; // eslint-disable-line
+    value?: any | null; // eslint-disable-line
     onChange?(item: T): void;
     shimerPlaceHolder?: boolean;
     disable?: boolean;
@@ -32,7 +39,7 @@ interface Props<T> {
 const SelectedDropdown = <T extends { label: string }>({
     data,
     onChange,
-    value,
+    value = null,
     placeholder,
     shimerPlaceHolder = false,
     disable = false,
@@ -42,7 +49,7 @@ const SelectedDropdown = <T extends { label: string }>({
     error = false,
 }: Props<T>) => {
     const styles = useThemeAwareObject(createStyles);
-    const [_value, setValue] = useState<T | null>(null);
+    const [_value, setValue] = useState(value);
 
     const renderItem = (item: T) => {
         // eslint-disable-line
@@ -60,8 +67,16 @@ const SelectedDropdown = <T extends { label: string }>({
             <Dropdown
                 disable={disable}
                 search={data && data.length > 20 ? true : false}
-                style={[{ ...styles.dropdown }, DropDownStyle]}
-                placeholderStyle={[styles.placeholderStyle, error && { color: 'red' }]}
+                style={[
+                    disable
+                        ? { ...styles.dropdownDisable }
+                        : { ...styles.dropdown },
+                    DropDownStyle,
+                ]}
+                placeholderStyle={[
+                    styles.placeholderStyle,
+                    error && { color: 'red' },
+                ]}
                 selectedTextStyle={styles.placeholderStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 containerStyle={ContainerStyle}
@@ -69,7 +84,7 @@ const SelectedDropdown = <T extends { label: string }>({
                 data={data ?? _data}
                 maxHeight={maxHeight}
                 labelField="label"
-                valueField="value"
+                valueField="index"
                 placeholder={placeholder ? placeholder : 'Selecione'}
                 value={value ? value : _value}
                 onChange={(item) => {
@@ -94,10 +109,10 @@ const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         dropdown: {
             width: '100%',
+            backgroundColor: theme.colors.BACKGROUND_1,
             height: RFPercentage(6),
             margin: RFPercentage(2),
             alignSelf: 'center',
-            backgroundColor: 'white',
             borderRadius: 10,
             ...Platform.select({
                 ios: {
@@ -112,6 +127,28 @@ const createStyles = (theme: ThemeContextData) => {
                     elevation: 3,
                 },
             }),
+        },
+        dropdownDisable: {
+            width: '100%',
+            backgroundColor: theme.colors.BACKGROUND_1,
+            height: RFPercentage(6),
+            margin: RFPercentage(2),
+            alignSelf: 'center',
+            borderRadius: 10,
+            ...Platform.select({
+                ios: {
+                    shadowOffset: {
+                        width: 0,
+                        height: 5,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
+            opacity: 0.5,
         },
         icon: {
             marginRight: 5,
@@ -152,7 +189,6 @@ const createStyles = (theme: ThemeContextData) => {
             letterSpacing: theme.typography.LETTERSPACING.S,
             height: RFPercentage(6),
         },
-
     });
     return styles;
 };

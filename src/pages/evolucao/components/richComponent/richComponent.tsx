@@ -20,12 +20,14 @@ interface Props {
     initialContentHTML?: string;
     shimerPlaceHolder?: boolean;
     onChanger(textHtml: string): void;
+    disabled?: boolean;
 }
 
 const RichComponent: React.FC<Props> = ({
     initialContentHTML,
     shimerPlaceHolder = false,
     onChanger,
+    disabled = false,
 }: Props) => {
     const richText = useRef<any>(); // eslint-disable-line
 
@@ -134,7 +136,7 @@ const RichComponent: React.FC<Props> = ({
     }, []);
 
     const handleInput = useCallback(({ data, inputType }) => {
-       //console.log(inputType, data);
+        //console.log(inputType, data);
     }, []);
 
     const handleMessage = useCallback(({ type, id, data }) => {
@@ -169,141 +171,168 @@ const RichComponent: React.FC<Props> = ({
     }, []);
 
     return (
-        <View style={{flex: 1}}>
-             {shimerPlaceHolder ? (
+        <View style={{ flex: 1 }}>
+            {shimerPlaceHolder ? (
                 <ShimmerPlaceHolderText />
             ) : (
                 <>
-                <RichToolbar
-                style={styles.richBar}
-                flatContainerStyle={styles.flatStyle}
-                editor={richText}
-                disabled={false}
-                //iconTint={color}
-                selectedIconTint={'#2095F2'}
-                disabledIconTint={'#bfbfbf'}
-                onPressAddImage={onPressAddImage}
-                onInsertLink={onInsertLink}
-                iconSize={RFPercentage(2)}
-                iconGap={RFPercentage(3)}
-                actions={[
-                    actions.undo,
-                    actions.redo,
-                    actions.setBold,
-                    actions.alignLeft,
-                    actions.alignCenter,
-                    actions.alignRight,
-                    actions.setStrikethrough,
-                    actions.checkboxList,
-                    actions.insertOrderedList,
-                    actions.heading1,
-                    actions.heading2,
-                    actions.heading3,
-                    actions.heading4,
-                    actions.blockquote,
-                    actions.code,
-                    actions.line,
-                    //actions.foreColor,
-                    //actions.hiliteColor,
-                    /* 'insertEmoji',
+                    <RichToolbar
+                        style={styles.richBar}
+                        flatContainerStyle={styles.flatStyle}
+                        editor={richText}
+                        disabled={disabled}
+                        //iconTint={color}
+                        selectedIconTint={'#2095F2'}
+                        disabledIconTint={'#bfbfbf'}
+                        onPressAddImage={onPressAddImage}
+                        onInsertLink={onInsertLink}
+                        iconSize={RFPercentage(2)}
+                        iconGap={RFPercentage(3)}
+                        actions={[
+                            actions.undo,
+                            actions.redo,
+                            actions.setBold,
+                            actions.setItalic,
+                            actions.setStrikethrough,
+                            actions.setUnderline,
+                            actions.removeFormat,
+                            actions.alignLeft,
+                            actions.alignCenter,
+                            actions.alignRight,
+                            actions.checkboxList,
+                            actions.insertOrderedList,
+                            actions.heading1,
+                            actions.heading2,
+                            actions.heading3,
+                            actions.heading4,
+                            actions.blockquote,
+                            actions.code,
+                            actions.line,
+                            actions.keyboard,
+                            //actions.insertImage,
+                            actions.foreColor,
+                            //actions.hiliteColor,
+                            /* 'insertEmoji',
                     'insertHTML',
                     'fontSize', */
-                ]} // default defaultActions
-                iconMap={{
-                    //insertEmoji: phizIcon,
-                    [actions.foreColor]: ({ tintColor }) => (
-                        <Text style={[styles.tib, { color: 'blue' }]}>FC</Text>
-                    ),
-                    [actions.hiliteColor]: ({ tintColor }) => (
-                        <Text
-                            style={[
-                                styles.tib,
-                                { color: tintColor, backgroundColor: 'red' },
-                            ]}>
-                            BC
-                        </Text>
-                    ),
-                    [actions.heading1]: ({ tintColor, iconSize }) => (
-                        <Text
-                            style={[
-                                styles.tib,
-                                { color: tintColor, fontSize: iconSize },
-                            ]}>
-                            H1
-                        </Text>
-                    ),
-                    [actions.heading2]: ({ tintColor, iconSize }) => (
-                        <Text
-                            style={[
-                                styles.tib,
-                                { color: tintColor, fontSize: iconSize },
-                            ]}>
-                            H2
-                        </Text>
-                    ),
-                    [actions.heading3]: ({ tintColor, iconSize }) => (
-                        <Text
-                            style={[
-                                styles.tib,
-                                { color: tintColor, fontSize: iconSize },
-                            ]}>
-                            H3
-                        </Text>
-                    ),
-                    [actions.heading4]: ({ tintColor, iconSize }) => (
-                        <Text
-                            style={[
-                                styles.tib,
-                                { color: tintColor, fontSize: iconSize },
-                            ]}>
-                            H4
-                        </Text>
-                    ),
-                    //insertHTML: htmlIcon,
-                }}
-                insertEmoji={handleEmoji}
-                insertHTML={handleInsertHTML}
-                insertVideo={handleInsertVideo}
-                fontSize={handleFontSize}
-                foreColor={handleForeColor}
-                hiliteColor={handleHiliteColor}
-            />
-                <ScrollView>
-                    <KeyboardAvoidingView
-                         style={{ flex: 1 }}
-                         behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                         keyboardVerticalOffset={Platform.OS === "ios" ? 100 : -180}>
-                        <RichEditor
-                            //initialFocus={true}
-                            disabled={false}
-                            editorStyle={styles.contentStyle} // default light style
-                            ref={richText}
-                            style={styles.rich}
-                            useContainer={true}
-                            initialHeight={400}
-                            enterKeyHint={'done'}
-                            containerStyle={{borderRadius: 24}}
-                            //placeholder={'please input content'}
-                            initialContentHTML={initialContentHTML}
-                             editorInitializedCallback={
-                                editorInitializedCallback
+                        ]} // default defaultActions
+                        iconMap={{
+                            //insertEmoji: phizIcon,
+                            [actions.foreColor]: ({ tintColor }) => (
+                                <Text style={[styles.tib, { color: 'blue' }]}>
+                                    FC
+                                </Text>
+                            ),
+                            [actions.hiliteColor]: ({ tintColor }) => (
+                                <Text
+                                    style={[
+                                        styles.tib,
+                                        {
+                                            color: tintColor,
+                                            backgroundColor: 'red',
+                                        },
+                                    ]}>
+                                    BC
+                                </Text>
+                            ),
+                            [actions.heading1]: ({ tintColor, iconSize }) => (
+                                <Text
+                                    style={[
+                                        styles.tib,
+                                        {
+                                            color: tintColor,
+                                            fontSize: iconSize,
+                                        },
+                                    ]}>
+                                    H1
+                                </Text>
+                            ),
+                            [actions.heading2]: ({ tintColor, iconSize }) => (
+                                <Text
+                                    style={[
+                                        styles.tib,
+                                        {
+                                            color: tintColor,
+                                            fontSize: iconSize,
+                                        },
+                                    ]}>
+                                    H2
+                                </Text>
+                            ),
+                            [actions.heading3]: ({ tintColor, iconSize }) => (
+                                <Text
+                                    style={[
+                                        styles.tib,
+                                        {
+                                            color: tintColor,
+                                            fontSize: iconSize,
+                                        },
+                                    ]}>
+                                    H3
+                                </Text>
+                            ),
+                            [actions.heading4]: ({ tintColor, iconSize }) => (
+                                <Text
+                                    style={[
+                                        styles.tib,
+                                        {
+                                            color: tintColor,
+                                            fontSize: iconSize,
+                                        },
+                                    ]}>
+                                    H4
+                                </Text>
+                            ),
+                            //insertHTML: htmlIcon,
+                        }}
+                        insertEmoji={handleEmoji}
+                        insertHTML={handleInsertHTML}
+                        insertVideo={handleInsertVideo}
+                        fontSize={handleFontSize}
+                        foreColor={handleForeColor}
+                        hiliteColor={handleHiliteColor}
+                    />
+                    <ScrollView>
+                        <KeyboardAvoidingView
+                            style={{ flex: 1 }}
+                            behavior={
+                                Platform.OS === 'ios' ? 'padding' : 'padding'
                             }
-                            onChange={(descriptionText) => {
-                                onChanger(descriptionText);
-                            }}
-                            onHeightChange={handleHeightChange}
-                            onPaste={handlePaste}
-                            //onKeyUp={handleKeyUp}
-                            //onKeyDown={handleKeyDown}
-                            onInput={handleInput}
-                            onMessage={handleMessage}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            onCursorPosition={handleCursorPosition}
-                            pasteAsPlainText={true}
-                        />
-                    </KeyboardAvoidingView>
-                </ScrollView>
+                            keyboardVerticalOffset={
+                                Platform.OS === 'ios' ? 100 : -180
+                            }>
+                            <RichEditor
+                                focusable={true}
+                                //initialFocus={true}
+                                disabled={disabled}
+                                editorStyle={styles.contentStyle} // default light style
+                                ref={richText}
+                                style={styles.rich}
+                                useContainer={true}
+                                initialHeight={400}
+                                enterKeyHint={'done'}
+                                containerStyle={{ borderRadius: 24 }}
+                                //placeholder={'please input content'}
+                                initialContentHTML={initialContentHTML}
+                                editorInitializedCallback={
+                                    editorInitializedCallback
+                                }
+                                onChange={(descriptionText) => {
+                                    onChanger(descriptionText);
+                                }}
+                                onHeightChange={handleHeightChange}
+                                onPaste={handlePaste}
+                                //onKeyUp={handleKeyUp}
+                                //onKeyDown={handleKeyDown}
+                                onInput={handleInput}
+                                onMessage={handleMessage}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                onCursorPosition={handleCursorPosition}
+                                pasteAsPlainText={true}
+                            />
+                        </KeyboardAvoidingView>
+                    </ScrollView>
                 </>
             )}
         </View>
@@ -376,5 +405,5 @@ const styles = StyleSheet.create({
         placeholderColor: '#a9a9a9',
         // cssText: '#editor {background-color: #f3f3f3}', // initial valid
         contentCSSText: 'font-size: 16px; min-height: 200px;', // initial valid
-    }
+    },
 });

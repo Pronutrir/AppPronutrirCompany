@@ -1,17 +1,15 @@
 import React from 'react';
-import {StyleSheet, View, Dimensions} from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
 //import ExitButtom from '../buttons/ExitButtom';
 import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
 import AgendarConsultaImg from '../../assets/svg/AgendarConsulta.svg';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {RFValue} from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
     title?: string | null;
 }
 
-const HeaderExterno: React.FC<Props> = ({title}: Props) => {
+const HeaderExterno: React.FC<Props> = ({ title }: Props) => {
     const styles = useThemeAwareObject(createStyles);
     const size = Dimensions.get('screen').width / 10;
 
@@ -37,16 +35,16 @@ const HeaderExterno: React.FC<Props> = ({title}: Props) => {
     };
 
     return (
-        <SafeAreaView style={{backgroundColor: '#797979'}}>
+        <View style={{ backgroundColor: '#797979' }}>
             <View style={styles.container}>
                 <View style={styles.box2}>
                     <View style={styles.item1}>
-                       {/*  <ExitButtom /> */}
+                        {/*  <ExitButtom /> */}
                         <SetIcone />
                     </View>
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 
@@ -87,6 +85,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};
 
 export default HeaderExterno;

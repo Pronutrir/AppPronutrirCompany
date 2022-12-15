@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
@@ -20,11 +20,11 @@ const CardAlertaPesoPaciente = ({ historicoSinaisVitais, onpress }: Props) => {
             <Text style={styles.textMenssage}>
                 Paciente apresenta variação de peso!
             </Text>
-            <View>
+            <ScrollView>
                 {historicoSinaisVitais?.map((item, index) => {
                     return (
-                        <View style={styles.box} key={index}>
-                            <View style={styles.item} key={index}>
+                        <View style={styles.box} key={index.toString()}>
+                            <View style={styles.item} key={index.toString()}>
                                 <Text style={styles.label}>Peso: </Text>
                                 <Text style={styles.text}>{item.qT_PESO}</Text>
                             </View>
@@ -39,7 +39,7 @@ const CardAlertaPesoPaciente = ({ historicoSinaisVitais, onpress }: Props) => {
                         </View>
                     );
                 })}
-            </View>
+            </ScrollView>
             <View
                 style={{
                     flexDirection: 'row',
@@ -60,6 +60,8 @@ const createStyle = (theme: ThemeContextData) => {
             padding: 10,
             justifyContent: 'center',
             alignItems: 'center',
+            maxHeight: RFPercentage(80),
+            minHeight: RFPercentage(40),
         },
         box: {
             flexDirection: 'row',

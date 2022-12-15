@@ -27,12 +27,15 @@ import ModalCentralize, {
 import { IUnidade, useUnidades } from '../../hooks/useEstabelecimentos';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import VersionInfo from 'react-native-version-info';
+import { useQueryClient } from 'react-query';
 interface Props {
     navigation: DrawerNavigationHelpers;
 }
 
 const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     const styles = useThemeAwareObject(createStyles);
+
+    const queryClient = useQueryClient();
 
     const loadingRef = useRef<LoadHandles>(null);
     const notificationRef = useRef<ModalHandles>(null);
@@ -55,6 +58,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         auth()
             .signOut()
             .then(() => {
+                queryClient.clear();
                 dispatchAuth({ type: 'delUser', payload: '' });
                 loadingRef.current?.openModal();
             })
@@ -65,7 +69,11 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
     const RefactoryPerfisData = () => {
         const result = usuariO_FUNCIONARIO_PERFIL.map((element) => {
-            return { label: element.dS_PERFIL, value: element };
+            return {
+                index: element.cD_PERFIL.toString(),
+                label: element.dS_PERFIL,
+                value: element,
+            };
         });
         return result.sort((a, b) => {
             return a.label < b.label ? -1 : a.label > b.label ? 1 : 0;
@@ -86,7 +94,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         setTimeout(() => {
             loadingRef.current?.openModal();
         }, 500);
-        
+
         setTimeout(() => {
             loadingRef.current?.closeModal();
             navigation.closeDrawer();
@@ -100,7 +108,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
     }, []);
 
     useEffect(() => {
-        if (UnidadeSelected && PerfilSelected === null ) {
+        if (UnidadeSelected && PerfilSelected === null) {
             modalSelectPerfisRef.current?.openModal();
         }
     }, [UnidadeSelected]);
@@ -129,7 +137,11 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                 <SelectedDropdown
                     data={RefactoryPerfisData()}
                     onChange={({ value }) => SelectedPerfilApp(value)}
-                    value={PerfilSelected}
+                    value={{
+                        index: PerfilSelected?.cD_PERFIL.toString(),
+                        label: PerfilSelected?.dS_PERFIL,
+                        value: PerfilSelected,
+                    }}
                     placeholder={'Perfil do App'}
                 />
             </View>
@@ -139,7 +151,9 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     onPress={() => notificationRef.current?.openNotification()}>
                     <Text style={styles.text3}>Sair</Text>
                 </TouchableOpacity>
-                <Text style={styles.text2}>Versão {VersionInfo.appVersion}</Text>
+                <Text style={styles.text2}>
+                    Versão {VersionInfo.appVersion}
+                </Text>
             </View>
             <NotificationMultOptions
                 ref={notificationRef}
@@ -155,7 +169,13 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     <SelectedDropdown
                         data={unidades}
                         onChange={({ value }) => SelectedUnidadeApp(value)}
-                        value={PerfilSelected}
+                        value={{
+                            index: UnidadeSelected?.cD_ESTABELECIMENTO,
+                            label: UnidadeSelected?.dS_ESTABELECIMENTO
+                                .replace('PRONUTRIR ', '')
+                                .replace('- ', ''),
+                            value: UnidadeSelected,
+                        }}
                         placeholder={'Selecione a unidade'}
                         maxHeight={RFPercentage(20)}
                         ContainerStyle={styles.ContainerStyle}
@@ -170,7 +190,11 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
                     <SelectedDropdown
                         data={RefactoryPerfisData()}
                         onChange={({ value }) => SelectedPerfilApp(value)}
-                        value={PerfilSelected}
+                        value={{
+                            index: PerfilSelected?.cD_PERFIL.toString(),
+                            label: PerfilSelected?.dS_PERFIL,
+                            value: PerfilSelected,
+                        }}
                         placeholder={'Perfil do App'}
                     />
                 </View>
@@ -203,8 +227,8 @@ const createStyles = (theme: ThemeContextData) => {
             alignItems: 'center',
         },
         imgLogo: {
-            width: Dimensions.get('screen').width / 5,
-            height: Dimensions.get('screen').width / 5,
+            width: RFPercentage(8),
+            height: RFPercentage(8),
         },
         ContainerStyle: {
             //justifyContent: 'center',

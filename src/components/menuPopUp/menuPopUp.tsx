@@ -1,5 +1,10 @@
-import React, { useState, useCallback, useImperativeHandle } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {
+    useState,
+    useCallback,
+    useImperativeHandle,
+    useEffect,
+} from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Menu, MenuItem } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -16,7 +21,10 @@ interface Props {
     BtnOptionsSvg?: React.FC<SvgProps>;
     onpress?(item: string): void;
     styleSvg?: IStyleSvg;
-    widthMenu?: number
+    widthMenu?: number;
+    btnVisible?: boolean;
+    showItemSelected?: boolean;
+    ItemSelected?: string;
 }
 export interface ModalHandlesMenu {
     showMenu(): void;
@@ -30,19 +38,26 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
             onpress,
             BtnOptionsSvg = OptionsSvg,
             styleSvg = {
-                width: RFPercentage(1.5),
-                height: RFPercentage(4),
+                width: RFPercentage(1),
+                height: RFPercentage(3),
                 fill: '#737373',
             },
-            widthMenu
+            btnVisible = true,
+            widthMenu,
+            showItemSelected = false,
+            ItemSelected = '',
         }: Props,
         ref,
     ) => {
         const styles = useThemeAwareObject(createStyles);
 
         const [visible, setVisible] = useState(false);
+        const [selected, setSelected] = useState('');
 
         const selectedItem = (item: string) => {
+            if (showItemSelected) {
+                setSelected(item);
+            }
             setVisible(false);
             if (onpress) {
                 onpress(item);
@@ -64,18 +79,41 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
             };
         });
 
+        useEffect(() => {
+            setSelected(ItemSelected);
+        }, []);
+
         return (
             <View style={styles.container}>
                 <Menu
-                    style={{ width: widthMenu && widthMenu }}
+                    style={{
+                        width: widthMenu && widthMenu,
+                    }}
                     visible={visible}
-                    anchor={<BtnOptionsSvg onPress={showMenu} {...styleSvg} />}
+                    anchor={
+                        btnVisible ? (
+                            <TouchableOpacity
+                                onPress={showMenu}
+                                style={{
+                                    padding: RFPercentage(0.8),
+                                }}>
+                                <BtnOptionsSvg {...styleSvg} />
+                            </TouchableOpacity>
+                        ) : null
+                    }
                     onRequestClose={hideMenu}>
                     {btnLabels.map((item) => (
                         <MenuItem
-                            key={item}
-                            style={styles.boxItem}
-                            textStyle={{...styles.text, width: widthMenu && widthMenu}}
+                            key={item.toString()}
+                            style={
+                                selected === item
+                                    ? styles.boxItemSelected
+                                    : styles.boxItem
+                            }
+                            textStyle={{
+                                ...styles.text,
+                                width: widthMenu && widthMenu,
+                            }}
                             onPress={() => selectedItem(item)}>
                             <Text>{item}</Text>
                         </MenuItem>
@@ -95,10 +133,16 @@ const createStyles = (theme: ThemeContextData) => {
         container: {
             justifyContent: 'center',
             alignItems: 'center',
+            paddingHorizontal: RFPercentage(1),
         },
         boxItem: {
             marginVertical: RFPercentage(0.5),
             paddingVertical: RFPercentage(0.5),
+        },
+        boxItemSelected: {
+            marginVertical: RFPercentage(0.5),
+            paddingVertical: RFPercentage(0.5),
+            backgroundColor: theme.colors.BUTTON_SECUNDARY,
         },
         text: {
             fontSize: theme.typography.SIZE.fontysize14,
