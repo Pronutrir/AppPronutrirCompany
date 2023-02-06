@@ -7,7 +7,6 @@ import {
     saveRefreshToken,
 } from '../utils';
 import api from './api';
-
 interface TokenResponse {
     id: number;
     username: string;

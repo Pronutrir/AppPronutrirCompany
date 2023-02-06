@@ -1,5 +1,14 @@
 import React, { useRef, useState, useContext } from 'react';
-import { Text, View, Pressable, TextInput, ImageBackground, Keyboard, KeyboardAvoidingView, Dimensions } from 'react-native';
+import {
+    Text,
+    View,
+    Pressable,
+    TextInput,
+    ImageBackground,
+    Keyboard,
+    KeyboardAvoidingView,
+    Dimensions,
+} from 'react-native';
 
 import styles from './style';
 import Loading from '../../components/Loading/Loading';
@@ -17,7 +26,6 @@ import VisaoPassword from '../../componentes/visaoPassword';
 import Notification from '../../componentes/Notification';
 
 export default function consultarConfimarSenha({ navigation }) {
-
     const { stateAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);
@@ -26,7 +34,7 @@ export default function consultarConfimarSenha({ navigation }) {
     const [modalNotification, setModalNotification] = useState({
         active: false,
         message: '',
-        type: ''
+        type: '',
     });
 
     const Senha = useRef(null);
@@ -39,16 +47,22 @@ export default function consultarConfimarSenha({ navigation }) {
             nM_PESSOA_FISICA: usertasy.nM_PESSOA_FISICA.toUpperCase(),
             nR_CPF: usertasy.nR_CPF,
             dT_ATUALIZACAO: moment().format('YYYY-MM-DD'),
-            nR_DDD_CELULAR: usertasy.nR_TELEFONE_CELULAR.replace(/[() -]/g, "").substring(0, 2),
-            nR_TELEFONE_CELULAR: usertasy.nR_TELEFONE_CELULAR.replace(/[() -]/g, "").substring(2, 12),
-            dT_NASCIMENTO: moment(usertasy.dT_NASCIMENTO, "DD-MM-YYYY").format('YYYY-MM-DD'),
-            nM_USUARIO: "AppMobile",
-            dS_EMAIL: usertasy.dS_EMAIL
-        }).then(response => {
+            nR_DDD_CELULAR: usertasy.nR_TELEFONE_CELULAR
+                .replace(/[() -]/g, '')
+                .substring(0, 2),
+            nR_TELEFONE_CELULAR: usertasy.nR_TELEFONE_CELULAR
+                .replace(/[() -]/g, '')
+                .substring(2, 12),
+            dT_NASCIMENTO: moment(usertasy.dT_NASCIMENTO, 'DD-MM-YYYY').format(
+                'YYYY-MM-DD',
+            ),
+            nM_USUARIO: 'AppMobile',
+            dS_EMAIL: usertasy.dS_EMAIL,
+        }).then((response) => {
             const { result } = response.data;
             return result;
-        })
-    }
+        });
+    };
 
     // atualiza cadastro tasy
     const UpdateCadastroTasy = async (usertasy) => {
@@ -57,39 +71,52 @@ export default function consultarConfimarSenha({ navigation }) {
             nM_PESSOA_FISICA: usertasy.nM_PESSOA_FISICA.toUpperCase(),
             nR_CPF: usertasy.nR_CPF,
             dT_ATUALIZACAO: moment().format('YYYY-MM-DD'),
-            nR_DDD_CELULAR: usertasy.nR_TELEFONE_CELULAR.replace(/[() -]/g, "").substring(0, 2),
-            nR_TELEFONE_CELULAR: usertasy.nR_TELEFONE_CELULAR.replace(/[() -]/g, "").substring(2, 12),
-            dT_NASCIMENTO: moment(usertasy.dT_NASCIMENTO, "DD-MM-YYYY").format('YYYY-MM-DD'),
-            nM_USUARIO: "AppMobile",
+            nR_DDD_CELULAR: usertasy.nR_TELEFONE_CELULAR
+                .replace(/[() -]/g, '')
+                .substring(0, 2),
+            nR_TELEFONE_CELULAR: usertasy.nR_TELEFONE_CELULAR
+                .replace(/[() -]/g, '')
+                .substring(2, 12),
+            dT_NASCIMENTO: moment(usertasy.dT_NASCIMENTO, 'DD-MM-YYYY').format(
+                'YYYY-MM-DD',
+            ),
+            nM_USUARIO: 'AppMobile',
             dS_EMAIL: usertasy.dS_EMAIL,
             iE_TIPO_PESSOA: 2,
-            iE_FUNCIONARIO: usertasy.iE_FUNCIONARIO ? usertasy.iE_FUNCIONARIO : 'N',
+            iE_FUNCIONARIO: usertasy.iE_FUNCIONARIO
+                ? usertasy.iE_FUNCIONARIO
+                : 'N',
             nR_SEQUENCIA: usertasy.nR_SEQUENCIA,
-            iE_TIPO_COMPLEMENTO: usertasy.iE_TIPO_COMPLEMENTO
-        }).then(response => {
+            iE_TIPO_COMPLEMENTO: usertasy.iE_TIPO_COMPLEMENTO,
+        }).then((response) => {
             const { result } = response.data;
             return result;
-        })
-    }
+        });
+    };
 
     const cadastroFireBase = async (values) => {
-        return auth().createUserWithEmailAndPassword(values.dS_EMAIL, values.nR_Senha).then(response => {
-            return response.user;
-        })
-    }
+        return auth()
+            .createUserWithEmailAndPassword(values.dS_EMAIL, values.nR_Senha)
+            .then((response) => {
+                return response.user;
+            });
+    };
 
     const cadastroFireStone = async (cd_firebase, usertasy) => {
         const usersRef = firestore().collection('users');
-        await usersRef.doc(cd_firebase.uid).set({
-            nome: usertasy.nM_PESSOA_FISICA,
-            cpf: usertasy.nR_CPF.replace(/[.-]/g, ""),
-            email: usertasy.dS_EMAIL,
-            token: cd_firebase.uid,
-            nM_USUARIO: 'AppMobile'
-        }).then(() => {
-            return true;
-        });
-    }
+        await usersRef
+            .doc(cd_firebase.uid)
+            .set({
+                nome: usertasy.nM_PESSOA_FISICA,
+                cpf: usertasy.nR_CPF.replace(/[.-]/g, ''),
+                email: usertasy.dS_EMAIL,
+                token: cd_firebase.uid,
+                nM_USUARIO: 'AppMobile',
+            })
+            .then(() => {
+                return true;
+            });
+    };
 
     const cadastrarUsuario = async () => {
         setLoadingActive(true);
@@ -104,7 +131,7 @@ export default function consultarConfimarSenha({ navigation }) {
             }
 
             if (cd_tasy || updateTasy) {
-                await cadastroFireBase(usertasy).then(cd_firebase => {
+                await cadastroFireBase(usertasy).then((cd_firebase) => {
                     cadastroFireStone(cd_firebase, usertasy);
                 });
             }
@@ -113,70 +140,126 @@ export default function consultarConfimarSenha({ navigation }) {
             if (code) {
                 switch (code) {
                     case 'auth/invalid-email':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Formato Inválido de E-mail!', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message: 'Formato Inválido de E-mail!',
+                                type: 'error',
+                            };
                         });
                         break;
                     case 'auth/user-not-found':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Usuário não encontrado!', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message: 'Usuário não encontrado!',
+                                type: 'error',
+                            };
                         });
                         break;
                     case 'auth/wrong-password':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'A senha é inválida ou o usuário não possui uma senha.', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message:
+                                    'A senha é inválida ou o usuário não possui uma senha.',
+                                type: 'error',
+                            };
                         });
                         break;
                     case 'auth/network-request-failed':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Verifique sua conexão com a Internet.', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message:
+                                    'Verifique sua conexão com a Internet.',
+                                type: 'error',
+                            };
                         });
                         break;
                     case 'auth/too-many-requests':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Aguarde!, muitas tentativas de acesso!', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message:
+                                    'Aguarde!, muitas tentativas de acesso!',
+                                type: 'error',
+                            };
                         });
                         break;
                     case 'auth/email-already-in-use':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Email já está sendo utilizado!', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message: 'Email já está sendo utilizado!',
+                                type: 'error',
+                            };
                         });
                         break;
                     case 'auth/weak-password':
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: 'Sua senha precisa ter pelo menos 8 caracteres', type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message:
+                                    'Sua senha precisa ter pelo menos 8 caracteres',
+                                type: 'error',
+                            };
                         });
                         break;
                     default:
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: error.code, type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message: error.code,
+                                type: 'error',
+                            };
                         });
                         break;
                 }
             } else {
                 switch (message) {
                     default:
-                        setModalNotification(prevState => {
-                            return { ...prevState, active: true, message: message, type: 'error' }
+                        setModalNotification((prevState) => {
+                            return {
+                                ...prevState,
+                                active: true,
+                                message: message,
+                                type: 'error',
+                            };
                         });
                         break;
                 }
             }
             setLoadingActive(false);
         }
-    }
+    };
 
     const FormSchema = Yup.object().shape({
-        Senha: Yup
-            .string()
-            .required("Senha é obrigatório!")
-            .min(6, ({ min }) => `A senha deve ter pelo menos ${min} caracteres`)
-            .oneOf([stateAuth.usertasy.nR_Senha], 'As senhas digitadas são diferentes')
-    })
+        Senha: Yup.string()
+            .required('Senha é obrigatório!')
+            .min(
+                6,
+                ({ min }) => `A senha deve ter pelo menos ${min} caracteres`,
+            )
+            .oneOf(
+                [stateAuth.usertasy.nR_Senha],
+                'As senhas digitadas são diferentes',
+            ),
+    });
 
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
+            <ImageBackground
+                style={styles.BackgroundImage}
+                source={require('../../assets/imagens/logoBackgroud.png')}>
                 <View style={{ marginTop: 20 }}>
                     <BackButton onPress={() => navigation.goBack()} />
                 </View>
@@ -184,21 +267,34 @@ export default function consultarConfimarSenha({ navigation }) {
                     initialValues={{
                         Senha: '',
                     }}
-                    onSubmit={values => {
+                    onSubmit={(values) => {
                         cadastrarUsuario();
                     }}
-                    validationSchema={FormSchema}
-                >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                        <View style={{ flex: 1 }} >
+                    validationSchema={FormSchema}>
+                    {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                        isValid,
+                    }) => (
+                        <View style={{ flex: 1 }}>
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
-                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={Platform.OS === "ios" ? 130 : -180}
-                            >
+                                behavior={Platform.OS === 'ios' && 'padding'}
+                                keyboardVerticalOffset={
+                                    Platform.OS === 'ios' ? 105 : 0
+                                }>
                                 <View style={styles.box1}>
-                                    <Text style={styles.textInfo}>Confirme sua senha</Text>
-                                    <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
+                                    <Text style={styles.textInfo}>
+                                        Confirme sua senha
+                                    </Text>
+                                    <Text style={styles.text}>
+                                        Informe os dados para validar seu acesso
+                                        !
+                                    </Text>
                                     <View style={styles.sectionInput}>
                                         <TextInput
                                             ref={Senha}
@@ -210,9 +306,16 @@ export default function consultarConfimarSenha({ navigation }) {
                                             autoCapitalize={'none'}
                                             maxLength={40}
                                         />
-                                        <VisaoPassword active={showPassword} setActive={setShowPassword} />
+                                        <VisaoPassword
+                                            active={showPassword}
+                                            setActive={setShowPassword}
+                                        />
                                     </View>
-                                    {(touched.Senha && errors.Senha) && <Text style={styles.Error}>{errors.Senha}</Text>}
+                                    {touched.Senha && errors.Senha && (
+                                        <Text style={styles.Error}>
+                                            {errors.Senha}
+                                        </Text>
+                                    )}
                                 </View>
                                 <View style={styles.box2}>
                                     <Btnprosseguir
@@ -227,6 +330,6 @@ export default function consultarConfimarSenha({ navigation }) {
                     )}
                 </Formik>
             </ImageBackground>
-        </Pressable >
-    )
+        </Pressable>
+    );
 }

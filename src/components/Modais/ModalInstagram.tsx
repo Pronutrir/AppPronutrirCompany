@@ -12,7 +12,6 @@ import {
     Modal,
     TouchableOpacity,
     ScrollView,
-    SafeAreaView,
     Dimensions,
     Platform,
     ViewStyle,
@@ -123,7 +122,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                     transparent={true}
                     visible={active}>
                     <View style={styles.centeredView}>
-                        <SafeAreaView style={styles.centeredView}>
+                        <View style={styles.centeredView}>
                             <View style={styles.modalView}>
                                 <View style={styles.box1}>
                                     <View style={styles.boxBtn}>
@@ -186,7 +185,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                                     </Text>
                                 </ScrollView>
                             </View>
-                        </SafeAreaView>
+                        </View>
                     </View>
                 </Modal>
             </View>

@@ -28,7 +28,9 @@ interface refactoreUnidades {
 
 const useUnidades = () => {
     const { addAlert } = useContext(NotificationGlobalContext);
-    const { stateAuth: { usertasy } } = useContext(AuthContext);
+    const {
+        stateAuth: { usertasy },
+    } = useContext(AuthContext);
 
     return useQuery(
         'unidades',
@@ -41,7 +43,10 @@ const useUnidades = () => {
 
             const resultFilter = result?.map((item) => {
                 return {
-                    label: item.dS_ESTABELECIMENTO.replace('PRONUTRIR ', '').replace('- ', ''),
+                    index: item.cD_ESTABELECIMENTO,
+                    label: item.dS_ESTABELECIMENTO
+                        .replace('PRONUTRIR ', '')
+                        .replace('- ', ''),
                     value: item,
                 };
             });

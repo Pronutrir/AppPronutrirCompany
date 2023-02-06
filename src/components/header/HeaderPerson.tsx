@@ -1,11 +1,9 @@
 import React from 'react';
-import {StyleSheet, View, Dimensions, Text} from 'react-native';
+import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import AgendarConsultaImg from '../../assets/svg/AgendarConsulta.svg';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {RFValue} from 'react-native-responsive-fontsize';
 import BackButton from '../buttons/BackButton';
-import {SvgProps} from 'react-native-svg';
-import {useNavigation} from '@react-navigation/native';
+import { SvgProps } from 'react-native-svg';
+import { useNavigation } from '@react-navigation/native';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 interface Props {
@@ -13,13 +11,13 @@ interface Props {
     ImgSvg?: React.FC<SvgProps>;
 }
 
-const HeaderPerson: React.FC<Props> = ({title, ImgSvg}: Props) => {
+const HeaderPerson: React.FC<Props> = ({ title, ImgSvg }: Props) => {
     const styles = useThemeAwareObject(createStyles);
     const size = Dimensions.get('screen').width / 10;
     const navigation = useNavigation();
 
     return (
-        <SafeAreaView style={{backgroundColor: '#E6ECEC'}}>
+        <View style={{ backgroundColor: '#E6ECEC' }}>
             <View style={styles.container}>
                 <View style={styles.box2}>
                     <View style={styles.item1}>
@@ -41,7 +39,7 @@ const HeaderPerson: React.FC<Props> = ({title, ImgSvg}: Props) => {
                     </View>
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 
@@ -83,6 +81,6 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
+};
 
 export default HeaderPerson;

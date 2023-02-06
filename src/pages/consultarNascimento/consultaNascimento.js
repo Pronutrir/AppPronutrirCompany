@@ -1,5 +1,14 @@
 import React, { useContext, useRef, useState } from 'react';
-import { Text, View, Pressable, Keyboard, TextInput, ImageBackground, KeyboardAvoidingView, Dimensions } from 'react-native';
+import {
+    Text,
+    View,
+    Pressable,
+    Keyboard,
+    TextInput,
+    ImageBackground,
+    KeyboardAvoidingView,
+    Dimensions,
+} from 'react-native';
 
 import styles from './style';
 import Loading from '../../components/Loading/Loading';
@@ -11,36 +20,43 @@ import AuthContext from '../../contexts/auth';
 import BackButton from '../../components/buttons/BackButton';
 
 export default function consultaNascimento({ navigation }) {
-
     const [modalActive, setModalActive] = useState(false);
     const { dispatchAuth } = useContext(AuthContext);
 
     const DataNascimento = useRef(null);
 
     const validacaoData = (value) => {
-        let data = value.replace(/[" "/]/g, "");
+        let data = value.replace(/[" "/]/g, '');
         if (data.length == 8) {
-            return true
+            return true;
         } else {
             return false;
         }
-    }
+    };
 
     const FormSchema = Yup.object().shape({
-        DataNascimento: Yup
-            .string()
+        DataNascimento: Yup.string()
             .required('Telefone é obrigatório!')
-            .test('validationData', 'Data inválida', value => value && validacaoData(value))
-    })
+            .test(
+                'validationData',
+                'Data inválida',
+                (value) => value && validacaoData(value),
+            ),
+    });
 
     const setDataNasc = (value) => {
-        dispatchAuth({ type: 'UpdateUserTasyDataNasc', payload: value.DataNascimento })
-        navigation.navigate('ConsultaEmail')
-    }
+        dispatchAuth({
+            type: 'UpdateUserTasyDataNasc',
+            payload: value.DataNascimento,
+        });
+        navigation.navigate('ConsultaEmail');
+    };
 
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-            <ImageBackground style={styles.BackgroundImage} source={require('../../assets/imagens/logoBackgroud.png')}>
+            <ImageBackground
+                style={styles.BackgroundImage}
+                source={require('../../assets/imagens/logoBackgroud.png')}>
                 <View style={{ marginTop: 20 }}>
                     <BackButton onPress={() => navigation.goBack()} />
                 </View>
@@ -48,37 +64,56 @@ export default function consultaNascimento({ navigation }) {
                     initialValues={{
                         DataNascimento: '',
                     }}
-                    onSubmit={values => {
+                    onSubmit={(values) => {
                         setDataNasc(values);
                     }}
-                    validationSchema={FormSchema}
-                >
-                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                        <View style={{ flex: 1 }} >
+                    validationSchema={FormSchema}>
+                    {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                        isValid,
+                    }) => (
+                        <View style={{ flex: 1 }}>
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
-                                behavior={Platform.OS === "ios" ? "padding" : "padding"}
-                                keyboardVerticalOffset={Platform.OS === "ios" ? 130 : -180}
-                            >
+                                behavior={Platform.OS === 'ios' && 'padding'}
+                                keyboardVerticalOffset={
+                                    Platform.OS === 'ios' ? 105 : 0
+                                }>
                                 <View style={styles.box1}>
-                                    <Text style={styles.textInfo}>Informe Sua data de Nascimento</Text>
-                                    <Text style={styles.text}>Informe os dados para validar seu acesso !</Text>
+                                    <Text style={styles.textInfo}>
+                                        Informe Sua data de Nascimento
+                                    </Text>
+                                    <Text style={styles.text}>
+                                        Informe os dados para validar seu acesso
+                                        !
+                                    </Text>
                                     <TextInputMask
                                         type={'datetime'}
                                         options={{
                                             format: 'DD/MM/YYYY',
-
                                         }}
                                         ref={DataNascimento}
                                         style={styles.input}
-                                        onChangeText={handleChange('DataNascimento')}
+                                        onChangeText={handleChange(
+                                            'DataNascimento',
+                                        )}
                                         onBlur={handleBlur('DataNascimento')}
                                         value={values.DataNascimento}
                                         placeholder={'00/00/0000'}
                                         placeholderTextColor={'#95a6a9a6'}
                                         maxLength={40}
                                     />
-                                    {(touched.DataNascimento && errors.DataNascimento) && <Text style={styles.Error}>{errors.DataNascimento}</Text>}
+                                    {touched.DataNascimento &&
+                                        errors.DataNascimento && (
+                                            <Text style={styles.Error}>
+                                                {errors.DataNascimento}
+                                            </Text>
+                                        )}
                                 </View>
                                 <View style={styles.box2}>
                                     <Btnprosseguir
@@ -93,6 +128,6 @@ export default function consultaNascimento({ navigation }) {
                     )}
                 </Formik>
             </ImageBackground>
-        </Pressable >
-    )
+        </Pressable>
+    );
 }

@@ -5,6 +5,7 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 interface Props {
@@ -60,7 +61,7 @@ const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            marginHorizontal: 5,
+            marginHorizontal: RFPercentage(0.4),
         },
         textBtn: {
             color: theme.colors.TEXT_SECONDARY,

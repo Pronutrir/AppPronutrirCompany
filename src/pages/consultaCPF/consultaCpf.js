@@ -6,8 +6,6 @@ import {
     Keyboard,
     KeyboardAvoidingView,
     Platform,
-    Dimensions,
-    PixelRatio,
 } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import Btnprosseguir from '../../components/buttons/Btnprosseguir';
@@ -155,13 +153,9 @@ export default function consultaCpf({ navigation }) {
                         <View style={{ flex: 1 }}>
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
-                                behavior={
-                                    Platform.OS === 'ios'
-                                        ? 'padding'
-                                        : 'padding'
-                                }
+                                behavior={Platform.OS === 'ios' && 'padding'}
                                 keyboardVerticalOffset={
-                                    Platform.OS === 'ios' ? 100 : -180
+                                    Platform.OS === 'ios' ? 105 : 0
                                 }>
                                 <View style={styles.box1}>
                                     <Text style={styles.textInfo}>

@@ -53,7 +53,11 @@ const DashBoard: React.FC = () => {
                         data={unidades}
                         maxHeight={RFPercentage(20)}
                         ContainerStyle={styles.ContainerStyle}
-                        value={UnidadeSelected}
+                        value={{
+                            index: UnidadeSelected?.cD_ESTABELECIMENTO,
+                            label: UnidadeSelected?.dS_ESTABELECIMENTO,
+                            value: UnidadeSelected,
+                        }}
                         onChange={({ value }) => SelectedUnidadeApp(value)}
                     />
                 </View>

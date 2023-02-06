@@ -34,12 +34,15 @@ import SinaisVitaisContext, {
 import { ISinaisVitais } from '../../../reducers/ConsultasReducer';
 import ShimerPlaceHolderCardSNVTs from '../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import {
+    IFilterSinaisVitaisProfissional,
     useSinaisVitaisAll,
     useSinaisVitaisFilter,
 } from '../../../hooks/useSinaisVitais';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import AuthContext from '../../../contexts/auth';
+import ModalFiltroData from '../../../components/Modais/ModalFiltroData';
+import ActiveIndicator from '../../../components/Loading/ActiveIndicator';
 export interface PessoaSelected {
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
@@ -50,6 +53,8 @@ interface Parms {
     index: number;
 }
 
+type IFilter = 'Diario' | 'Todos' | 'Periodo';
+
 focusManager.setEventListener((handleFocus) => {
     const subscription = AppState.addEventListener('change', (state) => {
         handleFocus(state === 'active');
@@ -57,7 +62,6 @@ focusManager.setEventListener((handleFocus) => {
 
     return () => {
         subscription;
-        //subscription.remove()
     };
 });
 
@@ -77,19 +81,38 @@ const HistorySinaisVitais: React.FC = () => {
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
+    const [filterOptions, setFilterOptions] =
+        useState<IFilterSinaisVitaisProfissional>({
+            cd_pessoa_fisica: usertasy.cD_PESSOA_FISICA,
+            dataInicio: moment().format('YYYY-MM-DD'),
+            dataFinal: moment().format('YYYY-MM-DD'),
+        });
+
+    const [checkboxFilter, setCheckboxFilter] = useState<IFilter>('Diario');
+
     const {
         data: historySinaisVitais,
         refetch,
         isLoading,
         isFetching,
-    } = useSinaisVitaisFilter(usertasy.cD_PESSOA_FISICA);
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useSinaisVitaisFilter(filterOptions);
 
     const refModalOptions = useRef<ModalHandles>(null);
     const refMenuPopUp = useRef<ModalHandlesMenu>(null);
     const refLoading = useRef<LoadHandles>(null);
+    const ModalFiltroDataRef = useRef<ModalHandles>(null);
 
     const [selectedSinais, setSelectedSinais] =
         useState<IInativarSinaisVitais>();
+
+    const loadMore = () => {
+        if (hasNextPage) {
+            fetchNextPage();
+        }
+    };
 
     const setSelectedSinaisInativar = (item: IInativarSinaisVitais) => {
         setTimeout(
@@ -134,7 +157,7 @@ const HistorySinaisVitais: React.FC = () => {
             case 'Editar':
                 RedirectNavigation(item);
                 break;
-            case 'Excluir':
+            case 'Inativar':
                 setSelectedSinaisInativar(item);
                 break;
             default:
@@ -218,7 +241,9 @@ const HistorySinaisVitais: React.FC = () => {
     const Item = memo<Parms>(
         ({ item, index }: { item: ISinaisVitais; index: number }) => {
             return (
-                <View key={index.toString()} style={{ flexDirection: 'row' }}>
+                <View
+                    key={index.toString()}
+                    style={{ flexDirection: 'row', padding: RFPercentage(1) }}>
                     <View style={styles.box1}>
                         <HistorySvg
                             width={RFPercentage(5)}
@@ -277,7 +302,11 @@ const HistorySinaisVitais: React.FC = () => {
                     <View style={styles.box3}>
                         <MenuPopUp
                             ref={refMenuPopUp}
-                            btnLabels={['Editar', 'Excluir']}
+                            btnLabels={
+                                checkboxFilter === 'Diario'
+                                    ? ['Editar', 'Inativar']
+                                    : ['Inativar']
+                            }
                             onpress={(label) => {
                                 refMenuPopUp.current?.hideMenu(),
                                     MenuPopUpOptions(label, item);
@@ -301,7 +330,7 @@ const HistorySinaisVitais: React.FC = () => {
                 </CardSimples>
             );
         },
-        [],
+        [checkboxFilter],
     );
 
     const renderItemEmpty = () => (
@@ -312,8 +341,44 @@ const HistorySinaisVitais: React.FC = () => {
 
     const renderItemCall = useCallback(
         ({ item, index }) => renderItem({ item, index }),
-        [],
+        [checkboxFilter],
     );
+
+    const renderFooter = () => {
+        return <ActiveIndicator active={isFetchingNextPage} />;
+    };
+
+    const selectedOptions = (item: string) => {
+        switch (item) {
+            case 'Diario':
+                setFilterOptions({
+                    cd_pessoa_fisica: usertasy.cD_PESSOA_FISICA,
+                    dataInicio: moment().format('YYYY-MM-DD'),
+                    dataFinal: moment().format('YYYY-MM-DD'),
+                });
+                setCheckboxFilter('Diario');
+                break;
+            case 'Todos':
+                setFilterOptions({
+                    cd_pessoa_fisica: usertasy.cD_PESSOA_FISICA,
+                    dataInicio: moment()
+                        .subtract(1, 'year')
+                        .format('YYYY-MM-DD'),
+                    dataFinal: moment().format('YYYY-MM-DD'),
+                });
+                setCheckboxFilter('Todos');
+                break;
+            case 'Periodo':
+                setTimeout(
+                    () => {
+                        ModalFiltroDataRef.current?.openModal();
+                    },
+                    Platform.OS === 'ios' ? 500 : 0,
+                );
+                setCheckboxFilter('Periodo');
+                break;
+        }
+    };
 
     useEffect(() => {
         refetch();
@@ -321,19 +386,69 @@ const HistorySinaisVitais: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            {!isFetching ? (
+            <View
+                style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginVertical: RFPercentage(0.5),
+                }}>
+                <Text style={[styles.textLabel, styles.titleLabel]}>
+                    Ultimos sinais vitais adicionados!
+                </Text>
+                <View
+                    style={{
+                        position: 'absolute',
+                        right: 0,
+                    }}>
+                    <MenuPopUp
+                        btnLabels={['Diario', 'Todos', 'Periodo']}
+                        onpress={(item) => selectedOptions(item)}
+                        showItemSelected={true}
+                        ItemSelected={checkboxFilter}
+                    />
+                </View>
+            </View>
+            {!isLoading ? (
                 <FlatList
-                    data={historySinaisVitais}
-                    renderItem={renderItemCall}
+                    data={historySinaisVitais?.pages.map((page) => page).flat()}
+                    renderItem={({ item, index }) =>
+                        renderItemCall({ item, index })
+                    }
                     keyExtractor={(item, index) => index.toString()}
-                    refreshing={isLoading}
-                    onRefresh={refetch}
                     ListEmptyComponent={renderItemEmpty}
+                    ListFooterComponent={renderFooter}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={0.5}
                 />
             ) : (
                 Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
             )}
             <Loading ref={refLoading} />
+            <ModalFiltroData
+                ref={ModalFiltroDataRef}
+                clear={() => {
+                    setFilterOptions({
+                        cd_pessoa_fisica: usertasy.cD_PESSOA_FISICA,
+                        dataInicio: moment().format('YYYY-MM-DD'),
+                        dataFinal: moment().format('YYYY-MM-DD'),
+                    });
+                    ModalFiltroDataRef.current?.closeModal();
+                }}
+                onPress={(initialDate, endDate) => {
+                    setFilterOptions({
+                        cd_pessoa_fisica: usertasy.cD_PESSOA_FISICA,
+                        dataInicio: moment(initialDate, 'DD/MM/YYYY').format(
+                            'YYYY-MM-DD',
+                        ),
+                        dataFinal: moment(endDate, 'DD/MM/YYYY').format(
+                            'YYYY-MM-DD',
+                        ),
+                    });
+                    ModalFiltroDataRef.current?.closeModal();
+                }}
+            />
             <ModalCentralizedOptions
                 animationType={'slide'}
                 ref={refModalOptions}
@@ -363,16 +478,15 @@ const createStyles = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize16,
         },
         text: {
+            flexWrap: 'wrap',
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
             fontSize: theme.typography.SIZE.fontysize16,
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
-            marginVertical: RFPercentage(0.5),
         },
         SubItem: {
             flex: 1,
@@ -384,7 +498,7 @@ const createStyles = (theme: ThemeContextData) => {
             flex: 0.7,
             paddingTop: 10,
             justifyContent: 'flex-start',
-            alignItems: 'flex-start',
+            alignItems: 'center',
         },
         box2: {
             flex: 5,
@@ -417,6 +531,16 @@ const createStyles = (theme: ThemeContextData) => {
                 },
                 android: {
                     elevation: 3,
+                },
+            }),
+        },
+        titleLabel: {
+            alignSelf: 'center',
+            paddingLeft: 10,
+            textAlignVertical: 'center',
+            ...Platform.select({
+                ios: {
+                    lineHeight: RFPercentage(6), // as same as height
                 },
             }),
         },

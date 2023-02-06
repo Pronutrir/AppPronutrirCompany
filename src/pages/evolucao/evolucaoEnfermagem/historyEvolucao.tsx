@@ -309,7 +309,6 @@ const createStyles = (theme: ThemeContextData) => {
             padding: RFPercentage(0.5),
         },
         item: {
-            flex: 1,
             flexDirection: 'row',
             flexWrap: 'wrap',
             marginVertical: RFPercentage(0.5),

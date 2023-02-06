@@ -1,6 +1,13 @@
 import React, { useContext } from 'react';
-import { Text, View, Image, TouchableOpacity, TextInput, StyleSheet, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    TextInput,
+    StyleSheet,
+    Dimensions,
+} from 'react-native';
 import { TextMask, TextInputMask } from 'react-native-masked-text';
 import { foneMask } from '../../../services/validacoes';
 import AuthContext from '../../../contexts/auth';
@@ -8,20 +15,23 @@ import AuthContext from '../../../contexts/auth';
 import UserSvg from '../../../assets/svg/user.svg';
 import ProximoSvg from '../../../assets/svg/proximo.svg';
 import moment from 'moment';
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 export default function dadosContato({ navigation }) {
-
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
 
     return (
         <View style={styles.container}>
             <View style={styles.box1}>
-                <Text style={styles.textLabelInfo}>Mantenha seus dados atualizados</Text>
+                <Text style={styles.textLabelInfo}>
+                    Mantenha seus dados atualizados
+                </Text>
             </View>
             <View style={styles.box2}>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('AtualizarEmail')}>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => navigation.navigate('AtualizarEmail')}>
                     <View style={styles.item1}>
                         {/* <HospitalLocationSvg fill={'#748080'} width={40} height={40} /> */}
                     </View>
@@ -33,13 +43,19 @@ export default function dadosContato({ navigation }) {
                         <ProximoSvg fill={'#748080'} width={15} height={15} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('AtualizarCelular')}>
+                <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => navigation.navigate('AtualizarCelular')}>
                     <View style={styles.item1}>
                         {/* <HospitalLocationSvg fill={'#748080'} width={40} height={40} /> */}
                     </View>
                     <View style={styles.item2}>
                         <Text style={styles.text}>Celular</Text>
-                        <Text style={styles.textInfo}>{foneMask(`${usertasy.nR_DDD_CELULAR} ${usertasy.nR_TELEFONE_CELULAR}`)}</Text>
+                        <Text style={styles.textInfo}>
+                            {foneMask(
+                                `${usertasy.nR_DDD_CELULAR} ${usertasy.nR_TELEFONE_CELULAR}`,
+                            )}
+                        </Text>
                     </View>
                     <View style={styles.item3}>
                         <ProximoSvg fill={'#748080'} width={15} height={15} />
@@ -47,13 +63,13 @@ export default function dadosContato({ navigation }) {
                 </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     box1: {
         flex: 0.1,
@@ -78,7 +94,7 @@ const styles = StyleSheet.create({
         fontSize: RFValue(15, 680),
         color: '#7A8B8E',
         padding: 5,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     text3: {
         fontSize: RFValue(21, 680),
@@ -89,58 +105,58 @@ const styles = StyleSheet.create({
         color: '#08948A',
         fontWeight: 'bold',
         fontSize: RFValue(16, 680),
-        marginRight: 20
+        marginRight: 20,
     },
-    card:{
+    card: {
         width: '100%',
-        height:  Dimensions.get('screen').height / 10,
+        height: Dimensions.get('screen').height / 10,
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
         borderRadius: 10,
         margin: 5,
         ...Platform.select({
             ios: {
                 shadowOffset: {
                     width: 0,
-                    height: 1
+                    height: 1,
                 },
                 shadowOpacity: 0.1,
                 shadowRadius: 4,
             },
             android: {
                 elevation: 3,
-            }
+            },
         }),
     },
-    item1:{
+    item1: {
         flex: 0.3,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
-    item2:{
+    item2: {
         flex: 2,
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
-    item3:{
+    item3: {
         flex: 0.5,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
-    text:{
+    text: {
         fontSize: RFValue(18, 680),
-        color: '#748080'
+        color: '#748080',
     },
-    textInfo:{
+    textInfo: {
         fontSize: RFValue(16, 680),
         color: '#748080',
-        opacity: 0.5
+        opacity: 0.5,
     },
-    textLabelInfo:{
+    textLabelInfo: {
         fontSize: RFValue(18, 680),
         color: '#08948A',
-        opacity: 0.6
-    }
-})
+        opacity: 0.6,
+    },
+});

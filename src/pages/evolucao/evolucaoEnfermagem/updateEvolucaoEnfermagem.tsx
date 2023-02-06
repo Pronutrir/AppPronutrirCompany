@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import BtnOptions from '../../../components/buttons/BtnOptions';
@@ -70,7 +70,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.box}>
                 <View style={styles.item1}>
                     <PessoaFisicaComponent
@@ -109,7 +109,7 @@ const EvolucaoEnfermagem: React.FC<Props> = ({
                 message="Deseja liberar esta evolução ?"
                 onpress={() => console.log()}
             />
-        </SafeAreaView>
+        </View>
     );
 };
 

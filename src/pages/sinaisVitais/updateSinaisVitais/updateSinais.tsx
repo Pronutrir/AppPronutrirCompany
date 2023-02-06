@@ -46,10 +46,9 @@ const UpdateSinais: React.FC<Props> = ({
     const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais } =
         useContext(SinaisVitaisContext);
 
-    const { data: historicoSinaisVitais } = useSinaisVitaisHistory(
-        PessoaFisica.nM_PESSOA_FISICA,
-        3,
-    );
+    const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
+        nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    });
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
@@ -114,7 +113,7 @@ const UpdateSinais: React.FC<Props> = ({
                     Paciente: SinaisVitais?.nM_PESSOA_FISICA
                         ? SinaisVitais?.nM_PESSOA_FISICA
                         : PessoaFisica?.nM_PESSOA_FISICA,
-                    Tipo: 'all',
+                    Tipo: 'Todos',
                 });
                 break;
             case 'Acompanhantes':
@@ -337,7 +336,9 @@ const UpdateSinais: React.FC<Props> = ({
             />
             <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
                 <CardAlertaPesoPaciente
-                    historicoSinaisVitais={historicoSinaisVitais}
+                    historicoSinaisVitais={historicoSinaisVitais?.filter(
+                        (item, index) => index <= 2,
+                    )}
                     onpress={() => modalOptions()}
                 />
             </ModalCentralize>

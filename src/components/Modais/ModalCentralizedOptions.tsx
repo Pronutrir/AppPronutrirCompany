@@ -5,7 +5,7 @@ import React, {
     useImperativeHandle,
     useEffect,
 } from 'react';
-import { View, StyleSheet, SafeAreaView, Modal, Text } from 'react-native';
+import { View, StyleSheet, Modal, Text } from 'react-native';
 import Animated, {
     withTiming,
     useAnimatedStyle,
@@ -112,7 +112,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                             }
                             return true;
                         }}>
-                        <SafeAreaView style={styles.modalView}>
+                        <View style={styles.modalView}>
                             <View style={styles.menssage}>
                                 <Text style={styles.textMenssage}>
                                     {message}
@@ -133,7 +133,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                                     onPress={() => closeModal()}
                                 />
                             </View>
-                        </SafeAreaView>
+                        </View>
                     </Animated.View>
                 </Modal>
             </View>

@@ -28,7 +28,6 @@ const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
             position: 'absolute',
-            right: 0,
             top: -10,
             padding: 5,
             justifyContent: 'center',
@@ -53,5 +52,4 @@ const createStyles = (theme: ThemeContextData) => {
         },
     });
     return styles;
-}
-
+};
