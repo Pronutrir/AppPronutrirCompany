@@ -56,7 +56,7 @@ export interface IFilterSinaisVitais {
     rows?: number | null;
     status?: string | null;
     nomePaciente?: string | null;
-    cdPaciente?: number | null;
+    cdPaciente?: string | null;
 }
 
 export interface IFilterSinaisVitaisProfissional {

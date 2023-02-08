@@ -85,16 +85,16 @@ const DashBoard: React.FC = () => {
                         onpress={() => {
                             ('');
                         }}
-                        ImgSVG={LembreteImg}
-                        label={'Alertas'}
+                        ImgSVG={MedicoImg}
+                        label={'Médicos'}
                     />
                     <BtnDashboardComponent
                         disabled={true}
                         onpress={() => {
                             ('');
                         }}
-                        ImgSVG={MedicoImg}
-                        label={'Médicos'}
+                        ImgSVG={LembreteImg}
+                        label={'Alertas'}
                     />
                     <BtnDashboardComponent
                         disabled={true}

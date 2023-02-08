@@ -110,9 +110,9 @@ const UpdateSinais: React.FC<Props> = ({
         switch (itemSelected) {
             case 'Histórico':
                 navigation.navigate('EndSinaisVitais', {
-                    Paciente: SinaisVitais?.nM_PESSOA_FISICA
-                        ? SinaisVitais?.nM_PESSOA_FISICA
-                        : PessoaFisica?.nM_PESSOA_FISICA,
+                    cdPaciente: SinaisVitais?.cD_PACIENTE
+                        ? SinaisVitais?.cD_PACIENTE
+                        : PessoaFisica?.cD_PESSOA_FISICA,
                     Tipo: 'Todos',
                 });
                 break;

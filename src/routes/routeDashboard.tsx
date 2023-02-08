@@ -68,7 +68,7 @@ export type RootStackParamList = {
     };
     SearchPessoaFisica: undefined;
     EndSinaisVitais: {
-        Paciente: string;
+        cdPaciente: string;
         Tipo: string;
     };
     HistoryEvolucao: {

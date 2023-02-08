@@ -67,7 +67,7 @@ focusManager.setEventListener((handleFocus) => {
 
 const EndSinaisVitais: React.FC<Props> = ({
     route: {
-        params: { Paciente, Tipo },
+        params: { cdPaciente, Tipo },
     },
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
@@ -83,7 +83,7 @@ const EndSinaisVitais: React.FC<Props> = ({
 
     const [filterOptions, setFilterOptions] =
         useState<IFilterSinaisVitaisProfissional>({
-            cd_pessoa_fisica: Paciente,
+            cd_pessoa_fisica: cdPaciente,
             dataInicio:
                 Tipo === 'Diario'
                     ? moment().format('YYYY-MM-DD')
@@ -103,7 +103,7 @@ const EndSinaisVitais: React.FC<Props> = ({
         fetchNextPage,
         isFetchingNextPage,
     } = _useSinaisVitaisHistory({
-        nomePaciente: Paciente,
+        cdPaciente: cdPaciente,
         dataInicio: filterOptions?.dataInicio,
         dataFinal: filterOptions?.dataFinal,
     });
@@ -358,7 +358,7 @@ const EndSinaisVitais: React.FC<Props> = ({
         switch (item) {
             case 'Diario':
                 setFilterOptions({
-                    cd_pessoa_fisica: Paciente,
+                    cd_pessoa_fisica: cdPaciente,
                     dataInicio: moment().format('YYYY-MM-DD'),
                     dataFinal: moment().format('YYYY-MM-DD'),
                 });
@@ -366,7 +366,7 @@ const EndSinaisVitais: React.FC<Props> = ({
                 break;
             case 'Todos':
                 setFilterOptions({
-                    cd_pessoa_fisica: Paciente,
+                    cd_pessoa_fisica: cdPaciente,
                     dataInicio: moment()
                         .subtract(1, 'year')
                         .format('YYYY-MM-DD'),
@@ -436,7 +436,7 @@ const EndSinaisVitais: React.FC<Props> = ({
                 ref={ModalFiltroDataRef}
                 clear={() => {
                     setFilterOptions({
-                        cd_pessoa_fisica: Paciente,
+                        cd_pessoa_fisica: cdPaciente,
                         dataInicio: moment().format('YYYY-MM-DD'),
                         dataFinal: moment().format('YYYY-MM-DD'),
                     });
@@ -444,7 +444,7 @@ const EndSinaisVitais: React.FC<Props> = ({
                 }}
                 onPress={(initialDate, endDate) => {
                     setFilterOptions({
-                        cd_pessoa_fisica: Paciente,
+                        cd_pessoa_fisica: cdPaciente,
                         dataInicio: moment(initialDate, 'DD/MM/YYYY').format(
                             'YYYY-MM-DD',
                         ),
