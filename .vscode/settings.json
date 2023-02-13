@@ -1,12 +1,11 @@
 {
-  "colorize.languages": [
-    "javascript",
-    "typescript",
-    "typescriptreact",
-  ],
-  "colorize.colorized_colors": [
-    "HEXA",
-    "RGB",
-  ],
-  "java.configuration.updateBuildConfiguration": "interactive"
+    "colorize.languages": [
+        "javascript",
+        "typescript",
+        "typescriptreact",
+      ],
+      "colorize.colorized_colors": [
+        "HEXA",
+        "RGB",
+      ]
 }
