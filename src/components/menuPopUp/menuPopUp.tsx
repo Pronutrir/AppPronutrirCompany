@@ -133,7 +133,7 @@ const createStyles = (theme: ThemeContextData) => {
         container: {
             justifyContent: 'center',
             alignItems: 'center',
-            paddingHorizontal: RFPercentage(1),
+            paddingHorizontal: RFPercentage(0),
         },
         boxItem: {
             marginVertical: RFPercentage(0.5),

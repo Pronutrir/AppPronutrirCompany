@@ -17,7 +17,7 @@ import {
 import AuthContext from '../../../contexts/auth';
 import SearchBarBottom, {
     ModalHandles as ModalHandlesSearchBarBottom,
-} from '../../../components/seachBar/searchBarBottom/searchBarBottom';
+} from '../../../components/searchBarBottom/searchBarBottom';
 
 const ConsultasSinaisVitais: React.FC = () => {
     const { data: listAgendasConsultas, isFetching } = useGetAgendaConsultas();

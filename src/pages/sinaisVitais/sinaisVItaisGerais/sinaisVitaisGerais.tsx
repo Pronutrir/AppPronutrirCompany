@@ -39,7 +39,6 @@ const filterDefault = [
 ];
 
 const SinaisVitaisGerais: React.FC = () => {
-
     const styles = useThemeAwareObject(createStyles);
 
     const { SearchPFSinaisVitais } = useContext(SinaisVitaisContext);
@@ -47,6 +46,7 @@ const SinaisVitaisGerais: React.FC = () => {
     const [filterSelected, setFilterSelected] = useState<Ifilter>(
         filterDefault[0],
     );
+
     const [state, setState] = useState<IParamConsulta>({
         query: '',
         isLoading: true,

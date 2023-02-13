@@ -2,9 +2,9 @@ import React, { useCallback, useImperativeHandle, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import SearchBar from 'react-native-dynamic-search-bar';
 import createStyles from './style';
-import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
-import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
-import useTheme from '../../../hooks/useTheme';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { useKeyboardHeight } from '../../hooks/useKeyboardHeight';
+import useTheme from '../../hooks/useTheme';
 interface Props {
     placeholder?: string;
     onChangeText?: (text: string) => void | undefined;

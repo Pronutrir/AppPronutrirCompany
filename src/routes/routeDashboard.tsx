@@ -29,6 +29,9 @@ import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updat
 import { IEvolucaoHistory, IFilterHistoryEvolucao } from '../hooks/useEvolucao';
 import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
 import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
+import Exame from '../pages/exame/exame';
+import ExameDetalhes from '../pages/exame/exameDetalhes/exameDetalhes';
+import { IExame } from '../hooks/useExames';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -93,6 +96,10 @@ export type RootStackParamList = {
             dT_NASCIMENTO: string;
             cD_PESSOA_FISICA: string;
         };
+    };
+    Exame: undefined;
+    ExameDetalhes: {
+        exames: IExame;
     };
 };
 
@@ -220,6 +227,16 @@ const InitialStackNavigator = () => {
                 name="addAcompanhanteSinaisVitais"
                 component={addAcompanhanteSinaisVitais}
                 options={{ title: 'Adicionar acompanhante' }}
+            />
+            <Stack.Screen
+                name="Exame"
+                component={Exame}
+                options={{ title: 'Exames recebidos' }}
+            />
+            <Stack.Screen
+                name="ExameDetalhes"
+                component={ExameDetalhes}
+                options={{ title: 'Exame Detalhes' }}
             />
         </Stack.Navigator>
     );

@@ -81,12 +81,10 @@ const DashBoard: React.FC = () => {
                         label={'Evolução'}
                     />
                     <BtnDashboardComponent
-                        disabled={true}
-                        onpress={() => {
-                            ('');
-                        }}
+                        disabled={false}
+                        onpress={() => navigation.navigate('Exame')}
                         ImgSVG={MedicoImg}
-                        label={'Médicos'}
+                        label={'Exames'}
                     />
                     <BtnDashboardComponent
                         disabled={true}
