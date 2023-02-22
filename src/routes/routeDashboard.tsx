@@ -31,7 +31,9 @@ import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVita
 import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 import Exame from '../pages/exame/exame';
 import ExameDetalhes from '../pages/exame/exameDetalhes/exameDetalhes';
-import { IExame } from '../hooks/useExames';
+import { IExame, IFilesExames } from '../hooks/useExames';
+import ExamePdf from '../pages/exame/examePdf/examePdf';
+import ExameImg from '../pages/exame/exameImg/exameImg';
 
 export type RootStackParamList = {
     DashBoard: undefined;
@@ -101,6 +103,8 @@ export type RootStackParamList = {
     ExameDetalhes: {
         exames: IExame;
     };
+    ExamePdf: { guidFileStorage: string };
+    ExameImg: { guidFileStorage: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -237,6 +241,16 @@ const InitialStackNavigator = () => {
                 name="ExameDetalhes"
                 component={ExameDetalhes}
                 options={{ title: 'Exame Detalhes' }}
+            />
+            <Stack.Screen
+                name="ExamePdf"
+                component={ExamePdf}
+                options={{ title: 'ExamePdf' }}
+            />
+            <Stack.Screen
+                name="ExameImg"
+                component={ExameImg}
+                options={{ title: 'Exame' }}
             />
         </Stack.Navigator>
     );

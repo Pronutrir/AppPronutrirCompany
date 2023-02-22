@@ -4,7 +4,13 @@ import React, {
     useImperativeHandle,
     useEffect,
 } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ViewStyle,
+} from 'react-native';
 import { Menu, MenuItem } from 'react-native-material-menu';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -21,7 +27,7 @@ interface Props {
     BtnOptionsSvg?: React.FC<SvgProps>;
     onpress?(item: string): void;
     styleSvg?: IStyleSvg;
-    widthMenu?: number;
+    containerStyle?: ViewStyle;
     btnVisible?: boolean;
     showItemSelected?: boolean;
     ItemSelected?: string;
@@ -43,7 +49,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                 fill: '#737373',
             },
             btnVisible = true,
-            widthMenu,
+            containerStyle,
             showItemSelected = false,
             ItemSelected = '',
         }: Props,
@@ -84,11 +90,8 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
         }, []);
 
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, { ...containerStyle }]}>
                 <Menu
-                    style={{
-                        width: widthMenu && widthMenu,
-                    }}
                     visible={visible}
                     anchor={
                         btnVisible ? (
@@ -112,7 +115,6 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
                             }
                             textStyle={{
                                 ...styles.text,
-                                width: widthMenu && widthMenu,
                             }}
                             onPress={() => selectedItem(item)}>
                             <Text>{item}</Text>

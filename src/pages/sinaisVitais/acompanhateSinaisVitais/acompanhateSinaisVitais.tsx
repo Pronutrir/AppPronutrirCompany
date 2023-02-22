@@ -158,7 +158,6 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
                 <Text style={styles.title}>Acompanhantes Cadastrados</Text>
                 <View style={styles.menu}>
                     <MenuPopUp
-                        widthMenu={RFPercentage(31)}
                         btnLabels={['Adicionar Acompanhante']}
                         onpress={(item) => MenuPopUpOptions(item)}
                     />

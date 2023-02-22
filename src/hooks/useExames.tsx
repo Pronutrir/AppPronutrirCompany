@@ -1,69 +1,73 @@
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
-import axios from 'axios';
+import { InfiniteData, useInfiniteQuery } from 'react-query';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
-
+import Api from '../services/api';
+interface IExameResponse {
+    result: IExame[];
+    statusCode: number;
+    message: string;
+}
 export interface IExame {
     id_examination: number;
-    id_ref_ged: number;
     cd_doctor_resp: string;
     nm_doctor_resp: string;
     cd_patient: string;
     nm_patient: string;
-    cd_validator: string;
-    nm_validator: string;
     dt_send: string;
     dt_update: string;
     nm_tag: string;
     status: string;
-    observation: string;
     nm_user_reg: string;
     nm_user_update: string;
-    id_process_examination: string;
-    id_file_examination: string;
     processosExames: IProcessosExames;
     filesExames: IFilesExames[];
 }
-
 export interface IProcessosExames {
-    id_process_examination: 0;
-    ua: null;
-    dt_ua: null;
-    vt: null;
-    dt_vt: null;
-    pc: null;
-    dt_pc: null;
-    duration: null;
-    nm_user_reg: null;
-    nm_user_update: null;
-    exames: null;
+    id_process_examination: number;
+    ua: true;
+    dt_ua: string;
+    nm_user_reg: string; //AppMobile
+    nm_user_update: string; //AppMobile
+    id_examination: 1;
 }
-
 export interface IFilesExames {
-    id_file_examination: 0;
-    type: null;
-    name: null;
-    size: null;
-    dt_reg: null;
-    dt_update: null;
-    nm_user_reg: null;
-    nm_user_update: null;
-    exames: null;
+    id_file_examination: number;
+    type: string; //'image/png'
+    name: string;
+    size: number;
+    guidFileStorage: string;
+    status: string;
+    dt_reg: string;
+    dt_update: string;
+    nm_user_reg: string; //AppMobile
+    nm_user_update: string; //AppMobile
+    id_examination: number;
 }
 
 const useExames = (item: string | undefined) => {
     const { addAlert } = useContext(NotificationGlobalContext);
-    return useQuery(
-        ['exame', item],
-        async ({ signal }) => {
-            const { data } = await axios.get<IExame[]>(
-                `https://827a-177-22-36-198.ngrok.io/exames`,
-                { signal },
-            );
 
-            return data;
+    return useInfiniteQuery(
+        ['exame', 'infinite'],
+        async ({ signal, pageParam = 1 }) => {
+            const { result } = (
+                await Api.get<IExameResponse>(
+                    `Exames/ListExamesPacientes?page=${pageParam}&rows=5`,
+                    {
+                        signal,
+                    },
+                )
+            ).data;
+            return result;
         },
         {
+            getNextPageParam: (lastPage, pages) => {
+                if (lastPage?.length < 5) {
+                    return null;
+                } else {
+                    return pages.length + 1;
+                }
+            },
             onError: () => {
                 addAlert({
                     message:
@@ -75,4 +79,31 @@ const useExames = (item: string | undefined) => {
     );
 };
 
-export { useExames };
+type Ivalue = 'E' | 'A' | 'I';
+
+const updateCacheExame = (
+    item?: InfiniteData<IExame[]>,
+    idExame?: string,
+    value?: Ivalue,
+) => {
+    if (item) {
+        const { pageParams, pages } = item;
+
+        const updatePages = pages.map((element) => {
+            return element.map((elem) => {
+                const findExame = elem.filesExames.findIndex(
+                    (exameIndex) => exameIndex.guidFileStorage === idExame,
+                );
+
+                if (findExame != -1) {
+                    elem.filesExames[findExame].status = value ?? 'A';
+                }
+
+                return elem;
+            });
+        });
+        return { pageParams, pages: updatePages };
+    }
+};
+
+export { useExames, updateCacheExame };

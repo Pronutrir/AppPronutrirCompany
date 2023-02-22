@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     FlatList,
     StyleSheet,
@@ -5,19 +6,22 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React from 'react';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
-import { IFilesExames } from '../../../hooks/useExames';
+import { IExame, IFilesExames } from '../../../hooks/useExames';
 import CardSimples from '../../../components/Cards/CardSimples';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import moment from 'moment';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import ExameSvg from '../../../assets/svg/exame.svg';
+import useTheme from '../../../hooks/useTheme';
+import ExameSvg from '../../../components/svgComponents/ExameSvg';
+import RenderItemEmpty from '../../../components/renderItem/renderItemEmpty';
+import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
+import { InfiniteData, useQueryClient } from 'react-query';
+import { useIsFocused } from '@react-navigation/native';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ExameDetalhes'>;
-
 interface Props {
     route: ProfileScreenRouteProp;
 }
@@ -28,7 +32,41 @@ const ExameDetalhes: React.FC<Props> = ({
     },
 }: Props) => {
     const navigation = useNavigation();
+
+    const theme = useTheme();
     const styles = useThemeAwareObject(createStyles);
+
+    const isFocused = useIsFocused();
+
+    const queryClient = useQueryClient();
+
+    const filesExames = () => {
+        const resultExames = queryClient
+            .getQueryData<InfiniteData<IExame[]>>(['exame', 'infinite'])
+            ?.pages.map((item) => item)
+            .flat();
+
+        return resultExames?.find(
+            (elem) => elem.id_examination === exames.id_examination,
+        )?.filesExames;
+    };
+
+    const redirectpage = (item: IFilesExames) => {
+        switch (item.type) {
+            case 'application/pdf':
+                navigation.navigate('ExamePdf', {
+                    guidFileStorage: item.guidFileStorage,
+                });
+                break;
+            case 'image/png':
+                navigation.navigate('ExameImg', {
+                    guidFileStorage: item.guidFileStorage,
+                });
+                break;
+            default:
+                break;
+        }
+    };
 
     const renderItem = ({
         index,
@@ -37,22 +75,32 @@ const ExameDetalhes: React.FC<Props> = ({
         index: number;
         item: IFilesExames;
     }) => {
+        const fillSelected = (value: string) => {
+            switch (value) {
+                case 'E':
+                    return theme.colors.BUTTON_SECUNDARY;
+                case 'A':
+                    return theme.colors.WARNING;
+                default:
+                    return theme.colors.BUTTON_SECUNDARY;
+            }
+        };
+
         return (
             <CardSimples
                 key={index.toString()}
                 styleCardContainer={styles.cardStyle}>
                 <TouchableOpacity
                     key={index.toString()}
-                    onPress={() =>
-                        navigation.navigate('ExameDetalhes', { exames: item })
-                    }
+                    onPress={() => redirectpage(item)}
                     style={styles.containerCard}>
                     <View style={styles.box1Card}>
                         <ExameSvg
-                            width={RFPercentage(5)}
-                            height={RFPercentage(5)}>
-                            Botão
-                        </ExameSvg>
+                            width={RFPercentage(4)}
+                            height={RFPercentage(4)}
+                            fill={theme.colors.FILL_ICONE}
+                            fillSecondary={fillSelected(item.status)}
+                        />
                     </View>
                     <View style={styles.box2Card}>
                         <View style={styles.item}>
@@ -61,10 +109,10 @@ const ExameDetalhes: React.FC<Props> = ({
                         </View>
                         <View style={styles.item}>
                             <Text style={styles.textLabel}>
-                                Data Nascimento:{' '}
+                                Data do envio:{' '}
                             </Text>
                             <Text style={styles.text}>
-                                {moment(item.dt_update).format('DD-MM-YYYY')}
+                                {moment(item.dt_reg).format('DD-MM-YYYY')}
                             </Text>
                         </View>
                     </View>
@@ -77,14 +125,20 @@ const ExameDetalhes: React.FC<Props> = ({
         <View style={styles.container}>
             <FlatList
                 nestedScrollEnabled={true}
-                data={exames.filesExames}
+                data={filesExames()}
                 renderItem={({ item, index }) => renderItem({ index, item })}
                 scrollEnabled
                 keyExtractor={(item, index) => `key-${index}`}
-                //ListEmptyComponent={renderItemEmpty}
-                //onEndReached={LoadingSearch}
+                ListEmptyComponent={() => (
+                    <RenderItemEmpty text="Nenhum exame encontrado!" />
+                )}
                 onEndReachedThreshold={0.3}
-                //ListFooterComponent={renderFooter}
+            />
+            <Btnprosseguir
+                valueText="Atualizar"
+                onPress={() => {
+                    ('');
+                }}
             />
         </View>
     );
