@@ -31,7 +31,7 @@ import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVita
 import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 import Exame from '../pages/exame/exame';
 import ExameDetalhes from '../pages/exame/exameDetalhes/exameDetalhes';
-import { IExame, IFilesExames } from '../hooks/useExames';
+import { IExame, IFilesExames, IparamsFilterExame } from '../hooks/useExames';
 import ExamePdf from '../pages/exame/examePdf/examePdf';
 import ExameImg from '../pages/exame/exameImg/exameImg';
 
@@ -102,9 +102,16 @@ export type RootStackParamList = {
     Exame: undefined;
     ExameDetalhes: {
         exames: IExame;
+        filter: IparamsFilterExame;
     };
-    ExamePdf: { guidFileStorage: string };
-    ExameImg: { guidFileStorage: string };
+    ExamePdf: {
+        guidFileStorage: string;
+        filter: IparamsFilterExame;
+    };
+    ExameImg: {
+        guidFileStorage: string;
+        filter: IparamsFilterExame;
+    };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

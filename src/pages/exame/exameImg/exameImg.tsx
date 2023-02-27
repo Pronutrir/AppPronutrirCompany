@@ -6,16 +6,15 @@ import Image_Zoom from '../../../components/image-zoom/imageZoom';
 import { useGetImgExame } from '../../../hooks/useGetImagesFirebase';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import { useQueryClient, InfiniteData } from 'react-query';
-import { IExame, updateCacheExame } from '../../../hooks/useExames';
+import { IExame, useUpdateCacheExame } from '../../../hooks/useExames';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ExameImg'>;
-
 interface Props {
     route: ProfileScreenRouteProp;
 }
 
 const ExameImgZoom: React.FC<Props> = ({ route }: Props) => {
-    const { guidFileStorage } = route.params;
+    const { guidFileStorage, filter } = route.params;
 
     const { data } = useGetImgExame(guidFileStorage);
 
@@ -36,15 +35,15 @@ const ExameImgZoom: React.FC<Props> = ({ route }: Props) => {
                         case 'Validar exame':
                             queryClient.setQueryData<
                                 InfiniteData<IExame[]> | undefined
-                            >(['exame', 'infinite'], (item) =>
-                                updateCacheExame(item, guidFileStorage, 'E'),
+                            >(['exame', filter], (item) =>
+                                useUpdateCacheExame(item, guidFileStorage, 'E'),
                             );
                             break;
                         case 'Recusar exame':
                             queryClient.setQueryData<
                                 InfiniteData<IExame[]> | undefined
-                            >(['exame', 'infinite'], (item) =>
-                                updateCacheExame(item, guidFileStorage, 'A'),
+                            >(['exame', filter], (item) =>
+                                useUpdateCacheExame(item, guidFileStorage, 'C'),
                             );
                             break;
                         default:

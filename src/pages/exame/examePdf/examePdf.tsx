@@ -6,7 +6,7 @@ import Pdf from 'react-native-pdf';
 import { useGetImgExame } from '../../../hooks/useGetImagesFirebase';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import { InfiniteData, useQueryClient } from 'react-query';
-import { IExame, updateCacheExame } from '../../../hooks/useExames';
+import { IExame, useUpdateCacheExame } from '../../../hooks/useExames';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ExamePdf'>;
 
@@ -34,8 +34,8 @@ const ExamePdf: React.FC<Props> = ({ route }: Props) => {
                         case 'Validar exame':
                             queryClient.setQueryData<
                                 InfiniteData<IExame[]> | undefined
-                            >(['exame', 'infinite'], (item) =>
-                                updateCacheExame(
+                            >(['exame', 'infinite', null], (item) =>
+                                useUpdateCacheExame(
                                     item,
                                     route.params.guidFileStorage,
                                     'E',
@@ -45,8 +45,8 @@ const ExamePdf: React.FC<Props> = ({ route }: Props) => {
                         case 'Recusar exame':
                             queryClient.setQueryData<
                                 InfiniteData<IExame[]> | undefined
-                            >(['exame', 'infinite'], (item) =>
-                                updateCacheExame(
+                            >(['exame', 'infinite', null], (item) =>
+                                useUpdateCacheExame(
                                     item,
                                     route.params.guidFileStorage,
                                     'A',

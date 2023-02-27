@@ -7,15 +7,16 @@ import ExameSvg from '../../../../components/svgComponents/ExameSvg';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import moment from 'moment';
 import useTheme from '../../../../hooks/useTheme';
-import { IExame } from '../../../../hooks/useExames';
+import { IExame, IparamsFilterExame } from '../../../../hooks/useExames';
 import CardSimples from '../../../../components/Cards/CardSimples';
 
 type Props = {
     index: number;
     item: IExame;
+    filter: IparamsFilterExame;
 };
 
-const CardExames = ({ index, item }: Props) => {
+const CardExames = ({ index, item, filter }: Props) => {
     const styles = useThemeAwareObject(createStyles);
     const theme = useTheme();
     const navigation = useNavigation();
@@ -26,6 +27,8 @@ const CardExames = ({ index, item }: Props) => {
                 return theme.colors.BUTTON_SECUNDARY;
             case 'A':
                 return theme.colors.WARNING;
+            case 'C':
+                return theme.colors.ERROR;
             default:
                 return theme.colors.BUTTON_SECUNDARY;
         }
@@ -38,7 +41,10 @@ const CardExames = ({ index, item }: Props) => {
             <TouchableOpacity
                 key={index.toString()}
                 onPress={() =>
-                    navigation.navigate('ExameDetalhes', { exames: item })
+                    navigation.navigate('ExameDetalhes', {
+                        exames: item,
+                        filter: filter,
+                    })
                 }
                 style={styles.containerCard}>
                 <View style={styles.box1Card}>
@@ -67,7 +73,7 @@ const CardExames = ({ index, item }: Props) => {
                     <View style={styles.item}>
                         <Text style={styles.textLabel}>Data do envio: </Text>
                         <Text style={styles.text}>
-                            {moment(item.dt_update).format('DD-MM-YYYY')}
+                            {moment(item.dt_send).format('DD-MM-YYYY')}
                         </Text>
                     </View>
                 </View>

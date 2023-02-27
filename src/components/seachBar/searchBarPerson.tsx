@@ -4,45 +4,34 @@ import { ThemeContextData } from '../../contexts/themeContext';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-import MenuPopUp from '../menuPopUp/menuPopUp';
-
-export interface IParamConsulta<T> {
-    query: string | undefined;
-    isLoading: boolean;
-    refreshing: boolean;
-    dataSource: T[] | undefined;
-    spinnerVisibility: boolean;
-    page: number;
-    loadingScrow: boolean;
-    continue: boolean;
-    showRequest: boolean;
-}
 
 /**
  * @param item
  */
-
-interface Props<T> {
-    item: IParamConsulta<T>;
+interface Props {
     onChangeText: (text: string) => void;
     onClean: () => void;
     btnOptions?: boolean;
+    placeholder?: string;
+    spinnerVisibility?: boolean;
+    value: string | undefined;
 }
 
-const SearchBarPerson = <T extends Record<keyof T, unknown>>({
-    item,
+const SearchBarPerson = ({
     onChangeText,
     onClean,
-    btnOptions = false,
-}: Props<T>) => {
+    placeholder = 'Digite o texto',
+    spinnerVisibility = false,
+    value = '',
+}: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
     return (
         <View style={styles.container}>
             <SearchBar
                 darkMode={true}
-                placeholder={'Nome do paciente'}
-                spinnerVisibility={item.isLoading}
+                placeholder={placeholder}
+                spinnerVisibility={spinnerVisibility}
                 style={styles.SearchBarStyle}
                 textInputStyle={styles.textInputStyle}
                 spinnerSize={RFValue(20, 680)}
@@ -51,7 +40,7 @@ const SearchBarPerson = <T extends Record<keyof T, unknown>>({
                 onChangeText={(text) => onChangeText(text)}
                 onClearPress={() => onClean()}
                 selectionColor="#fff"
-                value={item.query}
+                value={value}
                 /* keyboardType={
                         filterSelected.filter === 'DATA DE NASCIMENTO'
                             ? 'number-pad'
@@ -59,30 +48,6 @@ const SearchBarPerson = <T extends Record<keyof T, unknown>>({
                     } */
                 returnKeyType={'next'}
             />
-            <View
-                style={{
-                    position: 'absolute',
-                    right: 0,
-                    alignSelf: 'center',
-                }}>
-                {btnOptions && (
-                    <MenuPopUp
-                        btnLabels={['Nome paciente', 'Data de nascimento']}
-                        onpress={(label) => {
-                            switch (label) {
-                                case 'Nome paciente':
-                                    /* filter(filterDefault[1]); */
-                                    break;
-                                case 'Data de nascimento':
-                                    /* filter(filterDefault[0]); */
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }}
-                    />
-                )}
-            </View>
         </View>
     );
 };

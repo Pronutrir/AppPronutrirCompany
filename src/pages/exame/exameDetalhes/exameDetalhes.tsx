@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useRef } from 'react';
 import {
     FlatList,
     StyleSheet,
@@ -8,7 +8,13 @@ import {
 } from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
-import { IExame, IFilesExames } from '../../../hooks/useExames';
+import {
+    IExame,
+    IFilesExames,
+    IvalueStatusExame,
+    findGetExames,
+    useUpdateExame,
+} from '../../../hooks/useExames';
 import CardSimples from '../../../components/Cards/CardSimples';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
@@ -20,6 +26,9 @@ import RenderItemEmpty from '../../../components/renderItem/renderItemEmpty';
 import Btnprosseguir from '../../../components/buttons/Btnprosseguir';
 import { InfiniteData, useQueryClient } from 'react-query';
 import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AuthContext from '../../../contexts/auth';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ExameDetalhes'>;
 interface Props {
@@ -28,21 +37,27 @@ interface Props {
 
 const ExameDetalhes: React.FC<Props> = ({
     route: {
-        params: { exames },
+        params: { exames, filter },
     },
 }: Props) => {
+    const {
+        stateAuth: {
+            usertasy: { cD_PESSOA_FISICA, nM_PESSOA_FISICA },
+        },
+    } = useContext(AuthContext);
     const navigation = useNavigation();
-
+    const insets = useSafeAreaInsets();
     const theme = useTheme();
     const styles = useThemeAwareObject(createStyles);
-
-    const isFocused = useIsFocused();
-
     const queryClient = useQueryClient();
+    const isFocused = useIsFocused();
+    const refModal = useRef<LoadHandles>(null);
+
+    const { mutateAsync } = useUpdateExame();
 
     const filesExames = () => {
         const resultExames = queryClient
-            .getQueryData<InfiniteData<IExame[]>>(['exame', 'infinite'])
+            .getQueryData<InfiniteData<IExame[]>>(['exame', filter])
             ?.pages.map((item) => item)
             .flat();
 
@@ -51,16 +66,39 @@ const ExameDetalhes: React.FC<Props> = ({
         )?.filesExames;
     };
 
+    const updateExame = async () => {
+        const resultExame = findGetExames(exames.id_examination, queryClient);
+        if (resultExame) {
+            refModal.current?.openModal();
+            await mutateAsync({
+                ...resultExame,
+                cd_validator: cD_PESSOA_FISICA,
+                nm_validator: nM_PESSOA_FISICA,
+                observation: 'Exame não está legível!',
+                dt_update: moment().format(),
+            });
+            refModal.current?.closeModal();
+        }
+    };
+
     const redirectpage = (item: IFilesExames) => {
         switch (item.type) {
             case 'application/pdf':
                 navigation.navigate('ExamePdf', {
                     guidFileStorage: item.guidFileStorage,
+                    filter: filter,
                 });
                 break;
             case 'image/png':
                 navigation.navigate('ExameImg', {
                     guidFileStorage: item.guidFileStorage,
+                    filter: filter,
+                });
+                break;
+            case 'image/jpeg':
+                navigation.navigate('ExameImg', {
+                    guidFileStorage: item.guidFileStorage,
+                    filter: filter,
                 });
                 break;
             default:
@@ -81,6 +119,8 @@ const ExameDetalhes: React.FC<Props> = ({
                     return theme.colors.BUTTON_SECUNDARY;
                 case 'A':
                     return theme.colors.WARNING;
+                case 'C':
+                    return theme.colors.ERROR;
                 default:
                     return theme.colors.BUTTON_SECUNDARY;
             }
@@ -122,7 +162,7 @@ const ExameDetalhes: React.FC<Props> = ({
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { marginBottom: insets.bottom }]}>
             <FlatList
                 nestedScrollEnabled={true}
                 data={filesExames()}
@@ -137,9 +177,10 @@ const ExameDetalhes: React.FC<Props> = ({
             <Btnprosseguir
                 valueText="Atualizar"
                 onPress={() => {
-                    ('');
+                    updateExame();
                 }}
             />
+            <Loading ref={refModal} />
         </View>
     );
 };

@@ -1,5 +1,10 @@
 import { useContext } from 'react';
-import { InfiniteData, useInfiniteQuery } from 'react-query';
+import {
+    InfiniteData,
+    QueryClient,
+    useInfiniteQuery,
+    useMutation,
+} from 'react-query';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
 interface IExameResponse {
@@ -21,6 +26,12 @@ export interface IExame {
     nm_user_update: string;
     processosExames: IProcessosExames;
     filesExames: IFilesExames[];
+}
+export interface IPutExame extends IExame {
+    id_ref_ged?: number;
+    cd_validator: string;
+    nm_validator: string;
+    observation?: string;
 }
 export interface IProcessosExames {
     id_process_examination: number;
@@ -44,21 +55,41 @@ export interface IFilesExames {
     id_examination: number;
 }
 
-const useExames = (item: string | undefined) => {
+export type IvalueStatusExame = 'E' | 'A' | 'C';
+export interface IparamsFilterExame {
+    statusExame?: IvalueStatusExame;
+    nomePacient?: string;
+    nomeMedico?: string;
+}
+
+const useExames = (paramsFilterExame: IparamsFilterExame) => {
     const { addAlert } = useContext(NotificationGlobalContext);
 
     return useInfiniteQuery(
-        ['exame', 'infinite'],
+        ['exame', paramsFilterExame],
         async ({ signal, pageParam = 1 }) => {
             const { result } = (
                 await Api.get<IExameResponse>(
-                    `Exames/ListExamesPacientes?page=${pageParam}&rows=5`,
+                    `Exames/ListExamesPacientes?${
+                        paramsFilterExame.statusExame
+                            ? `statusExame=${paramsFilterExame.statusExame}`
+                            : ''
+                    }${
+                        paramsFilterExame.nomePacient
+                            ? `nomePaciente=${paramsFilterExame.nomePacient}`
+                            : ''
+                    }${
+                        paramsFilterExame.nomeMedico
+                            ? `nomeMedico=${paramsFilterExame.nomeMedico}`
+                            : ''
+                    }&page=${pageParam}&rows=5`,
                     {
                         signal,
                     },
                 )
             ).data;
             return result;
+            //return Array<IExame>();
         },
         {
             getNextPageParam: (lastPage, pages) => {
@@ -70,8 +101,7 @@ const useExames = (item: string | undefined) => {
             },
             onError: () => {
                 addAlert({
-                    message:
-                        'Error ao consultar notas clinicas tente mais tarde!',
+                    message: 'Error ao consultar os exames tente mais tarde!',
                     status: 'error',
                 });
             },
@@ -79,12 +109,47 @@ const useExames = (item: string | undefined) => {
     );
 };
 
-type Ivalue = 'E' | 'A' | 'I';
+const useUpdateExame = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+    return useMutation(
+        (exames: IPutExame) => {
+            return Api.put(
+                `Exames/AtualizarExames/${exames.id_examination}`,
+                exames,
+            );
+        },
+        {
+            onSuccess: () => {
+                addAlert({
+                    message: 'Exame alterado com sucesso!',
+                    status: 'sucess',
+                });
+            },
+            onError: (error) => {
+                console.log(error);
+                addAlert({
+                    message: 'Error ao atualizar o exame tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
 
-const updateCacheExame = (
+const findGetExames = (idExame: number, queryClient: QueryClient) => {
+    const resultExames = queryClient
+        .getQueryData<InfiniteData<IExame[]>>(['exame', 'infinite'])
+        ?.pages.map((item) => item)
+        .flat()
+        .find((elem) => elem.id_examination === idExame);
+
+    return resultExames;
+};
+
+const useUpdateCacheExame = (
     item?: InfiniteData<IExame[]>,
     idExame?: string,
-    value?: Ivalue,
+    value?: IvalueStatusExame,
 ) => {
     if (item) {
         const { pageParams, pages } = item;
@@ -97,8 +162,10 @@ const updateCacheExame = (
 
                 if (findExame != -1) {
                     elem.filesExames[findExame].status = value ?? 'A';
+                    if (value === 'C') {
+                        elem.status = value;
+                    }
                 }
-
                 return elem;
             });
         });
@@ -106,4 +173,4 @@ const updateCacheExame = (
     }
 };
 
-export { useExames, updateCacheExame };
+export { useExames, useUpdateCacheExame, useUpdateExame, findGetExames };

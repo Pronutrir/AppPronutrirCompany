@@ -11,7 +11,7 @@ type Props = {
 
 const RenderItemEmpty: React.FC<Props> = ({
     text = 'Nenhum dado encontrado !',
-    show = true,
+    show = false,
 }: Props) => {
     const styles = useThemeAwareObject(createStyles);
 
