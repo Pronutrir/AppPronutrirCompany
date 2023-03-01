@@ -12,7 +12,12 @@ import RenderFooter from '../../components/renderItem/renderFooter';
 import CardExames from './components/cardExame/cardExames';
 import MenuPopUp from '../../components/menuPopUp/menuPopUp';
 
-type IFilterExames = 'Todos' | 'Liberados' | 'Pendentes' | 'Cancelados';
+type IFilterExames =
+    | 'Todos'
+    | 'Liberados'
+    | 'Pendentes'
+    | 'Cancelados'
+    | 'search';
 type IFilterSearch = 'Nome paciente' | 'Nome médico(a)';
 
 const Exame: React.FC = () => {
@@ -108,7 +113,10 @@ const Exame: React.FC = () => {
                         onChangeText={(text) => {
                             switch (placeholder) {
                                 case 'Nome paciente':
-                                    setStateExame({ nomePacient: text });
+                                    {
+                                        setStateExame({ nomePacient: text });
+                                        setSelectedFilter('search');
+                                    }
                                     break;
                                 case 'Nome médico(a)':
                                     setStateExame({ nomeMedico: text });
@@ -117,6 +125,7 @@ const Exame: React.FC = () => {
                         }}
                         onClean={() => {
                             setStateExame({});
+                            setSelectedFilter('Todos');
                         }}
                         btnOptions={true}
                         placeholder={placeholder}

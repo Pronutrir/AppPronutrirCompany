@@ -87,7 +87,7 @@ const MenuPopUp = React.forwardRef<ModalHandlesMenu, Props>(
 
         useEffect(() => {
             setSelected(ItemSelected);
-        }, []);
+        }, [ItemSelected]);
 
         return (
             <View style={[styles.container, { ...containerStyle }]}>

@@ -78,6 +78,12 @@ const ExameDetalhes: React.FC<Props> = ({
             : 'A';
     };
 
+    const selectStatusObservation = (exame: IExame) => {
+        return exame.filesExames.some((item) => item.status === 'E')
+            ? 'Existem exames com pendências, verifique seus exames'
+            : undefined;
+    };
+
     const updateExame = async () => {
         const resultExame = findGetExames(
             exames.id_examination,
@@ -90,7 +96,7 @@ const ExameDetalhes: React.FC<Props> = ({
                 ...resultExame,
                 cd_validator: cD_PESSOA_FISICA,
                 nm_validator: nM_PESSOA_FISICA,
-                observation: 'Exame não está legível!',
+                observation: selectStatusObservation(resultExame),
                 dt_update: moment().format(),
                 status: selectStatusExame(resultExame),
             });
