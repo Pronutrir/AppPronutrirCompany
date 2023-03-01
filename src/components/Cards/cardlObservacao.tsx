@@ -9,23 +9,20 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import { ThemeContextData } from '../../../../contexts/themeContext';
-import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
-import BtnCentered from '../../../../components/buttons/BtnCentered';
+import BtnCentered from '../buttons/BtnCentered';
+import { useThemeAwareObject } from '../../hooks/useThemedStyles';
+import { ThemeContextData } from '../../contexts/themeContext';
+
 interface Props {
     observacao: string;
-    setObservacao(value: string): void;
-    onpress(): void;
+    onpress(value: string): void;
 }
 
-const CardObservacao: React.FC<Props> = ({
-    observacao,
-    setObservacao,
-    onpress,
-}: Props) => {
+const CardObservacao: React.FC<Props> = ({ observacao, onpress }: Props) => {
     const styles = useThemeAwareObject(createStyle);
+    const [text, setText] = useState('');
 
     return (
         <KeyboardAvoidingView
@@ -53,7 +50,7 @@ const CardObservacao: React.FC<Props> = ({
                             numberOfLines={6}
                             maxLength={300}
                             value={observacao}
-                            onChangeText={setObservacao}
+                            onChangeText={(text) => setText(text)}
                             keyboardType={'default'}
                             //autoFocus={true}
                             editable={true}
@@ -63,7 +60,7 @@ const CardObservacao: React.FC<Props> = ({
                         <BtnCentered
                             SizeText={18}
                             labelBtn={'Ok'}
-                            onPress={() => onpress()}
+                            onPress={() => onpress(text)}
                         />
                     </View>
                 </View>

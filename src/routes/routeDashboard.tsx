@@ -105,11 +105,11 @@ export type RootStackParamList = {
         filter: IparamsFilterExame;
     };
     ExamePdf: {
-        guidFileStorage: string;
+        exameFiles: IFilesExames;
         filter: IparamsFilterExame;
     };
     ExameImg: {
-        guidFileStorage: string;
+        exameFiles: IFilesExames;
         filter: IparamsFilterExame;
     };
 };
@@ -247,7 +247,7 @@ const InitialStackNavigator = () => {
             <Stack.Screen
                 name="ExameDetalhes"
                 component={ExameDetalhes}
-                options={{ title: 'Exame Detalhes' }}
+                options={{ title: 'Exame detalhes' }}
             />
             <Stack.Screen
                 name="ExamePdf"

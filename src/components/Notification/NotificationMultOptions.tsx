@@ -133,7 +133,7 @@ const createStyles = (theme: ThemeContextData) => {
             fontFamily: theme.typography.FONTES.Regular,
             letterSpacing: theme.typography.LETTERSPACING.S,
             color: theme.colors.TEXT_SECONDARY,
-            textAlign: 'justify',
+            textAlign: 'auto',
             margin: 5,
         },
         Titulo: {

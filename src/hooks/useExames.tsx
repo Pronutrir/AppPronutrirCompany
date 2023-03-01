@@ -21,9 +21,10 @@ export interface IExame {
     dt_send: string;
     dt_update: string;
     nm_tag: string;
-    status: string;
+    status: IvalueStatusExame;
     nm_user_reg: string;
     nm_user_update: string;
+    CacheExame: boolean;
     processosExames: IProcessosExames;
     filesExames: IFilesExames[];
 }
@@ -47,12 +48,13 @@ export interface IFilesExames {
     name: string;
     size: number;
     guidFileStorage: string;
-    status: string;
+    status: IvalueStatusExame;
     dt_reg: string;
     dt_update: string;
     nm_user_reg: string; //AppMobile
     nm_user_update: string; //AppMobile
     id_examination: number;
+    observation: string;
 }
 
 export type IvalueStatusExame = 'E' | 'A' | 'C';
@@ -136,9 +138,13 @@ const useUpdateExame = () => {
     );
 };
 
-const findGetExames = (idExame: number, queryClient: QueryClient) => {
+const findGetExames = (
+    idExame: number,
+    queryClient: QueryClient,
+    queryKey: IparamsFilterExame,
+) => {
     const resultExames = queryClient
-        .getQueryData<InfiniteData<IExame[]>>(['exame', 'infinite'])
+        .getQueryData<InfiniteData<IExame[]>>(['exame', queryKey])
         ?.pages.map((item) => item)
         .flat()
         .find((elem) => elem.id_examination === idExame);
@@ -150,6 +156,7 @@ const useUpdateCacheExame = (
     item?: InfiniteData<IExame[]>,
     idExame?: string,
     value?: IvalueStatusExame,
+    observation?: string,
 ) => {
     if (item) {
         const { pageParams, pages } = item;
@@ -160,8 +167,14 @@ const useUpdateCacheExame = (
                     (exameIndex) => exameIndex.guidFileStorage === idExame,
                 );
 
+                if (observation && findExame != -1) {
+                    elem.filesExames[findExame].observation = observation;
+                }
+
                 if (findExame != -1) {
-                    elem.filesExames[findExame].status = value ?? 'A';
+                    elem.filesExames[findExame].status =
+                        value ?? elem.filesExames[findExame].status;
+                    elem.CacheExame = true;
                     if (value === 'C') {
                         elem.status = value;
                     }

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import {
     FlatList,
     StyleSheet,
@@ -11,7 +11,6 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import {
     IExame,
     IFilesExames,
-    IvalueStatusExame,
     findGetExames,
     useUpdateExame,
 } from '../../../hooks/useExames';
@@ -29,6 +28,10 @@ import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AuthContext from '../../../contexts/auth';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
+import HeaderDashBoard from '../../../components/header/HeaderDashBoard';
+import NotificationMultOptions, {
+    ModalHandles,
+} from '../../../components/Notification/NotificationMultOptions';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ExameDetalhes'>;
 interface Props {
@@ -52,6 +55,7 @@ const ExameDetalhes: React.FC<Props> = ({
     const queryClient = useQueryClient();
     const isFocused = useIsFocused();
     const refModal = useRef<LoadHandles>(null);
+    const notificationRef = useRef<ModalHandles>(null);
 
     const { mutateAsync } = useUpdateExame();
 
@@ -66,8 +70,20 @@ const ExameDetalhes: React.FC<Props> = ({
         )?.filesExames;
     };
 
+    const selectStatusExame = (exame: IExame) => {
+        return exame.filesExames.every((item) => item.status === 'E')
+            ? 'E'
+            : exame.filesExames.every((item) => item.status === 'C')
+            ? 'C'
+            : 'A';
+    };
+
     const updateExame = async () => {
-        const resultExame = findGetExames(exames.id_examination, queryClient);
+        const resultExame = findGetExames(
+            exames.id_examination,
+            queryClient,
+            filter,
+        );
         if (resultExame) {
             refModal.current?.openModal();
             await mutateAsync({
@@ -76,6 +92,7 @@ const ExameDetalhes: React.FC<Props> = ({
                 nm_validator: nM_PESSOA_FISICA,
                 observation: 'Exame não está legível!',
                 dt_update: moment().format(),
+                status: selectStatusExame(resultExame),
             });
             refModal.current?.closeModal();
         }
@@ -85,19 +102,19 @@ const ExameDetalhes: React.FC<Props> = ({
         switch (item.type) {
             case 'application/pdf':
                 navigation.navigate('ExamePdf', {
-                    guidFileStorage: item.guidFileStorage,
+                    exameFiles: item,
                     filter: filter,
                 });
                 break;
             case 'image/png':
                 navigation.navigate('ExameImg', {
-                    guidFileStorage: item.guidFileStorage,
+                    exameFiles: item,
                     filter: filter,
                 });
                 break;
             case 'image/jpeg':
                 navigation.navigate('ExameImg', {
-                    guidFileStorage: item.guidFileStorage,
+                    exameFiles: item,
                     filter: filter,
                 });
                 break;
@@ -161,6 +178,32 @@ const ExameDetalhes: React.FC<Props> = ({
         );
     };
 
+    const teste = () => {
+        const resultExame = findGetExames(
+            exames.id_examination,
+            queryClient,
+            filter,
+        );
+        return resultExame?.CacheExame;
+    };
+
+    useEffect(() => {
+        navigation.setOptions({
+            header: () => (
+                <HeaderDashBoard
+                    onPress={() => {
+                        if (!teste()) {
+                            navigation.goBack();
+                        } else {
+                            notificationRef.current?.openNotification();
+                        }
+                    }}
+                    title={'Exame detalhes'}
+                />
+            ),
+        });
+    }, [navigation]);
+
     return (
         <View style={[styles.container, { marginBottom: insets.bottom }]}>
             <FlatList
@@ -174,11 +217,22 @@ const ExameDetalhes: React.FC<Props> = ({
                 )}
                 onEndReachedThreshold={0.3}
             />
-            <Btnprosseguir
-                valueText="Atualizar"
-                onPress={() => {
-                    updateExame();
-                }}
+            {teste() && (
+                <Btnprosseguir
+                    valueText="Atualizar"
+                    onPress={() => {
+                        updateExame();
+                    }}
+                />
+            )}
+
+            <NotificationMultOptions
+                ref={notificationRef}
+                title={'Mensagem'}
+                message={
+                    'Existem alterações a serem atualizadas, deseja realmente sair?'
+                }
+                onpress={() => navigation.goBack()}
             />
             <Loading ref={refModal} />
         </View>

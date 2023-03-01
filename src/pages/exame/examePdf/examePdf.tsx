@@ -1,23 +1,77 @@
-import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
+import React, { useRef } from 'react';
+import { View, StyleSheet, Dimensions, Platform } from 'react-native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import Pdf from 'react-native-pdf';
 import { useGetImgExame } from '../../../hooks/useGetImagesFirebase';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import { InfiniteData, useQueryClient } from 'react-query';
 import { IExame, useUpdateCacheExame } from '../../../hooks/useExames';
+import ModalCentralize, {
+    ModalHandles,
+} from '../../../components/Modais/ModalCentralize';
+import CardObservacao from '../../../components/Cards/cardlObservacao';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'ExamePdf'>;
-
 interface Props {
     route: ProfileScreenRouteProp;
 }
 
 const ExamePdf: React.FC<Props> = ({ route }: Props) => {
+    const { exameFiles, filter } = route.params;
     const queryClient = useQueryClient();
+    const navigation = useNavigation();
 
-    const { data } = useGetImgExame(route.params.guidFileStorage);
+    const { data } = useGetImgExame(exameFiles.guidFileStorage);
+    const refmodalObservacoes = useRef<ModalHandles>(null);
+
+    const setObservation = (text: string) => {
+        queryClient.setQueryData<InfiniteData<IExame[]> | undefined>(
+            ['exame', filter],
+            (item) =>
+                useUpdateCacheExame(
+                    item,
+                    exameFiles.guidFileStorage,
+                    undefined,
+                    text,
+                ),
+        );
+        navigation.goBack();
+    };
+
+    const onpressMenuPopUp = (label: string) => {
+        switch (label) {
+            case 'Validar exame':
+                queryClient.setQueryData<InfiniteData<IExame[]> | undefined>(
+                    ['exame', filter],
+                    (item) =>
+                        useUpdateCacheExame(
+                            item,
+                            exameFiles.guidFileStorage,
+                            'E',
+                        ),
+                );
+                navigation.goBack();
+                break;
+            case 'Recusar exame':
+                queryClient.setQueryData<InfiniteData<IExame[]> | undefined>(
+                    ['exame', filter],
+                    (item) =>
+                        useUpdateCacheExame(
+                            item,
+                            exameFiles.guidFileStorage,
+                            'C',
+                        ),
+                );
+                setTimeout(
+                    () => {
+                        refmodalObservacoes.current?.openModal();
+                    },
+                    Platform.OS === 'ios' ? 500 : 0,
+                );
+                break;
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -29,34 +83,7 @@ const ExamePdf: React.FC<Props> = ({ route }: Props) => {
                     zIndex: 1,
                 }}
                 btnLabels={['Validar exame', 'Recusar exame']}
-                onpress={(label) => {
-                    switch (label) {
-                        case 'Validar exame':
-                            queryClient.setQueryData<
-                                InfiniteData<IExame[]> | undefined
-                            >(['exame', 'infinite', null], (item) =>
-                                useUpdateCacheExame(
-                                    item,
-                                    route.params.guidFileStorage,
-                                    'E',
-                                ),
-                            );
-                            break;
-                        case 'Recusar exame':
-                            queryClient.setQueryData<
-                                InfiniteData<IExame[]> | undefined
-                            >(['exame', 'infinite', null], (item) =>
-                                useUpdateCacheExame(
-                                    item,
-                                    route.params.guidFileStorage,
-                                    'A',
-                                ),
-                            );
-                            break;
-                        default:
-                            break;
-                    }
-                }}
+                onpress={onpressMenuPopUp}
             />
             <Pdf
                 trustAllCerts={false}
@@ -80,6 +107,15 @@ const ExamePdf: React.FC<Props> = ({ route }: Props) => {
                 }}
                 style={styles.pdf}
             />
+            <ModalCentralize ref={refmodalObservacoes}>
+                <CardObservacao
+                    observacao={exameFiles.observation}
+                    onpress={(text) => {
+                        setObservation(text);
+                        refmodalObservacoes.current?.closeModal();
+                    }}
+                />
+            </ModalCentralize>
         </View>
     );
 };

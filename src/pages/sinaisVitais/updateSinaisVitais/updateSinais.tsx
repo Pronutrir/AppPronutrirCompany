@@ -23,8 +23,8 @@ import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import ModalCentralize, {
     ModalHandles,
 } from '../../../components/Modais/ModalCentralize';
-import CardObservacao from '../components/cardObservacao/cardlObservacao';
 import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
+import CardObservacao from '../../../components/Cards/cardlObservacao';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
