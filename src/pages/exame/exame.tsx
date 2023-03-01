@@ -19,7 +19,6 @@ type IFilterExames =
     | 'Cancelados'
     | 'search';
 type IFilterSearch = 'Nome paciente' | 'Nome médico(a)';
-
 const Exame: React.FC = () => {
     const styles = useThemeAwareObject(creatStyles);
 
