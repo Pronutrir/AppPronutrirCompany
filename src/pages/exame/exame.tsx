@@ -5,7 +5,11 @@ import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import CardStatusExamesComponent from './components/cardStatusExamesComponent/cardStatusExamesComponent';
 import SearchBarPerson from '../../components/seachBar/searchBarPerson';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import { useExames, IparamsFilterExame } from '../../hooks/useExames';
+import {
+    useExames,
+    IparamsFilterExame,
+    useCountExames,
+} from '../../hooks/useExames';
 import ShimerPlaceHolderCardSNVTs from '../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import RenderItemEmpty from '../../components/renderItem/renderItemEmpty';
 import RenderFooter from '../../components/renderItem/renderFooter';
@@ -27,6 +31,8 @@ const Exame: React.FC = () => {
         useState<IFilterSearch>('Nome paciente');
     const [selectedFilter, setSelectedFilter] =
         useState<IFilterExames>('Todos');
+
+    const { data: countExames } = useCountExames();
 
     const {
         data,
@@ -70,21 +76,11 @@ const Exame: React.FC = () => {
             <View style={styles.box1}>
                 <CardStatusExamesComponent
                     label="Liberadas"
-                    value={
-                        data?.pages
-                            ?.map((page) => page)
-                            ?.flat()
-                            ?.filter((item) => item.status == 'E').length
-                    }
+                    value={countExames?.execultados}
                 />
                 <CardStatusExamesComponent
                     label="Pendentes"
-                    value={
-                        data?.pages
-                            ?.map((page) => page)
-                            ?.flat()
-                            ?.filter((item) => item.status == 'A').length
-                    }
+                    value={countExames?.andamentos}
                 />
                 <MenuPopUp
                     containerStyle={styles.menuPopUpStyle}

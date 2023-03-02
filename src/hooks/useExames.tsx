@@ -4,13 +4,20 @@ import {
     QueryClient,
     useInfiniteQuery,
     useMutation,
+    useQuery,
 } from 'react-query';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
-interface IExameResponse {
-    result: IExame[];
+interface IExameResponse<T> {
+    result: T;
     statusCode: number;
     message: string;
+}
+interface IStatusCount {
+    execultados: number;
+    andamentos: number;
+    cancelados: number;
+    arquivados: number;
 }
 export interface IExame {
     id_examination: number;
@@ -71,7 +78,7 @@ const useExames = (paramsFilterExame: IparamsFilterExame) => {
         ['exame', paramsFilterExame],
         async ({ signal, pageParam = 1 }) => {
             const { result } = (
-                await Api.get<IExameResponse>(
+                await Api.get<IExameResponse<IExame[]>>(
                     `Exames/ListExamesPacientes?${
                         paramsFilterExame.statusExame
                             ? `statusExame=${paramsFilterExame.statusExame}`
@@ -94,6 +101,7 @@ const useExames = (paramsFilterExame: IparamsFilterExame) => {
             //return Array<IExame>();
         },
         {
+            refetchInterval: 60 * 10 * 1000,
             getNextPageParam: (lastPage, pages) => {
                 if (lastPage?.length < 5) {
                     return null;
@@ -186,4 +194,35 @@ const useUpdateCacheExame = (
     }
 };
 
-export { useExames, useUpdateCacheExame, useUpdateExame, findGetExames };
+const useCountExames = () => {
+    const { addAlert } = useContext(NotificationGlobalContext);
+
+    return useQuery(
+        '',
+        async () => {
+            const { result } = (
+                await Api.get<IExameResponse<IStatusCount>>(
+                    'Exames/StatusExamesPaciente',
+                )
+            ).data;
+            return result;
+        },
+        {
+            refetchInterval: 60 * 10 * 1000,
+            onError: () => {
+                addAlert({
+                    message: 'Error ao consultar os exames tente mais tarde!',
+                    status: 'error',
+                });
+            },
+        },
+    );
+};
+
+export {
+    useExames,
+    useUpdateCacheExame,
+    useUpdateExame,
+    findGetExames,
+    useCountExames,
+};

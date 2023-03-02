@@ -79,7 +79,7 @@ const ExameDetalhes: React.FC<Props> = ({
     };
 
     const selectStatusObservation = (exame: IExame) => {
-        return exame.filesExames.some((item) => item.status === 'E')
+        return exame.filesExames.some((item) => item.status === 'C')
             ? 'Existem exames com pendências, verifique seus exames'
             : undefined;
     };
