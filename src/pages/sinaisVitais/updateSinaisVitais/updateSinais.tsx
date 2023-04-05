@@ -9,7 +9,9 @@ import ModalCentralizedOptions, {
 import Loading from '../../../components/Loading/Loading';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
-import SinaisVitaisContext from '../../../contexts/sinaisVitaisContext';
+import SinaisVitaisContext, {
+    SinaisVitaisPost,
+} from '../../../contexts/sinaisVitaisContext';
 import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
@@ -25,6 +27,9 @@ import ModalCentralize, {
 } from '../../../components/Modais/ModalCentralize';
 import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 import CardObservacao from '../../../components/Cards/cardlObservacao';
+import { useSenhaAtendimento } from '../../../hooks/usePainelAtendimento';
+import Checkbox from '../../../components/checkbox/checkbox';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -33,18 +38,24 @@ interface Props {
 
 const UpdateSinais: React.FC<Props> = ({
     route: {
-        params: { PessoaFisica, SinaisVitais },
+        params: { PessoaFisica, SinaisVitais, GeraSenhaOncologia },
     },
 }: Props) => {
     const refmodalObservacoes = useRef<ModalHandles>(null);
 
     const refPesoMediaPaciente = useRef<number | null>(null);
 
+    const [prioridade, setPrioridade] = useState(1);
+
     const styles = useThemeAwareObject(createStyles);
 
     const navigation = useNavigation();
-    const { AddSinaisVitais, GetSinaisVitais, UpdateSinaisVitais } =
-        useContext(SinaisVitaisContext);
+    const {
+        AddSinaisVitais,
+        GetSinaisVitais,
+        UpdateSinaisVitais,
+        AddSinaisVitaisAtendimento,
+    } = useContext(SinaisVitaisContext);
 
     const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
         nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
@@ -52,10 +63,21 @@ const UpdateSinais: React.FC<Props> = ({
 
     const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
+    const { mutateAsync } = useSenhaAtendimento({
+        prioridade: prioridade,
+        servico: 3,
+        unidade: 1,
+        cliente: {
+            documento: PessoaFisica?.nR_ATENDIMENTO?.toString(),
+            nome: PessoaFisica.nM_PESSOA_FISICA,
+        },
+    });
+
     const [activeModal, setActiveModal] = useState<boolean>(false);
     const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
     const refModalOptions = useRef<ModalHandlesOptions>(null);
+    const refModalOptionsAtendimento = useRef<ModalHandlesOptions>(null);
     const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
 
     const [Peso, setPeso] = useState(0);
@@ -93,17 +115,29 @@ const UpdateSinais: React.FC<Props> = ({
 
     const PostSinaisVitais = async () => {
         setActiveModal(true);
-        await AddSinaisVitais({
+
+        const dataSinaisVitais: SinaisVitaisPost = {
             cD_PACIENTE: PessoaFisica.cD_PESSOA_FISICA,
             qT_ALTURA_CM: Altura <= 0 ? null : Altura,
             qT_PESO: Peso <= 0 ? null : Peso,
             qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
             qT_TEMP: temperatura <= 30 ? null : temperatura,
             dS_OBSERVACAO: observacao ? observacao : null,
-        });
+            cD_ESTABELECIMENTO: PessoaFisica.cD_ESTABELECIMENTO,
+            cD_MEDICO_RESP: PessoaFisica.cD_MEDICO_RESP,
+        };
+
+        if (GeraSenhaOncologia) {
+            const result = await AddSinaisVitaisAtendimento(dataSinaisVitais);
+            if (result) PessoaFisica.nR_ATENDIMENTO = result.nR_ATENDIMENTO;
+        } else {
+            await AddSinaisVitais(dataSinaisVitais);
+        }
         refetchSinaisVitais;
         setActiveModal(false);
-        navigation.goBack();
+        GeraSenhaOncologia
+            ? refModalOptionsAtendimento.current?.openModal()
+            : navigation.goBack();
     };
 
     const MenuPopUpOptions = async (itemSelected: string) => {
@@ -334,6 +368,32 @@ const UpdateSinais: React.FC<Props> = ({
                     SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
                 }
             />
+            <ModalCentralizedOptions
+                ref={refModalOptionsAtendimento}
+                message={'Gerar senha para atendimento ?'}
+                onpress={() => {
+                    mutateAsync();
+                    navigation.goBack();
+                }}
+                onStartShouldResponder={false}
+                onpressCancel={() => navigation.goBack()}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        margin: RFPercentage(3),
+                    }}>
+                    <Checkbox
+                        isChecked={prioridade == 1}
+                        onPress={() => setPrioridade(1)}
+                        text="Normal"
+                    />
+                    <Checkbox
+                        isChecked={prioridade == 2}
+                        onPress={() => setPrioridade(2)}
+                        text="Prioridade"
+                    />
+                </View>
+            </ModalCentralizedOptions>
             <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
                 <CardAlertaPesoPaciente
                     historicoSinaisVitais={historicoSinaisVitais?.filter(
@@ -345,7 +405,6 @@ const UpdateSinais: React.FC<Props> = ({
             <ModalCentralize ref={refmodalObservacoes}>
                 <CardObservacao
                     observacao={observacao}
-                    setObservacao={(value) => setObservacao(value)}
                     onpress={() => refmodalObservacoes.current?.closeModal()}
                 />
             </ModalCentralize>

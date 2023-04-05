@@ -21,13 +21,25 @@
         "ecmaVersion": 12,
         "sourceType": "module"
     },
-    "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
+    "plugins": [
+        "react",
+        "react-hooks",
+        "@typescript-eslint",
+        "prettier"
+    ],
     "rules": {
         "prettier/prettier": "error",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
-        "react/jsx-filename-extension": [1, {"extensions": [".tsx"]}],
-        "@typescript-eslint/no-explicit-any": "off",
+        "no-unsafe-finally": 1,
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".tsx"
+                ]
+            }
+        ],
         "import/prefer-default-export": "off",
         "react/prop-types": "off",
         "no-unused-expressions": "off",
@@ -46,20 +58,11 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ],
-        "@typescript-eslint/ban-types" : [
-            " erro " ,
-           {
-             "extendDefaults" : true ,
-              "types" : {
-                "{}" : false
-             }
-           }
-         ]
+        ]
     },
     "settings": {
         "import/resolver": {
-            "typescript": { }
+            "typescript": {}
         }
     }
 }

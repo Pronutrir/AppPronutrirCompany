@@ -90,6 +90,7 @@ const CardConsultasGerais: React.FC<Props> = ({
                     } else {
                         navigation.navigate('UpdateSinais', {
                             PessoaFisica: item,
+                            GeraSenhaOncologia: true,
                         });
                     }
                 }}

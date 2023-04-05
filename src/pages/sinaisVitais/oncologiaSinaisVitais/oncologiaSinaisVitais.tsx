@@ -20,7 +20,7 @@ interface Consulta {
 const OncologiaSinaisVitais = () => {
     const styles = useThemeAwareObject(createStyles);
 
-    const { data: agendasQt, refetch } = useGetAgendasQt();
+    const { data: agendasQt } = useGetAgendasQt();
 
     const [state, setState] = useState<Consulta>({
         query: '',
@@ -108,7 +108,7 @@ const OncologiaSinaisVitais = () => {
                 selectionColor="#fff"
                 value={state.query}
             />
-            <CardConsultasQTComponent refetch={() => refetch()} dataSourceQT={state.dataSource} />
+            <CardConsultasQTComponent dataSourceQT={state.dataSource} />
         </View>
     );
 };

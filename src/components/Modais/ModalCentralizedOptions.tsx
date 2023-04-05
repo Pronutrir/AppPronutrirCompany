@@ -4,6 +4,7 @@ import React, {
     useCallback,
     useImperativeHandle,
     useEffect,
+    ReactNode,
 } from 'react';
 import { View, StyleSheet, Modal, Text } from 'react-native';
 import Animated, {
@@ -16,15 +17,16 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnOptions from '../buttons/BtnOptions';
-
 interface Props {
     activeModal?: boolean;
     message: string;
     onpress(): void;
+    onpressCancel?(): void;
     setActiveModal?(parms: boolean): void;
     animationType?: 'none' | 'slide' | 'fade';
+    onStartShouldResponder?: boolean;
+    children?: ReactNode;
 }
-
 export interface ModalHandles {
     openModal(): void;
     closeModal(): void;
@@ -39,7 +41,10 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
             activeModal = false,
             message = 'teste',
             onpress,
+            onpressCancel,
             setActiveModal,
+            onStartShouldResponder = true,
+            children,
         }: Props,
         ref,
     ) => {
@@ -108,7 +113,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                                 evt.nativeEvent.target ===
                                 _view.current?._nativeTag
                             ) {
-                                closeModal();
+                                onStartShouldResponder && closeModal();
                             }
                             return true;
                         }}>
@@ -118,6 +123,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                                     {message}
                                 </Text>
                             </View>
+                            {children}
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -130,7 +136,10 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                                 />
                                 <BtnOptions
                                     valueText={'Cancelar'}
-                                    onPress={() => closeModal()}
+                                    onPress={() => {
+                                        closeModal();
+                                        onpressCancel && onpressCancel();
+                                    }}
                                 />
                             </View>
                         </View>

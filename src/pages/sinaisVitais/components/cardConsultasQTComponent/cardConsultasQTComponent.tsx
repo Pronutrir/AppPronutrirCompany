@@ -10,15 +10,15 @@ import HistorySvg from '../../../../assets/svg/historico.svg';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
-import { IconsultaQT } from '../../../../reducers/ConsultasQTReducer';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
+import { IAgendaQT } from '../../../../hooks/useAgendaQt';
 interface Props {
-    dataSourceQT?: IconsultaQT[] | null | undefined;
+    dataSourceQT?: IAgendaQT[] | null | undefined;
 }
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
@@ -28,7 +28,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
     const navigation = useNavigation();
 
-    const Item = ({ item, index }: { item: IconsultaQT; index: number }) => {
+    const Item = ({ item, index }: { item: IAgendaQT; index: number }) => {
         return (
             <TouchableOpacity
                 key={index.toString()}
@@ -40,6 +40,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
                     } else {
                         navigation.navigate('UpdateSinais', {
                             PessoaFisica: item,
+                            GeraSenhaOncologia: true,
                         });
                     }
                 }}
@@ -81,7 +82,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         item,
         index,
     }: {
-        item: IconsultaQT;
+        item: IAgendaQT;
         index: number;
     }) => (
         <CardSimples styleCardContainer={styles.cardStyle}>

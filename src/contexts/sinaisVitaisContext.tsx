@@ -29,6 +29,9 @@ interface AuthContextData {
     stateConsultasQT: IstateConsultasQT;
     stateConsultas: IstateConsultas;
     AddSinaisVitais(atendimento: SinaisVitaisPost): Promise<void>;
+    AddSinaisVitaisAtendimento(
+        atendimento: SinaisVitaisPost,
+    ): Promise<void | ISinaisVitais>;
     dispatchConsultas: React.Dispatch<ConsultasAction>;
     SearchPFSinaisVitais(
         filter: IFilterPF,
@@ -62,6 +65,8 @@ export interface IFilterPF {
     page?: number | null;
 }
 export interface SinaisVitaisPost {
+    cD_MEDICO_RESP: number | null;
+    cD_ESTABELECIMENTO: number | null;
     cD_PACIENTE: string;
     qT_SATURACAO_O2: number | null;
     qT_TEMP: number | null;
@@ -132,6 +137,9 @@ export interface IPFSinaisVitais {
     dT_NASCIMENTO: string;
     iE_TIPO_PESSOA: number;
     nM_PESSOA_FISICA: string;
+    cD_ESTABELECIMENTO: number;
+    cD_MEDICO_RESP: number;
+    nR_ATENDIMENTO: number;
 }
 export interface IPerfisLiberados {
     cD_PERFIL: number;
@@ -288,6 +296,60 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             });
     };
 
+    const AddSinaisVitaisAtendimento = async (
+        atendimento: SinaisVitaisPost,
+    ) => {
+        try {
+            const { result } = (
+                await Api.post<ISinaisVitais, AxiosResponse<ResponseSVMG>>(
+                    'SinaisVitaisMonitoracaoGeral/PostSVMGComAtendimento',
+                    {
+                        cD_MEDICO_RESP: atendimento.cD_MEDICO_RESP,
+                        cD_ESTABELECIMENTO: atendimento.cD_ESTABELECIMENTO,
+                        iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
+                        iE_MEMBRO: sinaisVitaisDefault.iE_MEMBRO,
+                        iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
+                        iE_APARELHO_PA: sinaisVitaisDefault.iE_APARELHO_PA,
+                        cD_PACIENTE: atendimento.cD_PACIENTE,
+                        cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
+                        qT_SATURACAO_O2: atendimento.qT_SATURACAO_O2,
+                        iE_COND_SAT_O2: sinaisVitaisDefault.iE_COND_SAT_O2,
+                        iE_MEMBRO_SAT_O2: sinaisVitaisDefault.iE_MEMBRO_SAT_O2,
+                        iE_RITMO_ECG: sinaisVitaisDefault.iE_RITMO_ECG,
+                        iE_DECUBITO: sinaisVitaisDefault.iE_DECUBITO,
+                        qT_TEMP: atendimento.qT_TEMP,
+                        qT_PESO: atendimento.qT_PESO,
+                        iE_UNID_MED_PESO: sinaisVitaisDefault.iE_UNID_MED_PESO,
+                        qT_ALTURA_CM: atendimento.qT_ALTURA_CM,
+                        qT_PA_SISTOLICA: atendimento.qT_PA_SISTOLICA,
+                        qT_PA_DIASTOLICA: atendimento.qT_PA_DIASTOLICA,
+                        qT_PAM: atendimento.qT_PAM,
+                        qT_FREQ_CARDIACA: atendimento.qT_FREQ_CARDIACA,
+                        qT_FREQ_RESP: atendimento.qT_FREQ_RESP,
+                        cD_ESCALA_DOR: atendimento.cD_ESCALA_DOR,
+                        qT_ESCALA_DOR: atendimento.qT_ESCALA_DOR,
+                        iE_UNID_MED_ALTURA:
+                            sinaisVitaisDefault.iE_UNID_MED_ALTURA,
+                        iE_SITUACAO: sinaisVitaisDefault.iE_SITUACAO,
+                        dT_LIBERACAO: moment().format(),
+                        nM_USUARIO: usertasy.nM_USUARIO,
+                        dS_OBSERVACAO: atendimento.dS_OBSERVACAO,
+                    },
+                )
+            ).data;
+            addAlert({
+                message: 'Dados enviado com sucesso!',
+                status: 'sucess',
+            });
+            return result;
+        } catch (error) {
+            addAlert({
+                message: 'Falha ao enviar os sinais vitais tente mais tarde!',
+                status: 'error',
+            });
+        }
+    };
+
     const UpdateSinaisVitais = async (sinaisUpdate: SinaisVitaisPut) => {
         await Api.put<ISinaisVitais>(
             `SinaisVitaisMonitoracaoGeral/PutSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
@@ -442,6 +504,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
                 stateConsultasQT: consultasQT,
                 stateConsultas: stateConsultas,
                 AddSinaisVitais,
+                AddSinaisVitaisAtendimento,
                 dispatchConsultas,
                 SearchPFSinaisVitais,
                 GetSinaisVitais,

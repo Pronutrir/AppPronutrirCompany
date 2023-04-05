@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios';
-import { InternalServerError } from './api';
 
 const ApiInterageMd = axios.create({
     baseURL: 'http://medicapi.intmed.com.br/',
@@ -10,7 +9,22 @@ const ApiInterageMd = axios.create({
     },
 });
 
+export class CustomErrorResponse extends Error {
+    constructor(message?: string) {
+        super();
+        this.message =
+            message || 'Não foi possível acessar, tente novamente mais tarde!';
+    }
+}
+
+export class InternalServerError extends CustomErrorResponse {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
 ApiInterageMd.interceptors.response.use(
+    /* eslint-disable */
     (response: AxiosResponse<any>) => response,
     ({ response }: { response: AxiosResponse<string> }) => {
         if (response.status === 409) {

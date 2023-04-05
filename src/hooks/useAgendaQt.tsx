@@ -4,13 +4,14 @@ import { useQuery } from 'react-query';
 import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
-
 export interface IAgendaQT {
     //DT_PREVISTA: string;
     dT_REAL: string;
     cD_PESSOA_FISICA: string;
     nM_PESSOA_FISICA: string;
     dT_NASCIMENTO: string;
+    cD_ESTABELECIMENTO: number;
+    cD_MEDICO_RESP: number;
     //DS_DIA_CICLO: string;
     //QT_PESO: string;
     //QT_ALTURA: number;
@@ -18,7 +19,6 @@ export interface IAgendaQT {
     //DT_PREVISTA_1: string;
     //DT_REAL_1: string;
     //NR_SEQ_PACIENTE: number;
-    //CD_ESTABELECIMENTO: number;
     //PROTOCOLO: string;
     //NM_MEDICACAO: string;
 }

@@ -1,5 +1,10 @@
 import { StyleSheet } from 'react-native';
-import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useState,
+} from 'react';
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -26,7 +31,6 @@ const Checkbox = React.forwardRef<CheckedHandles, Props>(
         { size = 2.5, text = undefined, isChecked = false, onPress }: Props,
         ref,
     ) => {
-
         const theme = useTheme();
         const styles = useThemeAwareObject(createStyles);
 
@@ -39,7 +43,7 @@ const Checkbox = React.forwardRef<CheckedHandles, Props>(
         useImperativeHandle(ref, () => {
             return {
                 onPressChecked,
-                text
+                text,
             };
         });
 
