@@ -68,7 +68,7 @@ export interface ISinaisVitais {
     dT_LIBERACAO: string;
     iE_SITUACAO: string;
     nM_USUARIO: string;
-    dS_OBSERVACAO: "string";
+    dS_OBSERVACAO: string;
 }
 
 export interface IAlertaPaciente {

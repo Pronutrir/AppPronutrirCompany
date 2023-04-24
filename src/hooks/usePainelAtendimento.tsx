@@ -4,7 +4,6 @@ import ApiAtendimento, {
 } from '../services/api-atendimento';
 import { useContext } from 'react';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
-
 interface requestAtendimento {
     servico: number;
     prioridade: number;
