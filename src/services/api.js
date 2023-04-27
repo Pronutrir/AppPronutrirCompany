@@ -6,9 +6,9 @@ const api = axios.create({
   //producao
   //baseURL: 'https://servicesapppronutrir.com.br/apitasy/api/v1/',
   //teste
-  //baseURL: 'https://servicesapppronutrir.com.br/apitasytest/api/v1/',
+  baseURL: 'https://servicesapppronutrir.com.br/apitasytest/api/v1/',
   //ngrok
-  baseURL: 'https://3cbb-177-22-36-198.ngrok-free.app/api/v1/',
+  //baseURL: 'https://3cbb-177-22-36-198.ngrok-free.app/api/v1/',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -138,7 +138,7 @@ axios.interceptors.response.use(
   },
 );
 
-api.interceptors.request.use(async (req) => {
+api.interceptors.request.use(async req => {
   try {
     const tokenUpdated = await refreshToken(req.headers['common']);
     if (tokenUpdated) {
