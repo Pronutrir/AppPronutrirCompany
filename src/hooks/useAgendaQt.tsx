@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useContext } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
