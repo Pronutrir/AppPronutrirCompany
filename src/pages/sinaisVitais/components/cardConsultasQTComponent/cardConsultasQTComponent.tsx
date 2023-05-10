@@ -1,4 +1,4 @@
-import React, { memo, useContext, useRef, useState } from 'react';
+import React, { memo, useContext, useRef } from 'react';
 import {
   View,
   FlatList,
@@ -16,18 +16,9 @@ import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
-import {
-  IAgendaQT,
-  useGetAgendasQt,
-  useInitAtendimento,
-} from '../../../../hooks/useAgendaQt';
-import ModalCentralizedOptions, {
-  ModalHandles as ModalHandlesCentralizedOptions,
-} from '../../../../components/Modais/ModalCentralizedOptions';
+import { IAgendaQT } from '../../../../hooks/useAgendaQt';
 import Loading, { LoadHandles } from '../../../../components/Loading/Loading';
 import CheckMarkComponent from '../../../../components/check/CheckMarkComponent';
-import { useQueryClient } from 'react-query';
-import { boolean } from 'yup';
 interface Props {
   dataSourceQT?: IAgendaQT[] | null | undefined;
 }
@@ -35,67 +26,18 @@ interface Props {
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
   const styles = useThemeAwareObject(createStyles);
 
-  const { refetch } = useGetAgendasQt();
-
-  const { mutateAsync } = useInitAtendimento();
-
   const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
 
   const autorizeEnfermagem = ValidationAutorizeEnfermagem();
-
-  const [selectedItem, setSelectedItem] = useState<IAgendaQT | null>(null);
-
-  const refModalCentralizedOptions =
-    useRef<ModalHandlesCentralizedOptions>(null);
 
   const loadingRef = useRef<LoadHandles>(null);
 
   const navigation = useNavigation();
 
-  const queryClient = useQueryClient();
-
-  const useUpdateCacheAgendaQT = (nR_ATENDIMENTO: number) => {
-    queryClient.setQueryData<IAgendaQT[] | undefined>(
-      'agendaQuimio',
-      (itens) => {
-        const indexItem = itens?.findIndex(
-          (item) => item.nR_ATENDIMENTO === nR_ATENDIMENTO,
-        );
-
-        if (itens && indexItem) {
-          itens[indexItem].dT_INICIO_ADM = moment().format('DD-MM-YYYY');
-        }
-        return itens;
-      },
-    );
-  };
-
-  const IniciarTratamento = async (item: IAgendaQT | null) => {
-    if (item) {
-      try {
-        loadingRef.current?.openModal();
-        await mutateAsync({
-          NR_ATENDIMENTO: item.nR_ATENDIMENTO,
-          NM_USUARIO: item.nM_PESSOA_FISICA,
-        });
-        useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO);
-        loadingRef.current?.closeModal();
-      } catch (error) {
-        loadingRef.current?.closeModal();
-      }
-    }
-  };
-
   const Item = ({ item, index }: { item: IAgendaQT; index: number }) => {
     return (
       <TouchableOpacity
         key={index.toString()}
-        onLongPress={() => {
-          if (autorizeEnfermagem && Boolean(!item.dT_INICIO_ADM)) {
-            setSelectedItem(item);
-            refModalCentralizedOptions.current?.openModal();
-          }
-        }}
         onPress={() => {
           if (autorizeEnfermagem) {
             navigation.navigate('UpdateSinaisVitaisEnfermagem', {
@@ -170,11 +112,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
       )}
       <Loading ref={loadingRef} />
-      <ModalCentralizedOptions
-        ref={refModalCentralizedOptions}
-        message={`Deseja iniciar tratamento do paciente ?`}
-        onpress={() => IniciarTratamento(selectedItem)}
-      />
     </View>
   );
 };

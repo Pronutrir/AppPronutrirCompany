@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useContext } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import AuthContext from '../contexts/auth';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import Api from '../services/api';
@@ -25,6 +25,7 @@ export interface IAgendaQT {
   //PROTOCOLO: string;
   //NM_MEDICACAO: string;
 }
+
 const selectedSetor = (cod_estabelecimento?: number) => {
   switch (cod_estabelecimento) {
     case 7:
@@ -80,35 +81,5 @@ const useGetAgendasQt = () => {
     },
   );
 };
-interface IPropsInitAtendimento {
-  NR_ATENDIMENTO: number;
-  NM_USUARIO: string;
-}
-const useInitAtendimento = () => {
-  const { addAlert } = useContext(NotificationGlobalContext);
-  return useMutation(
-    (item: IPropsInitAtendimento) => {
-      return Api.put(
-        `AgendaQuimio/IniciarAtendimentoQuimioterapia/${
-          item.NR_ATENDIMENTO
-        }/${'wcorreia'}`,
-      );
-    },
-    {
-      onSuccess: () => {
-        addAlert({
-          message: 'Tratamento iniciado com sucesso!',
-          status: 'sucess',
-        });
-      },
-      onError: () => {
-        addAlert({
-          message: 'Error ao iniciar o tratamento tente mais tarde!',
-          status: 'error',
-        });
-      },
-    },
-  );
-};
 
-export { useGetAgendasQt, useInitAtendimento };
+export { useGetAgendasQt };
