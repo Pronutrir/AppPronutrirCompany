@@ -47,6 +47,7 @@ const useGetAtendimentosAptosEnfermagem = () => {
     {
       //enabled: false,
       //staleTime: 60 * 30000, // 30 minuto
+      refetchInterval: 60 * 1000,
       onError: () => {
         addAlert({
           message: 'Error ao carregar os atendimentos, tentar mais tarde!',

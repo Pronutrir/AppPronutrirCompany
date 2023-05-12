@@ -19,6 +19,7 @@ import { ThemeContextData } from '../../../../contexts/themeContext';
 import { IAgendaQT } from '../../../../hooks/useAgendaQt';
 import Loading, { LoadHandles } from '../../../../components/Loading/Loading';
 import CheckMarkComponent from '../../../../components/check/CheckMarkComponent';
+import CheckMarkSvg from '../../../../components/svgComponents/checkMarkSvg';
 interface Props {
   dataSourceQT?: IAgendaQT[] | null | undefined;
 }
@@ -78,7 +79,8 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         {autorizeEnfermagem ? (
           <CheckMarkComponent
             Show={Boolean(item.dT_INICIO_ADM)}
-            text={'Iniciado'}
+            IconText={'Iniciado'}
+            Icon={<CheckMarkSvg />}
           />
         ) : (
           <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />

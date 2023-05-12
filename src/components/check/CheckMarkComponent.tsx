@@ -1,25 +1,20 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { RFPercentage } from 'react-native-responsive-fontsize';
-import CheckMark from '../../assets/svg/checkMark.svg';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-
 interface Props {
   Show: boolean;
-  text: string;
+  IconText: string;
+  Icon: JSX.Element;
+  TextColor?: string;
 }
-const CheckMarkComponent = ({ Show, text }: Props) => {
+const CheckMarkComponent = ({ Show, IconText, Icon, TextColor }: Props) => {
   const styles = useThemeAwareObject(createStyles);
 
   return Show ? (
     <View style={styles.container}>
-      <CheckMark
-        style={styles.img}
-        width={RFPercentage(3.5)}
-        height={RFPercentage(3.5)}
-      />
-      <Text style={styles.text}>{text}</Text>
+      {Icon}
+      <Text style={[styles.text, { color: TextColor }]}>{IconText}</Text>
     </View>
   ) : null;
 };

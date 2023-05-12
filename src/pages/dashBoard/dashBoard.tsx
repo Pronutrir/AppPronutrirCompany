@@ -87,7 +87,7 @@ const DashBoard: React.FC = () => {
             label={'Exames'}
           />
           <BtnDashboardComponent
-            disabled={true}
+            disabled={!ValidationAutorizeTriagem()}
             onpress={() => navigation.navigate('Tratamento_quimio')}
             ImgSVG={LembreteImg}
             label={'Tratamento Quimioterapia'}

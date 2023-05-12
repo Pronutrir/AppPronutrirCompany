@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import ModalCentralizedOptions, {
@@ -17,9 +17,17 @@ import {
   useGetAtendimentosAptosEnfermagem,
   useInitAtendimento,
 } from '../../../hooks/useAtendimento';
+import AuthContext from '../../../contexts/auth';
+import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 
 const ListaTratamentoAptos = () => {
   const styles = useThemeAwareObject(createStyles);
+
+  const { addAlert } = useContext(NotificationGlobalContext);
+
+  const {
+    stateAuth: { UnidadeSelected, PerfilSelected },
+  } = useContext(AuthContext);
 
   const { mutateAsync: mutateAsyncInitAtendimento } = useInitAtendimento();
   const { mutateAsync: mutateAsyncEndAtendimento } = useEndAtendimento();
@@ -45,9 +53,9 @@ const ListaTratamentoAptos = () => {
         loadingRef.current?.openModal();
         await mutateAsyncInitAtendimento({
           NR_ATENDIMENTO: item.nR_ATENDIMENTO,
-          NM_USUARIO: item.nM_PESSOA_FISICA,
+          NM_USUARIO: PerfilSelected?.nM_USUARIO ?? 'AppPronutrir',
         });
-        useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO);
+        useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_INICIO_ADM');
         loadingRef.current?.closeModal();
       } catch (error) {
         loadingRef.current?.closeModal();
@@ -58,25 +66,37 @@ const ListaTratamentoAptos = () => {
   const FinalizarTratamento = async (
     item: IAtendimentosAptosEnfermagem | null,
   ) => {
-    if (item) {
+    if (item && UnidadeSelected && PerfilSelected) {
       try {
         loadingRef.current?.openModal();
         await mutateAsyncEndAtendimento({
-          cD_ESTABELECIMENTO: 0,
-          cD_PERFIL: 0,
-          nM_USUARIO: '',
+          cD_ESTABELECIMENTO: UnidadeSelected?.cD_ESTABELECIMENTO,
+          cD_PERFIL: PerfilSelected?.cD_PERFIL,
+          nM_USUARIO: PerfilSelected.nM_USUARIO,
           nR_ATENDIMENTO: item?.nR_ATENDIMENTO,
           nR_PRESCRICAO: item?.nR_PRESCRICAO,
           nR_SEQ_ATENDIMENTO: item?.nR_SEQ_ATENDIMENTO,
         });
+        useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_FIM_ADM');
         loadingRef.current?.closeModal();
       } catch (error) {
         loadingRef.current?.closeModal();
       }
+    } else {
+      addAlert({
+        message:
+          'Error ao finalizar o tratamento selecione a unidade e o perfil do usuário!',
+        status: 'error',
+      });
     }
   };
 
-  const useUpdateCacheAgendaQT = (nR_ATENDIMENTO: number) => {
+  type options = 'dT_INICIO_ADM' | 'dT_FIM_ADM';
+
+  const useUpdateCacheAgendaQT = (
+    nR_ATENDIMENTO: number,
+    update_props: options,
+  ) => {
     queryClient.setQueryData<IAtendimentosAptosEnfermagem[] | undefined>(
       'agendaQuimio',
       itens => {
@@ -85,7 +105,7 @@ const ListaTratamentoAptos = () => {
         );
 
         if (itens && indexItem) {
-          itens[indexItem].dT_INICIO_ADM = moment().format('DD-MM-YYYY');
+          itens[indexItem][update_props] = moment().format('DD-MM-YYYY');
         }
         return itens;
       },

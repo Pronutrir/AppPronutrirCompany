@@ -18,6 +18,9 @@ import MenuPopUp, {
   ModalHandlesMenu,
 } from '../../../components/menuPopUp/menuPopUp';
 import { IAtendimentosAptosEnfermagem } from '../../../hooks/useAtendimento';
+import CheckMarkSvg from '../../../components/svgComponents/checkMarkSvg';
+import CheckMarkSvgEnd from '../../../components/svgComponents/checkMarkSvgEnd';
+import useTheme from '../../../hooks/useTheme';
 
 type Props = {
   item: IAtendimentosAptosEnfermagem;
@@ -40,6 +43,8 @@ const CardTratamentoAptos = ({
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
+
+  const theme = useTheme();
 
   const [placeholder, setPlaceholder] = useState<IFilterSearch>();
 
@@ -82,6 +87,39 @@ const CardTratamentoAptos = ({
     }
   };
 
+  const ActionsOptions = (item: IAtendimentosAptosEnfermagem) => {
+    if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
+      return ['Sinais vitais', 'Fim tratamento'];
+    } else if (!item.dT_INICIO_ADM) {
+      return ['Sinais vitais', 'Inicio tratamento'];
+    } else {
+      return ['Sinais vitais'];
+    }
+  };
+
+  const ActionsCheck = () => {
+    if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
+      return (
+        <CheckMarkComponent
+          Show={Boolean(item.dT_INICIO_ADM)}
+          IconText={'Iniciado'}
+          Icon={<CheckMarkSvg />}
+        />
+      );
+    } else if (item.dT_INICIO_ADM && item.dT_FIM_ADM) {
+      return (
+        <CheckMarkComponent
+          Show={Boolean(item.dT_INICIO_ADM)}
+          IconText={'Finalizado'}
+          TextColor={theme.colors.TEXT_SECONDARY}
+          Icon={<CheckMarkSvgEnd fill={theme.colors.TEXT_SECONDARY} />}
+        />
+      );
+    } else {
+      return null;
+    }
+  };
+
   return (
     <TouchableOpacity
       key={index.toString()}
@@ -117,15 +155,12 @@ const CardTratamentoAptos = ({
         ref={refMenuBotom}
         btnVisible={false}
         containerStyle={styles.menuPopUpStyleSearch}
-        btnLabels={['Sinais vitais', 'Inicio tratamento', 'Fim tratamento']}
+        btnLabels={ActionsOptions(item)}
         showItemSelected={true}
         ItemSelected={placeholder}
         onpress={label => MenuPopUpOptions(label, item)}
       />
-      <CheckMarkComponent
-        Show={Boolean(item.dT_INICIO_ADM)}
-        text={'Iniciado'}
-      />
+      <ActionsCheck />
     </TouchableOpacity>
   );
 };

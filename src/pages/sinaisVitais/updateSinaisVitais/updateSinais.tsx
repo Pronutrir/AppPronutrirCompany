@@ -135,6 +135,7 @@ const UpdateSinais: React.FC<Props> = ({
     }
     refetchSinaisVitais;
     setActiveModal(false);
+    navigation.goBack();
     /* GeraSenhaOncologia
             ? refModalOptionsAtendimento.current?.openModal()
             : navigation.goBack(); */

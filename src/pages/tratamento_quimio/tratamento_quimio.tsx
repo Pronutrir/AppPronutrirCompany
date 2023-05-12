@@ -4,7 +4,6 @@ import createStyles from './style';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import SearchBarPerson from '../../components/seachBar/searchBarPerson';
 import { IAgendaQT, useGetAgendasQt } from '../../hooks/useAgendaQt';
-import CardConsultasQTComponent from '../sinaisVitais/components/cardConsultasQTComponent/cardConsultasQTComponent';
 import ListaTratamentoAptos from './components/listaTratamentoAptos';
 
 interface Consulta {
