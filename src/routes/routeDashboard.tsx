@@ -265,7 +265,7 @@ const InitialStackNavigator = () => {
       <Stack.Screen
         name="Tratamento_quimio"
         component={Tratamento_quimio}
-        options={{ title: 'Tratamento quimio' }}
+        options={{ title: 'Tratamento' }}
       />
     </Stack.Navigator>
   );

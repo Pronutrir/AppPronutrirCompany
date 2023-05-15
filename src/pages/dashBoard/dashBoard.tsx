@@ -4,7 +4,7 @@ import CarouselInstagram from '../../components/carrosel/Carousel_Instagram';
 import createStyles from './style';
 import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
-import LembreteImg from '../../assets/svg/lembrete.svg';
+import QuimioSvg from '../../assets/svg/quimioterapia.svg';
 import MedicoImg from '../../assets/svg/medico.svg';
 import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
 import HospitalLocationSvg from '../../assets/svg/hospitalLocation.svg';
@@ -81,7 +81,7 @@ const DashBoard: React.FC = () => {
             label={'Evolução'}
           />
           <BtnDashboardComponent
-            disabled={false}
+            disabled={true}
             onpress={() => navigation.navigate('Exame')}
             ImgSVG={MedicoImg}
             label={'Exames'}
@@ -89,7 +89,7 @@ const DashBoard: React.FC = () => {
           <BtnDashboardComponent
             disabled={!ValidationAutorizeTriagem()}
             onpress={() => navigation.navigate('Tratamento_quimio')}
-            ImgSVG={LembreteImg}
+            ImgSVG={QuimioSvg}
             label={'Tratamento Quimioterapia'}
           />
           <BtnDashboardComponent

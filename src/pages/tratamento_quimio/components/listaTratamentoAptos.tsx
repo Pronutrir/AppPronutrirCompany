@@ -14,13 +14,16 @@ import CardTratamentoAptos from './cardTratamentoAptos';
 import {
   IAtendimentosAptosEnfermagem,
   useEndAtendimento,
-  useGetAtendimentosAptosEnfermagem,
   useInitAtendimento,
 } from '../../../hooks/useAtendimento';
 import AuthContext from '../../../contexts/auth';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 
-const ListaTratamentoAptos = () => {
+interface Props {
+  AtendimentosAptos: IAtendimentosAptosEnfermagem[] | undefined;
+}
+
+const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
   const styles = useThemeAwareObject(createStyles);
 
   const { addAlert } = useContext(NotificationGlobalContext);
@@ -39,8 +42,6 @@ const ListaTratamentoAptos = () => {
   const refModalInitTratamento = useRef<ModalHandlesCentralizedOptions>(null);
 
   const refModalEndTratamento = useRef<ModalHandlesCentralizedOptions>(null);
-
-  const { data: AtendimentosAptos } = useGetAtendimentosAptosEnfermagem();
 
   const [selectedItem, setSelectedItem] =
     useState<IAtendimentosAptosEnfermagem | null>(null);
