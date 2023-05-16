@@ -2,12 +2,10 @@ import { useContext } from 'react';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import { useMutation, useQuery } from 'react-query';
 import Api from '../services/api';
-
 interface IPropsInitAtendimento {
   NR_ATENDIMENTO: number;
   NM_USUARIO: string;
 }
-
 interface IPropsEndAtendimento {
   cD_PERFIL: number;
   nR_SEQ_ATENDIMENTO: number;
@@ -16,11 +14,9 @@ interface IPropsEndAtendimento {
   nM_USUARIO: string;
   cD_ESTABELECIMENTO: number;
 }
-
 interface IResponseAtendimentosAptosEnfermagem {
   result: IAtendimentosAptosEnfermagem[];
 }
-
 export interface IAtendimentosAptosEnfermagem {
   nR_SEQ_ATENDIMENTO: number;
   nR_ATENDIMENTO: number;
@@ -30,6 +26,8 @@ export interface IAtendimentosAptosEnfermagem {
   dT_NASCIMENTO: string;
   dT_INICIO_ADM: string;
   dT_FIM_ADM: string;
+  dT_ENTREGA_MEDICACAO: string;
+  dT_PREVISTA: string;
   dT_ALTA: string;
 }
 const useGetAtendimentosAptosEnfermagem = () => {
@@ -109,8 +107,38 @@ const useEndAtendimento = () => {
   );
 };
 
+interface IPostEntregaMedicamento {
+  NR_SEQ_ATENDIMENTO: number;
+  NM_USUARIO: string;
+}
+const useEntregaMedicamento = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPostEntregaMedicamento) => {
+      return Api.post(
+        `AtendimentoPaciente/MedicacaoPaciente/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
+      );
+    },
+    {
+      onSuccess: () => {
+        addAlert({
+          message: 'Entrega realizada com sucesso!',
+          status: 'sucess',
+        });
+      },
+      onError: () => {
+        addAlert({
+          message: 'Error ao realizar entrega tente mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
 export {
   useInitAtendimento,
   useGetAtendimentosAptosEnfermagem,
   useEndAtendimento,
+  useEntregaMedicamento,
 };

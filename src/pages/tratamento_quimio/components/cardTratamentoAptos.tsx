@@ -21,6 +21,7 @@ import { IAtendimentosAptosEnfermagem } from '../../../hooks/useAtendimento';
 import CheckMarkSvg from '../../../components/svgComponents/checkMarkSvg';
 import CheckMarkSvgEnd from '../../../components/svgComponents/checkMarkSvgEnd';
 import useTheme from '../../../hooks/useTheme';
+import CheckMarkMedical from '../../../components/svgComponents/checkMarkMedical';
 
 type Props = {
   item: IAtendimentosAptosEnfermagem;
@@ -30,9 +31,14 @@ type Props = {
   >;
   refModalInitTratamento: React.RefObject<ModalHandlesCentralizedOptions>;
   refModalEndTratamento: React.RefObject<ModalHandlesCentralizedOptions>;
+  refModalEntregaMedicamento: React.RefObject<ModalHandlesCentralizedOptions>;
 };
 
-type IFilterSearch = 'Sinais Vitais' | 'Inicio tratamento' | 'Fim tratamento';
+type IFilterSearch =
+  | 'Sinais Vitais'
+  | 'Inicio tratamento'
+  | 'Fim tratamento'
+  | 'Lib. medicação';
 
 const CardTratamentoAptos = ({
   item,
@@ -40,6 +46,7 @@ const CardTratamentoAptos = ({
   setSelectedItem,
   refModalInitTratamento,
   refModalEndTratamento,
+  refModalEntregaMedicamento,
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
@@ -82,12 +89,26 @@ const CardTratamentoAptos = ({
           );
         }
         break;
+      case 'Lib. medicação':
+        {
+          setTimeout(
+            () => {
+              setSelectedItem(item);
+              refModalEntregaMedicamento.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+          );
+        }
+        break;
       default:
         break;
     }
   };
 
   const ActionsOptions = (item: IAtendimentosAptosEnfermagem) => {
+    if (!item.dT_ENTREGA_MEDICACAO && !item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
+      return ['Sinais vitais', 'Lib. medicação'];
+    }
     if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
       return ['Sinais vitais', 'Fim tratamento'];
     } else if (!item.dT_INICIO_ADM) {
@@ -98,11 +119,22 @@ const CardTratamentoAptos = ({
   };
 
   const ActionsCheck = () => {
+    if (item.dT_ENTREGA_MEDICACAO && !item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
+      return (
+        <CheckMarkComponent
+          Show={Boolean(item.dT_ENTREGA_MEDICACAO)}
+          IconText={'Entregue'}
+          TextColor={theme.colors.TEXT_PRIMARY}
+          Icon={<CheckMarkMedical />}
+        />
+      );
+    }
     if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
       return (
         <CheckMarkComponent
           Show={Boolean(item.dT_INICIO_ADM)}
           IconText={'Iniciado'}
+          TextColor={theme.colors.TEXT_PRIMARY}
           Icon={<CheckMarkSvg />}
         />
       );
@@ -147,7 +179,7 @@ const CardTratamentoAptos = ({
         <View style={styles.item}>
           <Text style={styles.textLabel}>Hora da agenda: </Text>
           <Text style={styles.text}>
-            {moment(item.dT_NASCIMENTO).format('HH:mm')}
+            {moment(item.dT_PREVISTA).format('HH:mm')}
           </Text>
         </View>
       </View>

@@ -14,6 +14,7 @@ import CardTratamentoAptos from './cardTratamentoAptos';
 import {
   IAtendimentosAptosEnfermagem,
   useEndAtendimento,
+  useEntregaMedicamento,
   useInitAtendimento,
 } from '../../../hooks/useAtendimento';
 import AuthContext from '../../../contexts/auth';
@@ -34,6 +35,8 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
 
   const { mutateAsync: mutateAsyncInitAtendimento } = useInitAtendimento();
   const { mutateAsync: mutateAsyncEndAtendimento } = useEndAtendimento();
+  const { mutateAsync: mutateAsyncEntregaMedicamento } =
+    useEntregaMedicamento();
 
   const queryClient = useQueryClient();
 
@@ -42,6 +45,9 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
   const refModalInitTratamento = useRef<ModalHandlesCentralizedOptions>(null);
 
   const refModalEndTratamento = useRef<ModalHandlesCentralizedOptions>(null);
+
+  const refModalEntregaMedicamento =
+    useRef<ModalHandlesCentralizedOptions>(null);
 
   const [selectedItem, setSelectedItem] =
     useState<IAtendimentosAptosEnfermagem | null>(null);
@@ -92,7 +98,31 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
     }
   };
 
-  type options = 'dT_INICIO_ADM' | 'dT_FIM_ADM';
+  const RecebimentoMedicamento = async (
+    item: IAtendimentosAptosEnfermagem | null,
+  ) => {
+    if (item && UnidadeSelected && PerfilSelected) {
+      try {
+        loadingRef.current?.openModal();
+        await mutateAsyncEntregaMedicamento({
+          NR_SEQ_ATENDIMENTO: item.nR_SEQ_ATENDIMENTO,
+          NM_USUARIO: PerfilSelected?.nM_USUARIO,
+        });
+        useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_ENTREGA_MEDICACAO');
+        loadingRef.current?.closeModal();
+      } catch (error) {
+        loadingRef.current?.closeModal();
+      }
+    } else {
+      addAlert({
+        message:
+          'Error ao realizar o recebimento selecione a unidade e o perfil do usuário!',
+        status: 'error',
+      });
+    }
+  };
+
+  type options = 'dT_INICIO_ADM' | 'dT_FIM_ADM' | 'dT_ENTREGA_MEDICACAO';
 
   const useUpdateCacheAgendaQT = (
     nR_ATENDIMENTO: number,
@@ -128,6 +158,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
         setSelectedItem={setSelectedItem}
         refModalInitTratamento={refModalInitTratamento}
         refModalEndTratamento={refModalEndTratamento}
+        refModalEntregaMedicamento={refModalEntregaMedicamento}
       />
     </CardSimples>
   );
@@ -160,6 +191,11 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
         ref={refModalEndTratamento}
         message={`Deseja finalizar tratamento do paciente ?`}
         onpress={() => FinalizarTratamento(selectedItem)}
+      />
+      <ModalCentralizedOptions
+        ref={refModalEntregaMedicamento}
+        message={`Deseja realizar o recebimento do medicamento ?`}
+        onpress={() => RecebimentoMedicamento(selectedItem)}
       />
     </View>
   );
