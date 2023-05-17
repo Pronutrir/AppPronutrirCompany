@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import Svg, { SvgProps, Path, NumberProp } from 'react-native-svg';
-
 interface Props extends SvgProps {
   width?: NumberProp;
   height?: NumberProp;

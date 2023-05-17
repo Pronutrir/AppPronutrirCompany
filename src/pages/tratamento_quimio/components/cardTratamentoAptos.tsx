@@ -107,14 +107,14 @@ const CardTratamentoAptos = ({
 
   const ActionsOptions = (item: IAtendimentosAptosEnfermagem) => {
     if (!item.dT_ENTREGA_MEDICACAO && !item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
-      return ['Sinais vitais', 'Lib. medicação'];
+      return ['Sinais Vitais', 'Lib. medicação'];
     }
     if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
-      return ['Sinais vitais', 'Fim tratamento'];
+      return ['Sinais Vitais', 'Fim tratamento'];
     } else if (!item.dT_INICIO_ADM) {
-      return ['Sinais vitais', 'Inicio tratamento'];
+      return ['Sinais Vitais', 'Inicio tratamento'];
     } else {
-      return ['Sinais vitais'];
+      return ['Sinais Vitais'];
     }
   };
 
@@ -179,8 +179,12 @@ const CardTratamentoAptos = ({
         <View style={styles.item}>
           <Text style={styles.textLabel}>Hora da agenda: </Text>
           <Text style={styles.text}>
-            {moment(item.dT_PREVISTA).format('HH:mm')}
+            {moment(item.dT_REAL).format('HH:mm')}
           </Text>
+        </View>
+        <View style={styles.item_protocolo}>
+          <Text style={styles.textLabel}>Protocolo: </Text>
+          <Text style={styles.text_protocolo}>{item.dS_PROTOCOLO_ONCO}</Text>
         </View>
       </View>
       <MenuPopUp
@@ -212,6 +216,19 @@ const createStyles = (theme: ThemeContextData) => {
       letterSpacing: theme.typography.LETTERSPACING.S,
       color: theme.colors.TEXT_SECONDARY,
       fontSize: theme.typography.SIZE.fontysize16,
+    },
+    text_protocolo: {
+      fontFamily: theme.typography.FONTES.Regular,
+      letterSpacing: theme.typography.LETTERSPACING.S,
+      color: theme.colors.TEXT_SECONDARY,
+      fontSize: theme.typography.SIZE.fontysize10,
+      textAlign: 'justify',
+      textAlignVertical: 'center',
+    },
+    item_protocolo: {
+      width: '80%',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
     },
     item: {
       flexDirection: 'row',

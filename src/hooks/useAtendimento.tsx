@@ -2,15 +2,20 @@ import { useContext } from 'react';
 import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import { useMutation, useQuery } from 'react-query';
 import Api from '../services/api';
+import AuthContext from '../contexts/auth';
 interface IPropsInitAtendimento {
   NR_ATENDIMENTO: number;
   NM_USUARIO: string;
 }
 interface IPropsEndAtendimento {
+  cD_PESSOA_FISICA: number;
   cD_PERFIL: number;
   nR_SEQ_ATENDIMENTO: number;
+  nR_SEQ_PACIENTE: number;
   nR_ATENDIMENTO: number;
   nR_PRESCRICAO: number;
+  nR_CICLO: number;
+  dS_DIA_CICLO: string;
   nM_USUARIO: string;
   cD_ESTABELECIMENTO: number;
 }
@@ -22,22 +27,27 @@ export interface IAtendimentosAptosEnfermagem {
   nR_ATENDIMENTO: number;
   nR_SEQ_PACIENTE: number;
   nR_PRESCRICAO: number;
+  dS_PROTOCOLO_ONCO: string;
+  nR_CICLO: number;
+  dS_DIA_CICLO: string;
   nM_PESSOA_FISICA: string;
+  cD_PESSOA_FISICA: number;
   dT_NASCIMENTO: string;
   dT_INICIO_ADM: string;
   dT_FIM_ADM: string;
   dT_ENTREGA_MEDICACAO: string;
-  dT_PREVISTA: string;
+  dT_REAL: string;
   dT_ALTA: string;
 }
 const useGetAtendimentosAptosEnfermagem = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
+  const { stateAuth } = useContext(AuthContext);
   return useQuery(
     '',
     async () => {
       const { result } = (
         await Api.get<IResponseAtendimentosAptosEnfermagem>(
-          'AtendimentoPaciente/ObterAtendimentosAptosEnfermagem',
+          `AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
         )
       ).data;
       return result;
@@ -106,7 +116,6 @@ const useEndAtendimento = () => {
     },
   );
 };
-
 interface IPostEntregaMedicamento {
   NR_SEQ_ATENDIMENTO: number;
   NM_USUARIO: string;

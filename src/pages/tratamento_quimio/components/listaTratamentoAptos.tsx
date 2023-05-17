@@ -81,8 +81,12 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
           cD_PERFIL: PerfilSelected?.cD_PERFIL,
           nM_USUARIO: PerfilSelected.nM_USUARIO,
           nR_ATENDIMENTO: item?.nR_ATENDIMENTO,
+          nR_SEQ_PACIENTE: item.nR_SEQ_PACIENTE,
           nR_PRESCRICAO: item?.nR_PRESCRICAO,
           nR_SEQ_ATENDIMENTO: item?.nR_SEQ_ATENDIMENTO,
+          dS_DIA_CICLO: item.dS_DIA_CICLO,
+          nR_CICLO: item.nR_CICLO,
+          cD_PESSOA_FISICA: item.cD_PESSOA_FISICA,
         });
         useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_FIM_ADM');
         loadingRef.current?.closeModal();
