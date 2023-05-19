@@ -124,8 +124,8 @@ const CardTratamentoAptos = ({
         <CheckMarkComponent
           Show={Boolean(item.dT_ENTREGA_MEDICACAO)}
           IconText={'Entregue'}
-          TextColor={theme.colors.TEXT_PRIMARY}
-          Icon={<CheckMarkMedical />}
+          TextColor={theme.colors.GREENPRIMARY}
+          Icon={<CheckMarkMedical fill={theme.colors.GREENPRIMARY} />}
         />
       );
     }
@@ -176,11 +176,15 @@ const CardTratamentoAptos = ({
             {moment(item.dT_NASCIMENTO).format('DD-MM-YYYY')}
           </Text>
         </View>
-        <View style={styles.item}>
+        <View style={[styles.item, { marginRight: RFPercentage(1) }]}>
           <Text style={styles.textLabel}>Hora da agenda: </Text>
           <Text style={styles.text}>
             {moment(item.dT_REAL).format('HH:mm')}
           </Text>
+        </View>
+        <View style={styles.item}>
+          <Text style={styles.textLabel}>Acomodação: </Text>
+          <Text style={styles.text}>{item.dS_ACOMODACAO}</Text>
         </View>
         <View style={styles.item_protocolo}>
           <Text style={styles.textLabel}>Protocolo: </Text>

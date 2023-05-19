@@ -30,6 +30,7 @@ export interface IAtendimentosAptosEnfermagem {
   dS_PROTOCOLO_ONCO: string;
   nR_CICLO: number;
   dS_DIA_CICLO: string;
+  dS_ACOMODACAO: string;
   nM_PESSOA_FISICA: string;
   cD_PESSOA_FISICA: number;
   dT_NASCIMENTO: string;
