@@ -1,9 +1,13 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { TouchableOpacity, Dimensions } from 'react-native';
 import VisaoSvg from '../assets/svg/visao.svg';
 import PrivadoSvg from '../assets/svg/privado.svg';
 
-export default function VisaoPassword({ active, setActive }) {
+interface Props {
+  active: any;
+  setActive: any;
+}
+export default function VisaoPassword({ active, setActive }: Props) {
   const widthScreen = Dimensions.get('screen').width / 20;
 
   return (
