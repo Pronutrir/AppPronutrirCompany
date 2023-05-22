@@ -26,7 +26,7 @@ import ModalCentralize, {
   ModalHandles,
 } from '../../../components/Modais/ModalCentralize';
 import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
-import CardObservacao from '../../../components/Cards/cardlObservacao';
+import CardObservacao from '../components/cardObservacao/cardlObservacao';
 import { useSenhaAtendimento } from '../../../hooks/usePainelAtendimento';
 import Checkbox from '../../../components/checkbox/checkbox';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -396,6 +396,7 @@ const UpdateSinais: React.FC<Props> = ({
       <ModalCentralize ref={refmodalObservacoes}>
         <CardObservacao
           observacao={observacao}
+          setObservacao={setObservacao}
           onpress={() => refmodalObservacoes.current?.closeModal()}
         />
       </ModalCentralize>

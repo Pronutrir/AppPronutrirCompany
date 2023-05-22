@@ -1,7 +1,12 @@
 import React from 'react';
 import SearchBar from 'react-native-dynamic-search-bar';
 import { ThemeContextData } from '../../contexts/themeContext';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import {
+  Dimensions,
+  KeyboardTypeOptions,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
@@ -14,7 +19,8 @@ interface Props {
   btnOptions?: boolean;
   placeholder?: string;
   spinnerVisibility?: boolean;
-  value: string | undefined;
+  value?: string | undefined;
+  keyboardType?: KeyboardTypeOptions | undefined;
 }
 
 const SearchBarPerson = ({
@@ -23,6 +29,7 @@ const SearchBarPerson = ({
   placeholder = 'Digite o texto',
   spinnerVisibility = false,
   value = '',
+  keyboardType = 'default',
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
 
@@ -41,11 +48,7 @@ const SearchBarPerson = ({
         onClearPress={() => onClean()}
         selectionColor="#fff"
         value={value}
-        /* keyboardType={
-                        filterSelected.filter === 'DATA DE NASCIMENTO'
-                            ? 'number-pad'
-                            : 'default'
-                    } */
+        keyboardType={keyboardType}
         returnKeyType={'next'}
       />
     </View>
@@ -57,9 +60,7 @@ export default SearchBarPerson;
 const createStyles = (theme: ThemeContextData) => {
   const styles = StyleSheet.create({
     container: {
-      paddingVertical: RFPercentage(2),
-      flexDirection: 'row',
-      justifyContent: 'space-around',
+      flex: 1,
     },
     SearchBarStyle: {
       height: Dimensions.get('screen').height / 16,
@@ -80,9 +81,7 @@ const createStyles = (theme: ThemeContextData) => {
       height: RFPercentage(2),
     },
     loading: {
-      width: '100%',
-      height: '100%',
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.WHITE,
     },
   });
   return styles;

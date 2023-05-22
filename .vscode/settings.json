@@ -7,5 +7,6 @@
       "colorize.colorized_colors": [
         "HEXA",
         "RGB",
-      ]
+      ],
+      "java.compile.nullAnalysis.mode": "disabled"
 }

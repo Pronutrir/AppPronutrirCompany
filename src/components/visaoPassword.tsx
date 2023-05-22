@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import VisaoSvg from '../assets/svg/visao.svg';
 import PrivadoSvg from '../assets/svg/privado.svg';
 
-export default function visaoPassword({ active, setActive }) {
+export default function VisaoPassword({ active, setActive }) {
   const widthScreen = Dimensions.get('screen').width / 20;
 
   return (

@@ -24,7 +24,6 @@ export interface IParamConsulta {
   continue: boolean;
   showRequest: boolean;
 }
-
 interface Ifilter {
   filter: string;
   placeHolder: string;
@@ -122,7 +121,12 @@ const SinaisVitaisGerais: React.FC = () => {
   const onChangeTextSearch = (text: string) => {
     if (text.length === 0) {
       setState(prevState => {
-        return { ...prevState, spinnerVisibility: false, query: text };
+        return {
+          ...prevState,
+          spinnerVisibility: false,
+          query: text,
+          dataSource: [],
+        };
       });
       return;
     }
@@ -140,11 +144,13 @@ const SinaisVitaisGerais: React.FC = () => {
   };
 
   const onChangeDateSearch = (text: string) => {
+    setState({ ...state, spinnerVisibility: true, query: text });
     const textDate = DateMask(text);
     if (textDate.length === 0) {
       setState(prevState => {
         return {
           ...prevState,
+          dataSource: [],
           spinnerVisibility: false,
           query: textDate,
           showRequest: false,
@@ -153,20 +159,8 @@ const SinaisVitaisGerais: React.FC = () => {
       return;
     }
 
-    if (text.length >= 9 && text.length <= 10) {
+    if (textDate.length === 10) {
       Search({ queryDate: textDate });
-    }
-    if (text.length > 10) {
-      return;
-    } else {
-      setState(prevState => {
-        return {
-          ...prevState,
-          query: textDate,
-          dataSource: [],
-          showRequest: false,
-        };
-      });
     }
   };
 

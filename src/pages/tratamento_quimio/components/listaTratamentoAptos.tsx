@@ -169,7 +169,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
 
   const renderItemEmpty = () => (
     <CardSimples styleCardContainer={styles.cardStyle}>
-      <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
+      <Text style={styles.text}>Nenhum paciente encontrado</Text>
     </CardSimples>
   );
 
