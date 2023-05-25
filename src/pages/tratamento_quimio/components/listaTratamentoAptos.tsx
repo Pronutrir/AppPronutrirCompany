@@ -15,6 +15,7 @@ import {
   IAtendimentosAptosEnfermagem,
   useEndAtendimento,
   useEntregaMedicamento,
+  useEntregaPreMedicamento,
   useInitAtendimento,
 } from '../../../hooks/useAtendimento';
 import AuthContext from '../../../contexts/auth';
@@ -37,6 +38,8 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
   const { mutateAsync: mutateAsyncEndAtendimento } = useEndAtendimento();
   const { mutateAsync: mutateAsyncEntregaMedicamento } =
     useEntregaMedicamento();
+  const { mutateAsync: mutateAsyncEntregaPreMedicamento } =
+    useEntregaPreMedicamento();
 
   const queryClient = useQueryClient();
 
@@ -47,6 +50,9 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
   const refModalEndTratamento = useRef<ModalHandlesCentralizedOptions>(null);
 
   const refModalEntregaMedicamento =
+    useRef<ModalHandlesCentralizedOptions>(null);
+
+  const refModalEntregaPreMedicamento =
     useRef<ModalHandlesCentralizedOptions>(null);
 
   const [selectedItem, setSelectedItem] =
@@ -126,7 +132,38 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
     }
   };
 
-  type options = 'dT_INICIO_ADM' | 'dT_FIM_ADM' | 'dT_ENTREGA_MEDICACAO';
+  const RecebimentoPreMedicamento = async (
+    item: IAtendimentosAptosEnfermagem | null,
+  ) => {
+    if (item && UnidadeSelected && PerfilSelected) {
+      try {
+        loadingRef.current?.openModal();
+        await mutateAsyncEntregaPreMedicamento({
+          NR_SEQ_ATENDIMENTO: item.nR_SEQ_ATENDIMENTO,
+          NM_USUARIO: PerfilSelected?.nM_USUARIO,
+        });
+        useUpdateCacheAgendaQT(
+          item?.nR_ATENDIMENTO,
+          'dT_RECEBIMENTO_PRE_MEDIC',
+        );
+        loadingRef.current?.closeModal();
+      } catch (error) {
+        loadingRef.current?.closeModal();
+      }
+    } else {
+      addAlert({
+        message:
+          'Error ao realizar o recebimento selecione a unidade e o perfil do usuário!',
+        status: 'error',
+      });
+    }
+  };
+
+  type options =
+    | 'dT_INICIO_ADM'
+    | 'dT_FIM_ADM'
+    | 'dT_ENTREGA_MEDICACAO'
+    | 'dT_RECEBIMENTO_PRE_MEDIC';
 
   const useUpdateCacheAgendaQT = (
     nR_ATENDIMENTO: number,
@@ -163,6 +200,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
         refModalInitTratamento={refModalInitTratamento}
         refModalEndTratamento={refModalEndTratamento}
         refModalEntregaMedicamento={refModalEntregaMedicamento}
+        refModalEntregaPreMedicamento={refModalEntregaPreMedicamento}
       />
     </CardSimples>
   );
@@ -186,6 +224,11 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
         Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
       )}
       <Loading ref={loadingRef} />
+      <ModalCentralizedOptions
+        ref={refModalEntregaPreMedicamento}
+        message={`Deseja realizar o recebimento do pré-medicamento ?`}
+        onpress={() => RecebimentoPreMedicamento(selectedItem)}
+      />
       <ModalCentralizedOptions
         ref={refModalInitTratamento}
         message={`Deseja iniciar tratamento do paciente ?`}

@@ -34,6 +34,8 @@ export interface IAtendimentosAptosEnfermagem {
   nM_PESSOA_FISICA: string;
   cD_PESSOA_FISICA: number;
   dT_NASCIMENTO: string;
+  iE_PRE_MEDICACAO: number;
+  dT_RECEBIMENTO_PRE_MEDIC: string;
   dT_INICIO_ADM: string;
   dT_FIM_ADM: string;
   dT_ENTREGA_MEDICACAO: string;
@@ -51,7 +53,14 @@ const useGetAtendimentosAptosEnfermagem = () => {
           `AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
         )
       ).data;
-      return result;
+      console.log(result);
+      return result.sort((a, b) => {
+        return a.nM_PESSOA_FISICA < b.nM_PESSOA_FISICA
+          ? -1
+          : a.nM_PESSOA_FISICA > b.nM_PESSOA_FISICA
+          ? 1
+          : 0;
+      });
     },
     {
       //enabled: false,
@@ -146,9 +155,35 @@ const useEntregaMedicamento = () => {
   );
 };
 
+const useEntregaPreMedicamento = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPostEntregaMedicamento) => {
+      return Api.post(
+        `AtendimentoPaciente/PreMedicacaoPacienteEntregue/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
+      );
+    },
+    {
+      onSuccess: () => {
+        addAlert({
+          message: 'Entrega realizada com sucesso!',
+          status: 'sucess',
+        });
+      },
+      onError: () => {
+        addAlert({
+          message: 'Error ao realizar entrega tente mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
 export {
   useInitAtendimento,
   useGetAtendimentosAptosEnfermagem,
   useEndAtendimento,
   useEntregaMedicamento,
+  useEntregaPreMedicamento,
 };

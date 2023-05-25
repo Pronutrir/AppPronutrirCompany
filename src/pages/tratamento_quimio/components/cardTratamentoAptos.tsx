@@ -32,13 +32,15 @@ type Props = {
   refModalInitTratamento: React.RefObject<ModalHandlesCentralizedOptions>;
   refModalEndTratamento: React.RefObject<ModalHandlesCentralizedOptions>;
   refModalEntregaMedicamento: React.RefObject<ModalHandlesCentralizedOptions>;
+  refModalEntregaPreMedicamento: React.RefObject<ModalHandlesCentralizedOptions>;
 };
 
 type IFilterSearch =
   | 'Sinais Vitais'
   | 'Inicio tratamento'
   | 'Fim tratamento'
-  | 'Lib. medicação';
+  | 'Lib. medicação'
+  | 'Lib. pre-medicação';
 
 const CardTratamentoAptos = ({
   item,
@@ -47,6 +49,7 @@ const CardTratamentoAptos = ({
   refModalInitTratamento,
   refModalEndTratamento,
   refModalEntregaMedicamento,
+  refModalEntregaPreMedicamento,
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
@@ -100,55 +103,99 @@ const CardTratamentoAptos = ({
           );
         }
         break;
+      case 'Lib. pre-medicação':
+        {
+          setTimeout(
+            () => {
+              setSelectedItem(item);
+              refModalEntregaPreMedicamento.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+          );
+        }
+        break;
       default:
         break;
     }
   };
 
   const ActionsOptions = (item: IAtendimentosAptosEnfermagem) => {
-    if (!item.dT_ENTREGA_MEDICACAO && !item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
-      return ['Sinais Vitais', 'Lib. medicação'];
+    const options = ['Sinais Vitais'];
+    const {
+      iE_PRE_MEDICACAO,
+      dT_RECEBIMENTO_PRE_MEDIC,
+      dT_ENTREGA_MEDICACAO,
+      dT_INICIO_ADM,
+      dT_FIM_ADM,
+    } = item;
+
+    if (
+      iE_PRE_MEDICACAO > 0 &&
+      !dT_RECEBIMENTO_PRE_MEDIC &&
+      !dT_INICIO_ADM &&
+      !dT_FIM_ADM
+    ) {
+      options.push('Lib. pre-medicação');
+    } else if (!dT_ENTREGA_MEDICACAO && !dT_INICIO_ADM && !dT_FIM_ADM) {
+      options.push('Lib. medicação');
+    } else if (dT_INICIO_ADM && !dT_FIM_ADM) {
+      options.push('Fim tratamento');
+    } else if (!dT_INICIO_ADM) {
+      options.push('Inicio tratamento');
     }
-    if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
-      return ['Sinais Vitais', 'Fim tratamento'];
-    } else if (!item.dT_INICIO_ADM) {
-      return ['Sinais Vitais', 'Inicio tratamento'];
-    } else {
-      return ['Sinais Vitais'];
-    }
+    return options;
   };
 
   const ActionsCheck = () => {
-    if (item.dT_ENTREGA_MEDICACAO && !item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
-      return (
-        <CheckMarkComponent
-          Show={Boolean(item.dT_ENTREGA_MEDICACAO)}
-          IconText={'Entregue'}
-          TextColor={theme.colors.GREENPRIMARY}
-          Icon={<CheckMarkMedical fill={theme.colors.GREENPRIMARY} />}
-        />
-      );
-    }
-    if (item.dT_INICIO_ADM && !item.dT_FIM_ADM) {
-      return (
-        <CheckMarkComponent
-          Show={Boolean(item.dT_INICIO_ADM)}
-          IconText={'Iniciado'}
-          TextColor={theme.colors.TEXT_PRIMARY}
-          Icon={<CheckMarkSvg />}
-        />
-      );
-    } else if (item.dT_INICIO_ADM && item.dT_FIM_ADM) {
-      return (
-        <CheckMarkComponent
-          Show={Boolean(item.dT_INICIO_ADM)}
-          IconText={'Finalizado'}
-          TextColor={theme.colors.TEXT_SECONDARY}
-          Icon={<CheckMarkSvgEnd fill={theme.colors.TEXT_SECONDARY} />}
-        />
-      );
-    } else {
-      return null;
+    const {
+      dT_RECEBIMENTO_PRE_MEDIC,
+      dT_ENTREGA_MEDICACAO,
+      dT_INICIO_ADM,
+      dT_FIM_ADM,
+    } = item;
+
+    switch (true) {
+      case dT_RECEBIMENTO_PRE_MEDIC &&
+        !dT_ENTREGA_MEDICACAO &&
+        !dT_INICIO_ADM &&
+        !dT_FIM_ADM:
+        return (
+          <CheckMarkComponent
+            Show={true}
+            IconText={'Pré-Entregue'}
+            TextColor={theme.colors.WARNING}
+            Icon={<CheckMarkMedical fill={theme.colors.WARNING} />}
+          />
+        );
+      case dT_ENTREGA_MEDICACAO && !dT_INICIO_ADM && !dT_FIM_ADM:
+        return (
+          <CheckMarkComponent
+            Show={true}
+            IconText={'Entregue'}
+            TextColor={theme.colors.GREENPRIMARY}
+            Icon={<CheckMarkMedical fill={theme.colors.GREENPRIMARY} />}
+          />
+        );
+      case Boolean(dT_INICIO_ADM) && Boolean(dT_FIM_ADM):
+        return (
+          <CheckMarkComponent
+            Show={Boolean(dT_INICIO_ADM)}
+            IconText={'Finalizado'}
+            TextColor={theme.colors.TEXT_SECONDARY}
+            Icon={<CheckMarkSvgEnd fill={theme.colors.TEXT_SECONDARY} />}
+          />
+        );
+      case dT_INICIO_ADM && !dT_FIM_ADM:
+        return (
+          <CheckMarkComponent
+            Show={Boolean(dT_INICIO_ADM)}
+            IconText={'Iniciado'}
+            TextColor={theme.colors.TEXT_PRIMARY}
+            Icon={<CheckMarkSvg />}
+          />
+        );
+      default:
+        return null;
     }
   };
 
@@ -184,7 +231,7 @@ const CardTratamentoAptos = ({
         </View>
         <View style={styles.item}>
           <Text style={styles.textLabel}>Acomodação: </Text>
-          <Text style={styles.text}>{item.dS_ACOMODACAO}</Text>
+          <Text style={styles.text}>{item.dS_ACOMODACAO ?? '- -'}</Text>
         </View>
         <View style={styles.item_protocolo}>
           <Text style={styles.textLabel}>Protocolo: </Text>
