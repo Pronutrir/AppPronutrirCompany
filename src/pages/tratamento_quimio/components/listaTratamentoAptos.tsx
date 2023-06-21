@@ -16,6 +16,7 @@ import {
   useEndAtendimento,
   useEntregaMedicamento,
   useEntregaPreMedicamento,
+  useGetAtendimentosAptosEnfermagem,
   useInitAtendimento,
 } from '../../../hooks/useAtendimento';
 import AuthContext from '../../../contexts/auth';
@@ -29,6 +30,8 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
   const styles = useThemeAwareObject(createStyles);
 
   const { addAlert } = useContext(NotificationGlobalContext);
+
+  const { refetch, isFetching } = useGetAtendimentosAptosEnfermagem();
 
   const {
     stateAuth: { UnidadeSelected, PerfilSelected },
@@ -222,6 +225,8 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
           renderItem={({ item, index }) => renderItem({ item, index })}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={renderItemEmpty}
+          refreshing={isFetching}
+          onRefresh={() => refetch()}
         />
       ) : (
         Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
