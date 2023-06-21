@@ -212,7 +212,6 @@ const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
         },
         {
             onError: (error) => {
-                console.log(error);
                 addAlert({
                     message:
                         'Error ao listar os sinais vitais tente mais tarde!',
@@ -257,7 +256,6 @@ const _useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
                 }
             },
             onError: (error) => {
-                console.log(error);
                 addAlert({
                     message:
                         'Error ao listar os sinais vitais tente mais tarde!',

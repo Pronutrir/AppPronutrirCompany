@@ -116,7 +116,6 @@ const useAddFamiliar = () => {
                 }
             },
             onError: (error) => {
-                console.log(error);
                 addAlert({
                     message:
                         'Error ao adicionar  os sinais vitais tente mais tarde!',

@@ -65,8 +65,10 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
       try {
         loadingRef.current?.openModal();
         await mutateAsyncInitAtendimento({
-          NR_ATENDIMENTO: item.nR_ATENDIMENTO,
+          nR_SEQ_ATENDIMENTO: item.nR_SEQ_ATENDIMENTO,
           NM_USUARIO: PerfilSelected?.nM_USUARIO ?? 'AppPronutrir',
+          cD_ESTABELECIMENTO: UnidadeSelected?.cD_ESTABELECIMENTO ?? 7,
+          nR_SEQ_AGENDA: item.nR_SEQ_AGENDA
         });
         useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_INICIO_ADM');
         loadingRef.current?.closeModal();
@@ -93,6 +95,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
           dS_DIA_CICLO: item.dS_DIA_CICLO,
           nR_CICLO: item.nR_CICLO,
           cD_PESSOA_FISICA: item.cD_PESSOA_FISICA,
+          dT_REAL: item.dT_REAL
         });
         useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_FIM_ADM');
         loadingRef.current?.closeModal();
