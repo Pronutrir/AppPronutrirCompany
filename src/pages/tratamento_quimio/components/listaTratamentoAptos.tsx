@@ -31,7 +31,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
 
   const { addAlert } = useContext(NotificationGlobalContext);
 
-  const { refetch, isFetching } = useGetAtendimentosAptosEnfermagem();
+  const { refetch, isLoading } = useGetAtendimentosAptosEnfermagem();
 
   const {
     stateAuth: { UnidadeSelected, PerfilSelected },
@@ -225,7 +225,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
           renderItem={({ item, index }) => renderItem({ item, index })}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={renderItemEmpty}
-          refreshing={isFetching}
+          refreshing={isLoading}
           onRefresh={() => refetch()}
         />
       ) : (
