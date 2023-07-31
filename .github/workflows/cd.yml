@@ -1,70 +1,70 @@
 name: Development Distribution
 
 on:
-  workflow_dispatch: # To trigger manual build
-  release:
-    types: [published] # only run the workflow when a new release has been published
+    workflow_dispatch: # To trigger manual build
+    release:
+        types: [published] # only run the workflow when a new release has been published
 
 jobs:
-  dev-distribution:
-    runs-on: ubuntu-latest
-    name: Development Distribution
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - uses: actions/setup-node@master
-    - uses: c-hive/gha-yarn-cache@v1
+    dev-distribution:
+        runs-on: ubuntu-latest
+        name: Development Distribution
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@master
+            - uses: c-hive/gha-yarn-cache@v1
 
-    - name: Install node modules
-      run: |
-        yarn install
-    
-    - name: Cache Gradle Wrapper
-      uses: actions/cache@v2
-      with:
-        path: ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+            - name: Install node modules
+              run: |
+                  yarn install
 
-    - name: Cache Gradle Dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/.gradle/caches
-        key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-caches-
-    - name: Make Gradlew Executable
-      run: cd android && chmod +x ./gradlew
+            - name: Cache Gradle Wrapper
+              uses: actions/cache@v2
+              with:
+                  path: ~/.gradle/wrapper
+                  key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
 
-    - name: Build Android Release
-      run: |
-        cd android && ./gradlew bundleRelease --no-daemon
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: app-release.aab
-        path: android/app/build/outputs/bundle/release
+            - name: Cache Gradle Dependencies
+              uses: actions/cache@v1
+              with:
+                  path: ~/.gradle/caches
+                  key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+                  restore-keys: |
+                      ${{ runner.os }}-gradle-caches-
+            - name: Make Gradlew Executable
+              run: cd android && chmod +x ./gradlew
 
-    - name: upload artifact to Firebase App Distribution
-      uses: wzieba/Firebase-Distribution-Github-Action@v1
-      env:
-          firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
-          firebaseGroups: ${{ secrets.FIREBASE_GROUPS }}
-          firebaseAppId: ${{ secrets.FIREBASE_APP_ID }}
-          notes: ${{ github.event.release.body }}
-      with:
-        appId: ${{ secrets.FIREBASE_APP_ID }}
-        token: ${{ secrets.FIREBASE_TOKEN }}
-        groups: ${{ secrets.FIREBASE_GROUPS }}
-        file: android/app/build/outputs/bundle/release/app-release.aab
-        releaseNotes: ${{ github.event.release.body }}
+            - name: Build Android Release
+              run: |
+                  cd android && ./gradlew bundleRelease --no-daemon
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v1
+              with:
+                  name: app-release.aab
+                  path: android/app/build/outputs/bundle/release
 
-    - name: send telegram message on push
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: |
-            ${{ github.actor }} created commit testes:
-            tests message: new verson create successfully!
-            
-            Repository: ${{ github.repository }}
+            - name: upload artifact to Firebase App Distribution
+              uses: wzieba/Firebase-Distribution-Github-Action@v1
+              env:
+                  firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
+                  firebaseGroups: ${{ secrets.FIREBASE_GROUPS }}
+                  firebaseAppId: ${{ secrets.FIREBASE_APP_ID }}
+                  notes: ${{ github.event.release.body }}
+              with:
+                  appId: ${{ secrets.FIREBASE_APP_ID }}
+                  token: ${{ secrets.FIREBASE_TOKEN }}
+                  groups: ${{ secrets.FIREBASE_GROUPS }}
+                  file: android/app/build/outputs/bundle/release/app-release.aab
+                  releaseNotes: ${{ github.event.release.body }}
+
+            - name: send telegram message on push
+              uses: appleboy/telegram-action@master
+              with:
+                  to: ${{ secrets.TELEGRAM_TO }}
+                  token: ${{ secrets.TELEGRAM_TOKEN }}
+                  message: |
+                      ${{ github.actor }} created commit testes:
+                      tests message: new verson create successfully!
+
+                      Repository: ${{ github.repository }}

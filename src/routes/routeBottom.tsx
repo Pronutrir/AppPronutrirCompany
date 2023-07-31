@@ -11,27 +11,11 @@ import LupaImg from '../assets/svg/Lupa.svg';
 import UserImg from '../assets/svg/avatar.svg';
 import useTheme from '../hooks/useTheme';
 import { Text } from 'react-native';
-import { useKeyboardHeight } from '../hooks/useKeyboardHeight';
 
 const Tab = createBottomTabNavigator();
 
 const RouteBottom: React.FC = () => {
-    const keyboardHeight = useKeyboardHeight();
-
     const theme = useTheme();
-
-    /* const tabBarVisibility = ( route ) => {
-        const routeName = route.state
-        ? route.state.routes[route.state.index].name
-        : '';
-
-        if(routeName === 'AddMedicamentos'){
-            return false
-        }
-        return true;
-    }  */
-
-    console.log(keyboardHeight);
 
     return (
         <Tab.Navigator
@@ -39,7 +23,6 @@ const RouteBottom: React.FC = () => {
             tabBarOptions={{
                 activeTintColor: theme.colors.GREENPRIMARY,
                 labelPosition: 'below-icon',
-                //style: { height: RFPercentage(7) },
             }}
             screenOptions={({ route }) => ({
                 tabBarLabel: ({ color }) => {

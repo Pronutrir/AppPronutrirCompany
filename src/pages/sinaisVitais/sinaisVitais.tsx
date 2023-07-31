@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
     useWindowDimensions,
     ListRenderItem,
-    Dimensions,
 } from 'react-native';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import ConsultasSinaisVitais from './consultasSinaisVitais/consultasSinaisVitais';

@@ -14,7 +14,6 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import BtnCentered from '../../../../components/buttons/BtnCentered';
-
 interface Props {
     observacao: string;
     setObservacao(value: string): void;

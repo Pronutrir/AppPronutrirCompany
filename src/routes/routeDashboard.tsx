@@ -29,286 +29,332 @@ import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updat
 import { IEvolucaoHistory, IFilterHistoryEvolucao } from '../hooks/useEvolucao';
 import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
 import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
+import Exame from '../pages/exame/exame';
+import ExameDetalhes from '../pages/exame/exameDetalhes/exameDetalhes';
+import { IExame, IFilesExames, IparamsFilterExame } from '../hooks/useExames';
+import ExamePdf from '../pages/exame/examePdf/examePdf';
+import ExameImg from '../pages/exame/exameImg/exameImg';
+import Tratamento_quimio from '../pages/tratamento_quimio/tratamento_quimio';
 
 export type RootStackParamList = {
-    DashBoard: undefined;
-    RouteBottom: undefined;
-    DadosPessoais: undefined;
-    DadosContato: undefined;
-    Credenciais: undefined;
-    UpdatePassword: undefined;
-    AtualizarEmail: undefined;
-    AtualizarCelular: undefined;
-    RecuperarSenha: undefined;
-    CameraPerson: undefined;
-    FalarMedico: undefined;
-    LembretesNotificacoes: undefined;
-    Perfil: undefined;
-    Terapia: undefined;
-    EquipeMedica: undefined;
-    Equipe: undefined;
-    Unidades: undefined;
-    menuUnidades: undefined;
-    Busca: undefined;
-    ExameCamera: undefined;
-    InformacoesPessoais: undefined;
-    AlterarSenha: undefined;
-    SinaisVitais: undefined;
-    historySinaisVitais: undefined;
-    UpdateSinais: {
-        PessoaFisica: IPFSinaisVitais;
-        SinaisVitais: ISinaisVitais;
+  DashBoard: undefined;
+  RouteBottom: undefined;
+  DadosPessoais: undefined;
+  DadosContato: undefined;
+  Credenciais: undefined;
+  UpdatePassword: undefined;
+  AtualizarEmail: undefined;
+  AtualizarCelular: undefined;
+  RecuperarSenha: undefined;
+  CameraPerson: undefined;
+  FalarMedico: undefined;
+  LembretesNotificacoes: undefined;
+  Perfil: undefined;
+  Terapia: undefined;
+  EquipeMedica: undefined;
+  Equipe: undefined;
+  Unidades: undefined;
+  menuUnidades: undefined;
+  Busca: undefined;
+  ExameCamera: undefined;
+  InformacoesPessoais: undefined;
+  AlterarSenha: undefined;
+  SinaisVitais: undefined;
+  historySinaisVitais: undefined;
+  UpdateSinais: {
+    PessoaFisica: IPFSinaisVitais;
+    SinaisVitais: ISinaisVitais;
+    GeraSenhaOncologia: boolean;
+  };
+  UpdateSinaisVitaisEnfermagem: {
+    PessoaFisica: IPFSinaisVitais;
+    SinaisVitais: ISinaisVitais;
+  };
+  EvolucaoEnfermagem: {
+    PessoaFisica: IPFSinaisVitais;
+  };
+  SearchPessoaFisica: undefined;
+  EndSinaisVitais: {
+    cdPaciente: string;
+    Tipo: string;
+  };
+  HistoryEvolucao: {
+    Filter: IFilterHistoryEvolucao;
+  };
+  IndexEvolucao: {
+    Index: number;
+  };
+  UpdateEvolucaoEnfermagem: {
+    Evolucao: IEvolucaoHistory;
+  };
+  AcompanhateSinaisVitais: {
+    PessoaFisica: {
+      nM_PESSOA_FISICA: string;
+      dT_NASCIMENTO: string;
+      cD_PESSOA_FISICA: string;
     };
-    UpdateSinaisVitaisEnfermagem: {
-        PessoaFisica: IPFSinaisVitais;
-        SinaisVitais: ISinaisVitais;
+  };
+  addAcompanhanteSinaisVitais: {
+    PessoaFisica: {
+      nM_PESSOA_FISICA: string;
+      dT_NASCIMENTO: string;
+      cD_PESSOA_FISICA: string;
     };
-    EvolucaoEnfermagem: {
-        PessoaFisica: IPFSinaisVitais;
-    };
-    SearchPessoaFisica: undefined;
-    EndSinaisVitais: {
-        Paciente: string;
-        Tipo: string;
-    };
-    HistoryEvolucao: {
-        Filter: IFilterHistoryEvolucao;
-    };
-    IndexEvolucao: {
-        Index: number;
-    };
-    UpdateEvolucaoEnfermagem: {
-        Evolucao: IEvolucaoHistory;
-    };
-    AcompanhateSinaisVitais: {
-        PessoaFisica: {
-            nM_PESSOA_FISICA: string;
-            dT_NASCIMENTO: string;
-            cD_PESSOA_FISICA: string;
-        };
-    };
-    addAcompanhanteSinaisVitais: {
-        PessoaFisica: {
-            nM_PESSOA_FISICA: string;
-            dT_NASCIMENTO: string;
-            cD_PESSOA_FISICA: string;
-        };
-    };
+  };
+  Exame: undefined;
+  ExameDetalhes: {
+    exames: IExame;
+    filter: IparamsFilterExame;
+  };
+  ExamePdf: {
+    exameFiles: IFilesExames;
+    filter: IparamsFilterExame;
+  };
+  ExameImg: {
+    exameFiles: IFilesExames;
+    filter: IparamsFilterExame;
+  };
+  Tratamento_quimio: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const InitialStackNavigator = () => {
-    return (
-        <Stack.Navigator
-            initialRouteName={'DashBoard'}
-            headerMode={'screen'}
-            screenOptions={{
-                header: ({ navigation, scene }) => {
-                    const { options } = scene.descriptor;
-                    const Title = options.title ? options.title : null;
-                    return (
-                        <HeaderDashBoard
-                            onPress={() => navigation.goBack()}
-                            title={Title}
-                        />
-                    );
-                },
-            }}>
-            <Stack.Screen
-                name="RouteBottom"
-                component={RouteBottom}
-                options={{ headerShown: false }}
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
             />
-            <Stack.Screen
-                name="InformacoesPessoais"
-                component={InformacoesPessoais}
-                options={{ title: 'Informações Pessoais' }}
-            />
-            <Stack.Screen
-                name="DadosContato"
-                component={DadosContato}
-                options={{ title: 'Dados de Contato' }}
-            />
-            <Stack.Screen
-                name="Credenciais"
-                component={Credenciais}
-                options={{ title: 'Credenciais' }}
-            />
-            <Stack.Screen
-                name="AlterarSenha"
-                component={AlterarSenha}
-                options={{ title: 'Alterar senha' }}
-            />
-            <Stack.Screen
-                name="AtualizarEmail"
-                component={AtualizarEmail}
-                options={{ title: 'Atualizar Email' }}
-            />
-            <Stack.Screen
-                name="AtualizarCelular"
-                component={AtualizarCelular}
-                options={{ title: 'Atualizar Celular' }}
-            />
-            <Stack.Screen
-                name="RecuperarSenha"
-                component={RecuperarSenha}
-                options={{ title: 'Recuperar Senha', headerShown: false }}
-            />
-            <Stack.Screen
-                name="CameraPerson"
-                component={CameraPerson}
-                options={{ title: 'Foto perfil' }}
-            />
-            <Stack.Screen
-                name="SinaisVitais"
-                component={SinaisVitais}
-                options={{ title: 'Sinais Vitais' }}
-            />
-            <Stack.Screen
-                name="historySinaisVitais"
-                component={HistorySinaisVitais}
-                options={{ title: 'Historico Sinais Vitais' }}
-            />
-            <Stack.Screen
-                name="UpdateSinais"
-                component={UpdateSinais}
-                options={{ title: 'Sinais Vitais Triagem' }}
-            />
-            <Stack.Screen
-                name="UpdateSinaisVitaisEnfermagem"
-                component={UpdateSinaisVitaisEnfermagem}
-                options={{ title: 'Sinais Vitais Enfermagem' }}
-            />
-            <Stack.Screen
-                name="EvolucaoEnfermagem"
-                component={EvolucaoEnfermagem}
-                options={{ title: 'Evolução' }}
-            />
-            <Stack.Screen
-                name="SearchPessoaFisica"
-                component={SearchPessoaFisica}
-                options={{ title: 'Evolucão' }}
-            />
-            <Stack.Screen
-                name="EndSinaisVitais"
-                component={EndSinaisVitais}
-                options={{ title: 'Histórico sinais vitais' }}
-            />
-            <Stack.Screen
-                name="HistoryEvolucao"
-                component={HistoryEvolucao}
-                options={{ title: 'Histórico evolução' }}
-            />
-            <Stack.Screen
-                name="UpdateEvolucaoEnfermagem"
-                component={UpdateEvolucaoEnfermagem}
-                options={{ title: 'Evolução' }}
-            />
-            <Stack.Screen
-                name="IndexEvolucao"
-                initialParams={{ Index: 0 }}
-                component={IndexEvolucao}
-                options={{ title: 'Evolucão' }}
-            />
-            <Stack.Screen
-                name="AcompanhateSinaisVitais"
-                component={AcompanhateSinaisVitais}
-                options={{ title: 'Vincular acompanhante' }}
-            />
-            <Stack.Screen
-                name="addAcompanhanteSinaisVitais"
-                component={addAcompanhanteSinaisVitais}
-                options={{ title: 'Adicionar acompanhante' }}
-            />
-        </Stack.Navigator>
-    );
+          );
+        },
+      }}>
+      <Stack.Screen
+        name="RouteBottom"
+        component={RouteBottom}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InformacoesPessoais"
+        component={InformacoesPessoais}
+        options={{ title: 'Informações Pessoais' }}
+      />
+      <Stack.Screen
+        name="DadosContato"
+        component={DadosContato}
+        options={{ title: 'Dados de Contato' }}
+      />
+      <Stack.Screen
+        name="Credenciais"
+        component={Credenciais}
+        options={{ title: 'Credenciais' }}
+      />
+      <Stack.Screen
+        name="AlterarSenha"
+        component={AlterarSenha}
+        options={{ title: 'Alterar senha' }}
+      />
+      <Stack.Screen
+        name="AtualizarEmail"
+        component={AtualizarEmail}
+        options={{ title: 'Atualizar Email' }}
+      />
+      <Stack.Screen
+        name="AtualizarCelular"
+        component={AtualizarCelular}
+        options={{ title: 'Atualizar Celular' }}
+      />
+      <Stack.Screen
+        name="RecuperarSenha"
+        component={RecuperarSenha}
+        options={{ title: 'Recuperar Senha', headerShown: false }}
+      />
+      <Stack.Screen
+        name="CameraPerson"
+        component={CameraPerson}
+        options={{ title: 'Foto perfil' }}
+      />
+      <Stack.Screen
+        name="SinaisVitais"
+        component={SinaisVitais}
+        options={{ title: 'Sinais Vitais' }}
+      />
+      <Stack.Screen
+        name="historySinaisVitais"
+        component={HistorySinaisVitais}
+        options={{ title: 'Historico Sinais Vitais' }}
+      />
+      <Stack.Screen
+        name="UpdateSinais"
+        component={UpdateSinais}
+        options={{ title: 'Sinais Vitais Triagem' }}
+      />
+      <Stack.Screen
+        name="UpdateSinaisVitaisEnfermagem"
+        component={UpdateSinaisVitaisEnfermagem}
+        options={{ title: 'Sinais Vitais Enfermagem' }}
+      />
+      <Stack.Screen
+        name="EvolucaoEnfermagem"
+        component={EvolucaoEnfermagem}
+        options={{ title: 'Evolução' }}
+      />
+      <Stack.Screen
+        name="SearchPessoaFisica"
+        component={SearchPessoaFisica}
+        options={{ title: 'Evolucão' }}
+      />
+      <Stack.Screen
+        name="EndSinaisVitais"
+        component={EndSinaisVitais}
+        options={{ title: 'Histórico sinais vitais' }}
+      />
+      <Stack.Screen
+        name="HistoryEvolucao"
+        component={HistoryEvolucao}
+        options={{ title: 'Histórico evolução' }}
+      />
+      <Stack.Screen
+        name="UpdateEvolucaoEnfermagem"
+        component={UpdateEvolucaoEnfermagem}
+        options={{ title: 'Evolução' }}
+      />
+      <Stack.Screen
+        name="IndexEvolucao"
+        initialParams={{ Index: 0 }}
+        component={IndexEvolucao}
+        options={{ title: 'Evolucão' }}
+      />
+      <Stack.Screen
+        name="AcompanhateSinaisVitais"
+        component={AcompanhateSinaisVitais}
+        options={{ title: 'Vincular acompanhante' }}
+      />
+      <Stack.Screen
+        name="addAcompanhanteSinaisVitais"
+        component={addAcompanhanteSinaisVitais}
+        options={{ title: 'Adicionar acompanhante' }}
+      />
+      <Stack.Screen
+        name="Exame"
+        component={Exame}
+        options={{ title: 'Exames recebidos' }}
+      />
+      <Stack.Screen
+        name="ExameDetalhes"
+        component={ExameDetalhes}
+        options={{ title: 'Exame detalhes' }}
+      />
+      <Stack.Screen
+        name="ExamePdf"
+        component={ExamePdf}
+        options={{ title: 'ExamePdf' }}
+      />
+      <Stack.Screen
+        name="ExameImg"
+        component={ExameImg}
+        options={{ title: 'Exame' }}
+      />
+      <Stack.Screen
+        name="Tratamento_quimio"
+        component={Tratamento_quimio}
+        options={{ title: 'Tratamento' }}
+      />
+    </Stack.Navigator>
+  );
 };
 
 const DashBoardNavigator = () => {
-    return (
-        <Stack.Navigator
-            screenOptions={{
-                header: ({ navigation, scene }) => {
-                    const { options } = scene.descriptor;
-                    const Title = options.title ? options.title : null;
-                    return (
-                        <HeaderDashBoard
-                            onPress={() => navigation.goBack()}
-                            title={Title}
-                        />
-                    );
-                },
-            }}>
-            <Stack.Screen
-                name="DashBoard"
-                component={DashBoard}
-                options={{ headerShown: false }}
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
             />
-            <Stack.Screen
-                name="Perfil"
-                component={Perfil}
-                options={{ title: 'Perfil' }}
-            />
-        </Stack.Navigator>
-    );
+          );
+        },
+      }}>
+      <Stack.Screen
+        name="DashBoard"
+        component={DashBoard}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Perfil"
+        component={Perfil}
+        options={{ title: 'Perfil' }}
+      />
+    </Stack.Navigator>
+  );
 };
 
 const BuscaStackNavigator = () => {
-    return (
-        <>
-            <Stack.Navigator
-                screenOptions={{
-                    header: ({ navigation, scene }) => {
-                        const { options } = scene.descriptor;
-                        const Title = options.title ? options.title : null;
-                        return (
-                            <HeaderDashBoard
-                                onPress={() => navigation.goBack()}
-                                title={Title}
-                            />
-                        );
-                    },
-                }}>
-                <Stack.Screen
-                    name="Busca"
-                    component={Busca}
-                    options={{ title: 'Busca' }}
-                />
-            </Stack.Navigator>
-        </>
-    );
+  return (
+    <>
+      <Stack.Navigator
+        screenOptions={{
+          header: ({ navigation, scene }) => {
+            const { options } = scene.descriptor;
+            const Title = options.title ? options.title : null;
+            return (
+              <HeaderDashBoard
+                onPress={() => navigation.goBack()}
+                title={Title}
+              />
+            );
+          },
+        }}>
+        <Stack.Screen
+          name="Busca"
+          component={Busca}
+          options={{ title: 'Busca' }}
+        />
+      </Stack.Navigator>
+    </>
+  );
 };
 
 const UserStackNavigator = () => {
-    return (
-        <>
-            <Stack.Navigator
-                screenOptions={{
-                    header: ({ navigation, scene }) => {
-                        const { options } = scene.descriptor;
-                        const Title = options.title ? options.title : null;
-                        return (
-                            <HeaderDashBoard
-                                onPress={() => navigation.goBack()}
-                                title={Title}
-                            />
-                        );
-                    },
-                }}>
-                <Stack.Screen
-                    name="Perfil"
-                    component={User}
-                    options={{ title: 'Perfil' }}
-                />
-            </Stack.Navigator>
-        </>
-    );
+  return (
+    <>
+      <Stack.Navigator
+        screenOptions={{
+          header: ({ navigation, scene }) => {
+            const { options } = scene.descriptor;
+            const Title = options.title ? options.title : null;
+            return (
+              <HeaderDashBoard
+                onPress={() => navigation.goBack()}
+                title={Title}
+              />
+            );
+          },
+        }}>
+        <Stack.Screen
+          name="Perfil"
+          component={User}
+          options={{ title: 'Perfil' }}
+        />
+      </Stack.Navigator>
+    </>
+  );
 };
 
 export {
-    InitialStackNavigator,
-    BuscaStackNavigator,
-    UserStackNavigator,
-    DashBoardNavigator,
+  InitialStackNavigator,
+  BuscaStackNavigator,
+  UserStackNavigator,
+  DashBoardNavigator,
 };

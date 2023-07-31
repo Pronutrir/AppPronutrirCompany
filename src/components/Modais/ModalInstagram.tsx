@@ -30,6 +30,7 @@ import NotificationGlobalContext from '../../contexts/notificationGlobalContext'
 import useTheme from '../../hooks/useTheme';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const width = Dimensions.get('window').width;
 interface Props {
@@ -53,6 +54,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
 
         const { addNotification } = useContext(NotificationGlobalContext);
         const [imagensInsta, setImagensInsta] = useState<IInstagram[]>([]);
+        const insets = useSafeAreaInsets();
 
         const closeModal = useCallback(() => {
             setActive(false);
@@ -121,7 +123,14 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
                     animationType={animationType}
                     transparent={true}
                     visible={active}>
-                    <View style={styles.centeredView}>
+                    <View
+                        style={[
+                            styles.centeredView,
+                            {
+                                marginTop: insets.top,
+                                marginBottom: insets.bottom,
+                            },
+                        ]}>
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
                                 <View style={styles.box1}>

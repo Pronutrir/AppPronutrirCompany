@@ -27,9 +27,9 @@ const Index: React.FC = () => {
         <SafeAreaView
             style={{
                 flex: 1,
-                backgroundColor: theme.colors.BACKGROUND_2,
+                backgroundColor: 'theme.colors.BACKGROUND_2',
             }}
-            edges={['top']}>
+            edges={Platform.OS == 'android' ? ['top'] : ['top']}>
             <StatusBar
                 backgroundColor={theme.colors.BACKGROUND_2}
                 barStyle="dark-content"
