@@ -1,7 +1,20 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
-import { View, ScrollView, Text, Platform } from 'react-native';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
+import {
+  View,
+  Text,
+  Platform,
+  FlatList,
+  TouchableOpacity,
+  ListRenderItem,
+  useWindowDimensions,
+} from 'react-native';
 import createStyles from './style';
-import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
 import ModalCentralizedOptions, {
   ModalHandles as ModalHandlesOptions,
@@ -12,7 +25,6 @@ import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext, {
   SinaisVitaisPost,
 } from '../../../contexts/sinaisVitaisContext';
-import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 import {
@@ -27,9 +39,11 @@ import ModalCentralize, {
 } from '../../../components/Modais/ModalCentralize';
 import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 import CardObservacao from '../components/cardObservacao/cardlObservacao';
-import { useSenhaAtendimento } from '../../../hooks/usePainelAtendimento';
-import Checkbox from '../../../components/checkbox/checkbox';
-import { RFPercentage } from 'react-native-responsive-fontsize';
+import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
+import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAntropometria';
+import OptionMonitorizacaoGeral from '../components/cardOptionsSinaisVitais/OptionMonitorizacaoGeral';
+import OptionSinaisVitais from '../components/cardOptionsSinaisVitais/OptionSinaisVitais';
+import OptionRegistroDor from '../components/cardOptionsSinaisVitais/OptionRegistroDor';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -38,14 +52,18 @@ interface Props {
 
 const UpdateSinais: React.FC<Props> = ({
   route: {
-    params: { PessoaFisica, SinaisVitais, GeraSenhaOncologia },
+    params: { PessoaFisica, SinaisVitais, GeraAtendimento },
   },
 }: Props) => {
+  const deviceWidth = useWindowDimensions();
+
   const refmodalObservacoes = useRef<ModalHandles>(null);
 
   const refPesoMediaPaciente = useRef<number | null>(null);
 
-  const [prioridade, setPrioridade] = useState(1);
+  const refFlatlistMenu = useRef<FlatList<number>>(null);
+
+  const refFlatlistPages = useRef<FlatList<PropsPage>>(null);
 
   const styles = useThemeAwareObject(createStyles);
 
@@ -63,28 +81,25 @@ const UpdateSinais: React.FC<Props> = ({
 
   const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
-  const { mutateAsync } = useSenhaAtendimento({
-    prioridade: prioridade,
-    servico: 3,
-    unidade: 1,
-    cliente: {
-      documento: PessoaFisica?.nR_ATENDIMENTO?.toString(),
-      nome: PessoaFisica.nM_PESSOA_FISICA,
-    },
-  });
-
   const [activeModal, setActiveModal] = useState<boolean>(false);
   const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
-  const refModalOptionsAtendimento = useRef<ModalHandlesOptions>(null);
   const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
 
   const [Peso, setPeso] = useState(0);
   const [Altura, setAltura] = useState(0);
-  const [temperatura, setTemperatura] = useState(0);
   const [oxigenacao, setOxigenacao] = useState(0);
   const [observacao, setObservacao] = useState<string>('');
+  const [dor, setDor] = useState(0);
+
+  //params Antropometria
+  const [pas, setPas] = useState(0);
+  const [pad, setPad] = useState(0);
+  const [pam, setPam] = useState(0);
+  const [fc, setFc] = useState(0);
+  const [fr, setFr] = useState(0);
+  const [temperatura, setTemperatura] = useState(0);
 
   const ChangerProperty = () => {
     let x = false;
@@ -106,6 +121,13 @@ const UpdateSinais: React.FC<Props> = ({
       qT_PESO: Peso <= 0 ? null : Peso,
       qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
       qT_TEMP: temperatura <= 30 ? null : temperatura,
+      cD_ESCALA_DOR: 'FEVA',
+      qT_ESCALA_DOR: dor,
+      qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
+      qT_FREQ_RESP: fr <= 12 ? null : fr,
+      qT_PAM: pam <= 0 ? null : pam,
+      qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
+      qT_PA_SISTOLICA: pas <= 40 ? null : pas,
       dS_OBSERVACAO: observacao,
     });
     refetchSinaisVitais;
@@ -115,30 +137,32 @@ const UpdateSinais: React.FC<Props> = ({
 
   const PostSinaisVitais = async () => {
     setActiveModal(true);
-
     const dataSinaisVitais: SinaisVitaisPost = {
       cD_PACIENTE: PessoaFisica.cD_PESSOA_FISICA,
       qT_ALTURA_CM: Altura <= 0 ? null : Altura,
       qT_PESO: Peso <= 0 ? null : Peso,
       qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
       qT_TEMP: temperatura <= 30 ? null : temperatura,
+      cD_ESCALA_DOR: 'FEVA',
+      qT_ESCALA_DOR: dor ? dor : null,
+      qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
+      qT_FREQ_RESP: fr <= 0 ? null : fr,
+      qT_PAM: pam <= 0 ? null : pam,
+      qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
+      qT_PA_SISTOLICA: pas <= 40 ? null : pas,
       dS_OBSERVACAO: observacao ? observacao : null,
       cD_ESTABELECIMENTO: PessoaFisica.cD_ESTABELECIMENTO,
-      cD_MEDICO_RESP: PessoaFisica.cD_MEDICO_RESP,
+      cD_MEDICO_RESP: PessoaFisica.cD_MEDICO_RESP ?? null,
     };
 
-    if (GeraSenhaOncologia) {
-      const result = await AddSinaisVitaisAtendimento(dataSinaisVitais);
-      if (result) PessoaFisica.nR_ATENDIMENTO = result.nR_ATENDIMENTO;
+    if (GeraAtendimento) {
+      await AddSinaisVitaisAtendimento(dataSinaisVitais);
     } else {
       await AddSinaisVitais(dataSinaisVitais);
     }
     refetchSinaisVitais;
     setActiveModal(false);
     navigation.goBack();
-    /* GeraSenhaOncologia
-            ? refModalOptionsAtendimento.current?.openModal()
-            : navigation.goBack(); */
   };
 
   const MenuPopUpOptions = async (itemSelected: string) => {
@@ -188,6 +212,11 @@ const UpdateSinais: React.FC<Props> = ({
         SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
       );
       setObservacao(SinaisVitais.dS_OBSERVACAO);
+      setDor(SinaisVitais.qT_ESCALA_DOR);
+      setPad(SinaisVitais.qT_PA_DIASTOLICA);
+      setPas(SinaisVitais.qT_PA_SISTOLICA);
+      setFc(SinaisVitais.qT_FREQ_CARDIACA);
+      setFr(SinaisVitais.qT_FREQ_RESP);
       setActiveShimmer(true);
     } else {
       GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)
@@ -242,14 +271,151 @@ const UpdateSinais: React.FC<Props> = ({
     }
   }, [historicoSinaisVitais]);
 
+  const refView0 = useRef<TouchableOpacity>(null);
+  const refView1 = useRef<TouchableOpacity>(null);
+  const refView2 = useRef<TouchableOpacity>(null);
+  const refView3 = useRef<TouchableOpacity>(null);
+
+  interface PropsPage {
+    Index: number;
+    Name: string;
+    Ref: React.RefObject<TouchableOpacity>;
+  }
+
+  const [pages] = useState<PropsPage[]>([
+    {
+      Index: 0,
+      Name: 'Antropometria',
+      Ref: refView0,
+    },
+    {
+      Index: 1,
+      Name: 'Sinais vitais',
+      Ref: refView1,
+    },
+    {
+      Index: 2,
+      Name: 'Monitorização geral',
+      Ref: refView2,
+    },
+    {
+      Index: 3,
+      Name: 'Registro de dor',
+      Ref: refView3,
+    },
+  ]);
+
+  const renderItemMenu: ListRenderItem<any> = ({
+    item: { Name, Index, Ref },
+  }) => (
+    <TouchableOpacity
+      ref={Ref}
+      style={styles.btn}
+      onPress={() => selected(Index, 'scrollToIndex')}>
+      <Text style={styles.textBtn}>{Name}</Text>
+    </TouchableOpacity>
+  );
+
+  const getItemLayout = (data: any | null | undefined, index: number) => {
+    return {
+      length: deviceWidth.width,
+      offset: deviceWidth.width * index,
+      index,
+    };
+  };
+
+  type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
+
+  const scrollToIndex = (index: number) => {
+    refFlatlistPages.current?.scrollToIndex({ animated: true, index: index });
+  };
+
+  const scrollToIndexMenu = (index: number) => {
+    refFlatlistMenu.current?.scrollToIndex({
+      animated: true,
+      index: index,
+    });
+  };
+
+  const selected = useCallback((index: number, type: scroll) => {
+    if (type === 'scrollToIndex') {
+      scrollToIndex(index);
+    }
+    scrollToIndexMenu(index);
+
+    if (index === 0) {
+      refView0.current?.setNativeProps({ style: styles.btnSelected });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 1) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btnSelected });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 2) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btnSelected });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 3) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btnSelected });
+    }
+  }, []);
+
+  const renderItemSinaisVitais: ListRenderItem<PropsPage> = ({
+    item: { Name },
+  }) => {
+    switch (Name) {
+      case 'Antropometria':
+        return (
+          <OptionAntropometria
+            Altura={Altura}
+            setAltura={setAltura}
+            Peso={Peso}
+            setPeso={setPeso}
+          />
+        );
+      case 'Monitorização geral':
+        return (
+          <OptionMonitorizacaoGeral
+            Oxigigenacao={oxigenacao}
+            setOxigigenacao={setOxigenacao}
+          />
+        );
+      case 'Sinais vitais':
+        return (
+          <OptionSinaisVitais
+            Pas={pas}
+            setPas={setPas}
+            Pad={pad}
+            setPad={setPad}
+            setPam={setPam}
+            Fc={fc}
+            setFc={setFc}
+            Fr={fr}
+            setFr={setFr}
+            Temperatura={temperatura}
+            setTemperatura={setTemperatura}
+          />
+        );
+      case 'Registro de dor':
+        return <OptionRegistroDor Dor={dor} setDor={setDor} />;
+      default:
+        return <Text></Text>;
+        break;
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.MenuOptions}>
         <ModalAlertPaciente
           codPacient={
             SinaisVitais?.cD_PACIENTE
@@ -257,96 +423,57 @@ const UpdateSinais: React.FC<Props> = ({
               : PessoaFisica?.cD_PESSOA_FISICA
           }
         />
-        <View>
-          <MenuPopUp
-            btnLabels={['Histórico', 'Acompanhantes', 'Observações']}
-            onpress={item => MenuPopUpOptions(item)}
+        <MenuPopUp
+          btnLabels={['Histórico', 'Acompanhantes', 'Observações']}
+          onpress={item => MenuPopUpOptions(item)}
+        />
+      </View>
+      <View style={styles.person}>
+        <PessoaFisicaComponent
+          PessoaFisica={{
+            nM_PESSOA_FISICA: PessoaFisica?.nM_PESSOA_FISICA,
+            dT_NASCIMENTO: PessoaFisica?.dT_NASCIMENTO,
+          }}
+        />
+      </View>
+      <View style={styles.box_sinais_vitais}>
+        <View style={styles.box1}>
+          <FlatList
+            ref={refFlatlistMenu}
+            data={pages}
+            keyExtractor={item => item.Index.toString()}
+            renderItem={renderItemMenu}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
           />
         </View>
-      </View>
-      <ScrollView style={styles.box}>
-        <View style={styles.item1}>
-          <View style={styles.boxLabel}>
-            <Text style={styles.label}>Nome: </Text>
-            <Text style={styles.text}>
-              {SinaisVitais?.nM_PESSOA_FISICA
-                ? SinaisVitais?.nM_PESSOA_FISICA
-                : PessoaFisica?.nM_PESSOA_FISICA}
-            </Text>
-          </View>
-          <View style={styles.boxLabel}>
-            <Text style={styles.label}>Nascimento: </Text>
-            <Text style={styles.text}>
-              {moment(
-                SinaisVitais?.dT_NASCIMENTO
-                  ? SinaisVitais?.dT_NASCIMENTO
-                  : PessoaFisica?.dT_NASCIMENTO,
-              ).format('DD-MM-YYYY')}
-            </Text>
-          </View>
-        </View>
-        <View>
+        <View style={styles.box2}>
           {activeShimmer ? (
-            <>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Altura'}
-                  medida={'cm'}
-                  step={1}
-                  valueMin={0}
-                  valueMax={300}
-                  valueRanger={Altura}
-                  setValueRanger={value => setAltura(value)}
-                />
-              </View>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Peso'}
-                  medida={'kg'}
-                  step={0.1}
-                  valueMin={0}
-                  valueMax={200}
-                  valueRanger={Peso}
-                  setValueRanger={value => setPeso(value)}
-                />
-              </View>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Temperatura'}
-                  medida={'°C'}
-                  step={0.1}
-                  valueMin={30}
-                  valueMax={42}
-                  valueRanger={temperatura}
-                  setValueRanger={value => setTemperatura(value)}
-                />
-              </View>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Oximetria'}
-                  medida={'SpO²'}
-                  step={1}
-                  valueMin={50}
-                  valueMax={100}
-                  valueRanger={oxigenacao}
-                  setValueRanger={value => setOxigenacao(value)}
-                />
-              </View>
-              <View style={styles.item3}>
-                <BtnCentered
-                  SizeText={18}
-                  labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
-                  //onPress={() => setActiveModalOptions(true)}
-                  onPress={() => variacaoPercentualPaciente()}
-                  enabled={ChangerProperty()}
-                />
-              </View>
-            </>
+            <FlatList
+              ref={refFlatlistPages}
+              data={pages}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={renderItemSinaisVitais}
+              scrollEnabled={false}
+              horizontal={true}
+              pagingEnabled={false}
+              showsHorizontalScrollIndicator={false}
+              nestedScrollEnabled
+              scrollEventThrottle={16}
+              getItemLayout={getItemLayout}
+            />
           ) : (
-            Array(4).fill(<ShimmerPaceHolderSNMG />)
+            Array(2).fill(<ShimmerPaceHolderSNMG />)
           )}
         </View>
-      </ScrollView>
+      </View>
+      <BtnCentered
+        SizeText={18}
+        labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
+        //onPress={() => setActiveModalOptions(true)}
+        onPress={() => variacaoPercentualPaciente()}
+        enabled={ChangerProperty()}
+      />
       <Loading activeModal={activeModal} />
       <ModalCentralizedOptions
         ref={refModalOptions}
@@ -359,32 +486,6 @@ const UpdateSinais: React.FC<Props> = ({
           SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
         }
       />
-      <ModalCentralizedOptions
-        ref={refModalOptionsAtendimento}
-        message={'Gerar senha para atendimento ?'}
-        onpress={() => {
-          mutateAsync();
-          navigation.goBack();
-        }}
-        onStartShouldResponder={false}
-        onpressCancel={() => navigation.goBack()}>
-        <View
-          style={{
-            flexDirection: 'row',
-            margin: RFPercentage(3),
-          }}>
-          <Checkbox
-            isChecked={prioridade == 1}
-            onPress={() => setPrioridade(1)}
-            text="Normal"
-          />
-          <Checkbox
-            isChecked={prioridade == 2}
-            onPress={() => setPrioridade(2)}
-            text="Prioridade"
-          />
-        </View>
-      </ModalCentralizedOptions>
       <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
         <CardAlertaPesoPaciente
           historicoSinaisVitais={historicoSinaisVitais?.filter(

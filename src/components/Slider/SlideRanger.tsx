@@ -8,7 +8,6 @@ import RailSelected from './RailSelected';
 import Thumb from './Thumb';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import IncrementDecrement from '../IncrementDecrement';
-
 interface Props {
     label: string;
     medida: string;
@@ -83,18 +82,18 @@ const SlideReanger: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
     ContainerRanger: {
-        flex: 1,
-        paddingVertical: RFPercentage(1),
-        alignItems: 'stretch',
-        justifyContent: 'center',
+        paddingVertical: RFPercentage(0.5),
+        //alignItems: 'stretch',
+        //justifyContent: 'center',
+        paddingHorizontal: RFPercentage(2.5)
     },
     labelRanger: {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: RFPercentage(2),
-        paddingVertical: RFPercentage(0.5),
+        //alignItems: 'center',
+        //paddingHorizontal: RFPercentage(2),
+        //paddingVertical: RFPercentage(0.5),
     },
     RangeSlider: {
         paddingVertical: RFPercentage(1),

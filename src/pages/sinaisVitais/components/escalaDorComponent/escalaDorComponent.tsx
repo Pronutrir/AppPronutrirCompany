@@ -105,7 +105,7 @@ const EscalaDorComponent: React.FC<Props> = ({
     );
 };
 
-export default EscalaDorComponent;
+export default React.memo(EscalaDorComponent);
 
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({

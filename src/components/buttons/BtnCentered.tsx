@@ -57,7 +57,6 @@ const BtnCentered: React.FC<Props> = ({
 const createStyles = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({
         container: {
-            flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'transparent',

@@ -47,7 +47,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
           } else {
             navigation.navigate('UpdateSinais', {
               PessoaFisica: item,
-              GeraSenhaOncologia: true,
+              GeraAtendimento: true,
             });
           }
         }}

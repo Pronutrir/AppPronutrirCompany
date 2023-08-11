@@ -64,7 +64,7 @@ export type RootStackParamList = {
   UpdateSinais: {
     PessoaFisica: IPFSinaisVitais;
     SinaisVitais: ISinaisVitais;
-    GeraSenhaOncologia: boolean;
+    GeraAtendimento: boolean;
   };
   UpdateSinaisVitaisEnfermagem: {
     PessoaFisica: IPFSinaisVitais;

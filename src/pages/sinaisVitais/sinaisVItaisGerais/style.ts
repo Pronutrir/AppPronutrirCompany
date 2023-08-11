@@ -9,6 +9,7 @@ const createStyles = (theme: ThemeContextData) => {
             width: Dimensions.get('screen').width,
             paddingVertical: 10,
             backgroundColor: theme.colors.BACKGROUND_2,
+            marginBottom: 10
         },
         SearchBarStyle: {
             width: '90%',

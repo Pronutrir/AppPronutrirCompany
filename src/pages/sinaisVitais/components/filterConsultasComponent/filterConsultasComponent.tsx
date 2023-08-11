@@ -15,6 +15,7 @@ const filterConsultasComponent: React.FC<Props> = ({
     onpress,
     selectedFilter,
 }: Props) => {
+
     const ItensButton = [
         { name: 'Médico', prop: 'codMedico' },
         { name: 'Especialidade', prop: 'dataFinal' },
