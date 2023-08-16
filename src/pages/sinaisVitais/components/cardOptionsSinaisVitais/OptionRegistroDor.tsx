@@ -12,7 +12,7 @@ interface PropsRegistroDor {
 
 const OptionRegistroDor = ({ Dor, setDor }: PropsRegistroDor) => {
   
-  const [toggleSwitch, setToggleSwitch] = useState(true);
+  const [toggleSwitch, setToggleSwitch] = useState(false);
 
   return (
     <View style={styles.container}>

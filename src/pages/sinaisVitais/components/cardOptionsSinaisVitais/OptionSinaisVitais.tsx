@@ -15,8 +15,6 @@ interface PropSinaisVitais {
   setFc: React.Dispatch<React.SetStateAction<number>>;
   Fr: number;
   setFr: React.Dispatch<React.SetStateAction<number>>;
-  Temperatura: number;
-  setTemperatura: React.Dispatch<React.SetStateAction<number>>;
 }
 const OptionSinaisVitais = ({
   Pas,
@@ -28,10 +26,8 @@ const OptionSinaisVitais = ({
   setFc,
   Fr,
   setFr,
-  Temperatura,
-  setTemperatura,
 }: PropSinaisVitais) => {
-  const [toggleSwitch, setToggleSwitch] = useState(true);
+  const [toggleSwitch, setToggleSwitch] = useState(false);
 
   const pressaoArterialMedia = (): number => {
     if (Pad !== 40 && Pad !== 40) {
@@ -51,16 +47,6 @@ const OptionSinaisVitais = ({
         />
       </View>
       <ScrollView>
-        <SlideRanger
-          label={'Temperatura'}
-          medida={'°C'}
-          step={0.1}
-          valueMin={30}
-          valueMax={42}
-          valueRanger={Temperatura}
-          setValueRanger={value => setTemperatura(value)}
-          disabled={toggleSwitch}
-        />
         <SlideRanger
           label={'PAS(mmHG)'}
           medida={'mmHg'}

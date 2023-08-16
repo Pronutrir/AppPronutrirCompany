@@ -144,9 +144,9 @@ const UpdateSinais: React.FC<Props> = ({
       qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
       qT_TEMP: temperatura <= 30 ? null : temperatura,
       cD_ESCALA_DOR: 'FEVA',
-      qT_ESCALA_DOR: dor ? dor : null,
+      qT_ESCALA_DOR: dor ? dor : 0,
       qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
-      qT_FREQ_RESP: fr <= 0 ? null : fr,
+      qT_FREQ_RESP: fr <= 12 ? null : fr,
       qT_PAM: pam <= 0 ? null : pam,
       qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
       qT_PA_SISTOLICA: pas <= 40 ? null : pas,
@@ -285,7 +285,7 @@ const UpdateSinais: React.FC<Props> = ({
   const [pages] = useState<PropsPage[]>([
     {
       Index: 0,
-      Name: 'Antropometria',
+      Name: 'Geral',
       Ref: refView0,
     },
     {
@@ -295,11 +295,6 @@ const UpdateSinais: React.FC<Props> = ({
     },
     {
       Index: 2,
-      Name: 'Monitorização geral',
-      Ref: refView2,
-    },
-    {
-      Index: 3,
       Name: 'Registro de dor',
       Ref: refView3,
     },
@@ -373,18 +368,15 @@ const UpdateSinais: React.FC<Props> = ({
     item: { Name },
   }) => {
     switch (Name) {
-      case 'Antropometria':
+      case 'Geral':
         return (
           <OptionAntropometria
             Altura={Altura}
             setAltura={setAltura}
             Peso={Peso}
             setPeso={setPeso}
-          />
-        );
-      case 'Monitorização geral':
-        return (
-          <OptionMonitorizacaoGeral
+            Temperatura={temperatura}
+            setTemperatura={setTemperatura}
             Oxigigenacao={oxigenacao}
             setOxigigenacao={setOxigenacao}
           />
@@ -401,15 +393,12 @@ const UpdateSinais: React.FC<Props> = ({
             setFc={setFc}
             Fr={fr}
             setFr={setFr}
-            Temperatura={temperatura}
-            setTemperatura={setTemperatura}
           />
         );
       case 'Registro de dor':
         return <OptionRegistroDor Dor={dor} setDor={setDor} />;
       default:
         return <Text></Text>;
-        break;
     }
   };
 
@@ -463,7 +452,7 @@ const UpdateSinais: React.FC<Props> = ({
               getItemLayout={getItemLayout}
             />
           ) : (
-            Array(2).fill(<ShimmerPaceHolderSNMG />)
+            Array(4).fill(<ShimmerPaceHolderSNMG />)
           )}
         </View>
       </View>
