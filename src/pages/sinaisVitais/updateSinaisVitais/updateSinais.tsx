@@ -41,9 +41,9 @@ import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAle
 import CardObservacao from '../components/cardObservacao/cardlObservacao';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAntropometria';
-import OptionMonitorizacaoGeral from '../components/cardOptionsSinaisVitais/OptionMonitorizacaoGeral';
 import OptionSinaisVitais from '../components/cardOptionsSinaisVitais/OptionSinaisVitais';
 import OptionRegistroDor from '../components/cardOptionsSinaisVitais/OptionRegistroDor';
+import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -56,6 +56,8 @@ const UpdateSinais: React.FC<Props> = ({
   },
 }: Props) => {
   const deviceWidth = useWindowDimensions();
+
+  const keyboardHeight = useKeyboardHeight();
 
   const refmodalObservacoes = useRef<ModalHandles>(null);
 
@@ -269,12 +271,12 @@ const UpdateSinais: React.FC<Props> = ({
     if (historicoSinaisVitais) {
       mediaPesoPaciente(historicoSinaisVitais);
     }
+    selected(0, 'scrollToIndex');
   }, [historicoSinaisVitais]);
 
   const refView0 = useRef<TouchableOpacity>(null);
   const refView1 = useRef<TouchableOpacity>(null);
   const refView2 = useRef<TouchableOpacity>(null);
-  const refView3 = useRef<TouchableOpacity>(null);
 
   interface PropsPage {
     Index: number;
@@ -296,7 +298,7 @@ const UpdateSinais: React.FC<Props> = ({
     {
       Index: 2,
       Name: 'Registro de dor',
-      Ref: refView3,
+      Ref: refView2,
     },
   ]);
 
@@ -332,7 +334,7 @@ const UpdateSinais: React.FC<Props> = ({
     });
   };
 
-  const selected = useCallback((index: number, type: scroll) => {
+  const selected = useCallback((index: number, type?: scroll) => {
     if (type === 'scrollToIndex') {
       scrollToIndex(index);
     }
@@ -342,25 +344,16 @@ const UpdateSinais: React.FC<Props> = ({
       refView0.current?.setNativeProps({ style: styles.btnSelected });
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btn });
-      refView3.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 1) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btnSelected });
       refView2.current?.setNativeProps({ style: styles.btn });
-      refView3.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 2) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btnSelected });
-      refView3.current?.setNativeProps({ style: styles.btn });
-    }
-    if (index === 3) {
-      refView0.current?.setNativeProps({ style: styles.btn });
-      refView1.current?.setNativeProps({ style: styles.btn });
-      refView2.current?.setNativeProps({ style: styles.btn });
-      refView3.current?.setNativeProps({ style: styles.btnSelected });
     }
   }, []);
 
@@ -456,13 +449,15 @@ const UpdateSinais: React.FC<Props> = ({
           )}
         </View>
       </View>
-      <BtnCentered
-        SizeText={18}
-        labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
-        //onPress={() => setActiveModalOptions(true)}
-        onPress={() => variacaoPercentualPaciente()}
-        enabled={ChangerProperty()}
-      />
+      {keyboardHeight == 0 && (
+        <BtnCentered
+          SizeText={18}
+          labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
+          //onPress={() => setActiveModalOptions(true)}
+          onPress={() => variacaoPercentualPaciente()}
+          enabled={ChangerProperty()}
+        />
+      )}
       <Loading activeModal={activeModal} />
       <ModalCentralizedOptions
         ref={refModalOptions}
