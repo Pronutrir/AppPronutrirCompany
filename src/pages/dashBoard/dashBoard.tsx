@@ -7,7 +7,7 @@ import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import QuimioSvg from '../../assets/svg/quimioterapia.svg';
 import MedicoImg from '../../assets/svg/medico.svg';
 import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
-import HospitalLocationSvg from '../../assets/svg/hospitalLocation.svg';
+import AtendimentoSvg from '../../assets/svg/atendimento.svg';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnDashboardComponent from './components/btnDashboardComponent/btnDashboardComponent';
 import { useNavigation } from '@react-navigation/native';
@@ -93,12 +93,10 @@ const DashBoard: React.FC = () => {
             label={'Tratamento Quimioterapia'}
           />
           <BtnDashboardComponent
-            disabled={true}
-            onpress={() => {
-              ('');
-            }}
-            ImgSVG={HospitalLocationSvg}
-            label={'Unidades'}
+            disabled={false}
+            onpress={() => navigation.navigate('PainelSenha')}
+            ImgSVG={AtendimentoSvg}
+            label={'Painel de senhas'}
           />
           <BtnDashboardComponent
             disabled={true}

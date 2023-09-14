@@ -86,7 +86,9 @@ const useInitAtendimento = () => {
       return Api.put(
         `AtendimentoPaciente/IniciarAtendimentoQuimioterapia/${
           item.nR_SEQ_ATENDIMENTO
-        }/${stateAuth.PerfilSelected?.nM_USUARIO}/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}?${item.nR_SEQ_AGENDA ?? ''}`,
+        }/${stateAuth.PerfilSelected?.nM_USUARIO}/${
+          stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO
+        }?${item.nR_SEQ_AGENDA ?? ''}`,
       );
     },
     {

@@ -44,7 +44,6 @@ import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAnt
 import OptionSinaisVitais from '../components/cardOptionsSinaisVitais/OptionSinaisVitais';
 import OptionRegistroDor from '../components/cardOptionsSinaisVitais/OptionRegistroDor';
 import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
-
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
   route: ProfileScreenRouteProp;
@@ -70,6 +69,7 @@ const UpdateSinais: React.FC<Props> = ({
   const styles = useThemeAwareObject(createStyles);
 
   const navigation = useNavigation();
+
   const {
     AddSinaisVitais,
     GetSinaisVitais,

@@ -35,6 +35,9 @@ import { IExame, IFilesExames, IparamsFilterExame } from '../hooks/useExames';
 import ExamePdf from '../pages/exame/examePdf/examePdf';
 import ExameImg from '../pages/exame/exameImg/exameImg';
 import Tratamento_quimio from '../pages/tratamento_quimio/tratamento_quimio';
+import PainelSenha from '../pages/PainelSenha/painelSenha';
+import PainelSenhaOptions from '../pages/PainelSenha/painelSenhaOptions/painelSenhaOptions';
+import PrintBluetooth from '../pages/PrintBluetooth/PrintBluetooth';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -115,6 +118,9 @@ export type RootStackParamList = {
     filter: IparamsFilterExame;
   };
   Tratamento_quimio: undefined;
+  PainelSenha: undefined;
+  PainelSenhaOptions: undefined;
+  PrintBluetooth: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -266,6 +272,21 @@ const InitialStackNavigator = () => {
         name="Tratamento_quimio"
         component={Tratamento_quimio}
         options={{ title: 'Tratamento' }}
+      />
+      <Stack.Screen
+        name="PainelSenha"
+        component={PainelSenha}
+        options={{ title: 'Painel Senha' }}
+      />
+      <Stack.Screen
+        name="PainelSenhaOptions"
+        component={PainelSenhaOptions}
+        options={{ title: 'Opções' }}
+      />
+      <Stack.Screen
+        name="PrintBluetooth"
+        component={PrintBluetooth}
+        options={{ title: 'PrintBluetooth' }}
       />
     </Stack.Navigator>
   );
