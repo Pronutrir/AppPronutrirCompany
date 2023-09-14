@@ -7,6 +7,7 @@ import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolde
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import SinaisVitaisContext from '../../../../contexts/sinaisVitaisContext';
+import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { IAgendaQT } from '../../../../hooks/useAgendaQt';
@@ -20,6 +21,7 @@ import {
   printSenha,
 } from '../../../../hooks/usePainelSenha';
 import AuthContext from '../../../../contexts/auth';
+
 interface Props {
   dataSourceQT?: IAgendaQT[] | null | undefined;
 }
@@ -125,6 +127,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
               onpress={text => optionsMenuPopUp(text, item)}
             />
           </View>
+          <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
         </View>
       </PressableRipple>
     );
