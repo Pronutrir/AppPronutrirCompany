@@ -6,9 +6,9 @@ const api = axios.create({
   //producao
   //baseURL: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
   //teste
-  //baseURL: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
+  baseURL: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
   //ngrok
-  baseURL: 'https://f748-177-22-36-198.ngrok-free.app/api/v1/',
+  //baseURL: 'https://f748-177-22-36-198.ngrok-free.app/api/v1/',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

@@ -44,7 +44,7 @@ const ItemList = ({
         <Text style={styles({}).label}>{label || 'UNKNOWN'}</Text>
         <Text>{value}</Text>
       </View>
-      {connected && <Text style={styles({}).connected}>Terhubung</Text>}
+      {connected && <Text style={styles({}).connected}>Conectado</Text>}
       {!connected && (
         <TouchableOpacity
           onPress={onPress}

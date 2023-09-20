@@ -1,5 +1,5 @@
 import { FlatList, ListRenderItem, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
 import CardSimples from '../../components/Cards/CardSimples';
@@ -7,7 +7,6 @@ import {
   PropsFilaEsperaAtendimentos,
   useGerarSenhaPainel,
   useGetFilas,
-  printSenha,
 } from '../../hooks/usePainelSenha';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import PressableRipple from '../../components/ripple/PressableRipple';
@@ -17,15 +16,18 @@ import ModalCentralizedOptions, {
 import Loading, { LoadHandles } from '../../components/Loading/Loading';
 import AuthContext from '../../contexts/auth';
 import { useNavigation } from '@react-navigation/native';
-import { BluetoothManager } from '@brooons/react-native-bluetooth-escpos-printer';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import BtnRadius from '../../components/buttons/BtnRadius';
 import PrinterSvg from '../../assets/svg/printer.svg';
+import PrintBluetoothContext from '../../contexts/printBluetoothContext';
 
 const PainelSenha = () => {
   const {
     stateAuth: { PerfilSelected },
   } = useContext(AuthContext);
+
+  const { bleOpend, validationBluetooth, printSenha } = useContext(
+    PrintBluetoothContext,
+  );
 
   const navigation = useNavigation();
 
@@ -34,18 +36,12 @@ const PainelSenha = () => {
   const loadingRef = useRef<LoadHandles>(null);
 
   const [message, setMessage] = useState<string>('');
-  const [statusprint, setStatusPrint] = useState<boolean>(false);
   const [itemSelected, setItemSelected] =
     useState<PropsFilaEsperaAtendimentos | null>(null);
 
   const { mutateAsync } = useGerarSenhaPainel();
 
   const { data } = useGetFilas(7, 'A');
-
-  const varifyStatusPrint = async () => {
-    const status = await BluetoothManager.checkBluetoothEnabled();
-    setStatusPrint(status);
-  };
 
   const gerarSenha = async () => {
     if (itemSelected) {
@@ -57,16 +53,16 @@ const PainelSenha = () => {
           nR_SEQ_FILA_P: itemSelected.nR_SEQUENCIA,
           iE_SENHA_PRIORITARIA_P: 'N',
         });
-        console.log(result);
         await printSenha(result);
       } catch (error) {
+        console.log(error);
         loadingRef.current?.closeModal();
       }
       loadingRef.current?.closeModal();
     }
   };
 
-  const createPDF = async () => {
+  /*  const createPDF = async () => {
     const options = {
       html: '<html><h1 style="text-align:center;color:#000000;font-size: 22px">PDF TEST</h1><html>',
       fileName: 'test',
@@ -77,17 +73,16 @@ const PainelSenha = () => {
     const file = await RNHTMLtoPDF.convert(options);
     console.log(file);
     return file.base64;
-  };
+  }; */
 
-  const onClickCard = (item: PropsFilaEsperaAtendimentos) => {
-    setItemSelected(item);
-    refModalOptionsSenhaPainel.current?.openModal();
-    setMessage(`Deseja gerar senha para ${item.dS_CURTO.toLowerCase()} ?`);
+  const onClickCard = async (item: PropsFilaEsperaAtendimentos) => {
+    const validation = await validationBluetooth();
+    if (validation) {
+      setItemSelected(item);
+      refModalOptionsSenhaPainel.current?.openModal();
+      setMessage(`Deseja gerar senha para ${item.dS_CURTO.toLowerCase()} ?`);
+    }
   };
-
-  useEffect(() => {
-    varifyStatusPrint();
-  }, []);
 
   const renderItem: ListRenderItem<PropsFilaEsperaAtendimentos> = ({
     item,
@@ -104,16 +99,23 @@ const PainelSenha = () => {
 
   return (
     <View style={styles.container}>
-      <BtnRadius
-        onPress={() => navigation.navigate('PrintBluetooth')}
-        containerStyles={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          backgroundColor: statusprint ? 'green' : 'red',
-        }}
-        ImageSvg={PrinterSvg}
-      />
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'center',
+        }}>
+        <BtnRadius
+          onPress={() => navigation.navigate('PrintBluetooth')}
+          containerStyles={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            backgroundColor: bleOpend ? 'green' : 'red',
+          }}
+          ImageSvg={PrinterSvg}
+        />
+      </View>
       <FlatList
         contentContainerStyle={styles.contentContainer}
         data={data?.filter(

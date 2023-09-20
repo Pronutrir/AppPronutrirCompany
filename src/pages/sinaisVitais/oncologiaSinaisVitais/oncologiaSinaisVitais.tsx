@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { View } from 'react-native';
 import CardConsultasQTComponent from '../components/cardConsultasQTComponent/cardConsultasQTComponent';
 import createStyles from './style';
@@ -157,6 +157,8 @@ const OncologiaSinaisVitais = () => {
     });
   }, [agendasQt]);
 
+  console.log('OncologiaSinaisVitais');
+
   return (
     <View style={styles.container}>
       <View
@@ -204,4 +206,4 @@ const OncologiaSinaisVitais = () => {
   );
 };
 
-export default OncologiaSinaisVitais;
+export default memo(OncologiaSinaisVitais);

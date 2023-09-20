@@ -5,6 +5,7 @@ import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import { BluetoothEscposPrinter } from '@brooons/react-native-bluetooth-escpos-printer';
 import LogoBase64 from '../assets/imagens/logaBase64';
 import moment from 'moment';
+import PrintBluetoothContext from '../contexts/printBluetoothContext';
 
 export interface PropsGerarSenha {
   nR_SEQ_FILA_P: number;
@@ -45,6 +46,7 @@ const useGerarSenhaPainel = () => {
           props,
         )
       ).data;
+      console.log(result);
       return result;
     },
     {
@@ -86,62 +88,4 @@ const useGetFilas = (CD_ESTABELECIMENTO: number, IE_SITUACAO: string) => {
   );
 };
 
-const printSenha = async (item: PropsGerarSenhaResponse) => {
-  const { addAlert } = useContext(NotificationGlobalContext);
-  try {
-    await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-    await BluetoothEscposPrinter.printPic(LogoBase64, {
-      width: 150,
-      left: 210,
-    });
-    await BluetoothEscposPrinter.printerAlign(
-      BluetoothEscposPrinter.ALIGN.CENTER,
-    );
-    await BluetoothEscposPrinter.printText('BEM VINDO A PRONUTRIR\r\n', {
-      widthtimes: 1,
-      fonttype: 2,
-    });
-    await BluetoothEscposPrinter.printText('\r\n', {});
-    await BluetoothEscposPrinter.printText(
-      'PACIENTE COM PRIORIDADE NORMAL\r\n\r\n',
-      {
-        widthtimes: 1,
-        fonttype: 1,
-      },
-    );
-    await BluetoothEscposPrinter.printText(
-      `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
-      {
-        encoding: 'GBK',
-        codepage: 0,
-        widthtimes: 1,
-        heigthtimes: 1,
-        fonttype: 8,
-      },
-    );
-    await BluetoothEscposPrinter.printText(`${item?.dS_FILA}\r\n\r\n`, {
-      encoding: 'CP860',
-      codepage: 3,
-      fonttype: 3,
-      widthtimes: 1,
-      heigthtimes: 1,
-    });
-    await BluetoothEscposPrinter.printText(
-      moment(item.dT_GERACAO_SENHA).format('DD/MM/YYYY - H:mm'),
-      {
-        fonttype: 3,
-        widthtimes: 1,
-        heigthtimes: 1,
-      },
-    );
-    await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-  } catch (error) {
-    addAlert({
-      message:
-        'Não foi possivel imprimir a senha verifique a conexão com a impressora!',
-      status: 'sucess',
-    });
-  }
-};
-
-export { useGerarSenhaPainel, useGetFilas, printSenha };
+export { useGerarSenhaPainel, useGetFilas };

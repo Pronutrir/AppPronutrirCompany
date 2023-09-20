@@ -1,4 +1,4 @@
-import React, { memo, useContext, useRef } from 'react';
+import React, { memo, useCallback, useContext, useRef } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import HistorySvg from '../../../../assets/svg/historico.svg';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -16,11 +16,9 @@ import PressableRipple from '../../../../components/ripple/PressableRipple';
 import MenuPopUp, {
   ModalHandlesMenu,
 } from '../../../../components/menuPopUp/menuPopUp';
-import {
-  useGerarSenhaPainel,
-  printSenha,
-} from '../../../../hooks/usePainelSenha';
+import { useGerarSenhaPainel } from '../../../../hooks/usePainelSenha';
 import AuthContext from '../../../../contexts/auth';
+import PrintBluetoothContext from '../../../../contexts/printBluetoothContext';
 
 interface Props {
   dataSourceQT?: IAgendaQT[] | null | undefined;
@@ -37,6 +35,9 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
   const navigation = useNavigation();
 
+  const { validationBluetooth, printSenha, setSelectDevice } = useContext(
+    PrintBluetoothContext,
+  );
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
   const { stateAuth } = useContext(AuthContext);
 
@@ -58,6 +59,12 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
   };
 
   const optionsMenuPopUp = async (item: string, value: IAgendaQT) => {
+    const result = await validationBluetooth();
+
+    if (!result) {
+      return;
+    }
+
     switch (item) {
       case 'Gerar Senha':
         gerarSenha(value);
@@ -87,7 +94,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
   const Item = ({ item, index }: { item: IAgendaQT; index: number }) => {
     const MenuPopUpRef = useRef<ModalHandlesMenu>(null);
-
+    console.log('CardConsultasQTComponent =>> Item');
     return (
       <PressableRipple
         key={index.toString()}
@@ -133,10 +140,13 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     );
   };
 
-  const renderItem = ({ item, index }: { item: IAgendaQT; index: number }) => (
-    <CardSimples styleCardContainer={styles.cardStyle}>
-      <Item key={index.toString()} item={item} index={index} />
-    </CardSimples>
+  const renderItem = useCallback(
+    ({ item, index }: { item: IAgendaQT; index: number }) => (
+      <CardSimples styleCardContainer={styles.cardStyle}>
+        <Item key={index.toString()} item={item} index={index} />
+      </CardSimples>
+    ),
+    [dataSourceQT],
   );
 
   const renderItemEmpty = () => (
@@ -144,6 +154,8 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
       <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
     </CardSimples>
   );
+
+  console.log('CardConsultasQTComponent');
 
   return (
     <View style={styles.container}>

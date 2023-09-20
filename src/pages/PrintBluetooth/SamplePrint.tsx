@@ -1,24 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { BluetoothEscposPrinter } from '@brooons/react-native-bluetooth-escpos-printer';
-//import { hsdLogo } from './dummy-logo';
+import PrintBluetoothContext from '../../contexts/printBluetoothContext';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 const SamplePrint = () => {
+  const { connect, selectDevice, unPair } = useContext(PrintBluetoothContext);
+
   return (
     <View>
-      <Text>Sample Print Instruction</Text>
+      <Text style={{ marginVertical: RFPercentage(3), textAlign: 'center' }}>
+        Click para testar os exemplos de impressões!
+      </Text>
       <View style={styles.btn}>
         <Button
           onPress={async () => {
-            await BluetoothEscposPrinter.printBarCode(
-              '123456789012',
-              BluetoothEscposPrinter.BARCODETYPE.JAN13,
-              3,
-              120,
-              0,
-              2,
-            );
-            await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+            if (selectDevice) {
+              await connect(selectDevice);
+              await BluetoothEscposPrinter.printBarCode(
+                '123456789012',
+                BluetoothEscposPrinter.BARCODETYPE.JAN13,
+                3,
+                120,
+                0,
+                2,
+              );
+              await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+              await unPair(selectDevice);
+            }
           }}
           title="Print BarCode"
         />

@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from './contexts/themeContext';
 import CodePush from 'react-native-code-push';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { PrintBluetoothProvider } from './contexts/printBluetoothContext';
 
 //import messaging from '@react-native-firebase/messaging';
 //import OneSignal from 'react-native-onesignal';
@@ -18,25 +19,25 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 const queryClient = new QueryClient();
 
 const CodePushOptions = {
-    checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-    mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
-    updateDialog: {
-        appendReleaseDescription: true,
-        title: 'Uma nova atualização está disponível!',
-    },
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+  updateDialog: {
+    appendReleaseDescription: true,
+    title: 'Uma nova atualização está disponível!',
+  },
 };
 
 const Index: React.FC = () => {
-    /*  async function registerAppWithFCM() {
+  /*  async function registerAppWithFCM() {
          await messaging().registerDeviceForRemoteMessages();
      } */
 
-    // Register background handler
-    /*  messaging().setBackgroundMessageHandler(async remoteMessage => {
+  // Register background handler
+  /*  messaging().setBackgroundMessageHandler(async remoteMessage => {
          console.log('Message handled in the background!', remoteMessage);
      }); */
 
-    /* useEffect(() => {
+  /* useEffect(() => {
         registerAppWithFCM();
         const unsubscribe = messaging().onMessage(async remoteMessage => {
             Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -45,32 +46,32 @@ const Index: React.FC = () => {
         return unsubscribe;
     }, []) */
 
-    useEffect(() => {
-        // @ts-expect-error: Unreachable code error
-        Text.defaultProps = Text.defaultProps || {};
-        // Ignore dynamic type scaling on iOS
-        // @ts-expect-error: Unreachable code error
-        Text.defaultProps.allowFontScaling = false;
+  useEffect(() => {
+    // @ts-expect-error: Unreachable code error
+    Text.defaultProps = Text.defaultProps || {};
+    // Ignore dynamic type scaling on iOS
+    // @ts-expect-error: Unreachable code error
+    Text.defaultProps.allowFontScaling = false;
 
-        //OneSignal Init Code
-        /* OneSignal.setLogLevel(6, 0);
+    //OneSignal Init Code
+    /* OneSignal.setLogLevel(6, 0);
         OneSignal.setAppId('2c990bbc-f7ab-404f-9b95-ef981885ff18');
         OneSignal.setLogLevel(6, 0);
         OneSignal.setRequiresUserPrivacyConsent(false); */
-        //END OneSignal Init Code
+    //END OneSignal Init Code
 
-        /* OneSignal.setRequiresUserPrivacyConsent(false);
+    /* OneSignal.setRequiresUserPrivacyConsent(false);
         OneSignal.getDeviceState().then((response) => {
             console.log(response);
         }); */
 
-        //Prompt for push on iOS
-        /* OneSignal.promptForPushNotificationsWithUserResponse((response) => {
+    //Prompt for push on iOS
+    /* OneSignal.promptForPushNotificationsWithUserResponse((response) => {
             console.log('Prompt response:', response);
         }); */
 
-        //Method for handling notifications received while app in foreground
-        /* OneSignal.setNotificationWillShowInForegroundHandler(
+    //Method for handling notifications received while app in foreground
+    /* OneSignal.setNotificationWillShowInForegroundHandler(
             (notificationReceivedEvent) => {
                 console.log(
                     'OneSignal: notification will show in foreground:',
@@ -85,29 +86,31 @@ const Index: React.FC = () => {
             },
         ); */
 
-        //Method for handling notifications opened
-        /*  OneSignal.setNotificationOpenedHandler((notification) => {
+    //Method for handling notifications opened
+    /*  OneSignal.setNotificationOpenedHandler((notification) => {
             console.log('OneSignal: notification opened:', notification);
         }); */
-    }, []);
+  }, []);
 
-    return (
-        <SafeAreaProvider>
-            <NavigationContainer>
-                {/* contexto disponível para toda aplicação */}
-                <ThemeProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <NotificationGlobalProvider>
-                            <AuthProvider>
-                                <Routes />
-                                <NotificationCentralized />
-                                <NotificationAlert />
-                            </AuthProvider>
-                        </NotificationGlobalProvider>
-                    </QueryClientProvider>
-                </ThemeProvider>
-            </NavigationContainer>
-        </SafeAreaProvider>
-    );
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        {/* contexto disponível para toda aplicação */}
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <NotificationGlobalProvider>
+              <AuthProvider>
+                <PrintBluetoothProvider>
+                  <Routes />
+                </PrintBluetoothProvider>
+                <NotificationCentralized />
+                <NotificationAlert />
+              </AuthProvider>
+            </NotificationGlobalProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
 };
 export default CodePush(CodePushOptions)(Index);
