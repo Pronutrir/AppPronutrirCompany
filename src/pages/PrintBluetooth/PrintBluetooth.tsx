@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, memo } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -45,7 +45,7 @@ const PrintBluetooth = (): JSX.Element => {
     AppState.addEventListener('focus', onAppStateChange);
   }, []);
 
-  console.log(selectDevice);
+  console.log('PrintBluetooth', selectDevice);
 
   useEffect(() => {
     if (!selectDevice) {
@@ -108,4 +108,4 @@ const PrintBluetooth = (): JSX.Element => {
   );
 };
 
-export default PrintBluetooth;
+export default memo(PrintBluetooth);

@@ -13,13 +13,7 @@ import { ThemeContextData } from '../../../../contexts/themeContext';
 import { IAgendaQT } from '../../../../hooks/useAgendaQt';
 import Loading, { LoadHandles } from '../../../../components/Loading/Loading';
 import PressableRipple from '../../../../components/ripple/PressableRipple';
-import MenuPopUp, {
-  ModalHandlesMenu,
-} from '../../../../components/menuPopUp/menuPopUp';
-import { useGerarSenhaPainel } from '../../../../hooks/usePainelSenha';
-import AuthContext from '../../../../contexts/auth';
-import PrintBluetoothContext from '../../../../contexts/printBluetoothContext';
-
+import { ModalHandlesMenu } from '../../../../components/menuPopUp/menuPopUp';
 interface Props {
   dataSourceQT?: IAgendaQT[] | null | undefined;
 }
@@ -34,50 +28,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
   const loadingRef = useRef<LoadHandles>(null);
 
   const navigation = useNavigation();
-
-  const { validationBluetooth, printSenha, setSelectDevice } = useContext(
-    PrintBluetoothContext,
-  );
-  const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
-  const { stateAuth } = useContext(AuthContext);
-
-  const gerarSenha = async (value: IAgendaQT) => {
-    try {
-      loadingRef.current?.openModal();
-      const result = await mutateAsyncGerarSenha({
-        cD_ESTABELECIMENTO_P: value.cD_ESTABELECIMENTO,
-        cD_PESSOA_FISICA_P: value.cD_PESSOA_FISICA,
-        iE_SENHA_PRIORITARIA_P: 'N',
-        nR_SEQ_FILA_P: 14,
-        nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
-      });
-      await printSenha(result);
-      loadingRef.current?.closeModal();
-    } catch (error) {
-      loadingRef.current?.closeModal();
-    }
-  };
-
-  const optionsMenuPopUp = async (item: string, value: IAgendaQT) => {
-    const result = await validationBluetooth();
-
-    if (!result) {
-      return;
-    }
-
-    switch (item) {
-      case 'Gerar Senha':
-        gerarSenha(value);
-        break;
-      case 'Reimprimir Senha':
-        break;
-      case 'Sinais Vitais':
-        redirect(value);
-        break;
-      default:
-        break;
-    }
-  };
 
   const redirect = (item: IAgendaQT) => {
     if (autorizeEnfermagem) {
@@ -94,7 +44,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
   const Item = ({ item, index }: { item: IAgendaQT; index: number }) => {
     const MenuPopUpRef = useRef<ModalHandlesMenu>(null);
-    console.log('CardConsultasQTComponent =>> Item');
     return (
       <PressableRipple
         key={index.toString()}
@@ -126,14 +75,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
               </Text>
             </View>
           </View>
-          <View>
-            <MenuPopUp
-              btnLabels={['Gerar Senha', 'Reimprimir Senha', 'Sinais Vitais']}
-              ref={MenuPopUpRef}
-              btnVisible={false}
-              onpress={text => optionsMenuPopUp(text, item)}
-            />
-          </View>
           <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
         </View>
       </PressableRipple>
@@ -142,7 +83,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: IAgendaQT; index: number }) => (
-      <CardSimples styleCardContainer={styles.cardStyle}>
+      <CardSimples key={index.toString()} styleCardContainer={styles.cardStyle}>
         <Item key={index.toString()} item={item} index={index} />
       </CardSimples>
     ),
@@ -154,8 +95,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
       <Text style={styles.text}>Nenhum sinal vital encontrado</Text>
     </CardSimples>
   );
-
-  console.log('CardConsultasQTComponent');
 
   return (
     <View style={styles.container}>

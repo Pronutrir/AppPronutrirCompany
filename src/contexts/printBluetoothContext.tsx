@@ -2,17 +2,19 @@ import {
   BluetoothEscposPrinter,
   BluetoothManager,
 } from '@brooons/react-native-bluetooth-escpos-printer';
-import React, { createContext, useCallback, useEffect, useState } from 'react';
-import {
-  DeviceEventEmitter,
-  NativeEventEmitter,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { PermissionsAndroid } from 'react-native';
 import { getImpressora, saveImpressora } from '../utils';
 import { PropsGerarSenhaResponse } from '../hooks/usePainelSenha';
 import LogoBase64 from '../assets/imagens/logaBase64';
 import moment from 'moment';
+import NotificationGlobalContext from './notificationGlobalContext';
 
 interface AuthContextData {
   loading: boolean;
@@ -31,6 +33,7 @@ interface AuthContextData {
   validationImpress: () => Promise<boolean>;
   printSenha: (item: PropsGerarSenhaResponse) => Promise<void>;
   saveDevice: (device: IDevices) => Promise<void>;
+  teste: () => Promise<void>;
 }
 
 export interface IDevices {
@@ -42,37 +45,15 @@ export interface IDevices {
 const PrintBluetoothContext = createContext({} as AuthContextData);
 
 export const PrintBluetoothProvider: React.FC = ({ children }) => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+
   const [loading, setLoading] = useState(true);
   const [pairedDevices, setPairedDevices] = useState<IDevices[]>([]);
-  const [foundDs, setFoundDs] = useState<any[]>([]);
+  const [foundDs, setFoundDs] = useState<IDevices[]>([]);
   const [bleOpend, setBleOpend] = useState(false);
   const [name, setName] = useState('');
   const [boundAddress, setBoundAddress] = useState<string>('');
   const [selectDevice, setSelectDevice] = useState<IDevices>();
-
-  const deviceAlreadPaired = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (rsp: any) => {
-      let ds = null;
-      if (typeof rsp.devices == 'object') {
-        ds = rsp.devices;
-      } else {
-        try {
-          ds = JSON.parse(rsp.devices);
-        } catch (e) {
-          ('');
-        }
-      }
-      if (ds && ds.length) {
-        let pared = pairedDevices;
-        if (pared.length < 1) {
-          pared = pared.concat(ds || []);
-        }
-        setPairedDevices(pared);
-      }
-    },
-    [pairedDevices],
-  );
 
   const connect = async (row: IDevices) => {
     setLoading(true);
@@ -84,6 +65,10 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
       },
       error => {
         console.log('connect =>', error);
+        addAlert({
+          status: 'error',
+          message: 'Não foi possivel conectar as dispositivo',
+        });
         setLoading(false);
       },
     );
@@ -99,10 +84,9 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
       paired: [];
     } = JSON.parse(await BluetoothManager.scanDevices());
 
-    return {
-      paired,
-      found: found.filter(device => Boolean(device.name)),
-    };
+    setPairedDevices(paired);
+    setFoundDs(found.filter(device => Boolean(device.name)));
+    setLoading(false);
   }, [foundDs]);
 
   const scanBluetoothDevice = async () => {
@@ -110,7 +94,7 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
       setLoading(true);
       const validation = await validationBluetooth();
       if (validation) {
-        await PermissionsAndroid.requestMultiple([
+        const result = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -121,10 +105,13 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
           ) {
             scanDevices();
             setLoading(false);
+            return true;
           } else {
             setLoading(false);
+            return false;
           }
         });
+        result && (await scanDevices());
       } else {
         setLoading(false);
       }
@@ -133,38 +120,28 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
     }
   };
 
-  const deviceFoundEvent = useCallback(
-    (rsp: any) => {
-      let r: any = null;
-      try {
-        if (typeof rsp.device == 'object') {
-          r = rsp.device;
-        } else {
-          r = JSON.parse(rsp.device);
-        }
-      } catch (e) {
-        //alert(e.message);
-        //ignore
+  const deviceAlreadPaired = useCallback(
+    (rsp: IDevices[]) => {
+      console.log(rsp);
+      if (rsp && rsp.length) {
+        setPairedDevices(rsp);
       }
+    },
+    [pairedDevices],
+  );
 
-      if (r) {
-        const found = foundDs || [];
-        if (found.findIndex) {
-          const duplicated = found.findIndex(function (x: any) {
-            return x.address == r.address;
-          });
-          //CHECK DEPLICATED HERE...
-          if (duplicated == -1) {
-            found.push(r);
-            setFoundDs(found);
-          }
-        }
+  const deviceFoundEvent = useCallback(
+    (rsp: IDevices[]) => {
+      console.log(rsp);
+
+      if (rsp && rsp.length) {
+        setFoundDs(rsp);
       }
     },
     [foundDs],
   );
 
-  const blueTooth = async () => {
+  /*   const blueTooth = async () => {
     try {
       const permissions = {
         title: 'FirePrint pede permissão para acessar o bluetooth',
@@ -185,7 +162,7 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
           permissions,
         );
         if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
-          scanDevices();
+          //scanDevices();
         }
       } else {
         // ignore akses ditolak
@@ -193,15 +170,20 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }; */
 
-  const scan = useCallback(() => {
-    try {
-      blueTooth();
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [scanDevices]);
+  /*   const scan = useCallback(
+    () => {
+      try {
+        blueTooth();
+      } catch (err) {
+        console.warn(err);
+      }
+    },
+    [
+      scanDevices
+    ],
+  ); */
 
   const unPair = async (row: IDevices) => {
     setTimeout(() => {
@@ -257,97 +239,75 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
           err;
         },
       );
-
-      if (Platform.OS === 'ios') {
-        const bluetoothManagerEmitter = new NativeEventEmitter();
-        bluetoothManagerEmitter.addListener(
-          BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED.toString(),
-          rsp => {
-            deviceAlreadPaired(rsp);
-          },
-        );
-        bluetoothManagerEmitter.addListener(
-          BluetoothManager.EVENT_DEVICE_FOUND.toString(),
-          rsp => {
-            deviceFoundEvent(rsp);
-          },
-        );
-      } else if (Platform.OS === 'android') {
-        DeviceEventEmitter.addListener(
-          BluetoothManager.EVENT_DEVICE_ALREADY_PAIRED.toString(),
-          rsp => {
-            deviceAlreadPaired(rsp);
-          },
-        );
-        DeviceEventEmitter.addListener(
-          BluetoothManager.EVENT_DEVICE_FOUND.toString(),
-          rsp => {
-            deviceFoundEvent(rsp);
-          },
-        );
-      }
     } catch (error) {
       console.log('BluetoothManagerCheck', error);
     }
   };
 
   const printSenha = async (item: PropsGerarSenhaResponse) => {
-    const result = await validationImpress();
+    try {
+      const result = await validationImpress();
 
-    if (!result) {
-      return;
-    }
+      if (!result) {
+        return;
+      }
 
-    if (selectDevice) {
-      console.log('usePrintSenha', selectDevice);
-      await connect(selectDevice);
+      if (selectDevice) {
+        console.log('usePrintSenha', selectDevice);
+        await connect(selectDevice);
 
-      await BluetoothEscposPrinter.printPic(LogoBase64, {
-        width: 150,
-        left: 210,
-      });
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      );
-      await BluetoothEscposPrinter.printText('BEM VINDO A PRONUTRIR\r\n', {
-        widthtimes: 1,
-        fonttype: 2,
-      });
-      await BluetoothEscposPrinter.printText('\r\n', {});
-      await BluetoothEscposPrinter.printText(
-        'PACIENTE COM PRIORIDADE NORMAL\r\n\r\n',
-        {
+        await BluetoothEscposPrinter.printPic(LogoBase64, {
+          width: 150,
+          left: 210,
+        });
+        await BluetoothEscposPrinter.printerAlign(
+          BluetoothEscposPrinter.ALIGN.CENTER,
+        );
+        await BluetoothEscposPrinter.printText('BEM VINDO A PRONUTRIR\r\n', {
           widthtimes: 1,
-          fonttype: 1,
-        },
-      );
-      await BluetoothEscposPrinter.printText(
-        `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
-        {
-          encoding: 'GBK',
-          codepage: 0,
-          widthtimes: 1,
-          heigthtimes: 1,
-          fonttype: 8,
-        },
-      );
-      await BluetoothEscposPrinter.printText(`${item?.dS_FILA}\r\n\r\n`, {
-        encoding: 'CP860',
-        codepage: 3,
-        fonttype: 3,
-        widthtimes: 1,
-        heigthtimes: 1,
-      });
-      await BluetoothEscposPrinter.printText(
-        moment(item.dT_GERACAO_SENHA).format('DD/MM/YYYY - H:mm'),
-        {
+          fonttype: 2,
+        });
+        await BluetoothEscposPrinter.printText('\r\n', {});
+        await BluetoothEscposPrinter.printText(
+          'PACIENTE COM PRIORIDADE NORMAL\r\n\r\n',
+          {
+            widthtimes: 1,
+            fonttype: 1,
+          },
+        );
+        await BluetoothEscposPrinter.printText(
+          `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
+          {
+            encoding: 'GBK',
+            codepage: 0,
+            widthtimes: 1,
+            heigthtimes: 1,
+            fonttype: 8,
+          },
+        );
+        await BluetoothEscposPrinter.printText(`${item?.dS_FILA}\r\n\r\n`, {
+          encoding: 'CP860',
+          codepage: 3,
           fonttype: 3,
           widthtimes: 1,
           heigthtimes: 1,
-        },
-      );
-      await BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n', {});
-      await unPair(selectDevice);
+        });
+        await BluetoothEscposPrinter.printText(
+          moment(item.dT_GERACAO_SENHA).format('DD/MM/YYYY - H:mm'),
+          {
+            fonttype: 3,
+            widthtimes: 1,
+            heigthtimes: 1,
+          },
+        );
+        await BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n', {});
+        await unPair(selectDevice);
+      }
+    } catch (error) {
+      addAlert({
+        status: 'error',
+        message: 'Não foi possivel conectar as dispositivo',
+      });
     }
   };
 
@@ -356,8 +316,22 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
     await saveImpressora(device);
   };
 
+  const teste = async () => {
+    BluetoothManager.scanDevices().then(
+      s => {
+        const ss = JSON.parse(s); //JSON string
+        deviceAlreadPaired(ss.paired);
+        deviceFoundEvent(ss.found);
+      },
+      er => {
+        console.log(er);
+      },
+    );
+  };
+
   useEffect(() => {
     BluetoothManagerCheck();
+    scanBluetoothDevice();
     getImpressora().then(item => {
       setSelectDevice(item);
       console.log('useEffect', item);
@@ -383,6 +357,7 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
         validationImpress,
         printSenha,
         saveDevice,
+        teste,
       }}>
       {children}
     </PrintBluetoothContext.Provider>

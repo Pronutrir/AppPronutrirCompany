@@ -19,7 +19,7 @@ import BtnCentered from '../../../components/buttons/BtnCentered';
 import ModalCentralizedOptions, {
   ModalHandles as ModalHandlesOptions,
 } from '../../../components/Modais/ModalCentralizedOptions';
-import Loading from '../../../components/Loading/Loading';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext, {
@@ -44,6 +44,9 @@ import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAnt
 import OptionSinaisVitais from '../components/cardOptionsSinaisVitais/OptionSinaisVitais';
 import OptionRegistroDor from '../components/cardOptionsSinaisVitais/OptionRegistroDor';
 import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
+import PrintBluetoothContext from '../../../contexts/printBluetoothContext';
+import { useGerarSenhaPainel } from '../../../hooks/usePainelSenha';
+import AuthContext from '../../../contexts/auth';
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
   route: ProfileScreenRouteProp;
@@ -69,6 +72,10 @@ const UpdateSinais: React.FC<Props> = ({
   const styles = useThemeAwareObject(createStyles);
 
   const navigation = useNavigation();
+  const { stateAuth } = useContext(AuthContext);
+
+  const { printSenha } = useContext(PrintBluetoothContext);
+  const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
 
   const {
     AddSinaisVitais,
@@ -83,7 +90,7 @@ const UpdateSinais: React.FC<Props> = ({
 
   const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
-  const [activeModal, setActiveModal] = useState<boolean>(false);
+  const loadingRef = useRef<LoadHandles>(null);
   const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
@@ -115,7 +122,7 @@ const UpdateSinais: React.FC<Props> = ({
   };
 
   const SinaisVitaisUpdate = async () => {
-    setActiveModal(true);
+    loadingRef.current?.openModal();
     await UpdateSinaisVitais({
       cD_PACIENTE: SinaisVitais.cD_PACIENTE,
       nR_SEQUENCIA: SinaisVitais.nR_SEQUENCIA,
@@ -133,12 +140,12 @@ const UpdateSinais: React.FC<Props> = ({
       dS_OBSERVACAO: observacao,
     });
     refetchSinaisVitais;
-    setActiveModal(false);
+    loadingRef.current?.closeModal();
     navigation.goBack();
   };
 
   const PostSinaisVitais = async () => {
-    setActiveModal(true);
+    loadingRef.current?.openModal();
     const dataSinaisVitais: SinaisVitaisPost = {
       cD_PACIENTE: PessoaFisica.cD_PESSOA_FISICA,
       qT_ALTURA_CM: Altura <= 0 ? null : Altura,
@@ -163,12 +170,33 @@ const UpdateSinais: React.FC<Props> = ({
       await AddSinaisVitais(dataSinaisVitais);
     }
     refetchSinaisVitais;
-    setActiveModal(false);
+    loadingRef.current?.closeModal();
     navigation.goBack();
+  };
+
+  const gerarSenha = async () => {
+    try {
+      loadingRef.current?.openModal();
+      const result = await mutateAsyncGerarSenha({
+        cD_ESTABELECIMENTO_P: PessoaFisica.cD_ESTABELECIMENTO,
+        cD_PESSOA_FISICA_P: PessoaFisica.cD_PESSOA_FISICA,
+        iE_SENHA_PRIORITARIA_P: 'N',
+        nR_SEQ_FILA_P: 14,
+        nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
+      });
+      console.log(result);
+      await printSenha(result);
+      loadingRef.current?.closeModal();
+    } catch (error) {
+      loadingRef.current?.closeModal();
+    }
   };
 
   const MenuPopUpOptions = async (itemSelected: string) => {
     switch (itemSelected) {
+      case 'Gerar senha':
+        await gerarSenha();
+        break;
       case 'Histórico':
         navigation.navigate('EndSinaisVitais', {
           cdPaciente: SinaisVitais?.cD_PACIENTE
@@ -406,7 +434,12 @@ const UpdateSinais: React.FC<Props> = ({
           }
         />
         <MenuPopUp
-          btnLabels={['Histórico', 'Acompanhantes', 'Observações']}
+          btnLabels={[
+            'Gerar senha',
+            'Histórico',
+            'Acompanhantes',
+            'Observações',
+          ]}
           onpress={item => MenuPopUpOptions(item)}
         />
       </View>
@@ -458,7 +491,7 @@ const UpdateSinais: React.FC<Props> = ({
           enabled={ChangerProperty()}
         />
       )}
-      <Loading activeModal={activeModal} />
+      <Loading ref={loadingRef} />
       <ModalCentralizedOptions
         ref={refModalOptions}
         message={
