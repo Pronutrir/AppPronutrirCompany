@@ -18,7 +18,9 @@ import AuthContext from '../../contexts/auth';
 import { useNavigation } from '@react-navigation/native';
 import BtnRadius from '../../components/buttons/BtnRadius';
 import PrinterSvg from '../../assets/svg/printer.svg';
+import SenhaSvg from '../../assets/svg/senha.svg';
 import PrintBluetoothContext from '../../contexts/printBluetoothContext';
+import ShimerPlaceHolderSelected from '../../components/shimmerPlaceHolder/shimerPlaceHolderSelected';
 
 const PainelSenha = () => {
   const {
@@ -41,7 +43,7 @@ const PainelSenha = () => {
 
   const { mutateAsync } = useGerarSenhaPainel();
 
-  const { data } = useGetFilas(7, 'A');
+  const { data, isFetching, isLoading, refetch } = useGetFilas(7, 'A');
 
   const gerarSenha = async () => {
     if (itemSelected) {
@@ -53,12 +55,12 @@ const PainelSenha = () => {
           nR_SEQ_FILA_P: itemSelected.nR_SEQUENCIA,
           iE_SENHA_PRIORITARIA_P: 'N',
         });
+        loadingRef.current?.closeModal();
         await printSenha(result);
       } catch (error) {
         console.log(error);
         loadingRef.current?.closeModal();
       }
-      loadingRef.current?.closeModal();
     }
   };
 
@@ -90,7 +92,7 @@ const PainelSenha = () => {
     <CardSimples styleCardContainer={styles.card}>
       <PressableRipple
         onPress={() => onClickCard(item)}
-        onLongPress={() => navigation.navigate('PrintBluetooth')}
+        onLongPress={() => navigation.navigate('PainelSenhaOptions')}
         style={styles.PressableRippleStyle}>
         <Text style={styles.text}>{item.dS_CURTO}</Text>
       </PressableRipple>
@@ -115,14 +117,40 @@ const PainelSenha = () => {
           }}
           ImageSvg={PrinterSvg}
         />
+        <BtnRadius
+          onPress={() => navigation.navigate('PainelSenhaOptions')}
+          containerStyles={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            margin: 1,
+          }}
+          ImageSvg={SenhaSvg}
+        />
       </View>
-      <FlatList
-        contentContainerStyle={styles.contentContainer}
-        data={data?.filter(
-          item => item.iE_PERMITE_CHAMADA === 'S' && item.dS_CURTO != 'teste',
-        )}
-        renderItem={renderItem}
-      />
+      {!isFetching ? (
+        <FlatList
+          contentContainerStyle={styles.contentContainer}
+          data={data?.filter(
+            item => item.iE_PERMITE_CHAMADA === 'S' && item.dS_CURTO != 'teste',
+          )}
+          renderItem={renderItem}
+          refreshing={isLoading}
+          onRefresh={() => refetch()}
+        />
+      ) : (
+        <View style={{ flexGrow: 1, justifyContent: 'center' }}>
+          {Array(2).fill(
+            <ShimerPlaceHolderSelected
+              containerStyle={{
+                height: RFPercentage(25),
+                width: RFPercentage(35),
+              }}
+            />,
+          )}
+        </View>
+      )}
+
       <ModalCentralizedOptions
         ref={refModalOptionsSenhaPainel}
         message={message}

@@ -75,6 +75,7 @@ const UpdateSinais: React.FC<Props> = ({
   const { stateAuth } = useContext(AuthContext);
 
   const { printSenha } = useContext(PrintBluetoothContext);
+
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
 
   const {
@@ -184,9 +185,8 @@ const UpdateSinais: React.FC<Props> = ({
         nR_SEQ_FILA_P: 14,
         nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
       });
-      console.log(result);
-      await printSenha(result);
       loadingRef.current?.closeModal();
+      await printSenha(result);
     } catch (error) {
       loadingRef.current?.closeModal();
     }

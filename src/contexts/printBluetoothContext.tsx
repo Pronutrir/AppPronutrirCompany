@@ -11,7 +11,6 @@ import React, {
 } from 'react';
 import { PermissionsAndroid } from 'react-native';
 import { getImpressora, saveImpressora } from '../utils';
-import { PropsGerarSenhaResponse } from '../hooks/usePainelSenha';
 import LogoBase64 from '../assets/imagens/logaBase64';
 import moment from 'moment';
 import NotificationGlobalContext from './notificationGlobalContext';
@@ -31,15 +30,21 @@ interface AuthContextData {
   selectDevice: IDevices | undefined;
   setSelectDevice: React.Dispatch<React.SetStateAction<IDevices | undefined>>;
   validationImpress: () => Promise<boolean>;
-  printSenha: (item: PropsGerarSenhaResponse) => Promise<void>;
+  printSenha: (item: IPrintSenha) => Promise<void>;
   saveDevice: (device: IDevices) => Promise<void>;
-  teste: () => Promise<void>;
 }
 
 export interface IDevices {
   index: number;
   name: string;
   address: string;
+}
+
+export interface IPrintSenha {
+  cD_SENHA_GERADA: number;
+  dT_GERACAO_SENHA: string;
+  dS_LETRA_VERIFICACAO: string;
+  dS_FILA: string;
 }
 
 const PrintBluetoothContext = createContext({} as AuthContextData);
@@ -56,20 +61,16 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
   const [selectDevice, setSelectDevice] = useState<IDevices>();
 
   const connect = async (row: IDevices) => {
-    setLoading(true);
     await BluetoothManager.connect(row.address).then(
       () => {
-        setLoading(false);
         setBoundAddress(row.address);
         setName(row.name || 'UNKNOWN');
       },
-      error => {
-        console.log('connect =>', error);
+      () => {
         addAlert({
           status: 'error',
           message: 'Não foi possivel conectar as dispositivo',
         });
-        setLoading(false);
       },
     );
   };
@@ -190,9 +191,9 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
       if (selectDevice) {
         BluetoothManager.disconnect(row.address).then(
           () => {
-            setLoading(false);
-            setBoundAddress('');
-            setName('');
+            //setLoading(false);
+            //setBoundAddress('');
+            //setName('');
           },
           () => {
             ('');
@@ -244,89 +245,65 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
     }
   };
 
-  const printSenha = async (item: PropsGerarSenhaResponse) => {
-    try {
-      const result = await validationImpress();
+  const printSenha = async (item: IPrintSenha) => {
+    const result = await validationImpress();
 
-      if (!result) {
-        return;
-      }
+    if (!result) {
+      return;
+    }
 
-      if (selectDevice) {
-        console.log('usePrintSenha', selectDevice);
-        await connect(selectDevice);
+    if (selectDevice) {
+      await connect(selectDevice);
 
-        await BluetoothEscposPrinter.printPic(LogoBase64, {
-          width: 150,
-          left: 210,
-        });
-        await BluetoothEscposPrinter.printerAlign(
-          BluetoothEscposPrinter.ALIGN.CENTER,
-        );
-        await BluetoothEscposPrinter.printText('BEM VINDO A PRONUTRIR\r\n', {
+      await BluetoothEscposPrinter.printPic(LogoBase64, {
+        width: 150,
+        left: 210,
+      });
+      await BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.CENTER,
+      );
+      await BluetoothEscposPrinter.printText('BEM VINDO A PRONUTRIR\r\n', {
+        widthtimes: 1,
+        fonttype: 2,
+      });
+      await BluetoothEscposPrinter.printText('\r\n', {});
+      await BluetoothEscposPrinter.printText('PRIORIDADE NORMAL\r\n\r\n', {
+        widthtimes: 1,
+        fonttype: 1,
+      });
+      await BluetoothEscposPrinter.printText(
+        `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
+        {
+          encoding: 'GBK',
+          codepage: 0,
           widthtimes: 1,
-          fonttype: 2,
-        });
-        await BluetoothEscposPrinter.printText('\r\n', {});
-        await BluetoothEscposPrinter.printText(
-          'PACIENTE COM PRIORIDADE NORMAL\r\n\r\n',
-          {
-            widthtimes: 1,
-            fonttype: 1,
-          },
-        );
-        await BluetoothEscposPrinter.printText(
-          `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
-          {
-            encoding: 'GBK',
-            codepage: 0,
-            widthtimes: 1,
-            heigthtimes: 1,
-            fonttype: 8,
-          },
-        );
-        await BluetoothEscposPrinter.printText(`${item?.dS_FILA}\r\n\r\n`, {
-          encoding: 'CP860',
-          codepage: 3,
+          heigthtimes: 1,
+          fonttype: 8,
+        },
+      );
+      await BluetoothEscposPrinter.printText(`${item?.dS_FILA}\r\n\r\n`, {
+        encoding: 'CP860',
+        codepage: 3,
+        fonttype: 3,
+        widthtimes: 1,
+        heigthtimes: 1,
+      });
+      await BluetoothEscposPrinter.printText(
+        moment(item.dT_GERACAO_SENHA).format('DD/MM/YYYY - H:mm'),
+        {
           fonttype: 3,
           widthtimes: 1,
           heigthtimes: 1,
-        });
-        await BluetoothEscposPrinter.printText(
-          moment(item.dT_GERACAO_SENHA).format('DD/MM/YYYY - H:mm'),
-          {
-            fonttype: 3,
-            widthtimes: 1,
-            heigthtimes: 1,
-          },
-        );
-        await BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n', {});
-        await unPair(selectDevice);
-      }
-    } catch (error) {
-      addAlert({
-        status: 'error',
-        message: 'Não foi possivel conectar as dispositivo',
-      });
+        },
+      );
+      await BluetoothEscposPrinter.printText('\r\n\r\n\r\n\r\n', {});
+      await unPair(selectDevice);
     }
   };
 
   const saveDevice = async (device: IDevices) => {
     setSelectDevice(device);
     await saveImpressora(device);
-  };
-
-  const teste = async () => {
-    BluetoothManager.scanDevices().then(
-      s => {
-        const ss = JSON.parse(s); //JSON string
-        deviceAlreadPaired(ss.paired);
-        deviceFoundEvent(ss.found);
-      },
-      er => {
-        console.log(er);
-      },
-    );
   };
 
   useEffect(() => {
@@ -357,7 +334,6 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
         validationImpress,
         printSenha,
         saveDevice,
-        teste,
       }}>
       {children}
     </PrintBluetoothContext.Provider>
