@@ -29,9 +29,8 @@ const SelectedDropdownOptions = <
       data={data}
       defaultValueByIndex={selectedIndex}
       defaultValue={selectedValue}
-      onSelect={(selectedItem, index) => {
+      onSelect={selectedItem => {
         onChange(selectedItem);
-        console.log(index);
       }}
       defaultButtonText={'Selecione o dispositivo'}
       buttonTextAfterSelection={(selectedItem, index) => {

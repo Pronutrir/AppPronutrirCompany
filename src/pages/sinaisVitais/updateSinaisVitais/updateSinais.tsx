@@ -54,7 +54,7 @@ interface Props {
 
 const UpdateSinais: React.FC<Props> = ({
   route: {
-    params: { PessoaFisica, SinaisVitais, GeraAtendimento },
+    params: { PessoaFisica, SinaisVitais, GeraAtendimento, Origin },
   },
 }: Props) => {
   const deviceWidth = useWindowDimensions();
@@ -182,7 +182,7 @@ const UpdateSinais: React.FC<Props> = ({
         cD_ESTABELECIMENTO_P: PessoaFisica.cD_ESTABELECIMENTO,
         cD_PESSOA_FISICA_P: PessoaFisica.cD_PESSOA_FISICA,
         iE_SENHA_PRIORITARIA_P: 'N',
-        nR_SEQ_FILA_P: 14,
+        nR_SEQ_FILA_P: Origin === 'Tratamento' ? 14 : 12,
         nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
       });
       loadingRef.current?.closeModal();

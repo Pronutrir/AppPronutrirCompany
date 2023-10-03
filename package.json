@@ -10,7 +10,8 @@
         "lint": "eslint ./",
         "lintFix": "eslint ./ --fix",
         "np": "np --no-publish",
-        "postversion": "react-native-version"
+        "postversion": "react-native-version",
+        "postinstall": "patch-package"
     },
     "repository": {
         "type": "git",
@@ -43,12 +44,14 @@
         "appcenter-crashes": "4.4.5",
         "axios": "^0.26.1",
         "cspell": "^5.19.2",
+        "deprecated-react-native-prop-types": "^4.2.1",
         "eslint-fix": "^1.0.3",
         "formik": "^2.2.9",
         "lint": "^0.7.0",
         "lottie-ios": "^3.1.8",
         "lottie-react-native": "^4.0.2",
         "moment": "^2.29.1",
+        "patch-package": "^8.0.0",
         "react": "17.0.2",
         "react-devtools": "^4.13.5",
         "react-native": "0.68.0",

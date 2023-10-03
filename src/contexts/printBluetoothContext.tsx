@@ -123,7 +123,6 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
 
   const deviceAlreadPaired = useCallback(
     (rsp: IDevices[]) => {
-      console.log(rsp);
       if (rsp && rsp.length) {
         setPairedDevices(rsp);
       }
@@ -133,8 +132,6 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
 
   const deviceFoundEvent = useCallback(
     (rsp: IDevices[]) => {
-      console.log(rsp);
-
       if (rsp && rsp.length) {
         setFoundDs(rsp);
       }
@@ -311,7 +308,6 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
     scanBluetoothDevice();
     getImpressora().then(item => {
       setSelectDevice(item);
-      console.log('useEffect', item);
     });
   }, []);
 

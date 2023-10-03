@@ -91,7 +91,7 @@ export async function saveImpressora(impressora: IDevices) {
   try {
     await AsyncStorage.setItem('@Impressora', JSON.stringify(impressora));
   } catch (error) {
-    console.log('saveImpressora', error);
+    //console.log('saveImpressora', error);
   }
 }
 

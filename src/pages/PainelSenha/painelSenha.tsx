@@ -1,15 +1,13 @@
-import { FlatList, ListRenderItem, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React, { useContext, useRef, useState } from 'react';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
-import CardSimples from '../../components/Cards/CardSimples';
 import {
   PropsFilaEsperaAtendimentos,
   useGerarSenhaPainel,
   useGetFilas,
 } from '../../hooks/usePainelSenha';
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import PressableRipple from '../../components/ripple/PressableRipple';
 import ModalCentralizedOptions, {
   ModalHandles,
 } from '../../components/Modais/ModalCentralizedOptions';
@@ -21,6 +19,7 @@ import PrinterSvg from '../../assets/svg/printer.svg';
 import SenhaSvg from '../../assets/svg/senha.svg';
 import PrintBluetoothContext from '../../contexts/printBluetoothContext';
 import ShimerPlaceHolderSelected from '../../components/shimmerPlaceHolder/shimerPlaceHolderSelected';
+import BtnPainelComponent from './painelSenhaComponents/btnPainelComponent';
 
 const PainelSenha = () => {
   const {
@@ -43,7 +42,7 @@ const PainelSenha = () => {
 
   const { mutateAsync } = useGerarSenhaPainel();
 
-  const { data, isFetching, isLoading, refetch } = useGetFilas(7, 'A');
+  const { data } = useGetFilas(7, 'A');
 
   const gerarSenha = async () => {
     if (itemSelected) {
@@ -58,7 +57,6 @@ const PainelSenha = () => {
         loadingRef.current?.closeModal();
         await printSenha(result);
       } catch (error) {
-        console.log(error);
         loadingRef.current?.closeModal();
       }
     }
@@ -86,19 +84,6 @@ const PainelSenha = () => {
     }
   };
 
-  const renderItem: ListRenderItem<PropsFilaEsperaAtendimentos> = ({
-    item,
-  }) => (
-    <CardSimples styleCardContainer={styles.card}>
-      <PressableRipple
-        onPress={() => onClickCard(item)}
-        onLongPress={() => navigation.navigate('PainelSenhaOptions')}
-        style={styles.PressableRippleStyle}>
-        <Text style={styles.text}>{item.dS_CURTO}</Text>
-      </PressableRipple>
-    </CardSimples>
-  );
-
   return (
     <View style={styles.container}>
       <View
@@ -106,6 +91,9 @@ const PainelSenha = () => {
           width: '100%',
           flexDirection: 'row',
           justifyContent: 'center',
+          height: RFPercentage(3),
+          position: 'absolute',
+          top: 0,
         }}>
         <BtnRadius
           onPress={() => navigation.navigate('PrintBluetooth')}
@@ -128,26 +116,31 @@ const PainelSenha = () => {
           ImageSvg={SenhaSvg}
         />
       </View>
-      {!isFetching ? (
-        <FlatList
-          contentContainerStyle={styles.contentContainer}
-          data={data?.filter(
-            item => item.iE_PERMITE_CHAMADA === 'S' && item.dS_CURTO != 'teste',
-          )}
-          renderItem={renderItem}
-          refreshing={isLoading}
-          onRefresh={() => refetch()}
-        />
+      {data ? (
+        <View style={styles.box2}>
+          {data.map(item => (
+            <BtnPainelComponent
+              key={item.nR_DIGITO_FILA}
+              disabled={false}
+              onPress={() => onClickCard(item)}
+              ImgSVG={SenhaSvg}
+              label={item.dS_CURTO}
+            />
+          ))}
+        </View>
       ) : (
-        <View style={{ flexGrow: 1, justifyContent: 'center' }}>
-          {Array(2).fill(
-            <ShimerPlaceHolderSelected
-              containerStyle={{
-                height: RFPercentage(25),
-                width: RFPercentage(35),
-              }}
-            />,
-          )}
+        <View style={styles.box2}>
+          {Array.from(Array(6).fill(0), (_, index) => {
+            return (
+              <ShimerPlaceHolderSelected
+                key={index}
+                containerStyle={{
+                  height: RFPercentage(20),
+                  width: RFPercentage(25),
+                }}
+              />
+            );
+          })}
         </View>
       )}
 
@@ -174,6 +167,11 @@ const createStyles = (theme: ThemeContextData) => {
     contentContainer: {
       flexGrow: 1,
       justifyContent: 'center',
+    },
+    box2: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      flexWrap: 'wrap',
     },
     card: {
       flex: 1,

@@ -68,6 +68,7 @@ export type RootStackParamList = {
     PessoaFisica: IPFSinaisVitais;
     SinaisVitais: ISinaisVitais;
     GeraAtendimento: boolean;
+    Origin: 'Consulta' | 'Tratamento';
   };
   UpdateSinaisVitaisEnfermagem: {
     PessoaFisica: IPFSinaisVitais;

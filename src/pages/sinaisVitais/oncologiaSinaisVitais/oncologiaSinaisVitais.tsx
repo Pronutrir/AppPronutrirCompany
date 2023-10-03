@@ -157,8 +157,6 @@ const OncologiaSinaisVitais = () => {
     });
   }, [agendasQt]);
 
-  console.log('OncologiaSinaisVitais');
-
   return (
     <View style={styles.container}>
       <View

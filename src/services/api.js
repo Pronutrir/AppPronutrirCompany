@@ -4,9 +4,9 @@ import refreshToken from './refreshToken';
 
 const api = axios.create({
   //producao
-  //baseURL: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
+  baseURL: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
   //teste
-  baseURL: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
+  //baseURL: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
   //ngrok
   //baseURL: 'https://56bb-177-22-36-198.ngrok-free.app/api/v1/',
   headers: {

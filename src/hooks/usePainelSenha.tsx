@@ -27,7 +27,9 @@ export interface PropsFilaEsperaAtendimentos {
   dS_CURTO: string;
   dS_LETRA_VERIFICACAO: string;
   iE_SITUACAO: string;
+  nR_DIGITO_FILA: number;
   iE_PERMITE_CHAMADA: string;
+  iE_MOSTRA_MONITOR: string;
 }
 
 export interface PropsPacientFilaEspera {
@@ -81,13 +83,18 @@ const useGetFilas = (CD_ESTABELECIMENTO: number, IE_SITUACAO: string) => {
           `PainelChamada/GetListFilaEsperaAtendimento?CD_ESTABELECIMENTO=${CD_ESTABELECIMENTO}&IE_SITUACAO=${IE_SITUACAO}`,
         )
       ).data;
-      return result;
+      return result
+        .filter(item => item.iE_MOSTRA_MONITOR === 'S')
+        .sort((a, b) => {
+          return a.nR_DIGITO_FILA < b.nR_DIGITO_FILA
+            ? -1
+            : a.nR_DIGITO_FILA > b.nR_DIGITO_FILA
+            ? 1
+            : 0;
+        });
     },
     {
-      staleTime: 60 * 30000, // 30 minuto
-      onSuccess: () => {
-        console.log('sucesso');
-      },
+      staleTime: 1 * 60000, // 30 minuto
       onError: () => {
         addAlert({
           message: 'Error ao gerar lista filas tente mais tarde!',
@@ -111,6 +118,7 @@ const useGetListPacientFilaEspera = () => {
       return result;
     },
     {
+      staleTime: 1 * 60000, // 30 minuto
       onSuccess: () => {
         console.log('sucesso');
       },
@@ -128,7 +136,6 @@ const useInutilizarSenha = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
     async (item: PropsInutilizarSenha) => {
-      console.log(item);
       const result = (await api.post('PainelChamada/DisableSenha', item)).data;
       return result;
     },

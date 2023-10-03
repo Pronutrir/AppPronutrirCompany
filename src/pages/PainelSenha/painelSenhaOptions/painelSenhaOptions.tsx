@@ -16,8 +16,6 @@ const PainelSenhaOptions = () => {
   const { data, isFetching, refetch, isLoading } =
     useGetListPacientFilaEspera();
 
-  console.log('PainelSenhaOptions');
-
   const renderItem: ListRenderItem<PropsPacientFilaEspera> = ({
     item,
     index,
@@ -31,8 +29,8 @@ const PainelSenhaOptions = () => {
           keyExtractor={(_$, index) => index.toString()}
           renderItem={renderItem}
           ListEmptyComponent={<RenderItemEmpty />}
-          //refreshing={isLoading}
-          //onRefresh={() => refetch()}
+          refreshing={isLoading}
+          onRefresh={() => refetch()}
         />
       ) : (
         Array(4).fill(<ShimerPlaceHolderCardSNVTs />)

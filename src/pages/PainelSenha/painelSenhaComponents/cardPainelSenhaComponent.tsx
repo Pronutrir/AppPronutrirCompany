@@ -17,6 +17,7 @@ import SenhaSvg from '../../../assets/svg/senha.svg';
 import PrintBluetoothContext from '../../../contexts/printBluetoothContext';
 import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import moment from 'moment';
+import AuthContext from '../../../contexts/auth';
 
 type Props = {
   item: PropsPacientFilaEspera;
@@ -28,6 +29,7 @@ const CardPainelSenhaComponent = ({ item }: Props) => {
   const refMenuBotom = useRef<ModalHandlesMenu>(null);
   const loadingRef = useRef<LoadHandles>(null);
 
+  const { stateAuth } = useContext(AuthContext);
   const { printSenha } = useContext(PrintBluetoothContext);
   const { mutateAsync } = useInutilizarSenha();
   const { refetch } = useGetListPacientFilaEspera();
