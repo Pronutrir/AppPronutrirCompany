@@ -56,8 +56,6 @@ const useUnidades = () => {
       return orderByResult;
     },
     {
-      //enabled: false,
-      staleTime: 60 * 30000, // 30 minuto
       onError: () => {
         addAlert({
           message: 'Error ao carregar os estabelecimentos, tentar mais tarde!',

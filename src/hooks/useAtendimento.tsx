@@ -137,6 +137,14 @@ interface IPostEntregaMedicamento {
   NR_SEQ_ATENDIMENTO: number;
   NM_USUARIO: string;
 }
+
+interface IPropsVincularAtendimento {
+  cd_pessoa_fisica: string;
+  nr_atendimento: number;
+  estabelecimento: number;
+  setorAtendimento: number;
+  nm_usuario: string;
+}
 const useEntregaMedicamento = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
@@ -187,10 +195,19 @@ const useEntregaPreMedicamento = () => {
   );
 };
 
+const useVincularAtendimento = () => {
+  return useMutation((item: IPropsVincularAtendimento) => {
+    return Api.post(
+      `AtendimentoPaciente/VincularAtendimentoPaciente/${item.cd_pessoa_fisica}/${item.nr_atendimento}/${item.estabelecimento}/${item.setorAtendimento}/${item.nm_usuario}`,
+    );
+  });
+};
+
 export {
   useInitAtendimento,
   useGetAtendimentosAptosEnfermagem,
   useEndAtendimento,
   useEntregaMedicamento,
   useEntregaPreMedicamento,
+  useVincularAtendimento,
 };

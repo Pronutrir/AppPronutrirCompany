@@ -47,6 +47,7 @@ import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
 import PrintBluetoothContext from '../../../contexts/printBluetoothContext';
 import { useGerarSenhaPainel } from '../../../hooks/usePainelSenha';
 import AuthContext from '../../../contexts/auth';
+import { useVincularAtendimento } from '../../../hooks/useAtendimento';
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
   route: ProfileScreenRouteProp;
@@ -77,6 +78,9 @@ const UpdateSinais: React.FC<Props> = ({
   const { printSenha } = useContext(PrintBluetoothContext);
 
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
+
+  const { mutateAsync: mutateAsyncVincularAtendimento } =
+    useVincularAtendimento();
 
   const {
     AddSinaisVitais,
@@ -166,7 +170,18 @@ const UpdateSinais: React.FC<Props> = ({
     };
 
     if (GeraAtendimento) {
-      await AddSinaisVitaisAtendimento(dataSinaisVitais);
+      const result = await AddSinaisVitaisAtendimento(dataSinaisVitais);
+      if (result) {
+        mutateAsyncVincularAtendimento({
+          cd_pessoa_fisica: PessoaFisica.cD_PESSOA_FISICA,
+          estabelecimento: PessoaFisica.cD_ESTABELECIMENTO,
+          nm_usuario:
+            stateAuth.PerfilSelected?.nM_USUARIO ??
+            stateAuth.usertasy.nM_USUARIO,
+          nr_atendimento: result.nR_ATENDIMENTO,
+          setorAtendimento: 75,
+        });
+      }
     } else {
       await AddSinaisVitais(dataSinaisVitais);
     }

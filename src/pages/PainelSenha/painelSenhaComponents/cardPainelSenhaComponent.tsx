@@ -48,7 +48,8 @@ const CardPainelSenhaComponent = ({ item }: Props) => {
             CD_ESTABELECIMENTO: item.cD_ESTABELECIMENTO,
             CD_FILA_P: item.nR_SEQ_FILA_SENHA,
             CD_SENHA_P: item.cD_SENHA_GERADA,
-            NM_USUARIO_P: item.nM_USUARIO,
+            NM_USUARIO_P:
+              stateAuth.PerfilSelected?.nM_USUARIO ?? item.nM_USUARIO,
             NR_SEQ_MOTIVO_INUTILIZACAO_P: 1,
             NR_SEQ_SENHA_P: item.nR_SEQUENCIA,
           });
