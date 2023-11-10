@@ -38,6 +38,7 @@ import Tratamento_quimio from '../pages/tratamento_quimio/tratamento_quimio';
 import PainelSenha from '../pages/PainelSenha/painelSenha';
 import PainelSenhaOptions from '../pages/PainelSenha/painelSenhaOptions/painelSenhaOptions';
 import PrintBluetooth from '../pages/PrintBluetooth/PrintBluetooth';
+import Stopwatch from '../pages/stopwatch/stopwatch';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -122,6 +123,7 @@ export type RootStackParamList = {
   PainelSenha: undefined;
   PainelSenhaOptions: undefined;
   PrintBluetooth: undefined;
+  Stopwatch: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -288,6 +290,11 @@ const InitialStackNavigator = () => {
         name="PrintBluetooth"
         component={PrintBluetooth}
         options={{ title: 'PrintBluetooth' }}
+      />
+      <Stack.Screen
+        name="Stopwatch"
+        component={Stopwatch}
+        options={{ title: 'Stopwatch' }}
       />
     </Stack.Navigator>
   );

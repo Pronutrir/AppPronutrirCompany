@@ -79,9 +79,6 @@ const UpdateSinais: React.FC<Props> = ({
 
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
 
-  const { mutateAsync: mutateAsyncVincularAtendimento } =
-    useVincularAtendimento();
-
   const {
     AddSinaisVitais,
     GetSinaisVitais,
@@ -170,18 +167,7 @@ const UpdateSinais: React.FC<Props> = ({
     };
 
     if (GeraAtendimento) {
-      const result = await AddSinaisVitaisAtendimento(dataSinaisVitais);
-      if (result) {
-        mutateAsyncVincularAtendimento({
-          cd_pessoa_fisica: PessoaFisica.cD_PESSOA_FISICA,
-          estabelecimento: PessoaFisica.cD_ESTABELECIMENTO,
-          nm_usuario:
-            stateAuth.PerfilSelected?.nM_USUARIO ??
-            stateAuth.usertasy.nM_USUARIO,
-          nr_atendimento: result.nR_ATENDIMENTO,
-          setorAtendimento: 75,
-        });
-      }
+      await AddSinaisVitaisAtendimento(dataSinaisVitais);
     } else {
       await AddSinaisVitais(dataSinaisVitais);
     }

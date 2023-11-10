@@ -6,8 +6,8 @@ import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import QuimioSvg from '../../assets/svg/quimioterapia.svg';
 import MedicoImg from '../../assets/svg/medico.svg';
-import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
 import AtendimentoSvg from '../../assets/svg/atendimento.svg';
+import RelogioSvg from '../../assets/svg/relogio.svg';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnDashboardComponent from './components/btnDashboardComponent/btnDashboardComponent';
 import { useNavigation } from '@react-navigation/native';
@@ -100,11 +100,9 @@ const DashBoard: React.FC = () => {
           />
           <BtnDashboardComponent
             disabled={true}
-            onpress={() => {
-              ('');
-            }}
-            ImgSVG={PilulaComprimidoImg}
-            label={'Medicamentos'}
+            onpress={() => navigation.navigate('Stopwatch')}
+            ImgSVG={RelogioSvg}
+            label={'Stopwatch'}
           />
         </View>
       </ScrollView>

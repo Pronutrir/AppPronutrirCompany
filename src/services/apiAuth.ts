@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const ApiAuth = axios.create({
   //teste
-  baseURL: 'https://servicesapp.pronutrir.com.br/agentauthtest/api/v1/',
-  //producao
   //baseURL: 'https://servicesapp.pronutrir.com.br/agentauthtest/api/v1/',
+  //producao
+  baseURL: 'https://servicesapp.pronutrir.com.br/agentauth/api/v1/',
   //testeauth
   //baseURL: 'https://agentauth.pronutrir.com.br/api/v1/',
   headers: {
