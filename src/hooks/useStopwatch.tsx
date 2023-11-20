@@ -3,58 +3,46 @@ import Api from '../services/api';
 
 export interface IPropsListStopwatch {
   result: {
-    agendados: IPropsAgendaStopwatch[];
-    total: number;
-    acolhimento: IPropsInforStopwatch;
-    recepcao: IPropsInforStopwatch;
-    triagem: IPropsInforStopwatch;
-    farmacia_Interno: {
-      satelite: IPropsInforStopwatch;
-      producao: IPropsInforStopwatch;
-    };
-    farmacia: {
-      satelite: IPropsInforStopwatch;
-      producao: IPropsInforStopwatch;
-    };
-    acomodacao: IPropsInforStopwatch;
-    tratamento: IPropsInforStopwatch;
-    durationPatients: {
-      values: IPropsPacienteInfor[];
-    };
-    statusCode: number;
-    message: string;
+    agendados: IAgendaPacientStopWatchH;
+    acolhimento: IOptionsStopWatchH;
+    recepcao: IOptionsStopWatchH;
+    triagem: IOptionsStopWatchH;
+    farmacia: IOptionsStopWatchHFarmacia;
+    acomodacao: IOptionsStopWatchH;
+    pre_Tratamento: IOptionsStopWatchH;
+    tratamento: IOptionsStopWatchH;
+    durationPatients: IDurationsPatients;
   };
 }
 
-export interface IPropsAgendaStopwatch {
-  nR_SEQUENCIA: number;
-  cD_PESSOA_FISICA: string;
-  dT_AGENDA: string;
-  cD_ESTABELECIMENTO: number;
-  paciente: string;
-  dS_ABREV: string;
+interface DefaultOptionsStopWatchH {
+  Count: number;
 }
 
-export interface IPropsInforStopwatch {
-  count: number;
-  percent: {
-    positive: number;
-    negative: number;
-  };
-  patients: IPropsPacienteStopwatch[];
+interface IPercentsStopWatchH {
+  Positive: number;
+  Negative: number;
 }
 
-export interface IPropsPacienteInfor {
-  nR_SEQ_PACIENTE: number;
-  cod: string;
-  paciente: string;
-  dT_ACOLHIMENTO: string;
-  dT_ALTA: string;
-  duration: number;
-  protocolo: string;
+interface IOptionsStopWatchH extends DefaultOptionsStopWatchH {
+  Percent: IPercentsStopWatchH;
+  Patients: IQuimioterapiaStopwatchH[];
 }
 
-export interface IPropsPacienteStopwatch {
+interface IOptionsStopWatchHFarmacia {
+  Satelite: IOptionsStopWatchH;
+  Producao: IOptionsStopWatchH;
+}
+
+export interface IAgendaPacientStopWatchH extends DefaultOptionsStopWatchH {
+  ListAgendaQuimioterapia: [];
+}
+
+interface IDurationsPatients extends DefaultOptionsStopWatchH {
+  Patients: PatientsStopWatchH[];
+}
+
+export interface IQuimioterapiaStopwatchH {
   nR_SEQ_PACIENTE: number;
   cod: string;
   paciente: string;
@@ -106,6 +94,15 @@ export interface IPropsPacienteStopwatch {
   fa: boolean;
   tt: boolean;
   margem: string;
+}
+
+interface PatientsStopWatchH {
+  nR_SEQ_PACIENTE: number;
+  paciente: string;
+  dT_ACOLHIMENTO: string;
+  dT_ALTA: string;
+  duration: number;
+  protocolo: string;
 }
 
 const useListStopwatch = () => {

@@ -43,8 +43,18 @@ export interface IAtendimentosAptosEnfermagem {
   dT_INICIO_ADM: string;
   dT_FIM_ADM: string;
   dT_ENTREGA_MEDICACAO: string;
+  dT_INICIO_PRE_TRATAMENTO: string;
   dT_REAL: string;
   dT_ALTA: string;
+}
+
+interface IPostEntregaMedicamento {
+  NR_SEQ_ATENDIMENTO: number;
+  NM_USUARIO: string;
+}
+
+interface IPostIniciarPréTratamento extends IPostEntregaMedicamento {
+  cD_ESTABELECIMENTO: number;
 }
 const useGetAtendimentosAptosEnfermagem = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
@@ -57,6 +67,7 @@ const useGetAtendimentosAptosEnfermagem = () => {
           `AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
         )
       ).data;
+
       return result.sort((a, b) => {
         return a.nM_PESSOA_FISICA < b.nM_PESSOA_FISICA
           ? -1
@@ -132,12 +143,6 @@ const useEndAtendimento = () => {
     },
   );
 };
-
-interface IPostEntregaMedicamento {
-  NR_SEQ_ATENDIMENTO: number;
-  NM_USUARIO: string;
-}
-
 interface IPropsVincularAtendimento {
   cd_pessoa_fisica: string;
   nr_atendimento: number;
@@ -156,7 +161,7 @@ const useEntregaMedicamento = () => {
     {
       onSuccess: () => {
         addAlert({
-          message: 'Entrega realizada com sucesso!',
+          message: 'Entrega do medicamento realizada com sucesso!',
           status: 'sucess',
         });
       },
@@ -181,13 +186,38 @@ const useEntregaPreMedicamento = () => {
     {
       onSuccess: () => {
         addAlert({
-          message: 'Entrega realizada com sucesso!',
+          message: 'Entrega do pré-medicamento realizada com sucesso!',
           status: 'sucess',
         });
       },
       onError: () => {
         addAlert({
           message: 'Error ao realizar entrega tente mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+const useInitPreMedicamento = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPostIniciarPréTratamento) => {
+      return Api.post(
+        `AtendimentoPaciente/AdministrarPreTratamento/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}/${item.cD_ESTABELECIMENTO}`,
+      );
+    },
+    {
+      onSuccess: () => {
+        addAlert({
+          message: 'Inicio pré-medicamento realizado com sucesso!',
+          status: 'sucess',
+        });
+      },
+      onError: () => {
+        addAlert({
+          message: 'Error ao inicioar o pré-medicamento tente mais tarde!',
           status: 'error',
         });
       },
@@ -210,4 +240,5 @@ export {
   useEntregaMedicamento,
   useEntregaPreMedicamento,
   useVincularAtendimento,
+  useInitPreMedicamento,
 };

@@ -21,29 +21,18 @@ const Stopwatch = () => {
 
   const { data } = useListStopwatch();
 
-  console.log(Object.getOwnPropertyNames(data?.result));
-
-  const propsobject = Object.getOwnPropertyNames(data?.result).map(item => {
+  /* const Propsobject = Object.getOwnPropertyNames(data?.result).map(item => {
+    console.log(item);
     if (data) {
       type ObjectKey = keyof typeof data.result;
 
       const myVar = item as ObjectKey;
 
-      switch (item) {
-        case 'agendados':
-          return data.result.agendados;
-        case 'agendado':
-          return data.result.agendados;
-        case 'agendad':
-          return data.result.agendados;
-        default:
-          return data.result[myVar];
-          break;
-      }
+      console.log(myVar);
     } else {
       return;
     }
-  });
+  }); */
 
   return (
     <View style={styles.container}>
@@ -51,7 +40,7 @@ const Stopwatch = () => {
         <View style={styles.box1}>
           <CardSimples>
             <>
-              {propsobject?.map(item => {
+              {/* {Propsobject?.map(item => {
                 <CardSimples styleCardContainer={styles.ItemMenu}>
                   <View style={{ flexDirection: 'column' }}>
                     <Text style={styles.text_btnHorizontal}>
@@ -59,12 +48,12 @@ const Stopwatch = () => {
                     </Text>
                     <View>
                       <Text style={styles.text_btnHorizontal}>
-                        {data?.result.agendados.length}
+                        {data?.result.agendados.Count}
                       </Text>
                     </View>
                   </View>
                 </CardSimples>;
-              })}
+              })} */}
 
               <CardSimples styleCardContainer={styles.ItemMenu}>
                 <View style={{ flexDirection: 'column' }}>
@@ -73,7 +62,7 @@ const Stopwatch = () => {
                   </Text>
                   <View>
                     <Text style={styles.text_btnHorizontal}>
-                      {data?.result.total}
+                      {data?.result?.durationPatients?.Count}
                     </Text>
                   </View>
                 </View>
@@ -83,11 +72,7 @@ const Stopwatch = () => {
                   <Text style={styles.text_btnHorizontal}>Total de Altas</Text>
                   <View>
                     <Text style={styles.text_btnHorizontal}>
-                      {
-                        data?.result.durationPatients.values.filter(
-                          item => item.duration != null,
-                        ).length
-                      }
+                      {data?.result?.durationPatients?.Count}
                     </Text>
                   </View>
                 </View>
@@ -99,7 +84,7 @@ const Stopwatch = () => {
               <Text style={styles.text_btnHorizontal}>Total Recepção</Text>
               <View>
                 <Text style={styles.text_btnHorizontal}>
-                  {data?.result.recepcao.count}
+                  {data?.result?.recepcao?.Count}
                 </Text>
               </View>
             </View>
@@ -109,7 +94,7 @@ const Stopwatch = () => {
               <Text style={styles.text_btnHorizontal}>Total Triagem</Text>
               <View>
                 <Text style={styles.text_btnHorizontal}>
-                  {data?.result.triagem.count}
+                  {data?.result?.triagem?.Count}
                 </Text>
               </View>
             </View>
@@ -119,7 +104,7 @@ const Stopwatch = () => {
               <Text style={styles.text_btnHorizontal}>Total Satelite</Text>
               <View>
                 <Text style={styles.text_btnHorizontal}>
-                  {data?.result.farmacia.satelite.count}
+                  {data?.result?.farmacia?.Satelite?.Count}
                 </Text>
               </View>
             </View>
@@ -129,7 +114,7 @@ const Stopwatch = () => {
               <Text style={styles.text_btnHorizontal}>Total Produção</Text>
               <View>
                 <Text style={styles.text_btnHorizontal}>
-                  {data?.result.farmacia.producao.count}
+                  {data?.result?.farmacia?.Producao?.Count}
                 </Text>
               </View>
             </View>
@@ -139,7 +124,7 @@ const Stopwatch = () => {
               <Text style={styles.text_btnHorizontal}>Total Acomodação</Text>
               <View>
                 <Text style={styles.text_btnHorizontal}>
-                  {data?.result.acomodacao.count}
+                  {data?.result?.acomodacao?.Count}
                 </Text>
               </View>
             </View>
@@ -149,7 +134,7 @@ const Stopwatch = () => {
               <Text style={styles.text_btnHorizontal}>Total Tratamento</Text>
               <View>
                 <Text style={styles.text_btnHorizontal}>
-                  {data?.result.tratamento.count}
+                  {data?.result?.tratamento?.Count}
                 </Text>
               </View>
             </View>

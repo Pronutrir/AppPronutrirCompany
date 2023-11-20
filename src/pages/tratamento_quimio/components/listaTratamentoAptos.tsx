@@ -18,6 +18,7 @@ import {
   useEntregaPreMedicamento,
   useGetAtendimentosAptosEnfermagem,
   useInitAtendimento,
+  useInitPreMedicamento,
 } from '../../../hooks/useAtendimento';
 import AuthContext from '../../../contexts/auth';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
@@ -44,6 +45,9 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
   const { mutateAsync: mutateAsyncEntregaPreMedicamento } =
     useEntregaPreMedicamento();
 
+  const { mutateAsync: mutateAsyncInitPreMedicamento } =
+    useInitPreMedicamento();
+
   const queryClient = useQueryClient();
 
   const loadingRef = useRef<LoadHandles>(null);
@@ -56,6 +60,9 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
     useRef<ModalHandlesCentralizedOptions>(null);
 
   const refModalEntregaPreMedicamento =
+    useRef<ModalHandlesCentralizedOptions>(null);
+
+  const refModalInicioPreMedicamento =
     useRef<ModalHandlesCentralizedOptions>(null);
 
   const [selectedItem, setSelectedItem] =
@@ -71,7 +78,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
           nR_SEQ_ATENDIMENTO: item.nR_SEQ_ATENDIMENTO,
           NM_USUARIO: PerfilSelected?.nM_USUARIO ?? 'AppPronutrir',
           cD_ESTABELECIMENTO: UnidadeSelected?.cD_ESTABELECIMENTO ?? 7,
-          nR_SEQ_AGENDA: item.nR_SEQ_AGENDA
+          nR_SEQ_AGENDA: item.nR_SEQ_AGENDA,
         });
         useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_INICIO_ADM');
         loadingRef.current?.closeModal();
@@ -98,7 +105,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
           dS_DIA_CICLO: item.dS_DIA_CICLO,
           nR_CICLO: item.nR_CICLO,
           cD_PESSOA_FISICA: item.cD_PESSOA_FISICA,
-          dT_REAL: item.dT_REAL
+          dT_REAL: item.dT_REAL,
         });
         useUpdateCacheAgendaQT(item?.nR_ATENDIMENTO, 'dT_FIM_ADM');
         loadingRef.current?.closeModal();
@@ -165,6 +172,34 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
     }
   };
 
+  const InitPreMedicamento = async (
+    item: IAtendimentosAptosEnfermagem | null,
+  ) => {
+    if (item && UnidadeSelected && PerfilSelected) {
+      try {
+        loadingRef.current?.openModal();
+        await mutateAsyncInitPreMedicamento({
+          NR_SEQ_ATENDIMENTO: item.nR_SEQ_ATENDIMENTO,
+          NM_USUARIO: PerfilSelected?.nM_USUARIO,
+          cD_ESTABELECIMENTO: UnidadeSelected.cD_ESTABELECIMENTO,
+        });
+        useUpdateCacheAgendaQT(
+          item?.nR_ATENDIMENTO,
+          'dT_RECEBIMENTO_PRE_MEDIC',
+        );
+        loadingRef.current?.closeModal();
+      } catch (error) {
+        loadingRef.current?.closeModal();
+      }
+    } else {
+      addAlert({
+        message:
+          'Error ao realizar o recebimento selecione a unidade e o perfil do usuário!',
+        status: 'error',
+      });
+    }
+  };
+
   type options =
     | 'dT_INICIO_ADM'
     | 'dT_FIM_ADM'
@@ -207,6 +242,7 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
         refModalEndTratamento={refModalEndTratamento}
         refModalEntregaMedicamento={refModalEntregaMedicamento}
         refModalEntregaPreMedicamento={refModalEntregaPreMedicamento}
+        refModalInitPreMedicamento={refModalInicioPreMedicamento}
       />
     </CardSimples>
   );
@@ -251,6 +287,11 @@ const ListaTratamentoAptos = ({ AtendimentosAptos }: Props) => {
         ref={refModalEntregaMedicamento}
         message={`Deseja realizar o recebimento do medicamento ?`}
         onpress={() => RecebimentoMedicamento(selectedItem)}
+      />
+      <ModalCentralizedOptions
+        ref={refModalInicioPreMedicamento}
+        message={`Deseja realizar o inicio do pré-medicamento ?`}
+        onpress={() => InitPreMedicamento(selectedItem)}
       />
     </View>
   );
