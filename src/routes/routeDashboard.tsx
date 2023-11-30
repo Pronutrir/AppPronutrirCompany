@@ -39,6 +39,8 @@ import PainelSenha from '../pages/PainelSenha/painelSenha';
 import PainelSenhaOptions from '../pages/PainelSenha/painelSenhaOptions/painelSenhaOptions';
 import PrintBluetooth from '../pages/PrintBluetooth/PrintBluetooth';
 import Stopwatch from '../pages/stopwatch/stopwatch';
+import StopwatchFilter from '../pages/stopwatch/stopwatchFilter';
+import { IQuimioterapiaStopwatchH } from '../hooks/useStopwatch';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -124,6 +126,12 @@ export type RootStackParamList = {
   PainelSenhaOptions: undefined;
   PrintBluetooth: undefined;
   Stopwatch: undefined;
+  StopwatchFilter: {
+    listFilter: IQuimioterapiaStopwatchH[];
+    title: string;
+    filterParam: string;
+    setor: string;
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -295,6 +303,11 @@ const InitialStackNavigator = () => {
         name="Stopwatch"
         component={Stopwatch}
         options={{ title: 'Stopwatch' }}
+      />
+      <Stack.Screen
+        name="StopwatchFilter"
+        component={StopwatchFilter}
+        options={({ route }) => ({ title: route.params.title })}
       />
     </Stack.Navigator>
   );

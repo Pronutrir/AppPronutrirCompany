@@ -22,7 +22,8 @@ import { useQueryClient } from 'react-query';
 const DashBoard: React.FC = () => {
   const navigation = useNavigation();
   const styles = useThemeAwareObject(createStyles);
-  const { ValidationAutorizeTriagem } = useContext(SinaisVitaisContext);
+  const { ValidationAutorizeTriagem, ValidationAutorizeEnfermagem } =
+    useContext(SinaisVitaisContext);
   const {
     ValidationAutorizeEvolucao,
     stateAuth: { UnidadeSelected },
@@ -99,7 +100,7 @@ const DashBoard: React.FC = () => {
             label={'Painel de senhas'}
           />
           <BtnDashboardComponent
-            disabled={true}
+            disabled={!ValidationAutorizeEnfermagem()}
             onpress={() => navigation.navigate('Stopwatch')}
             ImgSVG={RelogioSvg}
             label={'Stopwatch'}

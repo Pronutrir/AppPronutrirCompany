@@ -1,6 +1,9 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import Api from '../services/api';
-
+import { useContext } from 'react';
+import NotificationGlobalContext from '../contexts/notificationGlobalContext';
+import ApiNotify from '../services/apiNotify';
+import moment from 'moment';
 export interface IPropsListStopwatch {
   result: {
     agendados: IAgendaPacientStopWatchH;
@@ -14,34 +17,27 @@ export interface IPropsListStopwatch {
     durationPatients: IDurationsPatients;
   };
 }
-
 interface DefaultOptionsStopWatchH {
-  Count: number;
+  count: number;
 }
-
 interface IPercentsStopWatchH {
-  Positive: number;
-  Negative: number;
+  positive: number;
+  negative: number;
 }
-
 interface IOptionsStopWatchH extends DefaultOptionsStopWatchH {
-  Percent: IPercentsStopWatchH;
-  Patients: IQuimioterapiaStopwatchH[];
+  percent: IPercentsStopWatchH;
+  patients: IQuimioterapiaStopwatchH[];
 }
-
 interface IOptionsStopWatchHFarmacia {
-  Satelite: IOptionsStopWatchH;
-  Producao: IOptionsStopWatchH;
+  satelite: IOptionsStopWatchH;
+  producao: IOptionsStopWatchH;
 }
-
 export interface IAgendaPacientStopWatchH extends DefaultOptionsStopWatchH {
-  ListAgendaQuimioterapia: [];
+  listAgendaQuimioterapia: [];
 }
-
 interface IDurationsPatients extends DefaultOptionsStopWatchH {
-  Patients: PatientsStopWatchH[];
+  patients: PatientsStopWatchH[];
 }
-
 export interface IQuimioterapiaStopwatchH {
   nR_SEQ_PACIENTE: number;
   cod: string;
@@ -95,7 +91,6 @@ export interface IQuimioterapiaStopwatchH {
   tt: boolean;
   margem: string;
 }
-
 interface PatientsStopWatchH {
   nR_SEQ_PACIENTE: number;
   paciente: string;
@@ -104,15 +99,83 @@ interface PatientsStopWatchH {
   duration: number;
   protocolo: string;
 }
+export interface IPostMotivoAtraso {
+  cod_PF: number;
+  nr_sequencia: number;
+  nomePF: string;
+  title: string;
+  body: string;
+  re?: boolean;
+  tr?: boolean;
+  fa?: boolean;
+  tt?: boolean;
+  defaultMsn?: boolean;
+}
 
-const useListStopwatch = () => {
-  return useQuery('serverDataHour', async () => {
+const useListStopwatch = (estabelecimento: number) => {
+  return useQuery(
+    'ListStopwatch',
+    async () => {
+      return (
+        await Api.get<IPropsListStopwatch>(
+          `StopWatchH/ListStopwatchH?estabelecimento=${estabelecimento}&notifySend=true&orderBy=ASC&page=1&rows=1000`,
+        )
+      ).data.result;
+    },
+    {
+      refetchInterval: 1000 * 10,
+    },
+  );
+};
+
+const useListStopwatchDefaultMsn = (setor: string) => {
+  return useQuery('DefaultMsn', async () => {
     return (
-      await Api.get<IPropsListStopwatch>(
-        'StopWatchH/ListStopwatchH?estabelecimento=7&notifySend=true&orderBy=ASC&page=1&rows=1000',
+      await ApiNotify.get<IPostMotivoAtraso[]>(
+        `ReasonDelay/ListarMotivosAtrasosPorSetor?setorParam=${setor}&msnPadrao=true`,
       )
     ).data;
   });
 };
 
-export { useListStopwatch };
+const useStopWatchMotivoAtraso = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPostMotivoAtraso) => {
+      return ApiNotify.post('ReasonDelay', item);
+    },
+    {
+      onSuccess: () => {
+        addAlert({
+          message: 'Motivo de atraso enviado com sucesso!',
+          status: 'sucess',
+        });
+      },
+      onError: () => {
+        addAlert({
+          message: 'Error ao enviar tente mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+const useListStopwatchAtrados = (setor: string) => {
+  return useQuery(setor, async () => {
+    return (
+      await ApiNotify.get<IPostMotivoAtraso[]>(
+        `ReasonDelay/ListarMotivosAtrasosPorSetor?setorParam=${setor}&dataRegistro=${moment().format(
+          'YYYY-MM-DD',
+        )}`,
+      )
+    ).data;
+  });
+};
+
+export {
+  useListStopwatch,
+  useStopWatchMotivoAtraso,
+  useListStopwatchDefaultMsn,
+  useListStopwatchAtrados,
+};

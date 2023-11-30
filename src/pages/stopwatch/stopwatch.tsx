@@ -6,6 +6,7 @@ import {
   Text,
   View,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import { ThemeContextData } from '../../contexts/themeContext';
@@ -14,134 +15,183 @@ import { useNavigation } from '@react-navigation/native';
 import { useListStopwatch } from '../../hooks/useStopwatch';
 import CardSimples from '../../components/Cards/CardSimples';
 import { RFPercentage } from 'react-native-responsive-fontsize';
+import ShimerPlaceHolderMenuStopWacth from '../../components/shimmerPlaceHolder/shimerPlaceHolderMenuStopWacth';
 
 const Stopwatch = () => {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
 
-  const { data } = useListStopwatch();
-
-  /* const Propsobject = Object.getOwnPropertyNames(data?.result).map(item => {
-    console.log(item);
-    if (data) {
-      type ObjectKey = keyof typeof data.result;
-
-      const myVar = item as ObjectKey;
-
-      console.log(myVar);
-    } else {
-      return;
-    }
-  }); */
+  const { data } = useListStopwatch(7);
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={{ flex: 1 }}>
-        <View style={styles.box1}>
+    <ScrollView style={styles.container}>
+      <View style={styles.box1}>
+        {data ? (
           <CardSimples>
-            <>
-              {/* {Propsobject?.map(item => {
-                <CardSimples styleCardContainer={styles.ItemMenu}>
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={styles.text_btnHorizontal}>
-                      Total de agendados
-                    </Text>
-                    <View>
-                      <Text style={styles.text_btnHorizontal}>
-                        {data?.result.agendados.Count}
-                      </Text>
-                    </View>
-                  </View>
-                </CardSimples>;
-              })} */}
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                marginVertical: RFPercentage(2),
+              }}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('StopwatchFilter', {
+                    listFilter: data?.agendados.listAgendaQuimioterapia,
+                    title: 'Check-in',
+                  })
+                }
+                style={styles.btnItemMenu}>
+                <Text style={styles.text_btnHorizontal}>Agenda</Text>
+                <Text style={styles.textNum_btnHorizontal}>
+                  {data?.agendados?.count}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('StopwatchFilter', {
+                    listFilter: data?.agendados.listAgendaQuimioterapia,
+                    title: 'Check-in',
+                  })
+                }
+                style={styles.btnItemMenu}>
+                <Text style={styles.text_btnHorizontal}>Check-in</Text>
+                <Text style={styles.textNum_btnHorizontal}>
+                  {data?.durationPatients?.count}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('StopwatchFilter', {
+                    listFilter: data?.durationPatients.patients.filter(
+                      item => item.dT_ALTA != null,
+                    ),
+                  })
+                }
+                style={styles.btnItemMenu}>
+                <Text style={styles.text_btnHorizontal}>Altas</Text>
+                <Text style={styles.textNum_btnHorizontal}>
+                  {
+                    data?.durationPatients?.patients.filter(
+                      item => item.dT_ALTA != null,
+                    ).length
+                  }
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </CardSimples>
+        ) : (
+          <CardSimples>
+            <>{Array(2).fill(<ShimerPlaceHolderMenuStopWacth />)}</>
+          </CardSimples>
+        )}
+      </View>
 
-              <CardSimples styleCardContainer={styles.ItemMenu}>
-                <View style={{ flexDirection: 'column' }}>
-                  <Text style={styles.text_btnHorizontal}>
-                    Total de Check-in
-                  </Text>
-                  <View>
-                    <Text style={styles.text_btnHorizontal}>
-                      {data?.result?.durationPatients?.Count}
-                    </Text>
-                  </View>
-                </View>
-              </CardSimples>
-              <CardSimples styleCardContainer={styles.ItemMenu}>
-                <View style={{ flexDirection: 'column' }}>
-                  <Text style={styles.text_btnHorizontal}>Total de Altas</Text>
-                  <View>
-                    <Text style={styles.text_btnHorizontal}>
-                      {data?.result?.durationPatients?.Count}
-                    </Text>
-                  </View>
-                </View>
-              </CardSimples>
-            </>
-          </CardSimples>
-          <CardSimples styleCardContainer={styles.btnItem}>
-            <View>
-              <Text style={styles.text_btnHorizontal}>Total Recepção</Text>
-              <View>
-                <Text style={styles.text_btnHorizontal}>
-                  {data?.result?.recepcao?.Count}
-                </Text>
-              </View>
-            </View>
-          </CardSimples>
-          <CardSimples styleCardContainer={styles.btnItem}>
-            <View>
-              <Text style={styles.text_btnHorizontal}>Total Triagem</Text>
-              <View>
-                <Text style={styles.text_btnHorizontal}>
-                  {data?.result?.triagem?.Count}
-                </Text>
-              </View>
-            </View>
-          </CardSimples>
-          <CardSimples styleCardContainer={styles.btnItem}>
-            <View>
-              <Text style={styles.text_btnHorizontal}>Total Satelite</Text>
-              <View>
-                <Text style={styles.text_btnHorizontal}>
-                  {data?.result?.farmacia?.Satelite?.Count}
-                </Text>
-              </View>
-            </View>
-          </CardSimples>
-          <CardSimples styleCardContainer={styles.btnItem}>
-            <View>
-              <Text style={styles.text_btnHorizontal}>Total Produção</Text>
-              <View>
-                <Text style={styles.text_btnHorizontal}>
-                  {data?.result?.farmacia?.Producao?.Count}
-                </Text>
-              </View>
-            </View>
-          </CardSimples>
-          <CardSimples styleCardContainer={styles.btnItem}>
-            <View>
-              <Text style={styles.text_btnHorizontal}>Total Acomodação</Text>
-              <View>
-                <Text style={styles.text_btnHorizontal}>
-                  {data?.result?.acomodacao?.Count}
-                </Text>
-              </View>
-            </View>
-          </CardSimples>
-          <CardSimples styleCardContainer={styles.btnItem}>
-            <View>
-              <Text style={styles.text_btnHorizontal}>Total Tratamento</Text>
-              <View>
-                <Text style={styles.text_btnHorizontal}>
-                  {data?.result?.tratamento?.Count}
-                </Text>
-              </View>
-            </View>
-          </CardSimples>
+      {data ? (
+        <View style={styles.box2}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('StopwatchFilter', {
+                listFilter: data?.recepcao.patients,
+                title: 'Recepção',
+                filterParam: 'margeM_RE',
+                setor: 'Recepcao',
+              })
+            }
+            style={styles.btnItem}>
+            <Text style={styles.text_btnHorizontal}>Recepção</Text>
+            <Text style={styles.textNum_btnHorizontal}>
+              {data?.recepcao?.count}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('StopwatchFilter', {
+                listFilter: data?.triagem.patients,
+                title: 'Triagem',
+                filterParam: 'margeM_TR',
+                setor: 'Triagem',
+              })
+            }
+            style={styles.btnItem}>
+            <Text style={styles.text_btnHorizontal}>Triagem</Text>
+            <Text style={styles.textNum_btnHorizontal}>
+              {data?.triagem?.count}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('StopwatchFilter', {
+                listFilter: data?.farmacia.satelite.patients,
+                title: 'Fámacia Satelite',
+                filterParam: 'margeM_FA_SAT_TT',
+                setor: 'Farmacia',
+              })
+            }
+            style={styles.btnItem}>
+            <Text style={styles.text_btnHorizontal}>Fámacia Satelite</Text>
+            <Text style={styles.textNum_btnHorizontal}>
+              {data?.farmacia?.satelite?.count}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('StopwatchFilter', {
+                listFilter: data?.farmacia.producao.patients,
+                title: 'Farmácia Produção',
+                filterParam: 'margeM_FA_TT',
+                setor: 'Farmacia',
+              })
+            }
+            style={styles.btnItem}>
+            <Text style={styles.text_btnHorizontal}>Farmácia Produção</Text>
+            <Text style={styles.textNum_btnHorizontal}>
+              {data?.farmacia?.producao?.count}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('StopwatchFilter', {
+                listFilter: data?.pre_Tratamento.patients,
+                title: 'Pré Tratamento',
+                filterParam: 'margeM_PRE_TT',
+                setor: 'Nursing',
+              })
+            }
+            style={styles.btnItem}>
+            <Text style={styles.text_btnHorizontal}>Pré Tratamento</Text>
+            <Text style={styles.textNum_btnHorizontal}>
+              {data?.pre_Tratamento?.count}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('StopwatchFilter', {
+                listFilter: data?.tratamento.patients,
+                title: 'Tratamento',
+                filterParam: 'margeM_TT',
+                setor: 'Nursing',
+              })
+            }
+            style={styles.btnItem}>
+            <Text style={styles.text_btnHorizontal}>Tratamento</Text>
+            <Text style={styles.textNum_btnHorizontal}>
+              {data?.tratamento?.count}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+      ) : (
+        <View style={styles.box2}>
+          {Array(6).fill(<ShimerPlaceHolderMenuStopWacth />)}
+        </View>
+      )}
+    </ScrollView>
   );
 };
 
@@ -158,14 +208,20 @@ const createStyles = (theme: ThemeContextData) => {
       justifyContent: 'space-around',
       flexWrap: 'wrap',
     },
-    btnItem: {
-      width: Dimensions.get('screen').width / 3.4,
+    box2: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      flexWrap: 'wrap',
+    },
+    btnItemMenu: {
+      width: Dimensions.get('screen').width / 3.5,
       height: RFPercentage(13),
-      backgroundColor: theme.colors.BACKGROUND_1,
-      marginVertical: 5,
-      paddingVertical: PixelRatio.get() < 2 ? 10 : 15,
+      backgroundColor: theme.colors.BUTTON_SECUNDARY,
+      marginVertical: RFPercentage(1),
+      padding: RFPercentage(0.5),
       borderRadius: 10,
-      justifyContent: 'center',
+      justifyContent: 'space-around',
       alignItems: 'center',
       ...Platform.select({
         ios: {
@@ -181,13 +237,14 @@ const createStyles = (theme: ThemeContextData) => {
         },
       }),
     },
-    ItemMenu: {
-      width: Dimensions.get('screen').width / 3.5,
+    btnItem: {
+      width: Dimensions.get('screen').width / 2.3,
       height: RFPercentage(13),
-      backgroundColor: theme.colors.BACKGROUND_1,
-      paddingVertical: PixelRatio.get() < 2 ? 10 : 15,
+      backgroundColor: theme.colors.BUTTON_SECUNDARY,
+      marginVertical: RFPercentage(1),
+      padding: PixelRatio.get() < 2 ? 10 : 15,
       borderRadius: 10,
-      justifyContent: 'center',
+      justifyContent: 'space-around',
       alignItems: 'center',
       ...Platform.select({
         ios: {
@@ -204,10 +261,17 @@ const createStyles = (theme: ThemeContextData) => {
       }),
     },
     text_btnHorizontal: {
-      fontSize: theme.typography.SIZE.fontysize12,
-      fontFamily: theme.typography.FONTES.Light,
-      letterSpacing: theme.typography.LETTERSPACING.S,
-      color: theme.colors.TEXT_SECONDARY,
+      fontSize: theme.typography.SIZE.fontysize14,
+      fontFamily: theme.typography.FONTES.Black,
+      letterSpacing: theme.typography.LETTERSPACING.L,
+      color: theme.colors.TEXT_TERTIARY,
+      textAlign: 'center',
+    },
+    textNum_btnHorizontal: {
+      fontSize: theme.typography.SIZE.fontysize16,
+      fontFamily: theme.typography.FONTES.Black,
+      letterSpacing: theme.typography.LETTERSPACING.L,
+      color: theme.colors.TEXT_TERTIARY,
       textAlign: 'center',
     },
   });

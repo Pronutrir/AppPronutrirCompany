@@ -12,6 +12,7 @@ interface Props<T> {
   onChange(item: T): void;
   selectedValue?: string;
   selectedIndex?: number;
+  defaultButtonText?: string;
 }
 
 const SelectedDropdownOptions = <
@@ -21,6 +22,7 @@ const SelectedDropdownOptions = <
   onChange,
   selectedIndex,
   selectedValue,
+  defaultButtonText = 'Selecione o dispositivo',
 }: Props<T>): JSX.Element => {
   const styles = useThemeAwareObject(createStyles);
 
@@ -32,7 +34,7 @@ const SelectedDropdownOptions = <
       onSelect={selectedItem => {
         onChange(selectedItem);
       }}
-      defaultButtonText={'Selecione o dispositivo'}
+      defaultButtonText={defaultButtonText}
       buttonTextAfterSelection={(selectedItem, index) => {
         return selectedItem.label;
       }}

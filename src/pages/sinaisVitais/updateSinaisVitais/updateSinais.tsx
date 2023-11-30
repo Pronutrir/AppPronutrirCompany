@@ -47,7 +47,7 @@ import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
 import PrintBluetoothContext from '../../../contexts/printBluetoothContext';
 import { useGerarSenhaPainel } from '../../../hooks/usePainelSenha';
 import AuthContext from '../../../contexts/auth';
-import { useVincularAtendimento } from '../../../hooks/useAtendimento';
+
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
   route: ProfileScreenRouteProp;

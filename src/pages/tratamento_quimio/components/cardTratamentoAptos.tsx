@@ -58,7 +58,7 @@ const CardTratamentoAptos = ({
 
   const theme = useTheme();
 
-  const [placeholder, setPlaceholder] = useState<IFilterSearch>();
+  const [placeholder] = useState<IFilterSearch>();
 
   const refMenuBotom = useRef<ModalHandlesMenu>(null);
 

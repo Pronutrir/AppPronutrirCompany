@@ -18,6 +18,7 @@ import {
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import { getPerfil, getUnidade, saveRefreshToken } from '../utils';
 import ApiAuth from '../services/apiAuth';
+import ApiNotify from '../services/apiNotify';
 interface AuthContextData {
   signed: boolean;
   stateAuth: LoginState;
@@ -117,6 +118,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       .then(response => {
         const { jwtToken, refreshToken } = response.data;
         Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
+        ApiNotify.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
         saveRefreshToken(refreshToken);
         return jwtToken;
       })
