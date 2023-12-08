@@ -66,7 +66,7 @@ const SelectedDropdown = <T extends { label: string }>({
     return (
       <Dropdown
         disable={disable}
-        search={data && data.length > 20 ? true : false}
+        search={data && data.length > 30 ? true : false}
         style={[
           disable ? { ...styles.dropdownDisable } : { ...styles.dropdown },
           DropDownStyle,

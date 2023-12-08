@@ -101,7 +101,6 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
     });
     refetchSinaisVitais;
     setActiveModal(false);
-    navigation.goBack();
   };
 
   const PostSinaisVitais = async () => {
@@ -124,7 +123,6 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
       cD_MEDICO_RESP: null,
     });
     setActiveModal(false);
-    navigation.goBack();
   };
 
   const pressaoArterialMedia = (): number => {
@@ -138,7 +136,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
 
   const mediaPesoPaciente = (element: ISinaisVitais[]) => {
     let mediaPeso = 0;
-    element?.map((item) => {
+    element?.map(item => {
       if (item?.qT_PESO) {
         mediaPeso = mediaPeso + item.qT_PESO;
       }
@@ -191,7 +189,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
       setActiveShimmer(true);
     } else {
       GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)
-        .then((response) => {
+        .then(response => {
           if (response?.qT_ALTURA_CM) {
             setAltura(response?.qT_ALTURA_CM);
             setPeso(response?.qT_PESO);
@@ -273,7 +271,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={0}
                     valueMax={300}
                     valueRanger={Altura}
-                    setValueRanger={(value) => setAltura(value)}
+                    setValueRanger={value => setAltura(value)}
                     disabled={disabledAntropometria}
                   />
                 </View>
@@ -285,7 +283,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={0}
                     valueMax={200}
                     valueRanger={Peso}
-                    setValueRanger={(value) => setPeso(value)}
+                    setValueRanger={value => setPeso(value)}
                     disabled={disabledAntropometria}
                   />
                 </View>
@@ -305,7 +303,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={40}
                     valueMax={280}
                     valueRanger={pas}
-                    setValueRanger={(value) => setPas(value)}
+                    setValueRanger={value => setPas(value)}
                     disabled={disabledSinaisVitais}
                   />
                 </View>
@@ -317,7 +315,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={40}
                     valueMax={150}
                     valueRanger={pad}
-                    setValueRanger={(value) => setPad(value)}
+                    setValueRanger={value => setPad(value)}
                     disabled={disabledSinaisVitais}
                   />
                 </View>
@@ -329,7 +327,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={0}
                     valueMax={200}
                     valueRanger={pressaoArterialMedia()}
-                    setValueRanger={(value) => setPam(value)}
+                    setValueRanger={value => setPam(value)}
                     disabled={disabledSinaisVitais}
                     disabledIncrement={true}
                   />
@@ -342,7 +340,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={0}
                     valueMax={300}
                     valueRanger={fc}
-                    setValueRanger={(value) => setFc(value)}
+                    setValueRanger={value => setFc(value)}
                     disabled={disabledSinaisVitais}
                   />
                 </View>
@@ -354,7 +352,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={12}
                     valueMax={80}
                     valueRanger={fr}
-                    setValueRanger={(value) => setFr(value)}
+                    setValueRanger={value => setFr(value)}
                     disabled={disabledSinaisVitais}
                   />
                 </View>
@@ -370,7 +368,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={30}
                     valueMax={42}
                     valueRanger={temperatura}
-                    setValueRanger={(value) => setTemperatura(value)}
+                    setValueRanger={value => setTemperatura(value)}
                     disabled={!disabledTemperatura}
                   />
                 </View>
@@ -382,7 +380,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     Enabled={!disabledRegistroDor}
                   />
                   <EscalaDorComponent
-                    onpress={(item) => {
+                    onpress={item => {
                       setDor(item);
                     }}
                     disabled={disabledRegistroDor}
@@ -394,7 +392,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={0}
                     valueMax={10}
                     valueRanger={dor}
-                    setValueRanger={(value) => setDor(value)}
+                    setValueRanger={value => setDor(value)}
                     disabled={disabledRegistroDor}
                   />
                 </View>
@@ -414,7 +412,7 @@ const UpdateSinaisVitaisEnfermagem: React.FC<Props> = ({
                     valueMin={50}
                     valueMax={100}
                     valueRanger={oxigenacao}
-                    setValueRanger={(value) => setOxigenacao(value)}
+                    setValueRanger={value => setOxigenacao(value)}
                     disabled={!disabledMonitorizacao}
                   />
                 </View>

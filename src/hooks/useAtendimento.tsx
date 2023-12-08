@@ -3,6 +3,7 @@ import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import { useMutation, useQuery } from 'react-query';
 import Api from '../services/api';
 import AuthContext from '../contexts/auth';
+
 interface IPropsInitAtendimento {
   nR_SEQ_ATENDIMENTO: number;
   NM_USUARIO: string;
@@ -34,7 +35,9 @@ export interface IAtendimentosAptosEnfermagem {
   dS_PROTOCOLO_ONCO: string;
   nR_CICLO: number;
   dS_DIA_CICLO: string;
+  NR_SEQ_LOCAL: number;
   dS_ACOMODACAO: string;
+  dT_ACOMODACAO_PACIENTE: string;
   nM_PESSOA_FISICA: string;
   cD_PESSOA_FISICA: number;
   dT_NASCIMENTO: string;
@@ -47,14 +50,33 @@ export interface IAtendimentosAptosEnfermagem {
   dT_REAL: string;
   dT_ALTA: string;
 }
-
 interface IPostEntregaMedicamento {
   NR_SEQ_ATENDIMENTO: number;
   NM_USUARIO: string;
 }
-
 interface IPostIniciarPréTratamento extends IPostEntregaMedicamento {
   cD_ESTABELECIMENTO: number;
+}
+
+interface IPropsDefinicaoAcomodacao {
+  NR_SEQ_PACIENTE_P: number;
+  NR_SEQ_ATENDIMENTO_P: number;
+  CD_ACOMODACAO_P: number;
+  DT_ACOMODACAO_P?: string;
+  DT_PREVISTA_P?: string;
+  DT_REAL_P?: string;
+  NM_USUARIO_P: string;
+  CD_ESTABELECIMENTO_P: number;
+}
+export interface IPropsAcomodacao {
+  nR_SEQUENCIA: 20;
+  cD_ESTABELECIMENTO: 7;
+  dS_LOCAL: 'APARTAMENTO - 01';
+  dS_ABREV: 'APT 01';
+  iE_SITUACAO: 'A';
+}
+interface IResponseListAcomodacao {
+  result: IPropsAcomodacao[];
 }
 const useGetAtendimentosAptosEnfermagem = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
@@ -233,6 +255,51 @@ const useVincularAtendimento = () => {
   });
 };
 
+const useDefinicaoAcomodacao = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPropsDefinicaoAcomodacao) => {
+      return Api.post<IPropsDefinicaoAcomodacao>(
+        'LocalAdmQuimioterapia/DefinirAcomodacaoQuimio',
+        item,
+      );
+    },
+    {
+      onError: ({ message }) => {
+        addAlert({
+          message: message,
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+const UseListLocalAcomodacao = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  const { stateAuth } = useContext(AuthContext);
+  return useQuery(
+    'ListLocalAcomodacao',
+    async () => {
+      const { result } = (
+        await Api.get<IResponseListAcomodacao>(
+          `LocalAdmQuimioterapia/ListarLocalAdmQT?estabelecimento=${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
+        )
+      ).data;
+      return result;
+    },
+    {
+      staleTime: 60 * 30000, // 30 minuto
+      onError: () => {
+        addAlert({
+          message: 'Error ao carregar as acomodações, tentar mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
 export {
   useInitAtendimento,
   useGetAtendimentosAptosEnfermagem,
@@ -241,4 +308,6 @@ export {
   useEntregaPreMedicamento,
   useVincularAtendimento,
   useInitPreMedicamento,
+  useDefinicaoAcomodacao,
+  UseListLocalAcomodacao,
 };

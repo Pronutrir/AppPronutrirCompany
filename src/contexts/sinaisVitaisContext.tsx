@@ -207,10 +207,6 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         if (axios.isCancel(error)) {
           return;
         }
-        addAlert({
-          message: 'Não foi possivel realizar a consulta, tente mais tarde!',
-          status: 'error',
-        });
         return null;
       });
     return listPFsinaisVitais;

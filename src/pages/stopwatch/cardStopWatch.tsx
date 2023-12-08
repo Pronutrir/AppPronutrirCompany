@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import HistorySvg from '../../assets/svg/historico.svg';
 import CheckMarkComponent from '../../components/check/CheckMarkComponent';
 import QuestionSvg from '../../assets/svg/question.svg';
@@ -16,7 +16,7 @@ import {
   IQuimioterapiaStopwatchH,
   useStopWatchMotivoAtraso,
 } from '../../hooks/useStopwatch';
-import CardObservacao, { IMotivoAtraso } from './cardlObservacao';
+import CardObservacao from './cardlObservacao';
 import ModalCentralize, {
   ModalHandles,
 } from '../../components/Modais/ModalCentralize';
@@ -57,11 +57,6 @@ const CardStopWatch = ({ item, index, setor }: Props) => {
   const refmodalObservacoes = useRef<ModalHandles>(null);
   const loadingRef = useRef<LoadHandles>(null);
 
-  const [motivoAtraso, setMotivoAtraso] = useState<IMotivoAtraso>({
-    title: '',
-    observacao: '',
-  });
-
   const { mutateAsync } = useStopWatchMotivoAtraso();
 
   const AddMotivoAtraso = async (item: IPostMotivoAtraso) => {
@@ -91,12 +86,6 @@ const CardStopWatch = ({ item, index, setor }: Props) => {
         return null;
     }
   };
-
-  useEffect(() => {
-    if (result) {
-      setMotivoAtraso({ title: result.title, observacao: result.body });
-    }
-  }, [resultListAtraso]);
 
   return (
     <TouchableOpacity
@@ -146,16 +135,15 @@ const CardStopWatch = ({ item, index, setor }: Props) => {
       <ActionsCheck />
       <ModalCentralize ref={refmodalObservacoes}>
         <CardObservacao
-          Motivo={motivoAtraso}
-          setMotivoAtraso={setMotivoAtraso}
+          item={{ motivo: result?.title ?? '', observacao: result?.body ?? '' }}
           setor={'Nursing'}
           disable={Boolean(!result)}
-          onpress={() =>
+          onpress={selected =>
             AddMotivoAtraso({
-              title: motivoAtraso.title,
-              body: motivoAtraso.observacao,
+              title: selected.motivo,
+              body: selected.observacao,
               cod_PF: parseInt(usertasy.cD_PESSOA_FISICA),
-              nomePF: usertasy.nM_USUARIO,
+              nomePF: usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO,
               nr_sequencia: item.nR_SEQ_PACIENTE,
               tt: true,
             })

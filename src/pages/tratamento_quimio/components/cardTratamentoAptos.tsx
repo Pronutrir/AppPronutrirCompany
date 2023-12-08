@@ -22,6 +22,10 @@ import CheckMarkSvg from '../../../components/svgComponents/checkMarkSvg';
 import CheckMarkSvgEnd from '../../../components/svgComponents/checkMarkSvgEnd';
 import useTheme from '../../../hooks/useTheme';
 import CheckMarkMedical from '../../../components/svgComponents/checkMarkMedical';
+import ModalCentralize, {
+  ModalHandles,
+} from '../../../components/Modais/ModalCentralize';
+import CardObservacao from './cardlObservacao';
 
 type Props = {
   item: IAtendimentosAptosEnfermagem;
@@ -61,6 +65,7 @@ const CardTratamentoAptos = ({
   const [placeholder] = useState<IFilterSearch>();
 
   const refMenuBotom = useRef<ModalHandlesMenu>(null);
+  const refmodalObservacoes = useRef<ModalHandles>(null);
 
   const MenuPopUpOptions = async (
     itemSelected: string,
@@ -127,13 +132,24 @@ const CardTratamentoAptos = ({
           );
         }
         break;
+      case 'Alterar Poltrona':
+        {
+          setTimeout(
+            () => {
+              setSelectedItem(item);
+              refmodalObservacoes.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+          );
+        }
+        break;
       default:
         break;
     }
   };
 
   const ActionsOptions = (item: IAtendimentosAptosEnfermagem) => {
-    const options = ['Sinais Vitais'];
+    const options = [];
     const {
       iE_PRE_MEDICACAO,
       dT_RECEBIMENTO_PRE_MEDIC,
@@ -166,6 +182,11 @@ const CardTratamentoAptos = ({
     } else if (!dT_INICIO_ADM) {
       options.push('Inicio tratamento');
     }
+
+    if (!dT_FIM_ADM) {
+      options.push('Sinais Vitais', 'Alterar Poltrona');
+    }
+
     return options;
   };
 
@@ -285,6 +306,9 @@ const CardTratamentoAptos = ({
         ItemSelected={placeholder}
         onpress={label => MenuPopUpOptions(label, item)}
       />
+      <ModalCentralize ref={refmodalObservacoes}>
+        <CardObservacao item={item} refmodalObservacoes={refmodalObservacoes} />
+      </ModalCentralize>
       <ActionsCheck />
     </TouchableOpacity>
   );

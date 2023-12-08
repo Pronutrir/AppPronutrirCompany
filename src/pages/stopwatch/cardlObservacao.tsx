@@ -17,23 +17,23 @@ import BtnCentered from '../../components/buttons/BtnCentered';
 import SelectedDropdownOptions from '../../components/selectedDropdown/SelectedDropdownOptions';
 import { useListStopwatchDefaultMsn } from '../../hooks/useStopwatch';
 import ShimerPlaceHolderSelected from '../../components/shimmerPlaceHolder/shimerPlaceHolderSelected';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 export interface IMotivoAtraso {
-  title: string;
+  motivo: string;
   observacao: string;
 }
 
 interface Props {
-  Motivo: IMotivoAtraso | undefined;
-  setMotivoAtraso: React.Dispatch<React.SetStateAction<IMotivoAtraso>>;
+  item: IMotivoAtraso;
   setor: string;
   disable: boolean;
-  onpress(): void;
+  onpress(item: IMotivoAtraso): void;
 }
 
 const CardObservacao: React.FC<Props> = ({
-  Motivo,
-  setMotivoAtraso,
+  item,
   setor,
   disable,
   onpress,
@@ -42,7 +42,9 @@ const CardObservacao: React.FC<Props> = ({
 
   const { data: motivosPadroes } = useListStopwatchDefaultMsn(setor);
 
-  console.log('Motivo', Motivo);
+  const FormSchema = Yup.object().shape({
+    motivo: Yup.string().required('Informar motivo do atraso!'),
+  });
 
   return (
     <KeyboardAvoidingView
@@ -50,78 +52,97 @@ const CardObservacao: React.FC<Props> = ({
       keyboardVerticalOffset={
         Platform.OS === 'ios'
           ? Dimensions.get('screen').height / 5
-          : Dimensions.get('screen').height / 5
+          : Dimensions.get('screen').height / 8
       }>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.containerReacao}>
-          {disable && (
-            <View style={{ alignItems: 'center' }}>
-              {motivosPadroes ? (
-                <SelectedDropdownOptions
-                  defaultButtonText="Motivos padrões"
-                  data={motivosPadroes?.map((item, index) => {
-                    return { index: index, label: item.title, value: item };
-                  })}
-                  onChange={item =>
-                    setMotivoAtraso({
-                      observacao: item.value.body,
-                      title: item.label,
-                    })
-                  }
-                />
-              ) : (
-                <ShimerPlaceHolderSelected />
-              )}
-            </View>
-          )}
-
-          <View>
-            <Text style={styles.textMsn}>Motivo do atraso.</Text>
-            <TextInput
-              style={styles.inputModalTitle}
-              placeholder={'Digite o Motivo do atraso.'}
-              textAlignVertical={'top'}
-              multiline
-              numberOfLines={2}
-              maxLength={50}
-              value={Motivo?.title}
-              onChangeText={text =>
-                setMotivoAtraso(old => {
-                  return { ...old, title: text };
-                })
-              }
-              keyboardType={'default'}
-              editable={true}
-            />
-          </View>
-          <View>
-            <Text style={styles.textMsn}>Observações!</Text>
-            <TextInput
-              style={styles.inputModal}
-              placeholder={'Descrição do motivo do atraso'}
-              textAlignVertical={'top'}
-              multiline
-              numberOfLines={6}
-              maxLength={300}
-              value={Motivo?.observacao}
-              onChangeText={text =>
-                setMotivoAtraso(old => {
-                  return { ...old, observacao: text };
-                })
-              }
-              keyboardType={'default'}
-              editable={true}
-            />
-          </View>
-          {disable && (
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <BtnCentered
-                SizeText={18}
-                labelBtn={'Ok'}
-                onPress={() => onpress()}
-              />
-            </View>
-          )}
+          <Formik
+            initialValues={item}
+            onSubmit={values => {
+              console.log(values);
+              onpress(values);
+            }}
+            validationSchema={FormSchema}>
+            {({
+              handleChange,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isValid,
+              setValues,
+            }) => (
+              <>
+                {disable && (
+                  <View style={{ alignItems: 'center' }}>
+                    {motivosPadroes ? (
+                      <SelectedDropdownOptions
+                        defaultButtonText="Motivos padrões"
+                        data={motivosPadroes?.map((item, index) => {
+                          return {
+                            index: index,
+                            label: item.title,
+                            value: item,
+                          };
+                        })}
+                        onChange={item =>
+                          setValues({
+                            motivo: item.value.body,
+                            observacao: item.label,
+                          })
+                        }
+                      />
+                    ) : (
+                      <ShimerPlaceHolderSelected />
+                    )}
+                  </View>
+                )}
+                <View>
+                  <Text style={styles.textMsn}>Motivo do atraso.</Text>
+                  <TextInput
+                    style={styles.inputModalTitle}
+                    placeholder={'Digite o Motivo do atraso.'}
+                    textAlignVertical={'top'}
+                    multiline
+                    numberOfLines={2}
+                    maxLength={50}
+                    value={values.motivo}
+                    onChangeText={handleChange('motivo')}
+                    keyboardType={'default'}
+                    editable={true}
+                  />
+                  {errors.motivo && (
+                    <Text style={styles.Error}>{errors.motivo}</Text>
+                  )}
+                </View>
+                <View>
+                  <Text style={styles.textMsn}>Observações!</Text>
+                  <TextInput
+                    style={styles.inputModal}
+                    placeholder={'Descrição do motivo do atraso'}
+                    textAlignVertical={'top'}
+                    multiline
+                    numberOfLines={6}
+                    maxLength={300}
+                    value={values.observacao}
+                    onChangeText={handleChange('observacao')}
+                    keyboardType={'default'}
+                    editable={true}
+                  />
+                </View>
+                {disable && (
+                  <View
+                    style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                    <BtnCentered
+                      SizeText={18}
+                      labelBtn={'Ok'}
+                      onPress={handleSubmit}
+                    />
+                  </View>
+                )}
+              </>
+            )}
+          </Formik>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -174,6 +195,10 @@ const createStyle = (theme: ThemeContextData) => {
       color: theme.colors.TEXT_SECONDARY,
       fontSize: theme.typography.SIZE.fontysize14,
       textAlign: 'left',
+    },
+    Error: {
+      color: 'red',
+      fontSize: theme.typography.SIZE.fontysize14,
     },
   });
   return styles;
