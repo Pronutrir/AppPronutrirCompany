@@ -107,7 +107,9 @@ export interface IPostMotivoAtraso {
   body: string;
   re?: boolean;
   tr?: boolean;
+  FaSat?: boolean;
   fa?: boolean;
+  PreTt?: boolean;
   tt?: boolean;
   defaultMsn?: boolean;
 }

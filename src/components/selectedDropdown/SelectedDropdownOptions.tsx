@@ -35,10 +35,10 @@ const SelectedDropdownOptions = <
         onChange(selectedItem);
       }}
       defaultButtonText={defaultButtonText}
-      buttonTextAfterSelection={selectedItem => {
+      buttonTextAfterSelection={(selectedItem, index) => {
         return selectedItem.label;
       }}
-      rowTextForSelection={item => {
+      rowTextForSelection={(item, index) => {
         return item.label;
       }}
       renderDropdownIcon={isOpened => {

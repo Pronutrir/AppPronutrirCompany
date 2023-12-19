@@ -47,6 +47,8 @@ import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
 import PrintBluetoothContext from '../../../contexts/printBluetoothContext';
 import { useGerarSenhaPainel } from '../../../hooks/usePainelSenha';
 import AuthContext from '../../../contexts/auth';
+import OptionEscalaFlebite from '../components/cardOptionsSinaisVitais/OptionEscalaFlebite';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -103,6 +105,8 @@ const UpdateSinais: React.FC<Props> = ({
   const [oxigenacao, setOxigenacao] = useState(0);
   const [observacao, setObservacao] = useState<string>('');
   const [dor, setDor] = useState(0);
+
+  const [pageSelected, setPageSelected] = useState(0);
 
   //params Antropometria
   const [pas, setPas] = useState(0);
@@ -306,6 +310,7 @@ const UpdateSinais: React.FC<Props> = ({
   const refView0 = useRef<TouchableOpacity>(null);
   const refView1 = useRef<TouchableOpacity>(null);
   const refView2 = useRef<TouchableOpacity>(null);
+  const refView3 = useRef<TouchableOpacity>(null);
 
   interface PropsPage {
     Index: number;
@@ -328,6 +333,11 @@ const UpdateSinais: React.FC<Props> = ({
       Index: 2,
       Name: 'Registro de dor',
       Ref: refView2,
+    },
+    {
+      Index: 3,
+      Name: 'Escala Flebite',
+      Ref: refView3,
     },
   ]);
 
@@ -364,6 +374,7 @@ const UpdateSinais: React.FC<Props> = ({
   };
 
   const selected = useCallback((index: number, type?: scroll) => {
+    setPageSelected(index);
     if (type === 'scrollToIndex') {
       scrollToIndex(index);
     }
@@ -373,16 +384,25 @@ const UpdateSinais: React.FC<Props> = ({
       refView0.current?.setNativeProps({ style: styles.btnSelected });
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 1) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btnSelected });
       refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 2) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btnSelected });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 3) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btnSelected });
     }
   }, []);
 
@@ -419,6 +439,8 @@ const UpdateSinais: React.FC<Props> = ({
         );
       case 'Registro de dor':
         return <OptionRegistroDor Dor={dor} setDor={setDor} />;
+      case 'Escala Flebite':
+        return <OptionEscalaFlebite item={PessoaFisica} />;
       default:
         return <Text></Text>;
     }
@@ -451,6 +473,13 @@ const UpdateSinais: React.FC<Props> = ({
             dT_NASCIMENTO: PessoaFisica?.dT_NASCIMENTO,
           }}
         />
+        {Origin == 'Tratamento_enfermagem' && (
+          <View
+            style={{ flexDirection: 'row', paddingVertical: RFPercentage(1) }}>
+            <Text style={styles.label}>Número do Atendimento: </Text>
+            <Text style={styles.text}>{PessoaFisica.nR_ATENDIMENTO}</Text>
+          </View>
+        )}
       </View>
       <View style={styles.box_sinais_vitais}>
         <View style={styles.box1}>
@@ -483,11 +512,10 @@ const UpdateSinais: React.FC<Props> = ({
           )}
         </View>
       </View>
-      {keyboardHeight == 0 && (
+      {keyboardHeight == 0 && pageSelected != 3 && (
         <BtnCentered
           SizeText={18}
           labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
-          //onPress={() => setActiveModalOptions(true)}
           onPress={() => variacaoPercentualPaciente()}
           enabled={ChangerProperty()}
         />

@@ -73,8 +73,10 @@ const CardTratamentoAptos = ({
   ) => {
     switch (itemSelected) {
       case 'Sinais Vitais':
-        navigation.navigate('UpdateSinaisVitaisEnfermagem', {
+        navigation.navigate('UpdateSinais', {
           PessoaFisica: item,
+          GeraAtendimento: false,
+          Origin: 'Tratamento_enfermagem',
         });
         break;
       case 'Inicio tratamento':
