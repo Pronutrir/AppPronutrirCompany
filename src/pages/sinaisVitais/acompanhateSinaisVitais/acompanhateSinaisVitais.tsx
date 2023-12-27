@@ -178,7 +178,6 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
 };
 
 export default AcompanhateSinaisVitais;
-
 const createStyle = (theme: ThemeContextData) => {
   const styles = StyleSheet.create({
     container: {

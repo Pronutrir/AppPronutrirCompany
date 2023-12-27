@@ -82,10 +82,10 @@ const DashBoard: React.FC = () => {
             label={'Evolução'}
           />
           <BtnDashboardComponent
-            disabled={true}
-            onpress={() => navigation.navigate('Exame')}
+            disabled={false}
+            onpress={() => navigation.navigate('CirculacaoInterna')}
             ImgSVG={MedicoImg}
-            label={'Exames'}
+            label={'Circulação Interna'}
           />
           <BtnDashboardComponent
             disabled={!ValidationAutorizeTriagem()}

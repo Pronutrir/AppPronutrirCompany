@@ -20,6 +20,11 @@ interface IReponseUnidades {
   result: IUnidade[];
 }
 
+interface IResponseSetores {
+  dS_SETOR_ATENDIMENTO: string;
+  cD_SETOR_ATENDIMENTO: number;
+}
+
 const useUnidades = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   const {
@@ -66,4 +71,28 @@ const useUnidades = () => {
   );
 };
 
-export { useUnidades };
+const useSetores = (cd_estabelecimento: number) => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useQuery(
+    'setores',
+    async () => {
+      const result = (
+        await Api.get<IResponseSetores[]>(
+          `SetorAtendimento/FiltrarSetoresCodEstabDescrGeral?codEstab=${cd_estabelecimento}&cacheKey=true&cacheName=setoresList`,
+        )
+      ).data;
+
+      return result;
+    },
+    {
+      onError: () => {
+        addAlert({
+          message: 'Error ao carregar os setores, tentar mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+export { useUnidades, useSetores };

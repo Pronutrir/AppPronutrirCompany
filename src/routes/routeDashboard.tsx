@@ -41,6 +41,7 @@ import PrintBluetooth from '../pages/PrintBluetooth/PrintBluetooth';
 import Stopwatch from '../pages/stopwatch/stopwatch';
 import StopwatchFilter from '../pages/stopwatch/stopwatchFilter';
 import { IQuimioterapiaStopwatchH } from '../hooks/useStopwatch';
+import CirculacaoInterna from '../pages/circulacaoInterna/circulacaoInterna';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -132,10 +133,9 @@ export type RootStackParamList = {
     filterParam: string;
     setor: string;
   };
+  CirculacaoInterna: undefined;
 };
-
 const Stack = createStackNavigator<RootStackParamList>();
-
 const InitialStackNavigator = () => {
   return (
     <Stack.Navigator
@@ -309,10 +309,14 @@ const InitialStackNavigator = () => {
         component={StopwatchFilter}
         options={({ route }) => ({ title: route.params.title })}
       />
+      <Stack.Screen
+        name="CirculacaoInterna"
+        component={CirculacaoInterna}
+        options={{ title: 'Circulação Interna' }}
+      />
     </Stack.Navigator>
   );
 };
-
 const DashBoardNavigator = () => {
   return (
     <Stack.Navigator
@@ -341,7 +345,6 @@ const DashBoardNavigator = () => {
     </Stack.Navigator>
   );
 };
-
 const BuscaStackNavigator = () => {
   return (
     <>
@@ -367,7 +370,6 @@ const BuscaStackNavigator = () => {
     </>
   );
 };
-
 const UserStackNavigator = () => {
   return (
     <>

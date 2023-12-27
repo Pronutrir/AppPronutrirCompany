@@ -40,8 +40,10 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 
   const redirect = (item: IAgendaQT) => {
     if (autorizeEnfermagem) {
-      navigation.navigate('UpdateSinaisVitaisEnfermagem', {
+      navigation.navigate('UpdateSinais', {
         PessoaFisica: item,
+        GeraAtendimento: false,
+        Origin: 'Tratamento_enfermagem',
       });
     } else {
       navigation.navigate('UpdateSinais', {
