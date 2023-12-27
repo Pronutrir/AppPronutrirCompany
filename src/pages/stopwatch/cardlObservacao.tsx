@@ -63,15 +63,7 @@ const CardObservacao: React.FC<Props> = ({
               onpress(values);
             }}
             validationSchema={FormSchema}>
-            {({
-              handleChange,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-              isValid,
-              setValues,
-            }) => (
+            {({ handleChange, handleSubmit, values, errors, setValues }) => (
               <>
                 {disable && (
                   <View style={{ alignItems: 'center' }}>

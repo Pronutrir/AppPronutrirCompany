@@ -145,7 +145,12 @@ const CardStopWatch = ({ item, index, setor }: Props) => {
               cod_PF: parseInt(usertasy.cD_PESSOA_FISICA),
               nomePF: usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO,
               nr_sequencia: item.nR_SEQ_PACIENTE,
-              tt: true,
+              tt: setor === 'Tratamento',
+              PreTt: setor === 'PreTratamento',
+              FaSat: setor === 'FarmaciaSat',
+              fa: setor === 'Farmacia',
+              re: setor === 'Recepcao',
+              tr: setor === 'Triagem',
             })
           }
         />

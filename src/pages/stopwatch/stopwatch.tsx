@@ -128,7 +128,7 @@ const Stopwatch = () => {
                 listFilter: data?.farmacia.satelite.patients,
                 title: 'Fámacia Satelite',
                 filterParam: 'margeM_FA_SAT_TT',
-                setor: 'Farmacia',
+                setor: 'FarmaciaSat',
               })
             }
             style={styles.btnItem}>
@@ -160,7 +160,7 @@ const Stopwatch = () => {
                 listFilter: data?.pre_Tratamento.patients,
                 title: 'Pré Tratamento',
                 filterParam: 'margeM_PRE_TT',
-                setor: 'Nursing',
+                setor: 'PreTratamento',
               })
             }
             style={styles.btnItem}>
@@ -176,7 +176,7 @@ const Stopwatch = () => {
                 listFilter: data?.tratamento.patients,
                 title: 'Tratamento',
                 filterParam: 'margeM_TT',
-                setor: 'Nursing',
+                setor: 'Tratamento',
               })
             }
             style={styles.btnItem}>
