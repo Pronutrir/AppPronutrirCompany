@@ -136,6 +136,7 @@ export interface IPFSinaisVitais {
   cD_ESTABELECIMENTO: number;
   cD_MEDICO_RESP: number;
   nR_ATENDIMENTO: number;
+  nR_SEQ_FILA_SENHA: number;
 }
 export interface IPerfisLiberados {
   cD_PERFIL: number;

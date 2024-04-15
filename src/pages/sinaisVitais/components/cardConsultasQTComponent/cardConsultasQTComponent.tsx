@@ -61,7 +61,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         cD_ESTABELECIMENTO_P: item.cD_ESTABELECIMENTO,
         cD_PESSOA_FISICA_P: item.cD_PESSOA_FISICA,
         iE_SENHA_PRIORITARIA_P: 'N',
-        nR_SEQ_FILA_P: 14,
+        nR_SEQ_FILA_P: item.nR_SEQ_FILA_SENHA,
         nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
       });
       loadingRef.current?.closeModal();

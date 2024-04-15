@@ -187,7 +187,7 @@ const UpdateSinais: React.FC<Props> = ({
         cD_ESTABELECIMENTO_P: PessoaFisica.cD_ESTABELECIMENTO,
         cD_PESSOA_FISICA_P: PessoaFisica.cD_PESSOA_FISICA,
         iE_SENHA_PRIORITARIA_P: 'N',
-        nR_SEQ_FILA_P: Origin === 'Tratamento' ? 14 : 12,
+        nR_SEQ_FILA_P: Origin === 'Tratamento' ? PessoaFisica.nR_SEQ_FILA_SENHA : 12,
         nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
       });
       loadingRef.current?.closeModal();
@@ -446,6 +446,14 @@ const UpdateSinais: React.FC<Props> = ({
     }
   };
 
+  const filterOptionsMenu = () : Array<string> => {
+    switch (Origin) {
+      case "Consulta": return ['Gerar senha','Histórico','Acompanhantes','Observações']
+      case "Tratamento": return ['Gerar senha','Histórico','Acompanhantes','Observações']
+      default: return ['Histórico','Acompanhantes','Observações']
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.MenuOptions}>
@@ -457,12 +465,7 @@ const UpdateSinais: React.FC<Props> = ({
           }
         />
         <MenuPopUp
-          btnLabels={[
-            'Gerar senha',
-            'Histórico',
-            'Acompanhantes',
-            'Observações',
-          ]}
+          btnLabels={filterOptionsMenu()}
           onpress={item => MenuPopUpOptions(item)}
         />
       </View>

@@ -69,6 +69,7 @@ export interface ISinaisVitais {
     iE_SITUACAO: string;
     nM_USUARIO: string;
     dS_OBSERVACAO: string;
+    NR_SEQ_FILA_SENHA: number;
 }
 
 export interface IAlertaPaciente {
