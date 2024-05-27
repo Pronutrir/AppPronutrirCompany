@@ -137,6 +137,7 @@ export interface IPFSinaisVitais {
   cD_MEDICO_RESP: number;
   nR_ATENDIMENTO: number;
   nR_SEQ_FILA_SENHA: number;
+  seQ_FILAS_SENHA: number[];
 }
 export interface IPerfisLiberados {
   cD_PERFIL: number;
@@ -187,14 +188,12 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
       any,
       AxiosResponse<ResponsePFdados>
     >(
-      `PessoaFisica/FiltrarPFdadosReduzidos?${
-        filter.queryDate
-          ? `&dataNascimento=${moment(filter.queryDate, 'DD/MM/YYYY').format(
-              'YYYY-MM-DD',
-            )}`
-          : ''
-      }${
-        filter.queryNome ? `&nomePessoaFisica=${filter.queryNome}` : ''
+      `PessoaFisica/FiltrarPFdadosReduzidos?${filter.queryDate
+        ? `&dataNascimento=${moment(filter.queryDate, 'DD/MM/YYYY').format(
+          'YYYY-MM-DD',
+        )}`
+        : ''
+      }${filter.queryNome ? `&nomePessoaFisica=${filter.queryNome}` : ''
       }&pagina=1&rows=100`,
       {
         cancelToken: axiosSourcePFSinaisVitais.current.token,

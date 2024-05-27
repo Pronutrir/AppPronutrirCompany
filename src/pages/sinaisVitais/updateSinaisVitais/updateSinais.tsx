@@ -49,6 +49,7 @@ import { useGerarSenhaPainel } from '../../../hooks/usePainelSenha';
 import AuthContext from '../../../contexts/auth';
 import OptionEscalaFlebite from '../components/cardOptionsSinaisVitais/OptionEscalaFlebite';
 import { RFPercentage } from 'react-native-responsive-fontsize';
+import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -78,6 +79,7 @@ const UpdateSinais: React.FC<Props> = ({
   const { stateAuth } = useContext(AuthContext);
 
   const { printSenha } = useContext(PrintBluetoothContext);
+  const { addNotification } = useContext(NotificationGlobalContext);
 
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
 
@@ -99,6 +101,7 @@ const UpdateSinais: React.FC<Props> = ({
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
   const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
+  const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
 
   const [Peso, setPeso] = useState(0);
   const [Altura, setAltura] = useState(0);
@@ -180,27 +183,42 @@ const UpdateSinais: React.FC<Props> = ({
     navigation.goBack();
   };
 
-  const gerarSenha = async () => {
+  const gerarSenha = async (seqFila: number) => {
+    if (seqFila === 0) {
+      addNotification({
+        message: 'Médico sem agenda vinculada a fila no painel de senhas!',
+        status: 'error',
+      });
+      return;
+    }
+
+    const { cD_ESTABELECIMENTO, cD_PESSOA_FISICA, nR_SEQ_FILA_SENHA } = PessoaFisica;
+    const { nM_USUARIO } = stateAuth.usertasy;
+
+    const senhaData = {
+      cD_ESTABELECIMENTO_P: cD_ESTABELECIMENTO,
+      cD_PESSOA_FISICA_P: cD_PESSOA_FISICA,
+      iE_SENHA_PRIORITARIA_P: 'N',
+      nR_SEQ_FILA_P: Origin === 'Tratamento' ? nR_SEQ_FILA_SENHA : seqFila,
+      nM_USUARIO_P: nM_USUARIO,
+    };
+
+    refModalCentralizeSenha.current?.closeModal();
+
     try {
       loadingRef.current?.openModal();
-      const result = await mutateAsyncGerarSenha({
-        cD_ESTABELECIMENTO_P: PessoaFisica.cD_ESTABELECIMENTO,
-        cD_PESSOA_FISICA_P: PessoaFisica.cD_PESSOA_FISICA,
-        iE_SENHA_PRIORITARIA_P: 'N',
-        nR_SEQ_FILA_P: Origin === 'Tratamento' ? PessoaFisica.nR_SEQ_FILA_SENHA : 12,
-        nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
-      });
-      loadingRef.current?.closeModal();
+      const result = await mutateAsyncGerarSenha(senhaData);
       await printSenha(result);
     } catch (error) {
+      loadingRef.current?.closeModal();
+    } finally {
       loadingRef.current?.closeModal();
     }
   };
 
   const MenuPopUpOptions = async (itemSelected: string) => {
     switch (itemSelected) {
-      case 'Gerar senha':
-        await gerarSenha();
+      case 'Gerar senha': Origin === 'Tratamento' ? gerarSenha(1) : refModalCentralizeSenha.current?.openModal()
         break;
       case 'Histórico':
         navigation.navigate('EndSinaisVitais', {
@@ -446,11 +464,11 @@ const UpdateSinais: React.FC<Props> = ({
     }
   };
 
-  const filterOptionsMenu = () : Array<string> => {
+  const filterOptionsMenu = (): Array<string> => {
     switch (Origin) {
-      case "Consulta": return ['Gerar senha','Histórico','Acompanhantes','Observações']
-      case "Tratamento": return ['Gerar senha','Histórico','Acompanhantes','Observações']
-      default: return ['Histórico','Acompanhantes','Observações']
+      case "Consulta": return ['Gerar senha', 'Histórico', 'Acompanhantes', 'Observações']
+      case "Tratamento": return ['Gerar senha', 'Histórico', 'Acompanhantes', 'Observações']
+      default: return ['Histórico', 'Acompanhantes', 'Observações']
     }
   }
 
@@ -549,6 +567,10 @@ const UpdateSinais: React.FC<Props> = ({
           setObservacao={setObservacao}
           onpress={() => refmodalObservacoes.current?.closeModal()}
         />
+      </ModalCentralize>
+      <ModalCentralize style={{ width: RFPercentage(30), height: RFPercentage(30), justifyContent: 'space-around' }} ref={refModalCentralizeSenha}>
+        <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[0])} enabled={true} />
+        <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[1])} enabled={true} />
       </ModalCentralize>
     </View>
   );

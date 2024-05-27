@@ -32,6 +32,7 @@ export interface IConsultas {
     nM_USUARIO?: string;
     cD_ESTABELECIMENTO?: number;
     counT_SVMP: number;
+    NR_SEQ_FILA_SENHA: string
 }
 
 export interface ISinaisVitais {

@@ -62,19 +62,6 @@ const PainelSenha = () => {
     }
   };
 
-  /*  const createPDF = async () => {
-    const options = {
-      html: '<html><h1 style="text-align:center;color:#000000;font-size: 22px">PDF TEST</h1><html>',
-      fileName: 'test',
-      directory: 'Documents',
-      base64: true,
-    };
-
-    const file = await RNHTMLtoPDF.convert(options);
-    console.log(file);
-    return file.base64;
-  }; */
-
   const onClickCard = async (item: PropsFilaEsperaAtendimentos) => {
     const validation = await validationBluetooth();
     if (validation) {
@@ -136,7 +123,7 @@ const PainelSenha = () => {
                 key={index}
                 containerStyle={{
                   height: RFPercentage(20),
-                  width: RFPercentage(25),
+                  width: RFPercentage(20),
                 }}
               />
             );

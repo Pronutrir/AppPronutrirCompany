@@ -2,54 +2,51 @@ import axios, { AxiosResponse } from 'axios';
 import refreshToken from './refreshToken';
 import { InternalServerError } from './apiInterageMedicamentos';
 
+// Define base URLs for different environments
+const BASE_URLS = {
+  production: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
+  test: 'https://testewebapitasy.pronutrir.com.br/api/v1/',
+};
+
+// Create Axios instance with default configuration
 const Api = axios.create({
-  //producao
-  baseURL: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
-  //teste
-  //baseURL: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
+  baseURL: BASE_URLS.production, // Default to test environment
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
 });
 
+// Response Interceptor
 Api.interceptors.response.use(
-  (response: AxiosResponse<any>) => response,
+  (response: AxiosResponse<unknown>) => response,
   ({ response }: { response: AxiosResponse<string> }) => {
-    console.log('api.interceptors.response.use', response);
-    if (response.status === 409) {
+
+    // Centralized error handling for specific status codes
+    if ([401, 409, 500].includes(response.status)) {
       return Promise.reject(new InternalServerError(response.data));
     }
-
-    if (response.status === 500) {
-      return Promise.reject(new InternalServerError(response.data));
-    }
-
-    if (response.status === 401) {
-      return Promise.reject(new InternalServerError(response.data));
-    }
-
-    // Generic Error Response
-    return Promise.reject(new InternalServerError(response.data));
+    
+    // Generic error handling
+    return Promise.reject(new InternalServerError('An unexpected error occurred.'));
   },
 );
 
-Api.interceptors.request.use(async req => {
+// Request Interceptor
+Api.interceptors.request.use(async (req) => {
   try {
-    // eslint-disable-next-line no-prototype-builtins
-    if (req.headers?.hasOwnProperty('common')) {
+    // Check for common headers and refresh token if needed
+    if (req.headers && 'common' in req.headers) {
       const tokenUpdated = await refreshToken(req.headers['common']);
       if (tokenUpdated) {
         req.headers.Authorization = `Bearer ${tokenUpdated}`;
       }
     }
   } catch (error) {
-    console.log('erro resquest ==> ', error);
+    console.error('Request Interceptor Error:', error);
     return Promise.reject(error);
-  } finally {
-    // eslint-disable-next-line no-unsafe-finally
-    return req;
   }
+  return req;
 });
 
 export default Api;

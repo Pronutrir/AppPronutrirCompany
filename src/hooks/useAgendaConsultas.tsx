@@ -44,6 +44,8 @@ export interface IAgendaConsulta {
   cD_PROCEDENCIA: number;
   nM_USUARIO_CONFIRM: string;
   counT_SVMP: number;
+  nR_SEQ_FILA_SENHA: string;
+  seQ_FILAS_SENHA: number[]
   Medicos: IMedico[];
 }
 interface IResponseAgendaConsulta {
@@ -81,7 +83,7 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
               : ''
           }&semStatusAgenda='C'&codEstabelecimento=${
             UnidadeSelected?.cD_ESTABELECIMENTO
-          }&rows=500&cacheKey=true&cacheName=sinaisVitais+${
+          }&rows=500&cacheKey=false&cacheName=sinaisVitais+${
             UnidadeSelected?.dS_ESTABELECIMENTO
           }`,
         )

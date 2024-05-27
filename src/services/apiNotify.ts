@@ -4,9 +4,9 @@ import { InternalServerError } from './apiInterageMedicamentos';
 
 const ApiNotify = axios.create({
   //teste
-  //baseURL: 'https://servicesapp.pronutrir.com.br/notifytest/api/v1/',
+  baseURL: 'https://servicesapp.pronutrir.com.br/notifytest/api/v1/',
   //producao
-  baseURL: 'https://servicesapp.pronutrir.com.br/notify/api/v1/',
+  //baseURL: 'https://servicesapp.pronutrir.com.br/notify/api/v1/',
   //testeauth
   //baseURL: 'https://agentauth.pronutrir.com.br/api/v1/',
 });

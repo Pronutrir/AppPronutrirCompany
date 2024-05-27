@@ -58,7 +58,6 @@ export interface IFilterSinaisVitais {
   nomePaciente?: string | null;
   cdPaciente?: string | null;
 }
-
 export interface IFilterSinaisVitaisProfissional {
   dataInicio: string | null;
   dataFinal: string | null;
@@ -66,7 +65,6 @@ export interface IFilterSinaisVitaisProfissional {
   rows?: number | null;
   cd_pessoa_fisica: string;
 }
-
 export interface IPropsEscalaFlebitePost {
   dT_ATUALIZACAO: string;
   nM_USUARIO: string;
@@ -78,7 +76,6 @@ export interface IPropsEscalaFlebitePost {
   iE_SITUACAO: string;
   iE_INTENSIDADE: string;
 }
-
 const initialSinaisVitais: ISinaisVitais[] = [
   {
     nR_SEQUENCIA: 101676,
@@ -118,7 +115,6 @@ const initialSinaisVitais: ISinaisVitais[] = [
     nM_USUARIO: 'AppMobile',
   },
 ];
-
 const useSinaisVitaisAll = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useQuery(
@@ -150,7 +146,6 @@ const useSinaisVitaisAll = () => {
     },
   );
 };
-
 const useSinaisVitaisFilter = (filter: IFilterSinaisVitaisProfissional) => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useInfiniteQuery(
@@ -187,7 +182,6 @@ const useSinaisVitaisFilter = (filter: IFilterSinaisVitaisProfissional) => {
     },
   );
 };
-
 const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useQuery(
@@ -226,7 +220,6 @@ const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
     },
   );
 };
-
 const _useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useInfiniteQuery(
@@ -267,7 +260,6 @@ const _useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
     },
   );
 };
-
 const useScalaFlebitePost = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
@@ -290,7 +282,6 @@ const useScalaFlebitePost = () => {
     },
   );
 };
-
 export {
   useSinaisVitaisAll,
   useSinaisVitaisHistory,

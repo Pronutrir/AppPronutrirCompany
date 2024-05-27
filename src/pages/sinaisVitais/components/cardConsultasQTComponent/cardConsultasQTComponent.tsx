@@ -25,36 +25,25 @@ interface Props {
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
   const styles = useThemeAwareObject(createStyles);
+  const navigation = useNavigation();
+  const loadingRef = useRef<LoadHandles>(null);
 
   const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
-
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
   const { printSenha } = useContext(PrintBluetoothContext);
   const { stateAuth } = useContext(AuthContext);
 
   const autorizeEnfermagem = ValidationAutorizeEnfermagem();
 
-  const loadingRef = useRef<LoadHandles>(null);
+  const redirectToUpdateSinais = useCallback((item: IAgendaQT) => {
+    navigation.navigate('UpdateSinais', {
+      PessoaFisica: item,
+      GeraAtendimento: !autorizeEnfermagem,
+      Origin: autorizeEnfermagem ? 'Tratamento_enfermagem' : 'Tratamento',
+    });
+  }, [autorizeEnfermagem, navigation]);
 
-  const navigation = useNavigation();
-
-  const redirect = (item: IAgendaQT) => {
-    if (autorizeEnfermagem) {
-      navigation.navigate('UpdateSinais', {
-        PessoaFisica: item,
-        GeraAtendimento: false,
-        Origin: 'Tratamento_enfermagem',
-      });
-    } else {
-      navigation.navigate('UpdateSinais', {
-        PessoaFisica: item,
-        GeraAtendimento: true,
-        Origin: 'Tratamento',
-      });
-    }
-  };
-
-  const gerarSenha = async (item: IAgendaQT) => {
+  const handleGerarSenha = useCallback(async (item: IAgendaQT) => {
     try {
       loadingRef.current?.openModal();
       const result = await mutateAsyncGerarSenha({
@@ -69,61 +58,60 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     } catch (error) {
       loadingRef.current?.closeModal();
     }
-  };
+  }, [mutateAsyncGerarSenha, printSenha, stateAuth]);
 
   const Item = useCallback(
-    ({ item, index }: { item: IAgendaQT; index: number }) => {
+    ({ item }: { item: IAgendaQT }) => {
       const MenuPopUpRef = useRef<ModalHandlesMenu>(null);
       return (
         <PressableRipple
-          key={index.toString()}
           onLongPress={() => MenuPopUpRef.current?.showMenu()}
-          onPress={() => redirect(item)}
-          style={{ flex: 1 }}>
-          <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
-            <View style={styles.box1}>
+          onPress={() => redirectToUpdateSinais(item)}
+          style={styles.pressableContainer}>
+          <View style={styles.itemContainer}>
+            <View style={styles.iconContainer}>
               <HistorySvg width={RFPercentage(5)} height={RFPercentage(5)} />
             </View>
-            <View style={styles.box2}>
-              <View style={styles.item}>
+            <View style={styles.infoContainer}>
+              <View style={styles.itemRow}>
                 <Text style={styles.textLabel}>Paciente: </Text>
                 <Text
                   style={
                     styles.text
                   }>{`${item.nM_PESSOA_FISICA.toUpperCase()}`}</Text>
               </View>
-              <View style={styles.item}>
+              <View style={styles.itemRow}>
                 <Text style={styles.textLabel}>Data Nascimento: </Text>
                 <Text style={styles.text}>
                   {moment(item.dT_NASCIMENTO).format('DD-MM-YYYY')}
                 </Text>
               </View>
-              <View style={styles.item}>
+              <View style={styles.itemRow}>
                 <Text style={styles.textLabel}>Hora da agenda: </Text>
                 <Text style={styles.text}>
                   {moment(item.dT_REAL).format('HH:mm')}
                 </Text>
               </View>
+              <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
             </View>
-            <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
             <MenuPopUp
               containerStyle={styles.menuPopUpStyle}
               ref={MenuPopUpRef}
               btnVisible={false}
               btnLabels={['Gerar senha']}
-              onpress={() => gerarSenha(item)}
+              onpress={() => handleGerarSenha(item)}
             />
           </View>
         </PressableRipple>
       );
     },
-    [],
+    [redirectToUpdateSinais],
   );
 
   const renderItem = useCallback(
-    ({ item, index }: { item: IAgendaQT; index: number }) => (
-      <CardSimples key={index.toString()} styleCardContainer={styles.cardStyle}>
-        <Item key={index.toString()} item={item} index={index} />
+    ({ item }: { item: IAgendaQT; }) => (
+      <CardSimples key={item.nR_ATENDIMENTO} styleCardContainer={styles.cardStyle}>
+        <Item item={item} />
       </CardSimples>
     ),
     [dataSourceQT],
@@ -140,7 +128,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
       {dataSourceQT ? (
         <FlatList
           data={dataSourceQT}
-          renderItem={({ item, index }) => renderItem({ item, index })}
+          renderItem={({ item }) => renderItem({ item })}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={renderItemEmpty}
         />
@@ -153,17 +141,37 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
 };
 
 const createStyles = (theme: ThemeContextData) => {
-  const styles = StyleSheet.create({
+  return StyleSheet.create({
     container: {
-      flex: 1,
-      marginTop: 10,
+      flex: 1
     },
     cardStyle: {
-      flex: 1,
+      flex: 1
     },
-    titleLabel: {
-      alignSelf: 'flex-start',
-      paddingLeft: 10,
+    pressableContainer: {
+      flex: 1,
+      borderRadius: 10
+    },
+    itemContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      paddingVertical: RFPercentage(3),
+    },
+    iconContainer: {
+      flex: 0.5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      margin: 3,
+    },
+    infoContainer: {
+      flex: 5,
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      margin: 3,
+    },
+    itemRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
     },
     textLabel: {
       fontFamily: theme.typography.FONTES.Bold,
@@ -177,34 +185,11 @@ const createStyles = (theme: ThemeContextData) => {
       color: theme.colors.TEXT_SECONDARY,
       fontSize: theme.typography.SIZE.fontysize16,
     },
-    item: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-    },
-    SubItem: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-    },
-    box1: {
-      flex: 0.5,
-      justifyContent: 'center',
-      alignItems: 'center',
-      margin: 3,
-    },
-    box2: {
-      flex: 5,
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-      margin: 3,
-    },
     menuPopUpStyle: {
       position: 'absolute',
       right: 0,
     },
   });
-  return styles;
 };
 
 export default memo(CardConsultasQTComponent);
