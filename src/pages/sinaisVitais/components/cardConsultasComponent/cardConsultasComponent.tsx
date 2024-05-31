@@ -19,11 +19,12 @@ import CardSimples from '../../../../components/Cards/CardSimples';
 import ShimerPlaceHolderCardSNVTs from '../../../../components/shimmerPlaceHolder/shimerPlaceHolderCardSNVTs';
 import PressableRipple from '../../../../components/ripple/PressableRipple';
 import Loading, { LoadHandles } from '../../../../components/Loading/Loading';
-import ModalCentralize, { ModalHandles as ModalHandlesOptions } from '../../../../components/Modais/ModalCentralize';
-import BtnCentered from '../../../../components/buttons/BtnCentered';
+/* import ModalCentralize, { ModalHandles as ModalHandlesOptions } from '../../../../components/Modais/ModalCentralize';
+import BtnCentered from '../../../../components/buttons/BtnCentered'; */
 
 import CheckSinaisVitaisComponent from '../checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import CheckPVSinaisVitaisComponent from '../checkPVSinaisVitaisComponent/checkPVSinaisVitaisComponent';
+import MenuPopUp, { ModalHandlesMenu } from '../../../../components/menuPopUp/menuPopUp';
 interface Props {
   dataSourceConsultas?: IAgendaConsulta[] | null;
   selectFilter: React.MutableRefObject<IFilterConsultas>;
@@ -33,9 +34,9 @@ interface Props {
 
 const CardConsultasComponent: React.FC<Props> = ({
   dataSourceConsultas,
-  //selectFilter,
-  //isFetching,
-  //filterConsultas,
+  selectFilter,
+  isFetching,
+  filterConsultas,
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
@@ -48,13 +49,12 @@ const CardConsultasComponent: React.FC<Props> = ({
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
 
   const loadingRef = useRef<LoadHandles>(null);
-  const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
-  const selectItem = useRef<IAgendaConsulta | null>(null);
+  /* const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null); */
+  /* const selectItem = useRef<IAgendaConsulta | null>(null); */
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const handleGerarSenha = async (item: IAgendaConsulta, nR_SEQ_FILA_P: number) => {
-    refModalCentralizeSenha.current?.closeModal();
     try {
       if (nR_SEQ_FILA_P != 0) {
         loadingRef.current?.openModal();
@@ -79,20 +79,21 @@ const CardConsultasComponent: React.FC<Props> = ({
     }
   };
 
-  const handleLongPress = (item: IAgendaConsulta) => {
-    //setTimeout(() => {
-    console.log("teste")
-    //selectItem.current = item
-    //refModalCentralizeSenha.current?.openModal();
-    ///}, 1000);
+  const handleGerarSenhaOptions = (item: IAgendaConsulta, option: string) => {
+    switch (option) {
+      case "Gerar senha normal": handleGerarSenha(item, item.seQ_FILAS_SENHA[0]);
+        break;
+      case "Gerar senha Prioridade": handleGerarSenha(item, item.seQ_FILAS_SENHA[1]);
+        break;
+    }
   }
 
   const Item = useCallback(({ item, index }: { item: IAgendaConsulta; index: number }) => {
-    console.log("CardConsultasComponent");
+    const MenuPopUpRef = useRef<ModalHandlesMenu>(null);
     return (
       <PressableRipple
         key={index.toString()}
-        onLongPress={() => handleLongPress(item)}
+        onLongPress={() => MenuPopUpRef.current?.showMenu()}
         onPress={() =>
           navigation.navigate('UpdateSinais', { PessoaFisica: item, GeraAtendimento: false, Origin: "Consulta" })
         }
@@ -113,6 +114,13 @@ const CardConsultasComponent: React.FC<Props> = ({
             <CheckSinaisVitaisComponent Item={item.cD_PESSOA_FISICA} />
           </View>
         </View>
+        <MenuPopUp
+          containerStyle={styles.menuPopUpStyle}
+          ref={MenuPopUpRef}
+          btnVisible={false}
+          btnLabels={['Gerar senha normal', 'Gerar senha Prioridade']}
+          onpress={(options) => handleGerarSenhaOptions(item, options)}
+        />
       </PressableRipple>
     );
   }, [dataSourceConsultas]);
@@ -139,7 +147,7 @@ const CardConsultasComponent: React.FC<Props> = ({
     </CardSimples>
   );
 
-  /* const handleRefresh = async () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
 
     if (selectFilter.current.nM_GUERRA || selectFilter.current.dS_ESPECIALIDADE) {
@@ -155,28 +163,28 @@ const CardConsultasComponent: React.FC<Props> = ({
       await refetch();
     }
     setRefreshing(false);
-  }; */
+  };
 
   return (
     <View style={styles.container}>
-      {/* {isFetching ? (
+      {isFetching ? (
         Array(4).fill(<ShimerPlaceHolderCardSNVTs />)
-      ) : ( */}
-      <FlatList
-        data={dataSourceConsultas}
-        renderItem={({ item, index }) => renderItem({ item, index })}
-        keyExtractor={(item, index) => index.toString()}
-        //refreshing={refreshing}
-        //onRefresh={handleRefresh}
-        ListEmptyComponent={renderItemEmpty}
-      />
-      {/*  )} */}
+      ) : (
+        <FlatList
+          data={dataSourceConsultas}
+          renderItem={({ item, index }) => renderItem({ item, index })}
+          keyExtractor={(item, index) => index.toString()}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          ListEmptyComponent={renderItemEmpty}
+        />
+      )}
       <Loading ref={loadingRef} />
-      <ModalCentralize style={{ width: RFPercentage(30), height: RFPercentage(30), justifyContent: 'space-around' }} ref={refModalCentralizeSenha}>
+      {/* <ModalCentralize style={{ width: RFPercentage(30), height: RFPercentage(30), justifyContent: 'space-around' }} ref={refModalCentralizeSenha}>
         <Text style={styles.textLabel}>Gerar senha</Text>
         <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => selectItem.current && handleGerarSenha(selectItem.current, selectItem.current.seQ_FILAS_SENHA[0])} enabled={true} />
         <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => selectItem.current && handleGerarSenha(selectItem.current, selectItem.current.seQ_FILAS_SENHA[1])} enabled={true} />
-      </ModalCentralize>
+      </ModalCentralize> */}
     </View>
   );
 };
@@ -232,6 +240,10 @@ const createStyles = (theme: ThemeContextData) => {
       justifyContent: 'center',
       alignItems: 'flex-start',
       margin: 3,
+    },
+    menuPopUpStyle: {
+      position: 'absolute',
+      right: 0,
     },
   });
   return styles;

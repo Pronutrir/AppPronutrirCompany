@@ -17,7 +17,7 @@ import ProximoSvg from '../../../assets/svg/proximo.svg';
 import moment from 'moment';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function dadosContato({ navigation }) {
+export default function DadosContato({ navigation }) {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
 

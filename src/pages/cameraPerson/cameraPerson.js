@@ -20,7 +20,7 @@ import moment from 'moment';
 import { Svg, Defs, Rect, Mask, Circle } from 'react-native-svg';
 import Notification from '../../componentes/Notification';
 
-export default function cameraPerson({ navigation }) {
+export default function CameraPerson({ navigation }) {
   const { stateAuth, dispatchAuth } = useContext(AuthContext);
   const { usertasy } = stateAuth;
   const [loading, setLoading] = useState(false);

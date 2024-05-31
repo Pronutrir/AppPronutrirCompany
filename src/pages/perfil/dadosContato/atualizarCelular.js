@@ -21,7 +21,7 @@ import Api from '../../../services/api';
 import moment from 'moment';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function atualizarCelular() {
+export default function AtualizarCelular() {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);

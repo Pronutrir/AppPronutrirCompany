@@ -25,7 +25,7 @@ import Api from '../../../services/api';
 import moment from 'moment';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function atualizarEmail({ navigation }) {
+export default function AtualizarEmail({ navigation }) {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);

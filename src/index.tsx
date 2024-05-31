@@ -12,9 +12,6 @@ import CodePush from 'react-native-code-push';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PrintBluetoothProvider } from './contexts/printBluetoothContext';
 
-//import messaging from '@react-native-firebase/messaging';
-//import OneSignal from 'react-native-onesignal';
-
 // Create a client
 const queryClient = new QueryClient();
 
@@ -28,23 +25,6 @@ const CodePushOptions = {
 };
 
 const Index: React.FC = () => {
-  /*  async function registerAppWithFCM() {
-         await messaging().registerDeviceForRemoteMessages();
-     } */
-
-  // Register background handler
-  /*  messaging().setBackgroundMessageHandler(async remoteMessage => {
-         console.log('Message handled in the background!', remoteMessage);
-     }); */
-
-  /* useEffect(() => {
-        registerAppWithFCM();
-        const unsubscribe = messaging().onMessage(async remoteMessage => {
-            Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-        });
-
-        return unsubscribe;
-    }, []) */
 
   useEffect(() => {
     // @ts-expect-error: Unreachable code error
@@ -53,43 +33,6 @@ const Index: React.FC = () => {
     // @ts-expect-error: Unreachable code error
     Text.defaultProps.allowFontScaling = false;
 
-    //OneSignal Init Code
-    /* OneSignal.setLogLevel(6, 0);
-        OneSignal.setAppId('2c990bbc-f7ab-404f-9b95-ef981885ff18');
-        OneSignal.setLogLevel(6, 0);
-        OneSignal.setRequiresUserPrivacyConsent(false); */
-    //END OneSignal Init Code
-
-    /* OneSignal.setRequiresUserPrivacyConsent(false);
-        OneSignal.getDeviceState().then((response) => {
-            console.log(response);
-        }); */
-
-    //Prompt for push on iOS
-    /* OneSignal.promptForPushNotificationsWithUserResponse((response) => {
-            console.log('Prompt response:', response);
-        }); */
-
-    //Method for handling notifications received while app in foreground
-    /* OneSignal.setNotificationWillShowInForegroundHandler(
-            (notificationReceivedEvent) => {
-                console.log(
-                    'OneSignal: notification will show in foreground:',
-                    notificationReceivedEvent,
-                );
-                let notification = notificationReceivedEvent.getNotification();
-                console.log('notification: ', notification);
-                const data = notification.additionalData;
-                console.log('additionalData: ', data);
-                // Complete with null means don't show a notification.
-                notificationReceivedEvent.complete(notification);
-            },
-        ); */
-
-    //Method for handling notifications opened
-    /*  OneSignal.setNotificationOpenedHandler((notification) => {
-            console.log('OneSignal: notification opened:', notification);
-        }); */
   }, []);
 
   return (

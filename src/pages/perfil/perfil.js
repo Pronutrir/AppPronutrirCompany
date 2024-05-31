@@ -22,7 +22,7 @@ import Loading from '../../components/Loading/Loading';
 import LoadingBall from '../../components/Loading/LoadingBall';
 import ShimmerPaceHolderFotoPerfil from '../../components/shimmerPlaceHolder/shimmerPaceHolderFotoPerfil';
 
-export default function perfil({ navigation }) {
+export default function Perfil({ navigation }) {
     const size = Dimensions.get('screen').width / 18;
 
     const { stateAuth, dispatchAuth } = useContext(AuthContext);

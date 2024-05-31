@@ -15,7 +15,7 @@ import auth from '@react-native-firebase/auth';
 import SelectedDropdown from '../selectedDropdown/SelectedDropdown';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import { ThemeContextData } from '../../contexts/themeContext';
-import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types';
+import { DrawerContentComponentProps } from '@react-navigation/drawer/lib/typescript/src/types';
 import { savePerfil, saveUnidade } from '../../utils';
 import { IPerfis } from '../../reducers/UserReducer';
 import NotificationMultOptions, {
@@ -29,11 +29,8 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import VersionInfo from 'react-native-version-info';
 import { useQueryClient } from 'react-query';
 import ShimerPlaceHolderSelected from '../shimmerPlaceHolder/shimerPlaceHolderSelected';
-interface Props {
-  navigation: DrawerNavigationHelpers;
-}
 
-const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
+const DrawerContent = (props: DrawerContentComponentProps) => {
   const styles = useThemeAwareObject(createStyles);
 
   const queryClient = useQueryClient();
@@ -83,7 +80,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
   const SelectedUnidadeApp = (item: IUnidade) => {
     modaSelectUnidadelRef.current?.closeModal();
-    navigation.closeDrawer();
+    props.navigation.closeDrawer();
     dispatchAuth({ type: 'setUnidade', payload: item });
     saveUnidade(item);
   };
@@ -98,7 +95,7 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
 
     setTimeout(() => {
       loadingRef.current?.closeModal();
-      navigation.closeDrawer();
+      props.navigation.closeDrawer();
     }, 2000);
   };
 
@@ -128,9 +125,9 @@ const DrawerContent: React.FC<Props> = ({ navigation }: Props) => {
         <Text style={styles.text2}>
           {usertasy
             ? `*** . *** . ${usertasy.nR_CPF.substring(
-                6,
-                9,
-              )}-${usertasy.nR_CPF.substring(9, 11)}`
+              6,
+              9,
+            )}-${usertasy.nR_CPF.substring(9, 11)}`
             : null}
         </Text>
       </View>

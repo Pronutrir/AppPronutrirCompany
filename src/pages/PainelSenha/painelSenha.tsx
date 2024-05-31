@@ -105,9 +105,9 @@ const PainelSenha = () => {
       </View>
       {data ? (
         <View style={styles.box2}>
-          {data.map(item => (
+          {data.map((item, index) => (
             <BtnPainelComponent
-              key={item.nR_DIGITO_FILA}
+              key={index}
               disabled={false}
               onPress={() => onClickCard(item)}
               ImgSVG={SenhaSvg}

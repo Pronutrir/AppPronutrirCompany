@@ -20,7 +20,7 @@ import moment from 'moment';
 import Api from '../../../services/api';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function informacoesPessoais() {
+export default function InformacoesPessoais() {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [modalActive, setModalActive] = useState(false);

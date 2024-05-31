@@ -14,7 +14,6 @@ import AtualizarCelular from '../pages/perfil/dadosContato/atualizarCelular';
 import RecuperarSenha from '../pages/recuperarSenha/recuperarSenha';
 import SinaisVitais from '../pages/sinaisVitais/sinaisVitais';
 import CameraPerson from '../pages/cameraPerson/cameraPerson';
-import RouteBottom from './routeBottom';
 import { HistorySinaisVitais } from '../pages/sinaisVitais/historySinaisVitais/historySinaisVitais';
 import UpdateSinais from '../pages/sinaisVitais/updateSinaisVitais/updateSinais';
 import { IPFSinaisVitais } from '../contexts/sinaisVitaisContext';
@@ -42,6 +41,7 @@ import Stopwatch from '../pages/stopwatch/stopwatch';
 import StopwatchFilter from '../pages/stopwatch/stopwatchFilter';
 import { IQuimioterapiaStopwatchH } from '../hooks/useStopwatch';
 import CirculacaoInterna from '../pages/circulacaoInterna/circulacaoInterna';
+import RouteBottom from './routeBottom';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -135,7 +135,9 @@ export type RootStackParamList = {
   };
   CirculacaoInterna: undefined;
 };
+
 const Stack = createStackNavigator<RootStackParamList>();
+
 const InitialStackNavigator = () => {
   return (
     <Stack.Navigator
@@ -158,46 +160,27 @@ const InitialStackNavigator = () => {
         component={RouteBottom}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="InformacoesPessoais"
-        component={InformacoesPessoais}
-        options={{ title: 'Informações Pessoais' }}
-      />
-      <Stack.Screen
-        name="DadosContato"
-        component={DadosContato}
-        options={{ title: 'Dados de Contato' }}
-      />
-      <Stack.Screen
-        name="Credenciais"
-        component={Credenciais}
-        options={{ title: 'Credenciais' }}
-      />
-      <Stack.Screen
-        name="AlterarSenha"
-        component={AlterarSenha}
-        options={{ title: 'Alterar senha' }}
-      />
-      <Stack.Screen
-        name="AtualizarEmail"
-        component={AtualizarEmail}
-        options={{ title: 'Atualizar Email' }}
-      />
-      <Stack.Screen
-        name="AtualizarCelular"
-        component={AtualizarCelular}
-        options={{ title: 'Atualizar Celular' }}
-      />
-      <Stack.Screen
-        name="RecuperarSenha"
-        component={RecuperarSenha}
-        options={{ title: 'Recuperar Senha', headerShown: false }}
-      />
-      <Stack.Screen
-        name="CameraPerson"
-        component={CameraPerson}
-        options={{ title: 'Foto perfil' }}
-      />
+    </Stack.Navigator>
+  );
+}
+
+const SinaisVitaisStackNavigation = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
+            />
+          );
+        },
+      }}>
       <Stack.Screen
         name="SinaisVitais"
         component={SinaisVitais}
@@ -207,6 +190,11 @@ const InitialStackNavigator = () => {
         name="historySinaisVitais"
         component={HistorySinaisVitais}
         options={{ title: 'Historico Sinais Vitais' }}
+      />
+      <Stack.Screen
+        name="EndSinaisVitais"
+        component={EndSinaisVitais}
+        options={{ title: 'Histórico sinais vitais' }}
       />
       <Stack.Screen
         name="UpdateSinais"
@@ -219,9 +207,41 @@ const InitialStackNavigator = () => {
         options={{ title: 'Sinais Vitais Enfermagem' }}
       />
       <Stack.Screen
-        name="EvolucaoEnfermagem"
-        component={EvolucaoEnfermagem}
-        options={{ title: 'Evolução' }}
+        name="AcompanhateSinaisVitais"
+        component={AcompanhateSinaisVitais}
+        options={{ title: 'Vincular acompanhante' }}
+      />
+      <Stack.Screen
+        name="addAcompanhanteSinaisVitais"
+        component={addAcompanhanteSinaisVitais}
+        options={{ title: 'Adicionar acompanhante' }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+const EvolucaoStackNavigation = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
+            />
+          );
+        },
+      }}>
+      <Stack.Screen
+        name="IndexEvolucao"
+        initialParams={{ Index: 0 }}
+        component={IndexEvolucao}
+        options={{ title: 'Evolucão' }}
       />
       <Stack.Screen
         name="SearchPessoaFisica"
@@ -229,10 +249,11 @@ const InitialStackNavigator = () => {
         options={{ title: 'Evolucão' }}
       />
       <Stack.Screen
-        name="EndSinaisVitais"
-        component={EndSinaisVitais}
-        options={{ title: 'Histórico sinais vitais' }}
+        name="EvolucaoEnfermagem"
+        component={EvolucaoEnfermagem}
+        options={{ title: 'Evolução' }}
       />
+
       <Stack.Screen
         name="HistoryEvolucao"
         component={HistoryEvolucao}
@@ -243,22 +264,78 @@ const InitialStackNavigator = () => {
         component={UpdateEvolucaoEnfermagem}
         options={{ title: 'Evolução' }}
       />
+    </Stack.Navigator>
+  );
+}
+
+const CirculacaoInternaStackNavigation = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
+            />
+          );
+        },
+      }}>
       <Stack.Screen
-        name="IndexEvolucao"
-        initialParams={{ Index: 0 }}
-        component={IndexEvolucao}
-        options={{ title: 'Evolucão' }}
+        name="CirculacaoInterna"
+        component={CirculacaoInterna}
+        options={{ title: 'Circulação Interna' }}
       />
+    </Stack.Navigator>
+  );
+}
+
+const TratamentoQuimioStackNavigation = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
+            />
+          );
+        },
+      }}>
       <Stack.Screen
-        name="AcompanhateSinaisVitais"
-        component={AcompanhateSinaisVitais}
-        options={{ title: 'Vincular acompanhante' }}
+        name="Tratamento_quimio"
+        component={Tratamento_quimio}
+        options={{ title: 'Tratamento' }}
       />
-      <Stack.Screen
-        name="addAcompanhanteSinaisVitais"
-        component={addAcompanhanteSinaisVitais}
-        options={{ title: 'Adicionar acompanhante' }}
-      />
+    </Stack.Navigator>
+  );
+}
+const ExamesStackNavigation = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
+            />
+          );
+        },
+      }}>
       <Stack.Screen
         name="Exame"
         component={Exame}
@@ -279,11 +356,27 @@ const InitialStackNavigator = () => {
         component={ExameImg}
         options={{ title: 'Exame' }}
       />
-      <Stack.Screen
-        name="Tratamento_quimio"
-        component={Tratamento_quimio}
-        options={{ title: 'Tratamento' }}
-      />
+    </Stack.Navigator>
+  );
+}
+
+const PainelSenhaStackNavigation = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
+      screenOptions={{
+        header: ({ navigation, scene }) => {
+          const { options } = scene.descriptor;
+          const Title = options.title ? options.title : null;
+          return (
+            <HeaderDashBoard
+              onPress={() => navigation.goBack()}
+              title={Title}
+            />
+          );
+        },
+      }}>
       <Stack.Screen
         name="PainelSenha"
         component={PainelSenha}
@@ -299,27 +392,15 @@ const InitialStackNavigator = () => {
         component={PrintBluetooth}
         options={{ title: 'PrintBluetooth' }}
       />
-      <Stack.Screen
-        name="Stopwatch"
-        component={Stopwatch}
-        options={{ title: 'Stopwatch' }}
-      />
-      <Stack.Screen
-        name="StopwatchFilter"
-        component={StopwatchFilter}
-        options={({ route }) => ({ title: route.params.title })}
-      />
-      <Stack.Screen
-        name="CirculacaoInterna"
-        component={CirculacaoInterna}
-        options={{ title: 'Circulação Interna' }}
-      />
     </Stack.Navigator>
   );
-};
-const DashBoardNavigator = () => {
+}
+
+const StopwatchStackNavigation = () => {
   return (
     <Stack.Navigator
+      initialRouteName={'DashBoard'}
+      headerMode={'screen'}
       screenOptions={{
         header: ({ navigation, scene }) => {
           const { options } = scene.descriptor;
@@ -333,18 +414,85 @@ const DashBoardNavigator = () => {
         },
       }}>
       <Stack.Screen
-        name="DashBoard"
-        component={DashBoard}
-        options={{ headerShown: false }}
+        name="Stopwatch"
+        component={Stopwatch}
+        options={{ title: 'Stopwatch' }}
       />
       <Stack.Screen
-        name="Perfil"
-        component={Perfil}
-        options={{ title: 'Perfil' }}
+        name="StopwatchFilter"
+        component={StopwatchFilter}
+        options={({ route }) => ({ title: route.params.title })}
       />
     </Stack.Navigator>
   );
+}
+
+const UserStackNavigator = () => {
+  return (
+    <>
+      <Stack.Navigator
+        screenOptions={{
+          header: ({ navigation, scene }) => {
+            const { options } = scene.descriptor;
+            const Title = options.title ? options.title : null;
+            return (
+              <HeaderDashBoard
+                onPress={() => navigation.goBack()}
+                title={Title}
+              />
+            );
+          },
+        }}>
+        <Stack.Screen
+          name="Perfil"
+          component={User}
+          options={{ title: 'Perfil' }}
+        />
+        <Stack.Screen
+          name="InformacoesPessoais"
+          component={InformacoesPessoais}
+          options={{ title: 'Informações Pessoais' }}
+        />
+        <Stack.Screen
+          name="DadosContato"
+          component={DadosContato}
+          options={{ title: 'Dados de Contato' }}
+        />
+        <Stack.Screen
+          name="Credenciais"
+          component={Credenciais}
+          options={{ title: 'Credenciais' }}
+        />
+        <Stack.Screen
+          name="AlterarSenha"
+          component={AlterarSenha}
+          options={{ title: 'Alterar senha' }}
+        />
+        <Stack.Screen
+          name="AtualizarEmail"
+          component={AtualizarEmail}
+          options={{ title: 'Atualizar Email' }}
+        />
+        <Stack.Screen
+          name="AtualizarCelular"
+          component={AtualizarCelular}
+          options={{ title: 'Atualizar Celular' }}
+        />
+        <Stack.Screen
+          name="RecuperarSenha"
+          component={RecuperarSenha}
+          options={{ title: 'Recuperar Senha', headerShown: false }}
+        />
+        <Stack.Screen
+          name="CameraPerson"
+          component={CameraPerson}
+          options={{ title: 'Foto perfil' }}
+        />
+      </Stack.Navigator>
+    </>
+  );
 };
+
 const BuscaStackNavigator = () => {
   return (
     <>
@@ -370,35 +518,17 @@ const BuscaStackNavigator = () => {
     </>
   );
 };
-const UserStackNavigator = () => {
-  return (
-    <>
-      <Stack.Navigator
-        screenOptions={{
-          header: ({ navigation, scene }) => {
-            const { options } = scene.descriptor;
-            const Title = options.title ? options.title : null;
-            return (
-              <HeaderDashBoard
-                onPress={() => navigation.goBack()}
-                title={Title}
-              />
-            );
-          },
-        }}>
-        <Stack.Screen
-          name="Perfil"
-          component={User}
-          options={{ title: 'Perfil' }}
-        />
-      </Stack.Navigator>
-    </>
-  );
-};
+
 
 export {
   InitialStackNavigator,
+  SinaisVitaisStackNavigation,
+  EvolucaoStackNavigation,
+  CirculacaoInternaStackNavigation,
+  TratamentoQuimioStackNavigation,
+  ExamesStackNavigation,
+  PainelSenhaStackNavigation,
+  StopwatchStackNavigation,
   BuscaStackNavigator,
   UserStackNavigator,
-  DashBoardNavigator,
 };

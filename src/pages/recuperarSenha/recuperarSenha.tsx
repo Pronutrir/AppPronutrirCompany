@@ -20,7 +20,7 @@ import NotificationSimples, {
     ModalHandles,
 } from '../../components/Notification/NotificationSimple';
 
-export default function recuperarSenha() {
+export default function RecuperarSenha() {
     const navigation = useNavigation();
     const { stateAuth } = useContext(AuthContext);
     const {

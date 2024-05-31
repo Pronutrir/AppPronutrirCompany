@@ -77,7 +77,7 @@ const DashBoard: React.FC = () => {
           />
           <BtnDashboardComponent
             disabled={!ValidationAutorizeEvolucao()}
-            onpress={() => navigation.navigate('IndexEvolucao')}
+            onpress={() => navigation.navigate('Evolucao')}
             ImgSVG={ConsultaMarcadasImg}
             label={'Evolução'}
           />

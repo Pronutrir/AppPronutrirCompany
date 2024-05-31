@@ -10,7 +10,7 @@ import Loading from '../../../components/Loading/Loading';
 import MyModalInfor from '../../../componentes/MyModalInfor';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
-export default function credenciais() {
+export default function Credenciais() {
 
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
