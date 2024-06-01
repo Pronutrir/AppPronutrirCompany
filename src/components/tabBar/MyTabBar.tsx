@@ -27,7 +27,7 @@ export default function MyTabBar({ state, descriptors, navigation }: BottomTabBa
     const styles = useThemeAwareObject(createStyles);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, state.index == 0 || state.index == 1 ? { display: 'flex' } : { display: 'none' }]}>
             {state.routes.map((route: any, index: any) => {
                 const { options } = descriptors[route.key];
                 const label =
