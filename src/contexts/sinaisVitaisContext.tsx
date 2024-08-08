@@ -297,7 +297,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
             iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
             iE_APARELHO_PA: sinaisVitaisDefault.iE_APARELHO_PA,
             cD_PACIENTE: atendimento.cD_PACIENTE,
-            cD_PESSOA_FISICA: atendimento.cD_PACIENTE,
+            cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             qT_SATURACAO_O2: atendimento.qT_SATURACAO_O2,
             iE_COND_SAT_O2: sinaisVitaisDefault.iE_COND_SAT_O2,
             iE_MEMBRO_SAT_O2: sinaisVitaisDefault.iE_MEMBRO_SAT_O2,

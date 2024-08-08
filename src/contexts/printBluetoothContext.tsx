@@ -264,10 +264,6 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
         fonttype: 2,
       });
       await BluetoothEscposPrinter.printText('\r\n', {});
-      await BluetoothEscposPrinter.printText('PRIORIDADE NORMAL\r\n\r\n', {
-        widthtimes: 1,
-        fonttype: 1,
-      });
       await BluetoothEscposPrinter.printText(
         `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
         {
