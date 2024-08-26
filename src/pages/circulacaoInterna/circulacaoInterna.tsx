@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
-import { Formik, FormikState, useFormikContext } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import * as Yup from 'yup';
 import { InputStandard } from 'react-native-input-outline';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -31,6 +31,7 @@ import {
 } from '../../hooks/useCirculacaoInterna';
 import { valicacaoCPF } from '../../services/validacaoCpf';
 import Loading, { LoadHandles } from '../../components/Loading/Loading';
+import AuthContext from '../../contexts/auth';
 
 interface Query {
   query: string;
@@ -47,6 +48,10 @@ const CirculacaoInterna = () => {
   const styles = useThemeAwareObject(createStyle);
   const theme = useTheme();
 
+  const {
+    stateAuth: { UnidadeSelected }
+  } = useContext(AuthContext);
+
   const refSelected = useRef<'CPF' | 'RG'>('CPF');
   const refMenuBotom = useRef<ModalHandlesMenu>(null);
   const refModalLoading = useRef<LoadHandles>(null);
@@ -55,7 +60,8 @@ const CirculacaoInterna = () => {
     'Visitante',
   );
 
-  const { data: setores } = useSetores(7);
+  const { data: setores } = useSetores(UnidadeSelected?.cD_ESTABELECIMENTO);
+
   const { mutateAsync } = useAddCirculacaoInterna();
 
   const [state, setState] = useState<Query>({
@@ -73,7 +79,7 @@ const CirculacaoInterna = () => {
     data: listFilter,
     isFetching,
     remove,
-  } = useCirculacaoInternaFilter(state.query);
+  } = useCirculacaoInternaFilter(state.query, UnidadeSelected?.cD_ESTABELECIMENTO);
 
   const RefactoryPerfisData = () => {
     if (setores && setores.length > 0) {
@@ -204,6 +210,7 @@ const CirculacaoInterna = () => {
               },
               documento: values.Documento.replace(/[.-]/g, ''),
               tipo_documento: values.tipo_documento,
+              cd_estabelecimento: UnidadeSelected?.cD_ESTABELECIMENTO ?? 7
             },
             resetForm,
           );
@@ -269,10 +276,10 @@ const CirculacaoInterna = () => {
                       data={SearchItemCallback()}
                       renderItem={({ item }) => <RenderItem item={item} />}
                       keyExtractor={(item, index) => index.toString()}
-                      //ListEmptyComponent={renderEmpty}
-                      //ListFooterComponent={renderFooter}
-                      //onEndReachedThreshold={0.1}
-                      //onEndReached={() => searchMedicamentos(inputValue, true)}
+                    //ListEmptyComponent={renderEmpty}
+                    //ListFooterComponent={renderFooter}
+                    //onEndReachedThreshold={0.1}
+                    //onEndReached={() => searchMedicamentos(inputValue, true)}
                     />
                   </CardSimples>
                 </View>

@@ -54,8 +54,8 @@ const useUnidades = () => {
         return a.value.dS_ESTABELECIMENTO < b.value.dS_ESTABELECIMENTO
           ? -1
           : a.value.dS_ESTABELECIMENTO > b.value.dS_ESTABELECIMENTO
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       });
 
       return orderByResult;
@@ -71,20 +71,21 @@ const useUnidades = () => {
   );
 };
 
-const useSetores = (cd_estabelecimento: number) => {
+const useSetores = (cd_estabelecimento: number | undefined) => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useQuery(
     'setores',
     async () => {
       const result = (
         await Api.get<IResponseSetores[]>(
-          `SetorAtendimento/FiltrarSetoresCodEstabDescrGeral?codEstab=${cd_estabelecimento}&cacheKey=true&cacheName=setoresList`,
+          `SetorAtendimento/FiltrarSetoresCodEstabDescrGeral?codEstab=${cd_estabelecimento}&cacheKey=true&cacheName=setoresList${cd_estabelecimento}`,
         )
       ).data;
 
       return result;
     },
     {
+      enabled: Boolean(cd_estabelecimento),
       onError: () => {
         addAlert({
           message: 'Error ao carregar os setores, tentar mais tarde!',

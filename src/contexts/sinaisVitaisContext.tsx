@@ -76,6 +76,8 @@ export interface SinaisVitaisPost {
   cD_ESCALA_DOR?: string | null;
   qT_ESCALA_DOR?: number | null;
   dS_OBSERVACAO: string | null;
+  nM_PESSOA_FISICA: string | null;
+  dT_NASCIMENTO: string | null;
 }
 export interface SinaisVitaisPut {
   nR_SEQUENCIA: number;
@@ -268,6 +270,8 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
       dT_LIBERACAO: moment().format(),
       nM_USUARIO: PerfilSelected?.nM_USUARIO,
       dS_OBSERVACAO: atendimento.dS_OBSERVACAO,
+      nM_PESSOA_FISICA: atendimento.nM_PESSOA_FISICA,
+      dT_NASCIMENTO: atendimento.dT_NASCIMENTO
     })
       .then(() => {
         addAlert({

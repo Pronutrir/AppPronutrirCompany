@@ -8,6 +8,7 @@ export interface IPropsCirculacaoInterna {
   cliente: string;
   documento: string;
   tipo_documento: string;
+  cd_estabelecimento: number;
   registro: {
     id?: 0;
     prestador: string;
@@ -15,21 +16,21 @@ export interface IPropsCirculacaoInterna {
   };
 }
 
-const useCirculacaoInternaFilter = (word: string) => {
+const useCirculacaoInternaFilter = (word: string, cd_estabelecimento: number | null | undefined) => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useQuery(
     'circulacaoInternaFilter',
     async () => {
       const result = (
         await Api.get<IPropsCirculacaoInterna[]>(
-          `CirculacaoInterna/GetAllCirculacaoInterna?filter=${word}`,
+          `CirculacaoInterna/GetAllCirculacaoInterna/${word}/${cd_estabelecimento}`,
         )
       ).data;
       console.log('useCirculacaoInternaFilter', result);
       return result;
     },
     {
-      enabled: Boolean(word.length > 4),
+      enabled: Boolean(word.length > 4 && Boolean(cd_estabelecimento)),
       onError: () => {
         addAlert({
           message: 'Error ao listar, tentar mais tarde!',

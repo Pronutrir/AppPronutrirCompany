@@ -171,6 +171,8 @@ const UpdateSinais: React.FC<Props> = ({
       dS_OBSERVACAO: observacao ? observacao : null,
       cD_ESTABELECIMENTO: PessoaFisica.cD_ESTABELECIMENTO,
       cD_MEDICO_RESP: PessoaFisica.cD_MEDICO_RESP ?? null,
+      nM_PESSOA_FISICA: PessoaFisica.nM_PESSOA_FISICA,
+      dT_NASCIMENTO: PessoaFisica.dT_NASCIMENTO
     };
 
     if (GeraAtendimento) {

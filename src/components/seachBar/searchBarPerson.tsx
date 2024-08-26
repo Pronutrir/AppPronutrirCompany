@@ -77,7 +77,7 @@ const createStyles = (theme: ThemeContextData) => {
       fontFamily: theme.typography.FONTES.Regular,
       letterSpacing: theme.typography.LETTERSPACING.S,
       color: theme.colors.TEXT_TERTIARY,
-      fontSize: theme.typography.SIZE.fontysize16,
+      fontSize: theme.typography.SIZE.fontysize14,
     },
     clearIconImageStyle: {
       width: RFPercentage(2),
