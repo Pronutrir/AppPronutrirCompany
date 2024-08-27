@@ -160,7 +160,7 @@ const Stopwatch = () => {
                 listFilter: data?.pre_Tratamento.patients,
                 title: 'Pré Tratamento',
                 filterParam: 'margeM_PRE_TT',
-                setor: 'PreTratamento',
+                setor: 'Nursing',
               })
             }
             style={styles.btnItem}>
@@ -176,7 +176,7 @@ const Stopwatch = () => {
                 listFilter: data?.tratamento.patients,
                 title: 'Tratamento',
                 filterParam: 'margeM_TT',
-                setor: 'Tratamento',
+                setor: 'Nursing',
               })
             }
             style={styles.btnItem}>
