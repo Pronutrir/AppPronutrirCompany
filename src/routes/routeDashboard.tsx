@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import DashBoard from '../pages/dashBoard/dashBoard';
 import HeaderDashBoard from '../components/header/HeaderDashBoard';
 import Perfil from '../pages/perfil/perfil';
@@ -27,7 +27,7 @@ import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
 import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updateEvolucaoEnfermagem';
 import { IEvolucaoHistory, IFilterHistoryEvolucao } from '../hooks/useEvolucao';
 import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
-import addAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
+import AddAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 import Exame from '../pages/exame/exame';
 import ExameDetalhes from '../pages/exame/exameDetalhes/exameDetalhes';
 import { IExame, IFilesExames, IparamsFilterExame } from '../hooks/useExames';
@@ -70,7 +70,7 @@ export type RootStackParamList = {
   historySinaisVitais: undefined;
   UpdateSinais: {
     PessoaFisica: IPFSinaisVitais;
-    SinaisVitais: ISinaisVitais;
+    SinaisVitais?: ISinaisVitais;
     GeraAtendimento: boolean;
     Origin: 'Consulta' | 'Tratamento' | 'Tratamento_enfermagem' | null;
   };
@@ -78,7 +78,7 @@ export type RootStackParamList = {
     PessoaFisica: IPFSinaisVitais;
     SinaisVitais: ISinaisVitais;
   };
-  EvolucaoEnfermagem: {
+  EvolucaoEnfermagem?: {
     PessoaFisica: IPFSinaisVitais;
   };
   SearchPessoaFisica: undefined;
@@ -102,7 +102,7 @@ export type RootStackParamList = {
       cD_PESSOA_FISICA: string;
     };
   };
-  addAcompanhanteSinaisVitais: {
+  AddAcompanhanteSinaisVitais: {
     PessoaFisica: {
       nM_PESSOA_FISICA: string;
       dT_NASCIMENTO: string;
@@ -137,6 +137,7 @@ export type RootStackParamList = {
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
+export type StackNavigation = StackNavigationProp<RootStackParamList>;
 
 const InitialStackNavigator = () => {
   return (
@@ -212,8 +213,8 @@ const SinaisVitaisStackNavigation = () => {
         options={{ title: 'Vincular acompanhante' }}
       />
       <Stack.Screen
-        name="addAcompanhanteSinaisVitais"
-        component={addAcompanhanteSinaisVitais}
+        name="AddAcompanhanteSinaisVitais"
+        component={AddAcompanhanteSinaisVitais}
         options={{ title: 'Adicionar acompanhante' }}
       />
     </Stack.Navigator>
@@ -315,6 +316,11 @@ const TratamentoQuimioStackNavigation = () => {
         name="Tratamento_quimio"
         component={Tratamento_quimio}
         options={{ title: 'Tratamento' }}
+      />
+      <Stack.Screen
+        name="UpdateSinais"
+        component={UpdateSinais}
+        options={{ title: 'Sinais Vitais Triagem' }}
       />
     </Stack.Navigator>
   );

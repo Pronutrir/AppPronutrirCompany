@@ -18,9 +18,10 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { useUnidades, IUnidade } from '../../hooks/useEstabelecimentos';
 import { saveUnidade } from '../../utils';
 import { useQueryClient } from 'react-query';
+import { StackNavigation } from '../../routes/routeDashboard';
 
 const DashBoard: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigation>();
   const styles = useThemeAwareObject(createStyles);
   const { ValidationAutorizeTriagem, ValidationAutorizeEnfermagem } =
     useContext(SinaisVitaisContext);
@@ -77,7 +78,7 @@ const DashBoard: React.FC = () => {
           />
           <BtnDashboardComponent
             disabled={!ValidationAutorizeEvolucao()}
-            onpress={() => navigation.navigate('Evolucao')}
+            onpress={() => navigation.navigate('EvolucaoEnfermagem')}
             ImgSVG={ConsultaMarcadasImg}
             label={'Evolução'}
           />
