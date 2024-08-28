@@ -130,7 +130,7 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
   const MenuPopUpOptions = async (itemSelected: string) => {
     switch (itemSelected) {
       case 'Adicionar Acompanhante':
-        navigation.navigate('addAcompanhanteSinaisVitais', {
+        navigation.navigate('AddAcompanhanteSinaisVitais', {
           PessoaFisica: route.params.PessoaFisica,
         });
         break;

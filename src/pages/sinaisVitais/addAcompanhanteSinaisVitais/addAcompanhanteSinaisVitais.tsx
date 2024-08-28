@@ -86,7 +86,7 @@ const sexoList = [
     { label: 'Masculino', iE_GENDER: 'M' },
 ];
 
-const addAcompanhanteSinaisVitais = ({ route }: Props) => {
+const AddAcompanhanteSinaisVitais = ({ route }: Props) => {
     const {
         stateAuth: { usertasy },
     } = useContext(AuthContext);
@@ -156,7 +156,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
                 refModal.current?.closeModal();
                 if (
                     MSG ===
-                        'A Pessoa fisica já possui cadastro na base de dados!' &&
+                    'A Pessoa fisica já possui cadastro na base de dados!' &&
                     DADOS
                 ) {
                     SetDadosDuplicidade({ ...DADOS });
@@ -487,7 +487,7 @@ const addAcompanhanteSinaisVitais = ({ route }: Props) => {
     );
 };
 
-export default addAcompanhanteSinaisVitais;
+export default AddAcompanhanteSinaisVitais;
 
 const createStyle = (theme: ThemeContextData) => {
     const styles = StyleSheet.create({

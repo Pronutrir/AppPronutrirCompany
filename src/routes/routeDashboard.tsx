@@ -27,7 +27,6 @@ import IndexEvolucao from '../pages/evolucao/evolucaoEnfermagem/indexEvolucao';
 import UpdateEvolucaoEnfermagem from '../pages/evolucao/evolucaoEnfermagem/updateEvolucaoEnfermagem';
 import { IEvolucaoHistory, IFilterHistoryEvolucao } from '../hooks/useEvolucao';
 import AcompanhateSinaisVitais from '../pages/sinaisVitais/acompanhateSinaisVitais/acompanhateSinaisVitais';
-import AddAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 import Exame from '../pages/exame/exame';
 import ExameDetalhes from '../pages/exame/exameDetalhes/exameDetalhes';
 import { IExame, IFilesExames, IparamsFilterExame } from '../hooks/useExames';
@@ -42,6 +41,7 @@ import StopwatchFilter from '../pages/stopwatch/stopwatchFilter';
 import { IQuimioterapiaStopwatchH } from '../hooks/useStopwatch';
 import CirculacaoInterna from '../pages/circulacaoInterna/circulacaoInterna';
 import RouteBottom from './routeBottom';
+import AddAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -318,9 +318,39 @@ const TratamentoQuimioStackNavigation = () => {
         options={{ title: 'Tratamento' }}
       />
       <Stack.Screen
+        name="SinaisVitais"
+        component={SinaisVitais}
+        options={{ title: 'Sinais Vitais' }}
+      />
+      <Stack.Screen
+        name="historySinaisVitais"
+        component={HistorySinaisVitais}
+        options={{ title: 'Historico Sinais Vitais' }}
+      />
+      <Stack.Screen
+        name="EndSinaisVitais"
+        component={EndSinaisVitais}
+        options={{ title: 'Histórico sinais vitais' }}
+      />
+      <Stack.Screen
         name="UpdateSinais"
         component={UpdateSinais}
         options={{ title: 'Sinais Vitais Triagem' }}
+      />
+      <Stack.Screen
+        name="UpdateSinaisVitaisEnfermagem"
+        component={UpdateSinaisVitaisEnfermagem}
+        options={{ title: 'Sinais Vitais Enfermagem' }}
+      />
+      <Stack.Screen
+        name="AcompanhateSinaisVitais"
+        component={AcompanhateSinaisVitais}
+        options={{ title: 'Vincular acompanhante' }}
+      />
+      <Stack.Screen
+        name="AddAcompanhanteSinaisVitais"
+        component={AddAcompanhanteSinaisVitais}
+        options={{ title: 'Adicionar acompanhante' }}
       />
     </Stack.Navigator>
   );
