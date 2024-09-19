@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { ThemeContextData } from '../../../contexts/themeContext';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
@@ -27,6 +27,8 @@ import ModalCentralizedOptions, {
 } from '../../../components/Modais/ModalCentralizedOptions';
 import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import moment from 'moment';
+import CheckMark from '../../../assets/svg/checkMark.svg';
+import ModalBottomInfor, { ModalHandles as ModalHandlesInfo } from '../../../components/Modais/ModalBottomInfor';
 
 type ProfileScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -36,6 +38,8 @@ interface Props {
   route: ProfileScreenRouteProp;
 }
 
+type IOptions = 'Acompanhantes' | 'Adicionar' | 'Cadastrados';
+
 const AcompanhateSinaisVitais = ({ route }: Props) => {
   const styles = useThemeAwareObject(createStyle);
 
@@ -43,8 +47,12 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
 
   const refModal = useRef<LoadHandles>(null);
   const refModalOptions = useRef<ModalHandles>(null);
+  const refModalHandlesInfo = useRef<ModalHandlesInfo>(null);
 
   const [acompanhante, setAcompanhante] = useState<IFamiliar | undefined>();
+
+  const [selectedoptions, setSelectedOptions] = useState<IOptions>('Cadastrados');
+  const [options, setOptions] = useState<IOptions[]>(['Adicionar', 'Cadastrados', 'Acompanhantes']);
 
   const {
     data: listFamiliar,
@@ -85,15 +93,8 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
   const renderItem: ListRenderItem<IFamiliar> = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => addAcompanhante(item)}
+        onPress={() => options.length == 3 ? addAcompanhante(item) : null}
         style={styles.cards}>
-        <View style={styles.box1}>
-          {/* <HistorySvg
-                        width={RFPercentage(5)}
-                        height={RFPercentage(5)}>
-                        Botão
-                    </HistorySvg> */}
-        </View>
         <View style={styles.box2}>
           <View style={styles.item}>
             <Text style={styles.textLabel}>Acompanhante: </Text>
@@ -115,6 +116,16 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
             <Text style={styles.text}>{item.desc_Grau_Parentesco}</Text>
           </View>
         </View>
+        <View style={styles.box1}>
+          {(moment(item.dt_Atualizacao, 'YYYY/MM/DD').format('DD/MM/YYYY') == moment().format('DD/MM/YYYY'))
+            &&
+            <CheckMark
+              style={styles.img}
+              width={RFPercentage(3.5)}
+              height={RFPercentage(3.5)}
+            />
+          }
+        </View>
       </TouchableOpacity>
     );
   };
@@ -129,15 +140,36 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
 
   const MenuPopUpOptions = async (itemSelected: string) => {
     switch (itemSelected) {
-      case 'Adicionar Acompanhante':
+      case 'Adicionar': {
         navigation.navigate('AddAcompanhanteSinaisVitais', {
           PessoaFisica: route.params.PessoaFisica,
         });
+      }
+        break;
+      case 'Acompanhantes': setSelectedOptions('Acompanhantes');
+        break;
+      case 'Cadastrados': setSelectedOptions('Cadastrados');
         break;
       default:
         break;
     }
   };
+
+  const Limited = () => {
+    refModalHandlesInfo.current?.openModal();
+    setOptions(['Cadastrados', 'Acompanhantes'])
+  }
+
+  const verifyLimited = () => {
+    if (listFamiliar != undefined && listFamiliar?.length > 0) {
+      const result = listFamiliar?.filter(x => moment(x.dt_Atualizacao, 'YYYY/MM/DD').format('DD/MM/YYYY') == moment().format('DD/MM/YYYY'));
+      result?.length >= 5 ? Limited() : null
+    }
+  }
+
+  useEffect(() => {
+    verifyLimited();
+  }, [listFamiliar]);
 
   return (
     <View style={styles.container}>
@@ -146,33 +178,36 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
         <PessoaFisicaComponent PessoaFisica={route.params.PessoaFisica} />
       </View>
       <View style={[styles.box, styles.boxTitle]}>
-        <Text style={styles.title}>Acompanhantes Cadastrados</Text>
+        <Text style={styles.title}>{selectedoptions}</Text>
         <View style={styles.menu}>
           <MenuPopUp
-            btnLabels={['Adicionar Acompanhante']}
+            btnLabels={options}
             onpress={item => MenuPopUpOptions(item)}
           />
         </View>
       </View>
-      <View style={styles.boxCards}>
-        {isFetching ? (
-          Array(3).fill(<ShimerPlaceHolderCardSNVTs />)
-        ) : (
-          <FlatList
-            data={listFamiliar}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderItem}
-            showsHorizontalScrollIndicator={false}
-            ListEmptyComponent={EmptyComponent}
-          />
-        )}
-      </View>
-      <Loading ref={refModal} />
-      <ModalCentralizedOptions
-        ref={refModalOptions}
-        message={'Deseja vincular o acompanhante ?'}
-        onpress={() => vincularAcompanhante(acompanhante)}
-      />
+      <>
+        <View style={styles.boxCards}>
+          {isFetching ? (
+            Array(3).fill(<ShimerPlaceHolderCardSNVTs />)
+          ) : (
+            <FlatList
+              data={selectedoptions == 'Cadastrados' ? listFamiliar : listFamiliar?.filter(x => moment(x.dt_Atualizacao, 'YYYY/MM/DD').format('DD/MM/YYYY') == moment().format('DD/MM/YYYY'))}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderItem}
+              showsHorizontalScrollIndicator={false}
+              ListEmptyComponent={EmptyComponent}
+            />
+          )}
+        </View>
+        <Loading ref={refModal} />
+        <ModalBottomInfor ref={refModalHandlesInfo} message='Limite maximo de acompanhates cadastrado!' />
+        <ModalCentralizedOptions
+          ref={refModalOptions}
+          message={'Deseja vincular o acompanhante ?'}
+          onpress={() => vincularAcompanhante(acompanhante)}
+        />
+      </>
     </View>
   );
 };
@@ -267,15 +302,17 @@ const createStyle = (theme: ThemeContextData) => {
     },
     box1: {
       flex: 0.5,
-      justifyContent: 'center',
-      alignItems: 'center',
-      margin: 3,
+      right: 0,
+      top: 0,
+      margin: 5,
+      position: 'absolute'
     },
     box2: {
       flex: 5,
       justifyContent: 'center',
       alignItems: 'flex-start',
-      margin: 3,
+      margin: 5,
+      marginHorizontal: RFPercentage(3)
     },
     textEmpty: {
       fontFamily: theme.typography.FONTES.Bold,
@@ -289,6 +326,9 @@ const createStyle = (theme: ThemeContextData) => {
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: RFValue(22, 680),
+    },
+    img: {
+      alignSelf: 'center',
     },
   });
   return styles;
