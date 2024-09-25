@@ -201,7 +201,7 @@ const AcompanhateSinaisVitais = ({ route }: Props) => {
           )}
         </View>
         <Loading ref={refModal} />
-        <ModalBottomInfor ref={refModalHandlesInfo} message='Limite maximo de acompanhates cadastrado!' />
+        <ModalBottomInfor ref={refModalHandlesInfo} message='Limite maximo de acompanhantes cadastrado!' />
         <ModalCentralizedOptions
           ref={refModalOptions}
           message={'Deseja vincular o acompanhante ?'}

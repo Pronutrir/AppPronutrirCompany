@@ -211,6 +211,7 @@ const AddAcompanhanteSinaisVitais = ({ route }: Props) => {
         SELECT: Yup.string(),
         NOME: Yup.string()
             .required('Nome é obrigatório!')
+            .max(50)
             .matches(/(\w.+\s).+/, 'Insira o nome e sobrenome'),
         NASCIMENTO: Yup.string()
             .required('Data de nascimento é obrigatória!')
@@ -221,7 +222,7 @@ const AddAcompanhanteSinaisVitais = ({ route }: Props) => {
             .test('validation', 'Insira uma data valida', (value) => {
                 return value ? Boolean(!(value.length > 10)) : false;
             }),
-        FONE: Yup.string().test(
+        FONE: Yup.string().max(11).test(
             'validationTelefone',
             'Telefone inválido',
             (value) => (value !== undefined ? validacaoTelefone(value) : true),
