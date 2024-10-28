@@ -70,7 +70,7 @@ const CardPainelSenhaComponent = ({ item }: Props) => {
         style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', padding: RFPercentage(1) }}>
           <View style={styles.box1}>
-            <SenhaSvg width={RFPercentage(5)} height={RFPercentage(5)}>
+            <SenhaSvg width={RFPercentage(3)} height={RFPercentage(3)}>
               Botão
             </SenhaSvg>
           </View>
@@ -78,6 +78,10 @@ const CardPainelSenhaComponent = ({ item }: Props) => {
             <View style={styles.item}>
               <Text style={styles.textLabel}>Fila: </Text>
               <Text style={styles.text}>{item.dS_FILA}</Text>
+            </View>
+            <View style={styles.item}>
+              <Text style={styles.textLabel}>Paciente: </Text>
+              <Text style={styles.text}>{item.nM_PESSOA_FISICA}</Text>
             </View>
             <View style={styles.item}>
               <Text style={styles.textLabel}>Senha: </Text>
@@ -116,7 +120,7 @@ const createStyles = (theme: ThemeContextData) => {
   const styles = StyleSheet.create({
     box1: {
       flex: 0.5,
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'center',
       margin: 3,
     },

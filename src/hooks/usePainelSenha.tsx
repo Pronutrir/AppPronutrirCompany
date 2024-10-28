@@ -38,6 +38,7 @@ export interface PropsPacientFilaEspera {
   nR_SEQUENCIA: number;
   nR_CPF: string;
   cD_PESSOA_FISICA: string;
+  nM_PESSOA_FISICA: string;
   nM_USUARIO: string;
   cD_ESTABELECIMENTO: number;
   nR_SEQ_FILA_SENHA: number;
@@ -89,8 +90,8 @@ const useGetFilas = (CD_ESTABELECIMENTO: number, IE_SITUACAO: string) => {
           return a.nR_DIGITO_FILA < b.nR_DIGITO_FILA
             ? -1
             : a.nR_DIGITO_FILA > b.nR_DIGITO_FILA
-            ? 1
-            : 0;
+              ? 1
+              : 0;
         });
     },
     {
