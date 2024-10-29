@@ -4,8 +4,8 @@ import { InternalServerError } from './apiInterageMedicamentos';
 
 // Define base URLs for different environments
 const BASE_URLS = {
-  production: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
-  test: 'https://testewebapitasy.pronutrir.com.br/api/v1/',
+  production: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
+  test: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
 };
 
 // Create Axios instance with default configuration
@@ -26,7 +26,7 @@ Api.interceptors.response.use(
     if ([401, 409, 500].includes(response.status)) {
       return Promise.reject(new InternalServerError(response.data));
     }
-    
+
     // Generic error handling
     return Promise.reject(new InternalServerError('An unexpected error occurred.'));
   },
