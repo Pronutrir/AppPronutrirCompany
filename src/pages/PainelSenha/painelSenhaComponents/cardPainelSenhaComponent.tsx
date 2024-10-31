@@ -81,7 +81,7 @@ const CardPainelSenhaComponent = ({ item }: Props) => {
             </View>
             <View style={styles.item}>
               <Text style={styles.textLabel}>Paciente: </Text>
-              <Text style={styles.text}>{item.nM_PESSOA_FISICA}</Text>
+              <Text style={styles.text}>{item.nM_PESSOA_FISICA ?? "sem agenda"}</Text>
             </View>
             <View style={styles.item}>
               <Text style={styles.textLabel}>Senha: </Text>
