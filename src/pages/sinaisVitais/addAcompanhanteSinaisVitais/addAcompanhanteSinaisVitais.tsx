@@ -198,19 +198,19 @@ const AddAcompanhanteSinaisVitais = ({ route }: Props) => {
         }
     };
 
-    const validacaoTelefone = (value: string | null | undefined) => {
-        const telefone = value ? value.replace(/[" "()-]/g, '') : '';
-        if (telefone && (telefone.length >= 10 || telefone.length >= 11)) {
-            return true;
-        } else {
+    const validacaoTelefone = (telefone: string | null | undefined) => {
+        if (!telefone) {
             return false;
         }
+        const regex = /^\([1-9]{2}\) 9[0-9]{4}-[0-9]{4}$/;
+        return regex.test(telefone);
     };
 
     const FormSchema = Yup.object().shape({
         SELECT: Yup.string(),
         NOME: Yup.string()
             .required('Nome é obrigatório!')
+            .max(30, "Limite maximo de caracteres!")
             .matches(/(\w.+\s).+/, 'Insira o nome e sobrenome'),
         NASCIMENTO: Yup.string()
             .required('Data de nascimento é obrigatória!')
@@ -221,11 +221,13 @@ const AddAcompanhanteSinaisVitais = ({ route }: Props) => {
             .test('validation', 'Insira uma data valida', (value) => {
                 return value ? Boolean(!(value.length > 10)) : false;
             }),
-        FONE: Yup.string().test(
-            'validationTelefone',
-            'Telefone inválido',
-            (value) => (value !== undefined ? validacaoTelefone(value) : true),
-        ),
+        FONE: Yup.string()
+            .required("Telefone é obrigatório!")
+            .test(
+                'validationTelefone',
+                'Telefone inválido',
+                (value) => (value !== undefined ? validacaoTelefone(value) : true),
+            ),
         CPF: Yup.string().test('validationCpf', 'CPF inválido', (value) => {
             return value !== undefined
                 ? valicacaoCPF(value?.replace(/[.-]/g, ''))
