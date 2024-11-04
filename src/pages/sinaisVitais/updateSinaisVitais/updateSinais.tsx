@@ -210,7 +210,7 @@ const UpdateSinais: React.FC<Props> = ({
     try {
       loadingRef.current?.openModal();
       const result = await mutateAsyncGerarSenha(senhaData);
-      await printSenha(result);
+      await printSenha(result, PessoaFisica?.nM_PESSOA_FISICA);
     } catch (error) {
       loadingRef.current?.closeModal();
     } finally {

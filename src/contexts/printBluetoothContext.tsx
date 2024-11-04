@@ -30,7 +30,7 @@ interface AuthContextData {
   selectDevice: IDevices | undefined;
   setSelectDevice: React.Dispatch<React.SetStateAction<IDevices | undefined>>;
   validationImpress: () => Promise<boolean>;
-  printSenha: (item: IPrintSenha) => Promise<void>;
+  printSenha: (item: IPrintSenha, nM_Paciente?: string) => Promise<void>;
   saveDevice: (device: IDevices) => Promise<void>;
 }
 
@@ -242,7 +242,7 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
     }
   };
 
-  const printSenha = async (item: IPrintSenha) => {
+  const printSenha = async (item: IPrintSenha, nM_Paciente = "sem Agenda") => {
     const result = await validationImpress();
 
     if (!result) {
@@ -261,9 +261,14 @@ export const PrintBluetoothProvider: React.FC = ({ children }) => {
       );
       await BluetoothEscposPrinter.printText('BEM VINDO A PRONUTRIR\r\n', {
         widthtimes: 1,
-        fonttype: 2,
+        fonttype: 5,
       });
       await BluetoothEscposPrinter.printText('\r\n', {});
+      await BluetoothEscposPrinter.printText(`${nM_Paciente}\r\n\r\n`, {
+        encoding: 'CP860',
+        widthtimes: 1,
+        fonttype: 2,
+      });
       await BluetoothEscposPrinter.printText(
         `${item.dS_LETRA_VERIFICACAO}${item?.cD_SENHA_GERADA}\r\n\r\n`,
         {

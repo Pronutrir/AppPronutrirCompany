@@ -38,7 +38,7 @@ const CardPainelSenhaComponent = ({ item }: Props) => {
     switch (label) {
       case 'Imprimir':
         loadingRef.current?.openModal();
-        await printSenha(item);
+        await printSenha(item, item.nM_PESSOA_FISICA);
         loadingRef.current?.closeModal();
         break;
       case 'Inutlizar':

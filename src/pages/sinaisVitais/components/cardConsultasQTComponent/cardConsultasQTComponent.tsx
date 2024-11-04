@@ -54,7 +54,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
       });
       loadingRef.current?.closeModal();
-      await printSenha(result);
+      await printSenha(result, item.nM_PESSOA_FISICA);
     } catch (error) {
       loadingRef.current?.closeModal();
     }

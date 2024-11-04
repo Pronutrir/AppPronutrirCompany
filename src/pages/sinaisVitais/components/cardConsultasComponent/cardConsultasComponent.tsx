@@ -66,7 +66,7 @@ const CardConsultasComponent: React.FC<Props> = ({
           nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
         });
         loadingRef.current?.closeModal();
-        await printSenha(result);
+        await printSenha(result, item.nM_PESSOA_FISICA);
       } else {
         addNotification({
           message:
