@@ -19,29 +19,30 @@ import MenuPopUp, {
 import { useGerarSenhaPainel } from '../../../../hooks/usePainelSenha';
 import PrintBluetoothContext from '../../../../contexts/printBluetoothContext';
 import AuthContext from '../../../../contexts/auth';
+import { StackNavigation } from '../../../../routes/routeDashboard';
 interface Props {
   dataSourceQT?: IAgendaQT[] | null | undefined;
 }
 
 const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
   const styles = useThemeAwareObject(createStyles);
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigation>();
   const loadingRef = useRef<LoadHandles>(null);
 
-  const { ValidationAutorizeEnfermagem } = useContext(SinaisVitaisContext);
+  const { ValidationAutorizeTriagem } = useContext(SinaisVitaisContext);
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
   const { printSenha } = useContext(PrintBluetoothContext);
   const { stateAuth } = useContext(AuthContext);
 
-  const autorizeEnfermagem = ValidationAutorizeEnfermagem();
+  const autorizeTriagem = ValidationAutorizeTriagem();
 
   const redirectToUpdateSinais = useCallback((item: IAgendaQT) => {
     navigation.navigate('UpdateSinais', {
       PessoaFisica: item,
-      GeraAtendimento: !autorizeEnfermagem,
-      Origin: autorizeEnfermagem ? 'Tratamento_enfermagem' : 'Tratamento',
+      GeraAtendimento: autorizeTriagem,
+      Origin: autorizeTriagem ? 'Tratamento' : 'Tratamento_enfermagem',
     });
-  }, [autorizeEnfermagem, navigation]);
+  }, [autorizeTriagem, navigation]);
 
   const handleGerarSenha = useCallback(async (item: IAgendaQT) => {
     try {
@@ -139,7 +140,6 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
     </View>
   );
 };
-
 const createStyles = (theme: ThemeContextData) => {
   return StyleSheet.create({
     container: {

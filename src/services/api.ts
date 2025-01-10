@@ -6,6 +6,7 @@ import { InternalServerError } from './apiInterageMedicamentos';
 const BASE_URLS = {
   production: 'https://servicesapp.pronutrir.com.br/apitasy/api/v1/',
   test: 'https://servicesapp.pronutrir.com.br/apitasytest/api/v1/',
+  test_local: 'https://5287bvqb-44326.brs.devtunnels.ms/api/v1/'
 };
 
 // Create Axios instance with default configuration

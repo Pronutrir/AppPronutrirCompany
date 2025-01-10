@@ -17,6 +17,32 @@ export interface IPropsListStopwatch {
     durationPatients: IDurationsPatients;
   };
 }
+
+export interface IListStopwatch {
+  agendados: IAgendaPacientStopWatchH;
+  acolhimento: IOptionsStopWatchH;
+  recepcao: IOptionsStopWatchH;
+  triagem: IOptionsStopWatchH;
+  farmacia: IOptionsStopWatchHFarmacia;
+  acomodacao: IOptionsStopWatchH;
+  pre_Tratamento: IOptionsStopWatchH;
+  tratamento: IOptionsStopWatchH;
+  durationPatients: IDurationsPatients;
+  stopWatchHCancel: AtendimentosStopWatchH[];
+}
+
+export interface AtendimentosStopWatchH {
+  nR_ATENDIMENTO: number,
+  cD_PESSOA_FISICA: string,
+  nM_PESSOA_FISICA: string,
+  cD_ESTABELECIMENTO: number,
+  dT_ENTRADA: string,
+  nM_USUARIO: string,
+  cD_MEDICO_RESP: number,
+  dT_CANCELAMENTO: string,
+  nM_USUARIO_CANCELAMENTO: string,
+  dS_MOTIVO_CANCEL: string,
+}
 interface DefaultOptionsStopWatchH {
   count: number;
 }
@@ -33,7 +59,17 @@ interface IOptionsStopWatchHFarmacia {
   producao: IOptionsStopWatchH;
 }
 export interface IAgendaPacientStopWatchH extends DefaultOptionsStopWatchH {
-  listAgendaQuimioterapia: [];
+  listAgendaQuimioterapia: AgendaQtItens[];
+}
+
+export interface AgendaQtItens {
+  nR_SEQUENCIA: number,
+  cD_PESSOA_FISICA: string,
+  dT_AGENDA: string,
+  cD_ESTABELECIMENTO: number,
+  dT_CONFIRMACAO: string,
+  paciente: string,
+  dS_ABREV: string
 }
 interface IDurationsPatients extends DefaultOptionsStopWatchH {
   patients: PatientsStopWatchH[];
@@ -91,7 +127,7 @@ export interface IQuimioterapiaStopwatchH {
   tt: boolean;
   margem: string;
 }
-interface PatientsStopWatchH {
+export interface PatientsStopWatchH {
   nR_SEQ_PACIENTE: number;
   paciente: string;
   dT_ACOLHIMENTO: string;

@@ -41,6 +41,7 @@ const CardStopWatch = ({ item, index, setor }: Props) => {
   const {
     stateAuth: { usertasy },
   } = useContext(AuthContext);
+
   const queryClient = useQueryClient();
 
   const resultListAtraso = queryClient.getQueryData<IPostMotivoAtraso[]>(
