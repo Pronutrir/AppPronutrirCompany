@@ -36,7 +36,7 @@ const useUnidades = () => {
     async () => {
       const { result } = (
         await Api.get<IReponseUnidades>(
-          `UsuarioEstabelecimento/FiltrarUsuarioEstabCodUsuarioNumSeqGeral?nomeUsuarioParam=${usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&page=1&rows=50`,
+          `v1/UsuarioEstabelecimento/FiltrarUsuarioEstabCodUsuarioNumSeqGeral?nomeUsuarioParam=${usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&page=1&rows=50`,
         )
       ).data;
 
@@ -78,7 +78,7 @@ const useSetores = (cd_estabelecimento: number | undefined) => {
     async () => {
       const result = (
         await Api.get<IResponseSetores[]>(
-          `SetorAtendimento/FiltrarSetoresCodEstabDescrGeral?codEstab=${cd_estabelecimento}&cacheKey=true&cacheName=setoresList${cd_estabelecimento}`,
+          `v1/SetorAtendimento/FiltrarSetoresCodEstabDescrGeral?codEstab=${cd_estabelecimento}&cacheKey=true&cacheName=setoresList${cd_estabelecimento}`,
         )
       ).data;
 

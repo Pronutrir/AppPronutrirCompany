@@ -156,7 +156,7 @@ const useListStopwatch = (estabelecimento: number) => {
     async () => {
       return (
         await Api.get<IPropsListStopwatch>(
-          `StopWatchH/ListStopwatchH?estabelecimento=${estabelecimento}&notifySend=true&orderBy=ASC&page=1&rows=1000`,
+          `v1/StopWatchH/ListStopwatchH?estabelecimento=${estabelecimento}&notifySend=true&orderBy=ASC&page=1&rows=1000`,
         )
       ).data.result;
     },

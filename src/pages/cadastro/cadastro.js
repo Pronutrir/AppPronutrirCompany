@@ -70,7 +70,7 @@ export default function cadastro({ navigation }) {
     };
 
     const cadastroTasy = async (values) => {
-        return Api.post('PessoaFisica', {
+        return Api.post('v1/PessoaFisica', {
             iE_TIPO_PESSOA: 2,
             nM_USUARIO: 'AppMobile',
             nR_CPF: values.Cpf.replace(/[.-]/g, ''),
@@ -111,7 +111,7 @@ export default function cadastro({ navigation }) {
     const ConsultaCpf = async (cpf) => {
         let _Cpf = cpf.replace(/[.-]/g, '');
         if (valicacaoCPF(_Cpf)) {
-            return Api.get(`PessoaFisica/buscaCpf/${_Cpf}`).then((response) => {
+            return Api.get(`v1/PessoaFisica/buscaCpf/${_Cpf}`).then((response) => {
                 const { result } = response.data;
                 if (result == null) {
                     return false;

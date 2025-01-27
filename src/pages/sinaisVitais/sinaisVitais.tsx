@@ -13,6 +13,7 @@ import { HistorySinaisVitais } from './historySinaisVitais/historySinaisVitais';
 import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais';
 import SinaisVitaisGerais from './sinaisVItaisGerais/sinaisVitaisGerais';
 import createStyles from './style';
+import { useGetRegraSinaisVitais } from '../../hooks/useSinaisVitais';
 interface PagesSinaisVitais {
   Index: number;
   Name: string;
@@ -23,6 +24,9 @@ type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
 
 const SinaisVitais: React.FC = () => {
   const styles = useThemeAwareObject(createStyles);
+
+  //armazenar os dados da regra de sinais vitais para capturar os valores minimos e maximos
+  const { data } = useGetRegraSinaisVitais();
 
   const refFlatlist = useRef<FlatList>(null);
   const refFlatlistMenu = useRef<FlatList>(null);
@@ -168,11 +172,11 @@ const SinaisVitais: React.FC = () => {
           horizontal={true}
           // pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
-          //onViewableItemsChanged={onViewableItemsChangedMenu}
-          // viewabilityConfig={viewabilityConfig.current}
-          // initialNumToRender={3}
-          // ListEmptyComponent={EmptyComponent}
-          // getItemLayout={getItemLayout}
+        //onViewableItemsChanged={onViewableItemsChangedMenu}
+        // viewabilityConfig={viewabilityConfig.current}
+        // initialNumToRender={3}
+        // ListEmptyComponent={EmptyComponent}
+        // getItemLayout={getItemLayout}
         />
       </View>
       <View style={styles.box2}>
@@ -190,11 +194,11 @@ const SinaisVitais: React.FC = () => {
           ListEmptyComponent={EmptyComponent}
           getItemLayout={getItemLayout}
           scrollEnabled={false}
-          //refreshing={refresh}
-          /* onRefresh={() => {
-                        setRefresh(true);
-                        GetExames();
-                    }} */
+        //refreshing={refresh}
+        /* onRefresh={() => {
+                      setRefresh(true);
+                      GetExames();
+                  }} */
         />
       </View>
     </View>

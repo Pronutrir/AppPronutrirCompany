@@ -69,7 +69,7 @@ const useGetFamiliar = (codPfPaciente: string) => {
     async () => {
       const { result } = (
         await Api.get<IResponseFamiliar>(
-          `PessoaFisicaFamiliaSqlServer/ListPfFamilySql?codPfPaciente=${codPfPaciente}&distinct=true&page=1&rows=100`,
+          `v1/PessoaFisicaFamiliaSqlServer/ListPfFamilySql?codPfPaciente=${codPfPaciente}&distinct=true&page=1&rows=100`,
         )
       ).data;
       return result;
@@ -92,7 +92,7 @@ const useAddFamiliar = () => {
     async (family: IPostFamiliar) => {
       const result = (
         await Api.post<any, AxiosResponse<any, any>, IPostFamiliar>(
-          `PessoaFisicaFamiliaSqlServer/PostPfEscortFamilySql`,
+          `v1/PessoaFisicaFamiliaSqlServer/PostPfEscortFamilySql`,
           family,
         )
       ).data;
@@ -126,7 +126,7 @@ const useVincularFamiliar = () => {
     async (family: IFamiliarVincularPost) => {
       const result = (
         await Api.post<any, AxiosResponse<any, any>, IFamiliarVincularPost>(
-          `PessoaFisicaFamiliaSqlServer/PostPfFamilySql`,
+          `v1/PessoaFisicaFamiliaSqlServer/PostPfFamilySql`,
           family,
         )
       ).data;

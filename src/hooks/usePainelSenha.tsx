@@ -66,7 +66,7 @@ const useGerarSenhaPainel = () => {
   return useMutation('useGerarSenha', async (props: PropsGerarSenha) => {
     const result = (
       await api.post<PropsGerarSenhaResponse>(
-        'PainelChamada/GerarSenhaPainel',
+        'v1/PainelChamada/GerarSenhaPainel',
         props,
       )
     ).data;
@@ -81,7 +81,7 @@ const useGetFilas = (CD_ESTABELECIMENTO: number, IE_SITUACAO: string) => {
     async () => {
       const result = (
         await api.get<PropsFilaEsperaAtendimentos[]>(
-          `PainelChamada/GetListFilaEsperaAtendimento?CD_ESTABELECIMENTO=${CD_ESTABELECIMENTO}&IE_SITUACAO=${IE_SITUACAO}`,
+          `v1/PainelChamada/GetListFilaEsperaAtendimento?CD_ESTABELECIMENTO=${CD_ESTABELECIMENTO}&IE_SITUACAO=${IE_SITUACAO}`,
         )
       ).data;
       return result
@@ -113,7 +113,7 @@ const useGetListPacientFilaEspera = () => {
     async () => {
       const result = (
         await api.get<PropsPacientFilaEspera[]>(
-          `PainelChamada/GetListPacientQueueWaiting?PAGENUMBER=1&ROWSOFPAGE=100`,
+          `v1/PainelChamada/GetListPacientQueueWaiting?PAGENUMBER=1&ROWSOFPAGE=100`,
         )
       ).data;
       return result;
@@ -137,7 +137,7 @@ const useInutilizarSenha = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
     async (item: PropsInutilizarSenha) => {
-      const result = (await api.post('PainelChamada/DisableSenha', item)).data;
+      const result = (await api.post('v1/PainelChamada/DisableSenha', item)).data;
       return result;
     },
     {

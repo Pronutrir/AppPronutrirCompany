@@ -100,6 +100,8 @@ const UpdateSinais: React.FC<Props> = ({
   const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
+  const refModalOptionsRegraPeso = useRef<ModalHandlesOptions>(null);
+  const refModalOptionsRegraAltura = useRef<ModalHandlesOptions>(null);
   const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
   const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
 
@@ -108,6 +110,7 @@ const UpdateSinais: React.FC<Props> = ({
   const [oxigenacao, setOxigenacao] = useState(0);
   const [observacao, setObservacao] = useState<string>('');
   const [dor, setDor] = useState(0);
+  const [msnAlert, setMensAlerta] = useState<string | undefined>();
 
   const [pageSelected, setPageSelected] = useState(0);
 
@@ -441,6 +444,14 @@ const UpdateSinais: React.FC<Props> = ({
             setTemperatura={setTemperatura}
             Oxigigenacao={oxigenacao}
             setOxigigenacao={setOxigenacao}
+            EnviarAlertaPeso={(item) => {
+              setMensAlerta(item);
+              refModalOptionsRegraAltura.current?.openModal();
+            }}
+            EnviarAlertaAltura={(item) => {
+              setMensAlerta(item);
+              refModalOptionsRegraPeso.current?.openModal();
+            }}
           />
         );
       case 'Sinais vitais':
@@ -574,6 +585,18 @@ const UpdateSinais: React.FC<Props> = ({
         <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[0])} enabled={true} />
         <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[1])} enabled={true} />
       </ModalCentralize>
+      <ModalCentralizedOptions
+        ref={refModalOptionsRegraPeso}
+        message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
+        onpress={() => console.log('Salvar')}
+        onpressCancel={() => setPeso(0)}
+      />
+      <ModalCentralizedOptions
+        ref={refModalOptionsRegraAltura}
+        message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
+        onpress={() => console.log('Salvar')}
+        onpressCancel={() => setAltura(0)}
+      />
     </View>
   );
 };

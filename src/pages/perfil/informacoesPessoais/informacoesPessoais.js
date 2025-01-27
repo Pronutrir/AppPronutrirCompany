@@ -36,7 +36,7 @@ export default function InformacoesPessoais() {
     /*ATUALIZAR DADOS NA API*/
     const atualizarPerfil = async (values) => {
         setModalActive(true);
-        return Api.put(`PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
+        return Api.put(`v1/PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             nM_PESSOA_FISICA: values.Nome,
             dT_ATUALIZACAO: moment().format(),

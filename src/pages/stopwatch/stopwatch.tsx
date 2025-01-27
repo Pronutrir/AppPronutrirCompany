@@ -34,7 +34,7 @@ const Stopwatch = () => {
 
   React.useEffect(() => {
     const connect = new HubConnectionBuilder()
-      .withUrl(`https://servicesapp.pronutrir.com.br/apitasytest/stopwatch-hub`, { skipNegotiation: true, transport: HttpTransportType.WebSockets })
+      .withUrl(`https://servicesapp.pronutrir.com.br/apitasy/stopwatch-hub`, { skipNegotiation: true, transport: HttpTransportType.WebSockets })
       .withAutomaticReconnect()
       .build();
 

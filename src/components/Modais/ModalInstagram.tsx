@@ -74,7 +74,7 @@ const ModalInstagram = React.forwardRef<ModalHandles, Props>(
 
         const getPostagemInsta = useCallback(() => {
             if (postagem.children?.data) {
-                Api.post('Social/GetChildresInst', postagem.children.data)
+                Api.post('v1/Social/GetChildresInst', postagem.children.data)
                     .then((response) => {
                         const { data } = response;
                         if (data) {

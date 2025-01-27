@@ -151,8 +151,6 @@ const ConsultasSinaisVitais: React.FC = () => {
         setListConsutas(listAgendasConsultas?.result);
     }, [listAgendasConsultas]);
 
-    console.log("ConsultasSinaisVitais");
-
     return (
         <View style={styles.container}>
             <FilterConsultasComponent
