@@ -33,6 +33,7 @@ const OptionAntropometria = ({
   EnviarAlertaPeso,
   EnviarAlertaAltura,
 }: PropsAntropometria) => {
+
   const [toggleSwitch, setToggleSwitch] = useState(true);
 
   const { ValidationAutorizeEnfermagem } =
@@ -40,14 +41,14 @@ const OptionAntropometria = ({
 
   const queryClient = useQueryClient();
 
-  const resultAltura = queryClient.getQueryData<IRegraSinaisVitais[]>('RegraSinaisVitais')?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM');
-  const resultPeso = queryClient.getQueryData<IRegraSinaisVitais[]>('RegraSinaisVitais')?.filter(item => item.nM_ATRIBUTO == 'QT_PESO');
+  const resultAltura = queryClient.getQueryData<IRegraSinaisVitais[]>('RegraSinaisVitais')?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM') ?? [];
+  const resultPeso = queryClient.getQueryData<IRegraSinaisVitais[]>('RegraSinaisVitais')?.filter(item => item.nM_ATRIBUTO == 'QT_PESO') ?? [];
 
-  const [alturaMinima] = useState<number | undefined>(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].qT_MINIMO);
-  const [alturaMaxima] = useState<number | undefined>(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].vL_MAXIMO);
+  const [alturaMinima] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].qT_MINIMO : 0);
+  const [alturaMaxima] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].vL_MAXIMO : 0);
 
-  const [pesoMinima] = useState<number | undefined>(resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].qT_MINIMO);
-  const [pesoMaxima] = useState<number | undefined>(resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].vL_MAXIMO);
+  const [pesoMinima] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].qT_MINIMO : 0);
+  const [pesoMaxima] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].vL_MAXIMO : 0);
 
   const ValidationAltura = (value: number) => {
     if (alturaMinima && alturaMaxima) {
@@ -57,6 +58,9 @@ const OptionAntropometria = ({
         setAltura(value);
         EnviarAlertaPeso(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].dS_MENSAGEM_ALERTA);
       }
+    } else {
+      setAltura(value);
+      EnviarAlertaPeso("Parâmetros de altura e peso não encontrados");
     }
   }
 
@@ -68,6 +72,9 @@ const OptionAntropometria = ({
         setPeso(value);
         EnviarAlertaAltura(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].dS_MENSAGEM_ALERTA);
       }
+    } else {
+      setPeso(value);
+      EnviarAlertaPeso("Parâmetros de altura e peso não encontrados");
     }
   }
 
