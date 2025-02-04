@@ -1,4 +1,4 @@
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions, Switch } from 'react-native';
 import React, { useContext, useRef, useState } from 'react';
 import SlideRanger from '../../../../components/Slider/SlideRanger';
 import { RFPercentage } from 'react-native-responsive-fontsize';
@@ -18,9 +18,10 @@ interface PropsAntropometria {
   setTemperatura(item: number): void;
   Oxigigenacao: number;
   setOxigigenacao(item: number): void;
-  EnviarAlertaPeso(msn: string | undefined): void;
-  EnviarAlertaAltura(msn: string | undefined): void;
+  enviarAlertaAviso: (msn: string, tipo: 'Altura' | 'Peso') => void;
+  enviarAlertaBloqueio: (msn: string, tipo: 'Altura' | 'Peso') => void;
 }
+
 const OptionAntropometria = ({
   Altura,
   setAltura,
@@ -30,8 +31,8 @@ const OptionAntropometria = ({
   setTemperatura,
   Oxigigenacao,
   setOxigigenacao,
-  EnviarAlertaPeso,
-  EnviarAlertaAltura,
+  enviarAlertaAviso,
+  enviarAlertaBloqueio,
 }: PropsAntropometria) => {
 
   const [toggleSwitch, setToggleSwitch] = useState(true);
@@ -44,37 +45,39 @@ const OptionAntropometria = ({
   const resultAltura = queryClient.getQueryData<IRegraSinaisVitais[]>('RegraSinaisVitais')?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM') ?? [];
   const resultPeso = queryClient.getQueryData<IRegraSinaisVitais[]>('RegraSinaisVitais')?.filter(item => item.nM_ATRIBUTO == 'QT_PESO') ?? [];
 
-  const [alturaMinima] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].qT_MINIMO : 0);
-  const [alturaMaxima] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].vL_MAXIMO : 0);
+  const [alturaMinimaAviso] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].qT_MIN_AVISO : 0);
+  const [alturaMaximaAviso] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].qT_MAX_AVISO : 0);
+  const [alturaMimimaBloqueio] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].qT_MINIMO : 0);
+  const [alturaMaximaBloqueio] = useState<number>(resultAltura.length > 0 ? resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].vL_MAXIMO : 0);
 
-  const [pesoMinima] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].qT_MINIMO : 0);
-  const [pesoMaxima] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].vL_MAXIMO : 0);
+  const [pesoMinimoAviso] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].qT_MIN_AVISO : 0);
+  const [pesoMaximaAviso] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].qT_MAX_AVISO : 0);
+  const [pesoMinimoBloqueio] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].qT_MINIMO : 0);
+  const [pesoMaximaBloqueio] = useState<number>(resultPeso.length > 0 ? resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].vL_MAXIMO : 0);
 
   const ValidationAltura = (value: number) => {
-    if (alturaMinima && alturaMaxima) {
-      if ((value >= alturaMinima && value <= alturaMaxima)) {
-        setAltura(value);
-      } else {
-        setAltura(value);
-        EnviarAlertaPeso(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].dS_MENSAGEM_ALERTA);
-      }
-    } else {
-      setAltura(value);
-      EnviarAlertaPeso("Parâmetros de altura e peso não encontrados");
+    setAltura(value);
+    if (value < alturaMimimaBloqueio || value > alturaMaximaBloqueio) {
+      enviarAlertaBloqueio(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].dS_MENSAGEM_BLOQUEIO, 'Altura');
+      return;
+    }
+
+    if (value < alturaMinimaAviso || value > alturaMaximaAviso) {
+      enviarAlertaAviso(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].dS_MENSAGEM_ALERTA, 'Altura');
+      return;
     }
   }
 
   const ValidationPeso = (value: number) => {
-    if (pesoMinima && pesoMaxima) {
-      if ((value >= pesoMinima && value <= pesoMaxima)) {
-        setPeso(value);
-      } else {
-        setPeso(value);
-        EnviarAlertaAltura(resultAltura?.filter(item => item.nM_ATRIBUTO == 'QT_ALTURA_CM')[0].dS_MENSAGEM_ALERTA);
-      }
-    } else {
-      setPeso(value);
-      EnviarAlertaPeso("Parâmetros de altura e peso não encontrados");
+    setPeso(value);
+    if (value < pesoMinimoBloqueio || value > pesoMaximaBloqueio) {
+      enviarAlertaBloqueio(resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].dS_MENSAGEM_BLOQUEIO, 'Peso');
+      return;
+    }
+
+    if (value < pesoMinimoAviso || value > pesoMaximaAviso) {
+      enviarAlertaAviso(resultPeso?.filter(item => item.nM_ATRIBUTO == 'QT_PESO')[0].dS_MENSAGEM_ALERTA, 'Peso');
+      return;
     }
   }
 
@@ -82,10 +85,6 @@ const OptionAntropometria = ({
     return (
       <View style={styles.container}>
         <View style={styles.ToggleSwitch}>
-          {/* <ToggleSwitch
-          onpress = {() => setToggleSwitch(!toggleSwitch)}
-          Enabled = {!toggleSwitch}
-        /> */}
         </View>
         <ScrollView>
           <SlideRanger
@@ -115,10 +114,6 @@ const OptionAntropometria = ({
     return (
       <View style={styles.container}>
         <View style={styles.ToggleSwitch}>
-          {/* <ToggleSwitch
-            onpress = {() => setToggleSwitch(!toggleSwitch)}
-            Enabled = {!toggleSwitch}
-          /> */}
         </View>
         <ScrollView>
           <SlideRanger

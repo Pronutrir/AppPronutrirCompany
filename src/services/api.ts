@@ -11,7 +11,7 @@ const BASE_URLS = {
 
 // Create Axios instance with default configuration
 const Api = axios.create({
-  baseURL: BASE_URLS.production, // Default to test environment
+  baseURL: BASE_URLS.test, // Default to test environment
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

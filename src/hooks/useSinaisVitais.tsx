@@ -82,7 +82,10 @@ export interface IRegraSinaisVitais {
   nM_ATRIBUTO: string;
   qT_MINIMO: number;
   vL_MAXIMO: number;
+  qT_MIN_AVISO: number,
+  qT_MAX_AVISO: number,
   dS_MENSAGEM_ALERTA: string;
+  dS_MENSAGEM_BLOQUEIO: string;
   dT_ATUALIZACAO: string;
 }
 

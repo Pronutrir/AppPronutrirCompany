@@ -50,6 +50,7 @@ import AuthContext from '../../../contexts/auth';
 import OptionEscalaFlebite from '../components/cardOptionsSinaisVitais/OptionEscalaFlebite';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
+import NotificationSimple, { ModalHandles as ModalHandlesNotificationSimples } from '../../../components/Notification/NotificationSimple';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -72,6 +73,8 @@ const UpdateSinais: React.FC<Props> = ({
   const refFlatlistMenu = useRef<FlatList<number>>(null);
 
   const refFlatlistPages = useRef<FlatList<PropsPage>>(null);
+
+  const RefNotificationSimple = useRef<ModalHandlesNotificationSimples>(null);
 
   const styles = useThemeAwareObject(createStyles);
 
@@ -100,8 +103,7 @@ const UpdateSinais: React.FC<Props> = ({
   const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
-  const refModalOptionsRegraPeso = useRef<ModalHandlesOptions>(null);
-  const refModalOptionsRegraAltura = useRef<ModalHandlesOptions>(null);
+  const refModalOptionsRegra = useRef<ModalHandlesOptions>(null);
   const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
   const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
 
@@ -429,6 +431,16 @@ const UpdateSinais: React.FC<Props> = ({
     }
   }, []);
 
+  const filterMsnAlertAviso = (msn: string, tipo: 'Peso' | 'Altura') => {
+    setMensAlerta(`${tipo} - ${msn}`);
+    refModalOptionsRegra.current?.openModal();
+  };
+
+  const filterMsnAlertBloqueio = (msn: string, tipo: 'Peso' | 'Altura') => {
+    setMensAlerta(`${tipo} - ${msn}`);
+    RefNotificationSimple.current?.openModal();
+  };
+
   const renderItemSinaisVitais: ListRenderItem<PropsPage> = ({
     item: { Name },
   }) => {
@@ -444,14 +456,8 @@ const UpdateSinais: React.FC<Props> = ({
             setTemperatura={setTemperatura}
             Oxigigenacao={oxigenacao}
             setOxigigenacao={setOxigenacao}
-            EnviarAlertaPeso={(item) => {
-              setMensAlerta(item);
-              refModalOptionsRegraAltura.current?.openModal();
-            }}
-            EnviarAlertaAltura={(item) => {
-              setMensAlerta(item);
-              refModalOptionsRegraPeso.current?.openModal();
-            }}
+            enviarAlertaAviso={(msn, tipo) => filterMsnAlertAviso(msn, tipo)}
+            enviarAlertaBloqueio={(msn, tipo) => filterMsnAlertBloqueio(msn, tipo)}
           />
         );
       case 'Sinais vitais':
@@ -585,17 +591,16 @@ const UpdateSinais: React.FC<Props> = ({
         <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[0])} enabled={true} />
         <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[1])} enabled={true} />
       </ModalCentralize>
+      <NotificationSimple ref={RefNotificationSimple} message={msnAlert} onpress={() => {
+        msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+      }} />
       <ModalCentralizedOptions
-        ref={refModalOptionsRegraPeso}
+        ref={refModalOptionsRegra}
         message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
         onpress={() => console.log('Salvar')}
-        onpressCancel={() => setPeso(0)}
-      />
-      <ModalCentralizedOptions
-        ref={refModalOptionsRegraAltura}
-        message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
-        onpress={() => console.log('Salvar')}
-        onpressCancel={() => setAltura(0)}
+        onpressCancel={() => {
+          msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+        }}
       />
     </View>
   );
