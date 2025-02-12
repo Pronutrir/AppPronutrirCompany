@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useImperativeHandle, useCallback, memo } from 'react';
-import { StyleSheet, Text, View, Modal } from 'react-native';
+import { StyleSheet, Text, View, Modal, Dimensions } from 'react-native';
 import { ThemeContextData } from '../../contexts/themeContext';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnOptions from '../buttons/BtnOptions';
+import AnimatedLottieView from 'lottie-react-native';
 
 interface Props {
     title?: string;
     message?: string;
     activeModal?: boolean;
+    LottieAnimation?: React.ReactNode;
     onpress?(): void;
 }
 
@@ -23,12 +25,15 @@ const NotificationSimple = React.forwardRef<ModalHandles, Props>(
             message = 'teste',
             activeModal = false,
             onpress,
+            LottieAnimation
         }: Props,
         ref,
     ) => {
         const styles = useThemeAwareObject(createStyles);
 
         const [active, setActive] = useState(activeModal);
+
+        const size = Dimensions.get('screen').width / 6;
 
         const disabled = () => {
             setActive(false);
@@ -64,6 +69,7 @@ const NotificationSimple = React.forwardRef<ModalHandles, Props>(
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <View style={styles.box}>
+                                {LottieAnimation}
                                 <Text style={styles.textLabel}>{title}</Text>
                             </View>
                             <View style={styles.box}>

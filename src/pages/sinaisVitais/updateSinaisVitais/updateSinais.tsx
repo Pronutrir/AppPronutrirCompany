@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   ListRenderItem,
   useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import createStyles from './style';
 import BtnCentered from '../../../components/buttons/BtnCentered';
@@ -51,6 +52,7 @@ import OptionEscalaFlebite from '../components/cardOptionsSinaisVitais/OptionEsc
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 import NotificationSimple, { ModalHandles as ModalHandlesNotificationSimples } from '../../../components/Notification/NotificationSimple';
+import AnimatedLottieView from 'lottie-react-native';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -591,9 +593,21 @@ const UpdateSinais: React.FC<Props> = ({
         <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[0])} enabled={true} />
         <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[1])} enabled={true} />
       </ModalCentralize>
-      <NotificationSimple ref={RefNotificationSimple} message={msnAlert} onpress={() => {
-        msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
-      }} />
+      <NotificationSimple
+        ref={RefNotificationSimple}
+        message={msnAlert}
+        title='Alerta!'
+        LottieAnimation={
+          <AnimatedLottieView
+            source={require('../../../assets/Animacoes/AnimationBlock.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: Dimensions.get('screen').width / 6, height: Dimensions.get('screen').width / 6 }}
+          />
+        }
+        onpress={() => {
+          msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+        }} />
       <ModalCentralizedOptions
         ref={refModalOptionsRegra}
         message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
@@ -601,6 +615,14 @@ const UpdateSinais: React.FC<Props> = ({
         onpressCancel={() => {
           msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
         }}
+        LottieAnimation={
+          <AnimatedLottieView
+            source={require('../../../assets/Animacoes/alert-notification.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: Dimensions.get('screen').width / 4, height: Dimensions.get('screen').width / 4 }}
+          />
+        }
       />
     </View>
   );
