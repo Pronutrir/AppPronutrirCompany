@@ -81,7 +81,7 @@ const UpdateSinais: React.FC<Props> = ({
   const styles = useThemeAwareObject(createStyles);
 
   const navigation = useNavigation();
-  const { stateAuth } = useContext(AuthContext);
+  const { stateAuth, stateAuth: { UnidadeSelected } } = useContext(AuthContext);
 
   const { printSenha } = useContext(PrintBluetoothContext);
   const { addNotification } = useContext(NotificationGlobalContext);
@@ -182,7 +182,7 @@ const UpdateSinais: React.FC<Props> = ({
       dT_NASCIMENTO: PessoaFisica.dT_NASCIMENTO
     };
 
-    if (GeraAtendimento) {
+    if (GeraAtendimento && UnidadeSelected?.cD_ESTABELECIMENTO == 7) {
       await AddSinaisVitaisAtendimento(dataSinaisVitais);
     } else {
       await AddSinaisVitais(dataSinaisVitais);
