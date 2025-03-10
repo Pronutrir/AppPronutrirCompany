@@ -66,6 +66,12 @@ const UpdateSinais: React.FC<Props> = ({
 }: Props) => {
   const deviceWidth = useWindowDimensions();
 
+  const {
+    stateAuth: {
+      PerfilSelected,
+    }
+  } = useContext(AuthContext);
+
   const keyboardHeight = useKeyboardHeight();
 
   const refmodalObservacoes = useRef<ModalHandles>(null);
@@ -182,7 +188,7 @@ const UpdateSinais: React.FC<Props> = ({
       dT_NASCIMENTO: PessoaFisica.dT_NASCIMENTO
     };
 
-    if (GeraAtendimento && UnidadeSelected?.cD_ESTABELECIMENTO == 7) {
+    if (GeraAtendimento && PerfilSelected?.cD_PERFIL == 2354 && UnidadeSelected?.cD_ESTABELECIMENTO == 7) {
       await AddSinaisVitaisAtendimento(dataSinaisVitais);
     } else {
       await AddSinaisVitais(dataSinaisVitais);
