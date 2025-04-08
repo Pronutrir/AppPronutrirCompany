@@ -44,6 +44,9 @@ import stopwatchList from '../pages/stopwatch/stopwatchList';
 import StopwatchListAgenda from '../pages/stopwatch/stopwatchListAgenda';
 import { IAgendaQT } from '../hooks/useAgendaQt';
 import StopwatchListAtendimento from '../pages/stopwatch/stopwatchListAtendimento';
+import AtendimentoFilterSinaisVitais from '../pages/sinaisVitais/atendimentosSinaisVitais/atendimentoFilterSinaisVitais';
+import { IAgendaPaciente } from '../hooks/useAgendaConsultas';
+import UpdateSinaisVitais from '../pages/sinaisVitais/updateSinaisVitais/updateSinaisVitais';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -76,6 +79,12 @@ export type RootStackParamList = {
     GeraAtendimento: boolean;
     Origin: 'Consulta' | 'Tratamento' | 'Tratamento_enfermagem' | null;
   };
+  UpdateSinaisVitais: {
+    AgendaPaciente: IAgendaPaciente;
+    SinaisVitais?: ISinaisVitais;
+    GeraAtendimento: boolean;
+    Origin: 'Consulta' | 'Tratamento' | 'Tratamento_enfermagem' | 'Atendimentos' | null;
+  }
   UpdateSinaisVitaisEnfermagem: {
     PessoaFisica: IPFSinaisVitais;
     SinaisVitais: ISinaisVitais;
@@ -148,6 +157,9 @@ export type RootStackParamList = {
     listFilter: AtendimentosStopWatchH[];
     title: string;
   };
+  AtendimentoFilterSinaisVitais: {
+    cd_pessoa_fisica: string;
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -217,6 +229,11 @@ const SinaisVitaisStackNavigation = () => {
         options={{ title: 'Sinais Vitais Triagem' }}
       />
       <Stack.Screen
+        name="UpdateSinaisVitais"
+        component={UpdateSinaisVitais}
+        options={{ title: 'Sinais Vitais Triagem' }}
+      />
+      <Stack.Screen
         name="UpdateSinaisVitaisEnfermagem"
         component={UpdateSinaisVitaisEnfermagem}
         options={{ title: 'Sinais Vitais Enfermagem' }}
@@ -230,6 +247,11 @@ const SinaisVitaisStackNavigation = () => {
         name="AddAcompanhanteSinaisVitais"
         component={AddAcompanhanteSinaisVitais}
         options={{ title: 'Adicionar acompanhante' }}
+      />
+      <Stack.Screen
+        name="AtendimentoFilterSinaisVitais"
+        component={AtendimentoFilterSinaisVitais}
+        options={{ title: 'Atendimentos Paciente' }}
       />
     </Stack.Navigator>
   );

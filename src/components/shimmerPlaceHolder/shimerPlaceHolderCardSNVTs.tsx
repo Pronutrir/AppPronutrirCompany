@@ -51,6 +51,7 @@ export default ShimerPlaceHolderCardSNVTs;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: '100%',
     },
     shimmerTextFull: {
         marginVertical: 5,

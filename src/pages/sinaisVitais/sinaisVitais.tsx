@@ -14,6 +14,7 @@ import OncologiaSinaisVitais from './oncologiaSinaisVitais/oncologiaSinaisVitais
 import SinaisVitaisGerais from './sinaisVItaisGerais/sinaisVitaisGerais';
 import createStyles from './style';
 import { useGetRegraSinaisVitais } from '../../hooks/useSinaisVitais';
+import AtendimentosSinaisVitais from './atendimentosSinaisVitais/atendimentosSinaisVitais';
 interface PagesSinaisVitais {
   Index: number;
   Name: string;
@@ -34,28 +35,34 @@ const SinaisVitais: React.FC = () => {
   const refView1 = useRef<TouchableOpacity>(null);
   const refView2 = useRef<TouchableOpacity>(null);
   const refView3 = useRef<TouchableOpacity>(null);
+  const refView4 = useRef<TouchableOpacity>(null);
   const deviceWidth = useWindowDimensions();
   //const {getEvolucoesPepVinculados} = useContext(ExamesContext);
   const [pages] = useState<PagesSinaisVitais[]>([
     {
       Index: 0,
-      Name: 'Consultas',
+      Name: 'Atendimentos',
       Ref: refView0,
     },
     {
       Index: 1,
-      Name: 'Tratamento',
+      Name: 'Consultas',
       Ref: refView1,
     },
     {
       Index: 2,
-      Name: 'Geral',
+      Name: 'Tratamento',
       Ref: refView2,
     },
     {
       Index: 3,
-      Name: 'Histórico',
+      Name: 'Geral',
       Ref: refView3,
+    },
+    {
+      Index: 4,
+      Name: 'Histórico',
+      Ref: refView4,
     },
   ]);
 
@@ -100,30 +107,44 @@ const SinaisVitais: React.FC = () => {
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btn });
       refView3.current?.setNativeProps({ style: styles.btn });
+      refView4.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 1) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btnSelected });
       refView2.current?.setNativeProps({ style: styles.btn });
       refView3.current?.setNativeProps({ style: styles.btn });
+      refView4.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 2) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btnSelected });
       refView3.current?.setNativeProps({ style: styles.btn });
+      refView4.current?.setNativeProps({ style: styles.btn });
     }
     if (index === 3) {
       refView0.current?.setNativeProps({ style: styles.btn });
       refView1.current?.setNativeProps({ style: styles.btn });
       refView2.current?.setNativeProps({ style: styles.btn });
       refView3.current?.setNativeProps({ style: styles.btnSelected });
+      refView4.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 4) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
+      refView4.current?.setNativeProps({ style: styles.btnSelected });
     }
   }, []);
 
   const renderPagesItem: ListRenderItem<PagesSinaisVitais> = ({
     item: { Name },
   }) => {
+    if (Name === 'Atendimentos') {
+      return <AtendimentosSinaisVitais />;
+    }
     if (Name === 'Consultas') {
       return <ConsultasSinaisVitais />;
     }

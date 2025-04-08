@@ -19,7 +19,7 @@ const createStyles = (theme: ThemeContextData) => {
         },
         btn: {
             flex: 1,
-            width: RFPercentage(18),
+            width: RFPercentage(20),
             backgroundColor: theme.colors.BUTTON_SECUNDARY,
             alignItems: 'center',
             justifyContent: 'center',

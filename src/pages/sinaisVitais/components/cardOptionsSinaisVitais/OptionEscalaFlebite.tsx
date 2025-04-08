@@ -12,7 +12,7 @@ import moment from 'moment';
 import Loading, { LoadHandles } from '../../../../components/Loading/Loading';
 
 interface IPropsFlebite {
-  item: IPFSinaisVitais;
+  nR_ATENDIMENTO: number;
 }
 
 interface Props {
@@ -57,7 +57,7 @@ const options: Props[] = [
   },
 ];
 
-const OptionEscalaFlebite = ({ item }: IPropsFlebite) => {
+const OptionEscalaFlebite = ({ nR_ATENDIMENTO }: IPropsFlebite) => {
   const {
     stateAuth: { usertasy, PerfilSelected },
   } = useContext(AuthContext);
@@ -83,7 +83,7 @@ const OptionEscalaFlebite = ({ item }: IPropsFlebite) => {
           iE_SITUACAO: 'A',
           nM_USUARIO: PerfilSelected?.nM_USUARIO ?? 'AppMobile',
           nM_USUARIO_NREC: PerfilSelected?.nM_USUARIO ?? 'AppMobile',
-          nR_ATENDIMENTO: item.nR_ATENDIMENTO,
+          nR_ATENDIMENTO: nR_ATENDIMENTO,
         });
         setValue(null);
         loadingRef.current?.closeModal();

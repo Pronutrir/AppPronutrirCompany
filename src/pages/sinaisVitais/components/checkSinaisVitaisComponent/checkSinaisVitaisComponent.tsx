@@ -19,8 +19,8 @@ const CheckSinaisVitaisComponent: React.FC<Props> = ({ Item }: Props) => {
       <View style={styles.container}>
         <CheckMark
           style={styles.img}
-          width={RFPercentage(3.5)}
-          height={RFPercentage(3.5)}
+          width={RFPercentage(3)}
+          height={RFPercentage(3)}
         />
         <Text style={styles.text}>Enviado</Text>
       </View>
@@ -35,6 +35,7 @@ export default CheckSinaisVitaisComponent;
 const createStyles = (theme: ThemeContextData) => {
   const styles = StyleSheet.create({
     container: {
+      marginBottom: RFPercentage(3.5),
       position: 'absolute',
       right: 0,
       bottom: RFPercentage(-3),

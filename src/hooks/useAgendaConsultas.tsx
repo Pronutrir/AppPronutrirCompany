@@ -61,6 +61,38 @@ export interface IResultAgendaConsultas {
   medicos: IMedico[];
 }
 
+export interface IResponseAgendasPaciente {
+  result: IAgendaPaciente[];
+}
+
+export interface IAgendaPaciente {
+  origem: string,
+  seQ_FILAS_SENHA: number[],
+  cD_PESSOA_FISICA: string,
+  nM_PESSOA_FISICA: string,
+  dT_NASCIMENTO: string,
+  dT_AGENDA: string,
+  cD_MEDICO: number,
+  nM_GUERRA_MEDICO: string,
+  cD_ESPECIALIDADE_CD_PROTOCOLO: number,
+  especialidadE_PROTOCOLO: string,
+  cD_ESTABELECIMENTO: number;
+}
+
+const useAgendasPaciente = () => {
+  return useQuery(
+    'agendasFullPaciente',
+    async () => {
+      const result = (
+        await Api.get<IAgendaPaciente[]>("v2/AgendaConsulta/GetAgendasPaciente")).data;
+
+      console.log('result', result);
+
+      return result;
+    }
+  )
+}
+
 const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
   const { addAlert } = useContext(NotificationGlobalContext);
 
@@ -80,8 +112,7 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
             ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
             : ''
           }&semStatusAgenda='C'&codEstabelecimento=${UnidadeSelected?.cD_ESTABELECIMENTO
-          }&rows=500&cacheKey=true&cacheName=sinaisVitais+${UnidadeSelected?.dS_ESTABELECIMENTO
-          }`,
+          }&rows=500`,
         )
       ).data;
 
@@ -121,4 +152,4 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
   );
 };
 
-export { useGetAgendaConsultas };
+export { useGetAgendaConsultas, useAgendasPaciente };

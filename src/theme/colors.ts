@@ -42,6 +42,8 @@ export interface IColor {
     BUTTON_PRIMARY: string;
     BUTTON_SECUNDARY: string;
     BUTTON_TERTIARY: string;
+    BORDER: string;      // Nova propriedade
+    SHADOW: string;      // Nova propriedade
 }
 
 export interface IThemeColors {
@@ -81,6 +83,8 @@ const light: IColor = {
     DARKLIGHT: DARKLIGHT,
     BLACK: BLACK,
     WHITE: WHITE,
+    BORDER: GREENLIGHT,   // Nova propriedade
+    SHADOW: BLACK,        // Nova propriedade
 };
 
 const dark: IColor = {
@@ -102,6 +106,8 @@ const dark: IColor = {
     DARKLIGHT: DARKLIGHT,
     BLACK: BLACK,
     WHITE: WHITE,
+    BORDER: GREENPRIMARY,  // Nova propriedade
+    SHADOW: DARKLIGHT,     // Nova propriedade
 };
 
 export const colors: IThemeColors = { light, dark };

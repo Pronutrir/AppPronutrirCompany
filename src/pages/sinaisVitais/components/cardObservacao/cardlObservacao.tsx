@@ -59,7 +59,7 @@ const CardObservacao: React.FC<Props> = ({
                             editable={true}
                         />
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                         <BtnCentered
                             SizeText={18}
                             labelBtn={'Ok'}
