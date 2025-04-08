@@ -12,8 +12,6 @@ import { StackNavigation } from '../../../routes/routeDashboard';
 import moment from 'moment';
 import ItemAtendimentoSinaisVitais from './ItemAtendimentoSinaisVitais';
 
-type Props = {}
-
 interface Consulta {
     query: string;
     isLoading: boolean;
@@ -41,7 +39,7 @@ const filterDefault: Ifilter[] = [
     { filter: 'NOME PACIENTE', placeHolder: 'Nome do paciente' },
 ];
 
-const AtendimentosSinaisVitais = (props: Props) => {
+const AtendimentosSinaisVitais = () => {
 
     const navigation = useNavigation<StackNavigation>();
 
