@@ -32,7 +32,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
   const { ValidationAutorizeTriagem } = useContext(SinaisVitaisContext);
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
   const { printSenha } = useContext(PrintBluetoothContext);
-  const { stateAuth } = useContext(AuthContext);
+  const { stateAuth, stateAuth: { PerfilSelected } } = useContext(AuthContext);
 
   const autorizeTriagem = ValidationAutorizeTriagem();
 
@@ -52,7 +52,7 @@ const CardConsultasQTComponent: React.FC<Props> = ({ dataSourceQT }: Props) => {
         cD_PESSOA_FISICA_P: item.cD_PESSOA_FISICA,
         iE_SENHA_PRIORITARIA_P: 'N',
         nR_SEQ_FILA_P: item.nR_SEQ_FILA_SENHA,
-        nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
+        nM_USUARIO_P: PerfilSelected?.nM_USUARIO ?? 'appMobile',
       });
       loadingRef.current?.closeModal();
       await printSenha(result, item.nM_PESSOA_FISICA);

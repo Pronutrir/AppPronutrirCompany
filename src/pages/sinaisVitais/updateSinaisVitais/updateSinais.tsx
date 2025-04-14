@@ -38,7 +38,6 @@ import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import ModalCentralize, {
   ModalHandles,
 } from '../../../components/Modais/ModalCentralize';
-import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 import CardObservacao from '../components/cardObservacao/cardlObservacao';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAntropometria';
@@ -53,6 +52,8 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
 import NotificationSimple, { ModalHandles as ModalHandlesNotificationSimples } from '../../../components/Notification/NotificationSimple';
 import AnimatedLottieView from 'lottie-react-native';
+import moment from 'moment';
+import ModalAlertaPeso, { ModalModalAlertaPesoHandles } from '../components/modalAlertaPeso/modalAlertaPeso';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -102,7 +103,11 @@ const UpdateSinais: React.FC<Props> = ({
   } = useContext(SinaisVitaisContext);
 
   const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
-    nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    cdPaciente: PessoaFisica.cD_PESSOA_FISICA,
+    dataInicio: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    dataFinal: moment().format('YYYY-MM-DD'),
+    rows: 3,
+    pagina: 1
   });
 
   const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
@@ -112,7 +117,7 @@ const UpdateSinais: React.FC<Props> = ({
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
   const refModalOptionsRegra = useRef<ModalHandlesOptions>(null);
-  const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
+  const refModalAlertaPeso = useRef<ModalModalAlertaPesoHandles>(null);
   const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
 
   const [Peso, setPeso] = useState(0);
@@ -208,14 +213,14 @@ const UpdateSinais: React.FC<Props> = ({
     }
 
     const { cD_ESTABELECIMENTO, cD_PESSOA_FISICA, nR_SEQ_FILA_SENHA } = PessoaFisica;
-    const { nM_USUARIO } = stateAuth.usertasy;
+    const { PerfilSelected } = stateAuth;
 
     const senhaData = {
       cD_ESTABELECIMENTO_P: cD_ESTABELECIMENTO,
       cD_PESSOA_FISICA_P: cD_PESSOA_FISICA,
       iE_SENHA_PRIORITARIA_P: 'N',
       nR_SEQ_FILA_P: Origin === 'Tratamento' ? nR_SEQ_FILA_SENHA : seqFila,
-      nM_USUARIO_P: nM_USUARIO,
+      nM_USUARIO_P: PerfilSelected?.nM_USUARIO ?? 'appMobile',
     };
 
     refModalCentralizeSenha.current?.closeModal();
@@ -311,20 +316,52 @@ const UpdateSinais: React.FC<Props> = ({
   };
 
   const variacaoPercentualPaciente = () => {
-    if (refPesoMediaPaciente.current && Peso) {
-      const percentual = (Peso / refPesoMediaPaciente.current - 1) * 100;
-      if (percentual > 10 || percentual < -10) {
-        refModalCentralizeVariacaoPeso.current?.openModal();
-      } else {
-        refModalOptions.current?.openModal();
-      }
-    } else {
+    // Verificar se temos o peso atual e a média histórica
+    const pesoAtual = Peso;
+    const pesoMedio = refPesoMediaPaciente.current;
+
+    // Se não tivermos algum dos valores necessários, vá direto para confirmação
+    if (!pesoAtual) {
       refModalOptions.current?.openModal();
+      return;
     }
+
+    if (!pesoMedio) {
+      refModalAlertaPeso.current?.openModal({ title: "Paciente não possue histórico!" });
+      return;
+    }
+
+    // Calcular a variação percentual do peso
+    const percentualVariacao = calcularPercentualVariacao(pesoAtual, pesoMedio);
+    const temVariacaoSignificativa = Math.abs(percentualVariacao) > 10;
+
+    // Definir parâmetros do modal com base na variação
+    const modalParams = {
+      title: temVariacaoSignificativa
+        ? "Paciente apresenta variação de peso!"
+        : "Histórico de Peso do Paciente",
+      historicoSinaisVitais,
+      pesoAtual,
+      pesoMedio,
+      percentualVariacao
+    };
+
+    // Abrir o modal com os parâmetros apropriados
+    refModalAlertaPeso.current?.openModal(modalParams);
+  };
+
+  /**
+ * Calcula o percentual de variação entre dois valores
+ * @param valorAtual - Valor atual para comparação
+ * @param valorReferencia - Valor de referência para base do cálculo
+ * @returns Percentual de variação (positivo para aumento, negativo para diminuição)
+ */
+  const calcularPercentualVariacao = (valorAtual: number, valorReferencia: number): number => {
+    return ((valorAtual / valorReferencia) - 1) * 100;
   };
 
   const modalOptions = () => {
-    refModalCentralizeVariacaoPeso.current?.closeModal();
+    refModalAlertaPeso.current?.closeModal();
     setTimeout(
       () => {
         refModalOptions.current?.openModal();
@@ -580,14 +617,10 @@ const UpdateSinais: React.FC<Props> = ({
           SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
         }
       />
-      <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
-        <CardAlertaPesoPaciente
-          historicoSinaisVitais={historicoSinaisVitais?.filter(
-            (item, index) => index <= 2,
-          )}
-          onpress={() => modalOptions()}
-        />
-      </ModalCentralize>
+      <ModalAlertaPeso
+        ref={refModalAlertaPeso}
+        onConfirm={modalOptions}
+      />
       <ModalCentralize ref={refmodalObservacoes}>
         <CardObservacao
           observacao={observacao}
