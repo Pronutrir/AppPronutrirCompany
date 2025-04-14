@@ -80,4 +80,6 @@ const ModalAlertaPeso = forwardRef<ModalModalAlertaPesoHandles, ModalPesoVariaca
     }
 );
 
+ModalAlertaPeso.displayName = 'ModalAlertaPeso';
+
 export default ModalAlertaPeso;
