@@ -80,8 +80,7 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
             ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
             : ''
           }&semStatusAgenda='C'&codEstabelecimento=${UnidadeSelected?.cD_ESTABELECIMENTO
-          }&rows=500&cacheKey=true&cacheName=sinaisVitais+${UnidadeSelected?.dS_ESTABELECIMENTO
-          }`,
+          }&rows=500&cacheKey=true`,
         )
       ).data;
 
