@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   ListRenderItem,
   useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import createStyles from './style';
 import BtnCentered from '../../../components/buttons/BtnCentered';
@@ -37,7 +38,6 @@ import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import ModalCentralize, {
   ModalHandles,
 } from '../../../components/Modais/ModalCentralize';
-import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 import CardObservacao from '../components/cardObservacao/cardlObservacao';
 import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
 import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAntropometria';
@@ -50,6 +50,10 @@ import AuthContext from '../../../contexts/auth';
 import OptionEscalaFlebite from '../components/cardOptionsSinaisVitais/OptionEscalaFlebite';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
+import NotificationSimple, { ModalHandles as ModalHandlesNotificationSimples } from '../../../components/Notification/NotificationSimple';
+import AnimatedLottieView from 'lottie-react-native';
+import moment from 'moment';
+import ModalAlertaPeso, { ModalModalAlertaPesoHandles } from '../components/modalAlertaPeso/modalAlertaPeso';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -63,6 +67,12 @@ const UpdateSinais: React.FC<Props> = ({
 }: Props) => {
   const deviceWidth = useWindowDimensions();
 
+  const {
+    stateAuth: {
+      PerfilSelected,
+    }
+  } = useContext(AuthContext);
+
   const keyboardHeight = useKeyboardHeight();
 
   const refmodalObservacoes = useRef<ModalHandles>(null);
@@ -73,10 +83,12 @@ const UpdateSinais: React.FC<Props> = ({
 
   const refFlatlistPages = useRef<FlatList<PropsPage>>(null);
 
+  const RefNotificationSimple = useRef<ModalHandlesNotificationSimples>(null);
+
   const styles = useThemeAwareObject(createStyles);
 
   const navigation = useNavigation();
-  const { stateAuth } = useContext(AuthContext);
+  const { stateAuth, stateAuth: { UnidadeSelected } } = useContext(AuthContext);
 
   const { printSenha } = useContext(PrintBluetoothContext);
   const { addNotification } = useContext(NotificationGlobalContext);
@@ -91,7 +103,11 @@ const UpdateSinais: React.FC<Props> = ({
   } = useContext(SinaisVitaisContext);
 
   const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
-    nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    cdPaciente: PessoaFisica.cD_PESSOA_FISICA,
+    dataInicio: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    dataFinal: moment().format('YYYY-MM-DD'),
+    rows: 3,
+    pagina: 1
   });
 
   const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
@@ -100,7 +116,8 @@ const UpdateSinais: React.FC<Props> = ({
   const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
-  const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
+  const refModalOptionsRegra = useRef<ModalHandlesOptions>(null);
+  const refModalAlertaPeso = useRef<ModalModalAlertaPesoHandles>(null);
   const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
 
   const [Peso, setPeso] = useState(0);
@@ -108,6 +125,7 @@ const UpdateSinais: React.FC<Props> = ({
   const [oxigenacao, setOxigenacao] = useState(0);
   const [observacao, setObservacao] = useState<string>('');
   const [dor, setDor] = useState(0);
+  const [msnAlert, setMensAlerta] = useState<string | undefined>();
 
   const [pageSelected, setPageSelected] = useState(0);
 
@@ -175,7 +193,7 @@ const UpdateSinais: React.FC<Props> = ({
       dT_NASCIMENTO: PessoaFisica.dT_NASCIMENTO
     };
 
-    if (GeraAtendimento) {
+    if (GeraAtendimento && PerfilSelected?.cD_PERFIL == 2354 && UnidadeSelected?.cD_ESTABELECIMENTO == 7) {
       await AddSinaisVitaisAtendimento(dataSinaisVitais);
     } else {
       await AddSinaisVitais(dataSinaisVitais);
@@ -195,14 +213,14 @@ const UpdateSinais: React.FC<Props> = ({
     }
 
     const { cD_ESTABELECIMENTO, cD_PESSOA_FISICA, nR_SEQ_FILA_SENHA } = PessoaFisica;
-    const { nM_USUARIO } = stateAuth.usertasy;
+    const { PerfilSelected } = stateAuth;
 
     const senhaData = {
       cD_ESTABELECIMENTO_P: cD_ESTABELECIMENTO,
       cD_PESSOA_FISICA_P: cD_PESSOA_FISICA,
       iE_SENHA_PRIORITARIA_P: 'N',
       nR_SEQ_FILA_P: Origin === 'Tratamento' ? nR_SEQ_FILA_SENHA : seqFila,
-      nM_USUARIO_P: nM_USUARIO,
+      nM_USUARIO_P: PerfilSelected?.nM_USUARIO ?? 'appMobile',
     };
 
     refModalCentralizeSenha.current?.closeModal();
@@ -298,20 +316,52 @@ const UpdateSinais: React.FC<Props> = ({
   };
 
   const variacaoPercentualPaciente = () => {
-    if (refPesoMediaPaciente.current && Peso) {
-      const percentual = (Peso / refPesoMediaPaciente.current - 1) * 100;
-      if (percentual > 10 || percentual < -10) {
-        refModalCentralizeVariacaoPeso.current?.openModal();
-      } else {
-        refModalOptions.current?.openModal();
-      }
-    } else {
+    // Verificar se temos o peso atual e a média histórica
+    const pesoAtual = Peso;
+    const pesoMedio = refPesoMediaPaciente.current;
+
+    // Se não tivermos algum dos valores necessários, vá direto para confirmação
+    if (!pesoAtual) {
       refModalOptions.current?.openModal();
+      return;
     }
+
+    if (!pesoMedio) {
+      refModalAlertaPeso.current?.openModal({ title: "Paciente não possue histórico!" });
+      return;
+    }
+
+    // Calcular a variação percentual do peso
+    const percentualVariacao = calcularPercentualVariacao(pesoAtual, pesoMedio);
+    const temVariacaoSignificativa = Math.abs(percentualVariacao) > 10;
+
+    // Definir parâmetros do modal com base na variação
+    const modalParams = {
+      title: temVariacaoSignificativa
+        ? "Paciente apresenta variação de peso!"
+        : "Histórico de Peso do Paciente",
+      historicoSinaisVitais,
+      pesoAtual,
+      pesoMedio,
+      percentualVariacao
+    };
+
+    // Abrir o modal com os parâmetros apropriados
+    refModalAlertaPeso.current?.openModal(modalParams);
+  };
+
+  /**
+ * Calcula o percentual de variação entre dois valores
+ * @param valorAtual - Valor atual para comparação
+ * @param valorReferencia - Valor de referência para base do cálculo
+ * @returns Percentual de variação (positivo para aumento, negativo para diminuição)
+ */
+  const calcularPercentualVariacao = (valorAtual: number, valorReferencia: number): number => {
+    return ((valorAtual / valorReferencia) - 1) * 100;
   };
 
   const modalOptions = () => {
-    refModalCentralizeVariacaoPeso.current?.closeModal();
+    refModalAlertaPeso.current?.closeModal();
     setTimeout(
       () => {
         refModalOptions.current?.openModal();
@@ -426,6 +476,16 @@ const UpdateSinais: React.FC<Props> = ({
     }
   }, []);
 
+  const filterMsnAlertAviso = (msn: string, tipo: 'Peso' | 'Altura') => {
+    setMensAlerta(`${tipo} - ${msn}`);
+    refModalOptionsRegra.current?.openModal();
+  };
+
+  const filterMsnAlertBloqueio = (msn: string, tipo: 'Peso' | 'Altura') => {
+    setMensAlerta(`${tipo} - ${msn}`);
+    RefNotificationSimple.current?.openModal();
+  };
+
   const renderItemSinaisVitais: ListRenderItem<PropsPage> = ({
     item: { Name },
   }) => {
@@ -441,6 +501,8 @@ const UpdateSinais: React.FC<Props> = ({
             setTemperatura={setTemperatura}
             Oxigigenacao={oxigenacao}
             setOxigigenacao={setOxigenacao}
+            enviarAlertaAviso={(msn, tipo) => filterMsnAlertAviso(msn, tipo)}
+            enviarAlertaBloqueio={(msn, tipo) => filterMsnAlertBloqueio(msn, tipo)}
           />
         );
       case 'Sinais vitais':
@@ -555,14 +617,10 @@ const UpdateSinais: React.FC<Props> = ({
           SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
         }
       />
-      <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
-        <CardAlertaPesoPaciente
-          historicoSinaisVitais={historicoSinaisVitais?.filter(
-            (item, index) => index <= 2,
-          )}
-          onpress={() => modalOptions()}
-        />
-      </ModalCentralize>
+      <ModalAlertaPeso
+        ref={refModalAlertaPeso}
+        onConfirm={modalOptions}
+      />
       <ModalCentralize ref={refmodalObservacoes}>
         <CardObservacao
           observacao={observacao}
@@ -574,6 +632,37 @@ const UpdateSinais: React.FC<Props> = ({
         <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[0])} enabled={true} />
         <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[1])} enabled={true} />
       </ModalCentralize>
+      <NotificationSimple
+        ref={RefNotificationSimple}
+        message={msnAlert}
+        title='Alerta!'
+        LottieAnimation={
+          <AnimatedLottieView
+            source={require('../../../assets/Animacoes/AnimationBlock.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: Dimensions.get('screen').width / 6, height: Dimensions.get('screen').width / 6 }}
+          />
+        }
+        onpress={() => {
+          msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+        }} />
+      <ModalCentralizedOptions
+        ref={refModalOptionsRegra}
+        message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
+        onpress={() => console.log('Salvar')}
+        onpressCancel={() => {
+          msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+        }}
+        LottieAnimation={
+          <AnimatedLottieView
+            source={require('../../../assets/Animacoes/alert-notification.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: Dimensions.get('screen').width / 4, height: Dimensions.get('screen').width / 4 }}
+          />
+        }
+      />
     </View>
   );
 };

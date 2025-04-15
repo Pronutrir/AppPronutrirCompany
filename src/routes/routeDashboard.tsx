@@ -1,8 +1,6 @@
 import React from 'react';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
-import DashBoard from '../pages/dashBoard/dashBoard';
 import HeaderDashBoard from '../components/header/HeaderDashBoard';
-import Perfil from '../pages/perfil/perfil';
 import User from '../pages/perfil/perfil';
 import Busca from '../pages/busca/busca';
 import InformacoesPessoais from '../pages/perfil/informacoesPessoais/informacoesPessoais';
@@ -38,10 +36,14 @@ import PainelSenhaOptions from '../pages/PainelSenha/painelSenhaOptions/painelSe
 import PrintBluetooth from '../pages/PrintBluetooth/PrintBluetooth';
 import Stopwatch from '../pages/stopwatch/stopwatch';
 import StopwatchFilter from '../pages/stopwatch/stopwatchFilter';
-import { IQuimioterapiaStopwatchH } from '../hooks/useStopwatch';
+import { AgendaQtItens, AtendimentosStopWatchH, IQuimioterapiaStopwatchH, PatientsStopWatchH } from '../hooks/useStopwatch';
 import CirculacaoInterna from '../pages/circulacaoInterna/circulacaoInterna';
 import RouteBottom from './routeBottom';
 import AddAcompanhanteSinaisVitais from '../pages/sinaisVitais/addAcompanhanteSinaisVitais/addAcompanhanteSinaisVitais';
+import stopwatchList from '../pages/stopwatch/stopwatchList';
+import StopwatchListAgenda from '../pages/stopwatch/stopwatchListAgenda';
+import { IAgendaQT } from '../hooks/useAgendaQt';
+import StopwatchListAtendimento from '../pages/stopwatch/stopwatchListAtendimento';
 
 export type RootStackParamList = {
   DashBoard: undefined;
@@ -69,7 +71,7 @@ export type RootStackParamList = {
   SinaisVitais: undefined;
   historySinaisVitais: undefined;
   UpdateSinais: {
-    PessoaFisica: IPFSinaisVitais;
+    PessoaFisica: IPFSinaisVitais | IAgendaQT;
     SinaisVitais?: ISinaisVitais;
     GeraAtendimento: boolean;
     Origin: 'Consulta' | 'Tratamento' | 'Tratamento_enfermagem' | null;
@@ -133,7 +135,19 @@ export type RootStackParamList = {
     filterParam: string;
     setor: string;
   };
+  StopwatchList: {
+    listFilter: PatientsStopWatchH[];
+    title: string;
+  };
+  StopwatchListAgenda: {
+    listFilter: AgendaQtItens[];
+    title: string;
+  }
   CirculacaoInterna: undefined;
+  StopwatchListAtendimento: {
+    listFilter: AtendimentosStopWatchH[];
+    title: string;
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -457,6 +471,21 @@ const StopwatchStackNavigation = () => {
       <Stack.Screen
         name="StopwatchFilter"
         component={StopwatchFilter}
+        options={({ route }) => ({ title: route.params.title })}
+      />
+      <Stack.Screen
+        name="StopwatchList"
+        component={stopwatchList}
+        options={({ route }) => ({ title: route.params.title })}
+      />
+      <Stack.Screen
+        name="StopwatchListAgenda"
+        component={StopwatchListAgenda}
+        options={({ route }) => ({ title: route.params.title })}
+      />
+      <Stack.Screen
+        name="StopwatchListAtendimento"
+        component={StopwatchListAtendimento}
         options={({ route }) => ({ title: route.params.title })}
       />
     </Stack.Navigator>

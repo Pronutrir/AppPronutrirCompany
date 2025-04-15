@@ -54,8 +54,7 @@ const useGetAgendasQt = () => {
     async () => {
       const { result } = (
         await Api.get<IResponseAgendaQt>(
-          `AgendaQuimio/GetAgendaQuimioterapiaGeral/${
-            UnidadeSelected?.cD_ESTABELECIMENTO
+          `v1/AgendaQuimio/GetAgendaQuimioterapiaGeral/${UnidadeSelected?.cD_ESTABELECIMENTO
           },${selectedSetor(
             UnidadeSelected?.cD_ESTABELECIMENTO,
           )},${moment().format('YYYY-MM-DD')},${moment().format(

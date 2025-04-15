@@ -86,7 +86,7 @@ const useGetAtendimentosAptosEnfermagem = () => {
     async () => {
       const { result } = (
         await Api.get<IResponseAtendimentosAptosEnfermagem>(
-          `AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
+          `v1/AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
         )
       ).data;
 
@@ -94,8 +94,8 @@ const useGetAtendimentosAptosEnfermagem = () => {
         return a.nM_PESSOA_FISICA < b.nM_PESSOA_FISICA
           ? -1
           : a.nM_PESSOA_FISICA > b.nM_PESSOA_FISICA
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       });
     },
     {
@@ -117,10 +117,8 @@ const useInitAtendimento = () => {
   return useMutation(
     (item: IPropsInitAtendimento) => {
       return Api.put(
-        `AtendimentoPaciente/IniciarAtendimentoQuimioterapia/${
-          item.nR_SEQ_ATENDIMENTO
-        }/${stateAuth.PerfilSelected?.nM_USUARIO}/${
-          stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO
+        `v1/AtendimentoPaciente/IniciarAtendimentoQuimioterapia/${item.nR_SEQ_ATENDIMENTO
+        }/${stateAuth.PerfilSelected?.nM_USUARIO}/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO
         }?${item.nR_SEQ_AGENDA ?? ''}`,
       );
     },
@@ -145,7 +143,7 @@ const useEndAtendimento = () => {
   return useMutation(
     (item: IPropsEndAtendimento) => {
       return Api.put(
-        'AtendimentoPaciente/FinalizarAtendimentoQuimioterapia',
+        'v1/AtendimentoPaciente/FinalizarAtendimentoQuimioterapia',
         item,
       );
     },
@@ -177,7 +175,7 @@ const useEntregaMedicamento = () => {
   return useMutation(
     (item: IPostEntregaMedicamento) => {
       return Api.post(
-        `AtendimentoPaciente/MedicacaoPaciente/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
+        `v1/AtendimentoPaciente/MedicacaoPaciente/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
       );
     },
     {
@@ -202,7 +200,7 @@ const useEntregaPreMedicamento = () => {
   return useMutation(
     (item: IPostEntregaMedicamento) => {
       return Api.post(
-        `AtendimentoPaciente/PreMedicacaoPacienteEntregue/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
+        `v1/AtendimentoPaciente/PreMedicacaoPacienteEntregue/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
       );
     },
     {
@@ -227,7 +225,7 @@ const useInitPreMedicamento = () => {
   return useMutation(
     (item: IPostIniciarPréTratamento) => {
       return Api.post(
-        `AtendimentoPaciente/AdministrarPreTratamento/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}/${item.cD_ESTABELECIMENTO}`,
+        `v1/AtendimentoPaciente/AdministrarPreTratamento/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}/${item.cD_ESTABELECIMENTO}`,
       );
     },
     {
@@ -250,7 +248,7 @@ const useInitPreMedicamento = () => {
 const useVincularAtendimento = () => {
   return useMutation((item: IPropsVincularAtendimento) => {
     return Api.post(
-      `AtendimentoPaciente/VincularAtendimentoPaciente/${item.cd_pessoa_fisica}/${item.nr_atendimento}/${item.estabelecimento}/${item.setorAtendimento}/${item.nm_usuario}`,
+      `v1/AtendimentoPaciente/VincularAtendimentoPaciente/${item.cd_pessoa_fisica}/${item.nr_atendimento}/${item.estabelecimento}/${item.setorAtendimento}/${item.nm_usuario}`,
     );
   });
 };
@@ -260,7 +258,7 @@ const useDefinicaoAcomodacao = () => {
   return useMutation(
     (item: IPropsDefinicaoAcomodacao) => {
       return Api.post<IPropsDefinicaoAcomodacao>(
-        'LocalAdmQuimioterapia/DefinirAcomodacaoQuimio',
+        'v1/LocalAdmQuimioterapia/DefinirAcomodacaoQuimio',
         item,
       );
     },
@@ -283,7 +281,7 @@ const UseListLocalAcomodacao = () => {
     async () => {
       const { result } = (
         await Api.get<IResponseListAcomodacao>(
-          `LocalAdmQuimioterapia/ListarLocalAdmQT?estabelecimento=${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
+          `v1/LocalAdmQuimioterapia/ListarLocalAdmQT?estabelecimento=${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
         )
       ).data;
       return result;

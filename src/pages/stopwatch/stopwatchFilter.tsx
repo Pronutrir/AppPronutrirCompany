@@ -104,8 +104,8 @@ const StopwatchFilter = ({
         renderItem={({ item, index }) => renderItem({ item, index })}
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={renderItemEmpty}
-        /* refreshing={isLoading}
-          onRefresh={() => refetch()} */
+      /* refreshing={isLoading}
+        onRefresh={() => refetch()} */
       />
     </View>
   );

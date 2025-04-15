@@ -23,7 +23,7 @@ const useCirculacaoInternaFilter = (word: string, cd_estabelecimento: number | n
     async () => {
       const result = (
         await Api.get<IPropsCirculacaoInterna[]>(
-          `CirculacaoInterna/GetAllCirculacaoInterna/${word}/${cd_estabelecimento}`,
+          `v1/CirculacaoInterna/GetAllCirculacaoInterna/${word}/${cd_estabelecimento}`,
         )
       ).data;
       console.log('useCirculacaoInternaFilter', result);
@@ -46,7 +46,7 @@ const useAddCirculacaoInterna = () => {
   return useMutation(
     (item: IPropsCirculacaoInterna) => {
       return Api.post<IPropsCirculacaoInterna>(
-        'CirculacaoInterna/AddCirculacaoInterna',
+        'v1/CirculacaoInterna/AddCirculacaoInterna',
         item,
       );
     },

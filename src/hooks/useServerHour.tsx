@@ -3,7 +3,7 @@ import Api from '../services/api';
 
 const useServerHour = () => {
   return useQuery('serverDataHour', async () => {
-    return (await Api.get<string>('ServerConfig/GetDateHourServer')).data;
+    return (await Api.get<string>('v1/ServerConfig/GetDateHourServer')).data;
   });
 };
 

@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { ThemeContextData } from '../../../../contexts/themeContext';
 import { useThemeAwareObject } from '../../../../hooks/useThemedStyles';
@@ -8,19 +8,30 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import BtnOptions from '../../../../components/buttons/BtnOptions';
 
 type Props = {
-    historicoSinaisVitais: ISinaisVitais[] | undefined;
-    onpress(): void;
+    historicoSinaisVitais?: ISinaisVitais[];
+    onpress: () => void;
+    onpressCancel: () => void;
+    title?: string;
+    pesoAtual?: number;
+    pesoMedio?: number;
 };
 
-const CardAlertaPesoPaciente = ({ historicoSinaisVitais, onpress }: Props) => {
+const CardAlertaPesoPaciente: React.FC<Props> = ({
+    historicoSinaisVitais,
+    onpress,
+    onpressCancel,
+    title,
+    pesoAtual,
+    pesoMedio,
+}) => {
     const styles = useThemeAwareObject(createStyle);
 
     return (
         <View style={styles.container}>
             <Text style={styles.textMenssage}>
-                Paciente apresenta variação de peso!
+                {title ?? 'Histórico de Peso do Paciente'}
             </Text>
-            <ScrollView>
+            <View>
                 {historicoSinaisVitais?.map((item, index) => {
                     return (
                         <View style={styles.box} key={index.toString()}>
@@ -39,7 +50,7 @@ const CardAlertaPesoPaciente = ({ historicoSinaisVitais, onpress }: Props) => {
                         </View>
                     );
                 })}
-            </ScrollView>
+            </View>
             <View
                 style={{
                     flexDirection: 'row',
@@ -47,6 +58,12 @@ const CardAlertaPesoPaciente = ({ historicoSinaisVitais, onpress }: Props) => {
                     paddingVertical: RFPercentage(1),
                 }}>
                 <BtnOptions valueText={'Ok'} onPress={() => onpress()} />
+                <BtnOptions
+                    valueText="Cancelar"
+                    onPress={() => onpressCancel()}
+                    colors={['#FF6B6B', '#FF8E8E']}
+                    textColor="#FFFFFF"
+                />
             </View>
         </View>
     );
@@ -61,7 +78,7 @@ const createStyle = (theme: ThemeContextData) => {
             justifyContent: 'center',
             alignItems: 'center',
             maxHeight: RFPercentage(80),
-            minHeight: RFPercentage(40),
+            minHeight: RFPercentage(1),
         },
         box: {
             flexDirection: 'row',

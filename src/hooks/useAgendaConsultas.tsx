@@ -73,15 +73,14 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
     async () => {
       const { result } = (
         await Api.get<IResponseAgendaConsulta>(
-          `AgendaConsultas/FilterAgendamentosGeral/${moment().format(
+          `v1/AgendaConsultas/FilterAgendamentosGeral/${moment().format(
             'YYYY-MM-DD',
           )},${moment().format('YYYY-MM-DD')}?${filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
           }${filter?.dS_ESPECIALIDADE
             ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
             : ''
           }&semStatusAgenda='C'&codEstabelecimento=${UnidadeSelected?.cD_ESTABELECIMENTO
-          }&rows=500&cacheKey=true&cacheName=sinaisVitais+${UnidadeSelected?.dS_ESTABELECIMENTO
-          }`,
+          }&rows=500&cacheKey=true`,
         )
       ).data;
 

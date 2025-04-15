@@ -76,6 +76,19 @@ export interface IPropsEscalaFlebitePost {
   iE_SITUACAO: string;
   iE_INTENSIDADE: string;
 }
+
+export interface IRegraSinaisVitais {
+  nR_SEQUENCIA: number;
+  nM_ATRIBUTO: string;
+  qT_MINIMO: number;
+  vL_MAXIMO: number;
+  qT_MIN_AVISO: number,
+  qT_MAX_AVISO: number,
+  dS_MENSAGEM_ALERTA: string;
+  dS_MENSAGEM_BLOQUEIO: string;
+  dT_ATUALIZACAO: string;
+}
+
 const initialSinaisVitais: ISinaisVitais[] = [
   {
     nR_SEQUENCIA: 101676,
@@ -123,7 +136,7 @@ const useSinaisVitaisAll = () => {
       const {
         data: { result },
       } = await Api.get<ResponsePFdados>(
-        `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
+        `v1/SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGListagem/${moment().format(
           'YYYY-MM-DD',
         )},${moment().format('YYYY-MM-DD')}`,
       );
@@ -131,8 +144,8 @@ const useSinaisVitaisAll = () => {
         return a?.dT_SINAL_VITAL < b.dT_SINAL_VITAL
           ? -1
           : a.dT_SINAL_VITAL > b.dT_SINAL_VITAL
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       });
     },
     {
@@ -154,12 +167,10 @@ const useSinaisVitaisFilter = (filter: IFilterSinaisVitaisProfissional) => {
       const {
         data: { result },
       } = await Api.get<ResponsePFdados>(
-        `SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${
-          filter.cd_pessoa_fisica
+        `v1/SinaisVitaisMonitoracaoGeral/HistoricoSVMPProfissionalGeral/${filter.cd_pessoa_fisica
         }${`,${moment(filter.dataInicio).format(
           'YYYY-MM-DD',
-        )}`}${`,${filter.dataFinal}`}?pagina=${pageParam}&rows=${
-          filter.rows ?? 10
+        )}`}${`,${filter.dataFinal}`}?pagina=${pageParam}&rows=${filter.rows ?? 10
         }`,
       );
       return result.filter(item => item.iE_SITUACAO != 'I');
@@ -190,14 +201,10 @@ const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
       const {
         data: { result },
       } = await Api.get<ResponsePFdados>(
-        `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
-          filter.dataInicio ? `=${filter.dataInicio}` : ''
-        }&dataFinal${filter.dataFinal ? `=${filter.dataFinal}` : ''}&pagina=${
-          filter.pagina ?? 1
-        }&rows=${filter.rows ?? 100}&status${
-          filter.status ? `=${filter.status}` : ''
-        }&nomePaciente${
-          filter.nomePaciente ? `=${filter.nomePaciente}` : ''
+        `v1/SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${filter.dataInicio ? `=${filter.dataInicio}` : ''
+        }&dataFinal${filter.dataFinal ? `=${filter.dataFinal}` : ''}&pagina=${filter.pagina ?? 1
+        }&rows=${filter.rows ?? 100}&status${filter.status ? `=${filter.status}` : ''
+        }&nomePaciente${filter.nomePaciente ? `=${filter.nomePaciente}` : ''
         }&cdPaciente${filter.cdPaciente ? `=${filter.cdPaciente}` : ''}`,
       );
       return result
@@ -205,8 +212,8 @@ const useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
           return a?.dT_SINAL_VITAL > b.dT_SINAL_VITAL
             ? -1
             : a.dT_SINAL_VITAL < b.dT_SINAL_VITAL
-            ? 1
-            : 0;
+              ? 1
+              : 0;
         })
         .filter(item => item.iE_SITUACAO != 'I');
     },
@@ -228,16 +235,12 @@ const _useSinaisVitaisHistory = (filter: IFilterSinaisVitais) => {
       const {
         data: { result },
       } = await Api.get<ResponsePFdados>(
-        `SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${
-          filter.dataInicio
-            ? `=${moment(filter.dataInicio).format('YYYY-MM-DD')}`
-            : ''
-        }&dataFinal${
-          filter.dataFinal ? `=${filter.dataFinal}` : ''
-        }&pagina=${pageParam}&rows=${filter.rows ?? 10}&status${
-          filter.status ? `=${filter.status}` : ''
-        }&nomePaciente${
-          filter.nomePaciente ? `=${filter.nomePaciente}` : ''
+        `v1/SinaisVitaisMonitoracaoGeral/ListarTodosDadosSVMGPaciente?dataInicio${filter.dataInicio
+          ? `=${moment(filter.dataInicio).format('YYYY-MM-DD')}`
+          : ''
+        }&dataFinal${filter.dataFinal ? `=${filter.dataFinal}` : ''
+        }&pagina=${pageParam}&rows=${filter.rows ?? 10}&status${filter.status ? `=${filter.status}` : ''
+        }&nomePaciente${filter.nomePaciente ? `=${filter.nomePaciente}` : ''
         }&cdPaciente${filter.cdPaciente ? `=${filter.cdPaciente}` : ''}`,
       );
       return result.filter(item => item.iE_SITUACAO != 'I');
@@ -264,7 +267,7 @@ const useScalaFlebitePost = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
     (item: IPropsEscalaFlebitePost) => {
-      return Api.post('EscalaFlebite/PostEscalaFlebite', item);
+      return Api.post('v1/EscalaFlebite/PostEscalaFlebite', item);
     },
     {
       onSuccess: () => {
@@ -282,10 +285,27 @@ const useScalaFlebitePost = () => {
     },
   );
 };
+
+const useGetRegraSinaisVitais = () => {
+  return useQuery<IRegraSinaisVitais[]>(
+    'RegraSinaisVitais',
+    async () => {
+      const result = (await Api.get('v2/SinaisVitais/GetRegrasSinaisVitais')).data;
+      return result;
+    },
+    {
+      onError: () => {
+        console.log('Error ao listar as regras sinais vitais tente mais tarde!');
+      }
+    },
+  );
+}
+
 export {
   useSinaisVitaisAll,
   useSinaisVitaisHistory,
   _useSinaisVitaisHistory,
   useSinaisVitaisFilter,
   useScalaFlebitePost,
+  useGetRegraSinaisVitais
 };

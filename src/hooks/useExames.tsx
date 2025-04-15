@@ -79,18 +79,15 @@ const useExames = (paramsFilterExame: IparamsFilterExame) => {
     async ({ signal, pageParam = 1 }) => {
       const { result } = (
         await Api.get<IExameResponse<IExame[]>>(
-          `Exames/ListExamesPacientes?${
-            paramsFilterExame.statusExame
-              ? `statusExame=${paramsFilterExame.statusExame}`
-              : ''
-          }${
-            paramsFilterExame.nomePacient
-              ? `nomePaciente=${paramsFilterExame.nomePacient}`
-              : ''
-          }${
-            paramsFilterExame.nomeMedico
-              ? `nomeMedico=${paramsFilterExame.nomeMedico}`
-              : ''
+          `v1/Exames/ListExamesPacientes?${paramsFilterExame.statusExame
+            ? `statusExame=${paramsFilterExame.statusExame}`
+            : ''
+          }${paramsFilterExame.nomePacient
+            ? `nomePaciente=${paramsFilterExame.nomePacient}`
+            : ''
+          }${paramsFilterExame.nomeMedico
+            ? `nomeMedico=${paramsFilterExame.nomeMedico}`
+            : ''
           }&page=${pageParam}&rows=5`,
           {
             signal,
@@ -123,7 +120,7 @@ const useUpdateExame = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
     (exames: IPutExame) => {
-      return Api.put(`Exames/AtualizarExames/${exames.id_examination}`, exames);
+      return Api.put(`v1/Exames/AtualizarExames/${exames.id_examination}`, exames);
     },
     {
       onSuccess: () => {
@@ -198,7 +195,7 @@ const useCountExames = () => {
     async () => {
       const { result } = (
         await Api.get<IExameResponse<IStatusCount>>(
-          'Exames/StatusExamesPaciente',
+          'v1/Exames/StatusExamesPaciente',
         )
       ).data;
       return result;

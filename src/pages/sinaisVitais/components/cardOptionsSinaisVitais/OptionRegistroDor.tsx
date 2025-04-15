@@ -11,16 +11,16 @@ interface PropsRegistroDor {
 }
 
 const OptionRegistroDor = ({ Dor, setDor }: PropsRegistroDor) => {
-  
-  const [toggleSwitch, setToggleSwitch] = useState(false);
+
+  const [toggleSwitch, setToggleSwitch] = useState(true);
 
   return (
     <View style={styles.container}>
       <View style={styles.ToggleSwitch}>
-        <ToggleSwitch
+        {/* <ToggleSwitch
           onpress={() => setToggleSwitch(!toggleSwitch)}
           Enabled={!toggleSwitch}
-        />
+        /> */}
       </View>
       <EscalaDorComponent
         onpress={item => {

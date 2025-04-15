@@ -190,7 +190,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
       any,
       AxiosResponse<ResponsePFdados>
     >(
-      `PessoaFisica/FiltrarPFdadosReduzidos?${filter.queryDate
+      `v1/PessoaFisica/FiltrarPFdadosReduzidos?${filter.queryDate
         ? `&dataNascimento=${moment(filter.queryDate, 'DD/MM/YYYY').format(
           'YYYY-MM-DD',
         )}`
@@ -218,7 +218,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     nR_SEQUENCIA: string,
   ): Promise<ISinaisVitais | null | undefined> => {
     return Api.get<any, AxiosResponse<ResponseSVMG>>(
-      `SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGGeral/${nR_SEQUENCIA}`,
+      `v1/SinaisVitaisMonitoracaoGeral/RecuperaDadosRecentesSVMGGeral/${nR_SEQUENCIA}`,
     )
       .then(response => {
         const { result } = response.data;
@@ -242,7 +242,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
   };
 
   const AddSinaisVitais = async (atendimento: SinaisVitaisPost) => {
-    await Api.post<ISinaisVitais>('SinaisVitaisMonitoracaoGeral', {
+    await Api.post<ISinaisVitais>('v1/SinaisVitaisMonitoracaoGeral', {
       iE_PRESSAO: sinaisVitaisDefault.iE_PRESSAO,
       iE_MEMBRO: sinaisVitaisDefault.iE_MEMBRO,
       iE_MANGUITO: sinaisVitaisDefault.iE_MANGUITO,
@@ -292,7 +292,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
     try {
       const { result } = (
         await Api.post<ISinaisVitais, AxiosResponse<ResponseSVMG>>(
-          'SinaisVitaisMonitoracaoGeral/PostSVMGComAtendimento',
+          'v1/SinaisVitaisMonitoracaoGeral/PostSVMGComAtendimento',
           {
             cD_MEDICO_RESP: atendimento.cD_MEDICO_RESP,
             cD_ESTABELECIMENTO: atendimento.cD_ESTABELECIMENTO,
@@ -341,7 +341,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
 
   const UpdateSinaisVitais = async (sinaisUpdate: SinaisVitaisPut) => {
     await Api.put<ISinaisVitais>(
-      `SinaisVitaisMonitoracaoGeral/PutSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
+      `v1/SinaisVitaisMonitoracaoGeral/PutSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
       {
         nM_USUARIO: usertasy.usuariO_FUNCIONARIO_SETOR[0]?.nM_USUARIO,
         cD_PACIENTE: sinaisUpdate.cD_PACIENTE,
@@ -375,7 +375,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
   const InativarSinaisVitais = async (sinaisUpdate: IInativarSinaisVitais) => {
     sinaisUpdate.iE_SITUACAO = 'I';
     Api.put<ISinaisVitais>(
-      `SinaisVitaisMonitoracaoGeral/PutAtivarInativarSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
+      `v1/SinaisVitaisMonitoracaoGeral/PutAtivarInativarSVMG/${sinaisUpdate.nR_SEQUENCIA}`,
       {
         iE_SITUACAO: sinaisUpdate?.iE_SITUACAO,
         nM_USUARIO: usertasy.usuariO_FUNCIONARIO_SETOR[0]?.nM_USUARIO,
@@ -451,7 +451,7 @@ export const SinaisVitaisProvider: React.FC = ({ children }) => {
         const {
           data: { result },
         } = await Api.get<IAlertPacientResponse>(
-          `AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=${codPacient}`,
+          `v1/AlergiaReacoesAdversas/ListarAlergiaReacoesAdversasPacienteAll?codPaciente=${codPacient}`,
         );
         return result.filter(item => item.iE_ALERTA === 'S');
       },

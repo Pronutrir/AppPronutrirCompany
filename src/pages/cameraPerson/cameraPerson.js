@@ -53,7 +53,7 @@ export default function CameraPerson({ navigation }) {
 
   const PostImgPerfil = imgBase64 => {
     setLoading(true);
-    Api.post('PessoaFisica/InserirImagemPerfil', {
+    Api.post('v1/PessoaFisica/InserirImagemPerfil', {
       cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
       base64image: imgBase64,
       dT_ATUALIZACAO: moment().format(),
@@ -88,7 +88,7 @@ export default function CameraPerson({ navigation }) {
 
   const PutImgPerfil = (cD_PESSOA_FISICA, imgBase64) => {
     setLoading(true);
-    Api.put(`PessoaFisica/PutFotoPerfil/${cD_PESSOA_FISICA}`, {
+    Api.put(`v1/PessoaFisica/PutFotoPerfil/${cD_PESSOA_FISICA}`, {
       cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
       base64image: imgBase64,
       dT_ATUALIZACAO: moment().format(),

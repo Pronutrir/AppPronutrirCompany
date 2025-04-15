@@ -27,7 +27,7 @@ const OptionSinaisVitais = ({
   Fr,
   setFr,
 }: PropSinaisVitais) => {
-  const [toggleSwitch, setToggleSwitch] = useState(false);
+  const [toggleSwitch, setToggleSwitch] = useState(true);
 
   const pressaoArterialMedia = (): number => {
     if (Pad !== 40 && Pad !== 40) {
@@ -41,10 +41,10 @@ const OptionSinaisVitais = ({
   return (
     <View style={styles.container}>
       <View style={styles.ToggleSwitch}>
-        <ToggleSwitch
+        {/*  <ToggleSwitch
           onpress={() => setToggleSwitch(!toggleSwitch)}
           Enabled={!toggleSwitch}
-        />
+        /> */}
       </View>
       <ScrollView>
         <SlideRanger
