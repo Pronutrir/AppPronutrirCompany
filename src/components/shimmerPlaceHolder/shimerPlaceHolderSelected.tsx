@@ -1,14 +1,20 @@
 import React from 'react';
 import { StyleSheet, Platform } from 'react-native';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import ShimmerPlaceholder, {
+  ShimmerPlaceholderProps,
+} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 
-const ShimerPlaceHolderSelected = () => {
+interface Props {
+  containerStyle?: ShimmerPlaceholderProps;
+}
+
+const ShimerPlaceHolderSelected = ({ containerStyle }: Props) => {
   return (
     <ShimmerPlaceholder
       LinearGradient={LinearGradient}
-      style={styles.container}
+      style={[styles.container, containerStyle]}
     />
   );
 };

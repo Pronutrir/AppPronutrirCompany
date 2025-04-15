@@ -25,7 +25,7 @@ import Api from '../../../services/api';
 import moment from 'moment';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function atualizarEmail({ navigation }) {
+export default function AtualizarEmail({ navigation }) {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);
@@ -43,7 +43,7 @@ export default function atualizarEmail({ navigation }) {
     /*ATUALIZAR DADOS NA API*/
     const atualizarPerfil = async (values) => {
         setLoadingActive(true);
-        return Api.put(`PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
+        return Api.put(`v1/PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             nM_PESSOA_FISICA: usertasy.nM_PESSOA_FISICA,
             dT_ATUALIZACAO: moment().format(),

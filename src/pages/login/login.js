@@ -38,7 +38,7 @@ export default function login({ navigation }) {
 
     // consulta o cpf do cliente na api tasy
     async function getCpf(cpf) {
-        return Api.get(`PessoaFisica/buscaCpfEmail?cpf=${cpf}`).then(
+        return Api.get(`v1/PessoaFisica/buscaCpfEmail?cpf=${cpf}`).then(
             (response) => {
                 const { result } = response.data;
                 return result;

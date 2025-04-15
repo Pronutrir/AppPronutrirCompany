@@ -8,5 +8,6 @@
         "HEXA",
         "RGB",
       ],
-      "java.compile.nullAnalysis.mode": "disabled"
+      "java.compile.nullAnalysis.mode": "disabled",
+      "CodeGPT.apiKey": "Google AI Studio"
 }

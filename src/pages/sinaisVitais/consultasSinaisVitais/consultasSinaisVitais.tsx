@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import styles from './style';
 import CardConsultasComponent from '../components/cardConsultasComponent/cardConsultasComponent';
@@ -45,27 +45,25 @@ const ConsultasSinaisVitais: React.FC = () => {
         IAgendaConsulta[] | null | undefined
     >(listAgendasConsultas?.result);
 
-    const filterConsultas = (
-        item?: IFilterConsultas,
-    ): IAgendaConsulta[] | undefined => {
-        const stateConsultas =
-            useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
+    const filterConsultas = useCallback((item?: IFilterConsultas): IAgendaConsulta[] | undefined => {
+        const stateConsultas = useGetFetchQuery<IResultAgendaConsultas>('agendasConsultas');
         if (item) {
-            if (stateConsultas?.result && item?.dS_ESPECIALIDADE) {
-                return stateConsultas.result.filter(
-                    (element) =>
-                        element.dS_ESPECIALIDADE === item.dS_ESPECIALIDADE,
-                );
-            }
-            if (stateConsultas?.result && item?.nM_GUERRA) {
-                return stateConsultas.result?.filter(
-                    (element) => element.nM_GUERRA === item.nM_GUERRA,
-                );
+            if (stateConsultas?.result) {
+                if (item.dS_ESPECIALIDADE) {
+                    return stateConsultas.result.filter(
+                        (element) => element.dS_ESPECIALIDADE === item.dS_ESPECIALIDADE
+                    );
+                }
+                if (item.nM_GUERRA) {
+                    return stateConsultas.result.filter(
+                        (element) => element.nM_GUERRA === item.nM_GUERRA
+                    );
+                }
             }
         } else {
             return stateConsultas?.result;
         }
-    };
+    }, [useGetFetchQuery]);
 
     const _FilterConsultas = async (item?: IFilterConsultas | null) => {
         if (item) {

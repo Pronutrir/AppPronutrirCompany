@@ -80,16 +80,10 @@ const CardConsultasGerais: React.FC<Props> = ({
     return (
       <TouchableOpacity
         onPress={() => {
-          if (ValidationAutorizeEnfermagem()) {
-            navigation.navigate('UpdateSinaisVitaisEnfermagem', {
-              PessoaFisica: item,
-            });
-          } else {
-            navigation.navigate('UpdateSinais', {
-              PessoaFisica: item,
-              GeraSenhaOncologia: false,
-            });
-          }
+          navigation.navigate('UpdateSinais', {
+            PessoaFisica: item,
+            GeraAtendimento: false,
+          });
         }}
         style={{ flexDirection: 'row', paddingVertical: 10 }}>
         <View style={styles.box1}>

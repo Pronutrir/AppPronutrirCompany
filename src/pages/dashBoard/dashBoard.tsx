@@ -6,8 +6,8 @@ import SinaisVitaisSvg from '../../assets/svg/sinaisVitais.svg';
 import ConsultaMarcadasImg from '../../assets/svg/ConsultasMarcadas.svg';
 import QuimioSvg from '../../assets/svg/quimioterapia.svg';
 import MedicoImg from '../../assets/svg/medico.svg';
-import PilulaComprimidoImg from '../../assets/svg/pilula-e-comprimido.svg';
-import HospitalLocationSvg from '../../assets/svg/hospitalLocation.svg';
+import AtendimentoSvg from '../../assets/svg/atendimento.svg';
+import RelogioSvg from '../../assets/svg/relogio.svg';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 import BtnDashboardComponent from './components/btnDashboardComponent/btnDashboardComponent';
 import { useNavigation } from '@react-navigation/native';
@@ -18,11 +18,13 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import { useUnidades, IUnidade } from '../../hooks/useEstabelecimentos';
 import { saveUnidade } from '../../utils';
 import { useQueryClient } from 'react-query';
+import { StackNavigation } from '../../routes/routeDashboard';
 
 const DashBoard: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigation>();
   const styles = useThemeAwareObject(createStyles);
-  const { ValidationAutorizeTriagem } = useContext(SinaisVitaisContext);
+  const { ValidationAutorizeTriagem, ValidationAutorizeEnfermagem } =
+    useContext(SinaisVitaisContext);
   const {
     ValidationAutorizeEvolucao,
     stateAuth: { UnidadeSelected },
@@ -76,15 +78,15 @@ const DashBoard: React.FC = () => {
           />
           <BtnDashboardComponent
             disabled={!ValidationAutorizeEvolucao()}
-            onpress={() => navigation.navigate('IndexEvolucao')}
+            onpress={() => navigation.navigate('EvolucaoEnfermagem')}
             ImgSVG={ConsultaMarcadasImg}
             label={'Evolução'}
           />
           <BtnDashboardComponent
-            disabled={true}
-            onpress={() => navigation.navigate('Exame')}
+            disabled={false}
+            onpress={() => navigation.navigate('CirculacaoInterna')}
             ImgSVG={MedicoImg}
-            label={'Exames'}
+            label={'Circulação Interna'}
           />
           <BtnDashboardComponent
             disabled={!ValidationAutorizeTriagem()}
@@ -93,20 +95,16 @@ const DashBoard: React.FC = () => {
             label={'Tratamento Quimioterapia'}
           />
           <BtnDashboardComponent
-            disabled={true}
-            onpress={() => {
-              ('');
-            }}
-            ImgSVG={HospitalLocationSvg}
-            label={'Unidades'}
+            disabled={!ValidationAutorizeTriagem()}
+            onpress={() => navigation.navigate('PainelSenha')}
+            ImgSVG={AtendimentoSvg}
+            label={'Painel de senhas'}
           />
           <BtnDashboardComponent
-            disabled={true}
-            onpress={() => {
-              ('');
-            }}
-            ImgSVG={PilulaComprimidoImg}
-            label={'Medicamentos'}
+            disabled={!ValidationAutorizeEnfermagem()}
+            onpress={() => navigation.navigate('Stopwatch')}
+            ImgSVG={RelogioSvg}
+            label={'Stopwatch'}
           />
         </View>
       </ScrollView>

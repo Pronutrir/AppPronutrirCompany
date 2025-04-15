@@ -19,7 +19,7 @@ if (
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export default function busca({ navigation }) {
+export default function Busca({ navigation }) {
     const listaFuncionalidade = [
         {
             id: '1',

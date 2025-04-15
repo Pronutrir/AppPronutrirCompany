@@ -8,7 +8,6 @@ import RailSelected from './RailSelected';
 import Thumb from './Thumb';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import IncrementDecrement from '../IncrementDecrement';
-
 interface Props {
     label: string;
     medida: string;
@@ -29,8 +28,8 @@ const SlideReanger: React.FC<Props> = ({
     valueMax = 10,
     valueRanger = 1.0,
     setValueRanger,
-    disabled= false,
-    disabledIncrement= false,
+    disabled = false,
+    disabledIncrement = false,
 }: Props) => {
     const renderThumb = useCallback(() => <Thumb />, []);
     const renderRail = useCallback(() => <Rail />, []);
@@ -38,7 +37,7 @@ const SlideReanger: React.FC<Props> = ({
     //const renderLabel = useCallback((value) => <Label text={value} />, []);
     const renderNotch = useCallback(() => <Notch />, []);
 
-    const handleValueChange = useCallback(
+    /* const handleValueChange = useCallback(
         (value) => {
             if (!Number.isInteger(value)) {
                 value = parseFloat(value.toFixed(1));
@@ -46,7 +45,7 @@ const SlideReanger: React.FC<Props> = ({
             setValueRanger(value);
         },
         [setValueRanger],
-    );
+    ); */
 
     return (
         <View style={styles.ContainerRanger}>
@@ -58,7 +57,7 @@ const SlideReanger: React.FC<Props> = ({
                     medida={medida}
                     max={valueMax}
                     min={valueMin}
-                    disabled={disabled || disabledIncrement}
+                //disabled={disabled || disabledIncrement}
                 />
             </View>
             <RangeSlider
@@ -73,7 +72,7 @@ const SlideReanger: React.FC<Props> = ({
                 renderRailSelected={renderRailSelected}
                 //renderLabel={renderLabel}
                 renderNotch={renderNotch}
-                onValueChanged={handleValueChange}
+                //onValueChanged={handleValueChange}
                 disableRange={true}
                 disabled={disabled}
             />
@@ -83,18 +82,18 @@ const SlideReanger: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
     ContainerRanger: {
-        flex: 1,
-        paddingVertical: RFPercentage(1),
-        alignItems: 'stretch',
-        justifyContent: 'center',
+        paddingVertical: RFPercentage(0.5),
+        //alignItems: 'stretch',
+        //justifyContent: 'center',
+        paddingHorizontal: RFPercentage(2.5)
     },
     labelRanger: {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: RFPercentage(2),
-        paddingVertical: RFPercentage(0.5),
+        //alignItems: 'center',
+        //paddingHorizontal: RFPercentage(2),
+        //paddingVertical: RFPercentage(0.5),
     },
     RangeSlider: {
         paddingVertical: RFPercentage(1),

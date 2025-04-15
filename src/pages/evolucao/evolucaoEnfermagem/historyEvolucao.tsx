@@ -149,13 +149,12 @@ const HistoryEvolucao: React.FC<Props> = ({ route }: Props) => {
     const refMenuBotom = useRef<ModalHandlesMenu>(null);
     return (
       <PressableRipple
-        pressableProps={{
-          onLongPress: () => activeMenuPopUp(refMenuBotom),
-          onPress: () =>
-            navigation.navigate('UpdateEvolucaoEnfermagem', {
-              Evolucao: item,
-            }),
-        }}
+        onLongPress={() => activeMenuPopUp(refMenuBotom)}
+        onPress={() =>
+          navigation.navigate('UpdateEvolucaoEnfermagem', {
+            Evolucao: item,
+          })
+        }
         childrenStyle={{ flexDirection: 'row' }}
         style={{ flex: 1 }}>
         <View style={styles.box1}>

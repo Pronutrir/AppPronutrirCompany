@@ -41,7 +41,7 @@ export default function consultarConfimarSenha({ navigation }) {
 
     //consulta e retorna o token para acesso a api tasy
     const cadastroTasy = async (usertasy) => {
-        return Api.post('PessoaFisica', {
+        return Api.post('v1/PessoaFisica', {
             iE_TIPO_PESSOA: 2,
             iE_FUNCIONARIO: 'N',
             nM_PESSOA_FISICA: usertasy.nM_PESSOA_FISICA.toUpperCase(),
@@ -66,7 +66,7 @@ export default function consultarConfimarSenha({ navigation }) {
 
     // atualiza cadastro tasy
     const UpdateCadastroTasy = async (usertasy) => {
-        return Api.put(`PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
+        return Api.put(`v1/PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             nM_PESSOA_FISICA: usertasy.nM_PESSOA_FISICA.toUpperCase(),
             nR_CPF: usertasy.nR_CPF,

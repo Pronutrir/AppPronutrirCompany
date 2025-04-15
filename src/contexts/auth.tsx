@@ -18,6 +18,7 @@ import {
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import { getPerfil, getUnidade, saveRefreshToken } from '../utils';
 import ApiAuth from '../services/apiAuth';
+import ApiNotify from '../services/apiNotify';
 interface AuthContextData {
   signed: boolean;
   stateAuth: LoginState;
@@ -117,6 +118,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       .then(response => {
         const { jwtToken, refreshToken } = response.data;
         Api.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
+        ApiNotify.defaults.headers.common.Authorization = `Bearer ${jwtToken}`;
         saveRefreshToken(refreshToken);
         return jwtToken;
       })
@@ -127,7 +129,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   //consulta e retorna o usuário da api tasy
   const ConsultaCpfTasy = async (cpf: string) => {
-    return Api.get(`PessoaFisica/buscaCpfEmail?cpf=${cpf}`).then(response => {
+    return Api.get(`v1/PessoaFisica/buscaCpfEmail?cpf=${cpf}`).then(response => {
       const { result } = response.data;
       if (result) {
         dispatchAuth({
@@ -147,8 +149,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       if (cpf || rg) {
         const { result } = (
           await Api.get<IResponsePessoaFisica>(
-            `PessoaFisica/FilterCPFRG?${
-              cpf ? `cpf=${cpf.replace(/[.-]/g, '')}` : ''
+            `v1/PessoaFisica/FilterCPFRG?${cpf ? `cpf=${cpf.replace(/[.-]/g, '')}` : ''
             }${rg ? `rg=${rg}` : ''}`,
           )
         ).data;
@@ -237,7 +238,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       const {
         data: { result },
       } = await Api.get<ReponsePerfis>(
-        `UsuarioPerfil/FiltrarUsuarioPerfisCodUsuarioNumSeqGeral?nomeUsuario=${stateAuth.usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&pagina=1`,
+        `v1/UsuarioPerfil/FiltrarUsuarioPerfisCodUsuarioNumSeqGeral?nomeUsuario=${stateAuth.usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&pagina=1`,
       );
       return result;
     });

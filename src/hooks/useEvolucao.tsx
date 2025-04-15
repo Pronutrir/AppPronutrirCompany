@@ -98,7 +98,7 @@ const useAddEvoluçaoEnfermagem = () => {
   return useMutation(
     (item: IEvolucao) => {
       return Api.post<any, AxiosResponse<IEvolucaoResponse>, IEvolucao>(
-        `EvolucaoPaciente/PostEvolucaoPaciente`,
+        `v1/EvolucaoPaciente/PostEvolucaoPaciente`,
         item,
       );
     },
@@ -123,7 +123,7 @@ const useUpdateEvoluçaoEnfermagem = () => {
   return useMutation(
     (item: IEvolucaoHistory) => {
       return Api.put(
-        `EvolucaoPaciente/PutEvolucaoPaciente/${item.cD_EVOLUCAO}`,
+        `v1/EvolucaoPaciente/PutEvolucaoPaciente/${item.cD_EVOLUCAO}`,
         item,
       );
     },
@@ -148,7 +148,7 @@ const useDeleteEvoluçaoEnfermagem = () => {
   return useMutation(
     (idEvolucao: number) => {
       return Api.delete(
-        `EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolucao}`,
+        `v1/EvolucaoPaciente/DeleteEvolucaoPaciente/${idEvolucao}`,
       );
     },
     {
@@ -175,7 +175,7 @@ const useNotasClinicas = () => {
       const {
         data: { result },
       } = await Api.get<ItipoNotasResponse>(
-        `TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
+        `v1/TipoEvolucao/ListarTiposEvolucoes?pagina=1&rows=100`,
       );
       return result.map(item => {
         return { label: item.dS_TIPO_EVOLUCAO, itemEvolucao: item };
@@ -199,7 +199,7 @@ const useEvolucaoTextDefaultReduzidos = (cD_TIPO_EVOLUCAO?: string) => {
       const {
         data: { result },
       } = await Api.get<ITextDefaultResponse>(
-        `TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?codNotasClinicas=${cD_TIPO_EVOLUCAO}&pagina=1&rows=100`,
+        `v1/TextoPadrao/ListarTextosPadroesInstituicaoReduzidos?codNotasClinicas=${cD_TIPO_EVOLUCAO}&pagina=1&rows=100`,
       );
 
       return result.map(item => {
@@ -225,8 +225,7 @@ const useEvolucaoTextDefault = (value: number | null) => {
       const {
         data: { result },
       } = await Api.get<ITextDefaultResponse>(
-        `TextoPadrao/ListarTextosPadroesInstituicao?nrSequencia=${
-          value ? value : 0
+        `v1/TextoPadrao/ListarTextosPadroesInstituicao?nrSequencia=${value ? value : 0
         }`,
       );
       return result[0];
@@ -252,12 +251,10 @@ const useHistoryEvolucao = (filter: IFilterHistoryEvolucao) => {
       const {
         data: { result },
       } = await Api.get<IEvolucaoHistoryResponse>(
-        `EvolucaoPaciente/ListarEvolucaoPaciente?${
-          filter.codMedico ? `codMedico=${filter.codMedico}` : ''
-        }${
-          filter.codPessoaFisica
-            ? `codPessoaFisica=${filter.codPessoaFisica}`
-            : ''
+        `v1/EvolucaoPaciente/ListarEvolucaoPaciente?${filter.codMedico ? `codMedico=${filter.codMedico}` : ''
+        }${filter.codPessoaFisica
+          ? `codPessoaFisica=${filter.codPessoaFisica}`
+          : ''
         }&pagina=${pageParam}&rows=8`,
       );
       return result.filter(item => {
@@ -298,7 +295,7 @@ const useFilterHistoryEvolucao = (idEvolucao: number) => {
       const {
         data: { result },
       } = await Api.get<IEvolucaoFilterHistoryResponse>(
-        `EvolucaoPaciente/FiltraEvolucaoPacientePorId/${idEvolucao}`,
+        `v1/EvolucaoPaciente/FiltraEvolucaoPacientePorId/${idEvolucao}`,
       );
       return result;
     },
@@ -317,7 +314,7 @@ const useLiberarEvolucao = () => {
   return useMutation(
     (Evolucao: IEvolucaoliberacao) => {
       return Api.put(
-        `EvolucaoPaciente/LiberarEvolucaoPaciente/${Evolucao.cD_EVOLUCAO}`,
+        `v1/EvolucaoPaciente/LiberarEvolucaoPaciente/${Evolucao.cD_EVOLUCAO}`,
         Evolucao,
       );
     },

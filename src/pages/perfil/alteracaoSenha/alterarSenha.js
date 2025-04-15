@@ -21,7 +21,7 @@ import Notification from '../../../componentes/Notification';
 import AuthContext from '../../../contexts/auth';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function alterarSenha({ navigation }) {
+export default function AlterarSenha({ navigation }) {
     const { stateAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
 

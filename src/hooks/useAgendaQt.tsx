@@ -15,6 +15,7 @@ export interface IAgendaQT {
   cD_MEDICO_RESP: number;
   dT_INICIO_ADM: string;
   dT_FIM_ADM: string;
+  nR_SEQ_FILA_SENHA: number;
   //DS_DIA_CICLO: string;
   //QT_PESO: string;
   //QT_ALTURA: number;
@@ -53,8 +54,7 @@ const useGetAgendasQt = () => {
     async () => {
       const { result } = (
         await Api.get<IResponseAgendaQt>(
-          `AgendaQuimio/GetAgendaQuimioterapiaGeral/${
-            UnidadeSelected?.cD_ESTABELECIMENTO
+          `v1/AgendaQuimio/GetAgendaQuimioterapiaGeral/${UnidadeSelected?.cD_ESTABELECIMENTO
           },${selectedSetor(
             UnidadeSelected?.cD_ESTABELECIMENTO,
           )},${moment().format('YYYY-MM-DD')},${moment().format(

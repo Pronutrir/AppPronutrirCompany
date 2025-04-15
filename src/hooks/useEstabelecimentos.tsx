@@ -20,6 +20,11 @@ interface IReponseUnidades {
   result: IUnidade[];
 }
 
+interface IResponseSetores {
+  dS_SETOR_ATENDIMENTO: string;
+  cD_SETOR_ATENDIMENTO: number;
+}
+
 const useUnidades = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   const {
@@ -31,7 +36,7 @@ const useUnidades = () => {
     async () => {
       const { result } = (
         await Api.get<IReponseUnidades>(
-          `UsuarioEstabelecimento/FiltrarUsuarioEstabCodUsuarioNumSeqGeral?nomeUsuarioParam=${usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&page=1&rows=50`,
+          `v1/UsuarioEstabelecimento/FiltrarUsuarioEstabCodUsuarioNumSeqGeral?nomeUsuarioParam=${usertasy.usuariO_FUNCIONARIO_PERFIL[0].nM_USUARIO}&page=1&rows=50`,
         )
       ).data;
 
@@ -49,15 +54,13 @@ const useUnidades = () => {
         return a.value.dS_ESTABELECIMENTO < b.value.dS_ESTABELECIMENTO
           ? -1
           : a.value.dS_ESTABELECIMENTO > b.value.dS_ESTABELECIMENTO
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       });
 
       return orderByResult;
     },
     {
-      //enabled: false,
-      staleTime: 60 * 30000, // 30 minuto
       onError: () => {
         addAlert({
           message: 'Error ao carregar os estabelecimentos, tentar mais tarde!',
@@ -68,4 +71,29 @@ const useUnidades = () => {
   );
 };
 
-export { useUnidades };
+const useSetores = (cd_estabelecimento: number | undefined) => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useQuery(
+    'setores',
+    async () => {
+      const result = (
+        await Api.get<IResponseSetores[]>(
+          `v1/SetorAtendimento/FiltrarSetoresCodEstabDescrGeral?codEstab=${cd_estabelecimento}&cacheKey=true&cacheName=setoresList${cd_estabelecimento}`,
+        )
+      ).data;
+
+      return result;
+    },
+    {
+      enabled: Boolean(cd_estabelecimento),
+      onError: () => {
+        addAlert({
+          message: 'Error ao carregar os setores, tentar mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+export { useUnidades, useSetores };

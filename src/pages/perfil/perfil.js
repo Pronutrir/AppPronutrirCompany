@@ -22,7 +22,7 @@ import Loading from '../../components/Loading/Loading';
 import LoadingBall from '../../components/Loading/LoadingBall';
 import ShimmerPaceHolderFotoPerfil from '../../components/shimmerPlaceHolder/shimmerPaceHolderFotoPerfil';
 
-export default function perfil({ navigation }) {
+export default function Perfil({ navigation }) {
     const size = Dimensions.get('screen').width / 18;
 
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
@@ -46,7 +46,7 @@ export default function perfil({ navigation }) {
 
     const PostImgPerfil = (imgBase64) => {
         setLoading(true);
-        Api.post('PessoaFisica/InserirImagemPerfil', {
+        Api.post('v1/PessoaFisica/InserirImagemPerfil', {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             base64image: imgBase64,
             dT_ATUALIZACAO: moment().format(),
@@ -80,7 +80,7 @@ export default function perfil({ navigation }) {
 
     const PutImgPerfil = (cD_PESSOA_FISICA, imgBase64) => {
         setLoading(true);
-        Api.put(`PessoaFisica/PutFotoPerfil/${cD_PESSOA_FISICA}`, {
+        Api.put(`v1/PessoaFisica/PutFotoPerfil/${cD_PESSOA_FISICA}`, {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             base64image: imgBase64,
             dT_ATUALIZACAO: moment().format(),
@@ -114,7 +114,7 @@ export default function perfil({ navigation }) {
 
     const GetImgPerfil = () => {
         Api.get(
-            `PessoaFisica/DadosFotoPerfilPessoaFisica?cpf=${usertasy.nR_CPF}`,
+            `v1/PessoaFisica/DadosFotoPerfilPessoaFisica?cpf=${usertasy.nR_CPF}`,
         )
             .then((response) => {
                 const { result } = response.data;

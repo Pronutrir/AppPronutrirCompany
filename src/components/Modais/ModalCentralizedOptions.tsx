@@ -26,6 +26,7 @@ interface Props {
     animationType?: 'none' | 'slide' | 'fade';
     onStartShouldResponder?: boolean;
     children?: ReactNode;
+    LottieAnimation?: React.ReactNode;
 }
 export interface ModalHandles {
     openModal(): void;
@@ -45,6 +46,7 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
             setActiveModal,
             onStartShouldResponder = true,
             children,
+            LottieAnimation,
         }: Props,
         ref,
     ) => {
@@ -118,6 +120,9 @@ const ModalCentralizedOptions = React.forwardRef<ModalHandles, Props>(
                             return true;
                         }}>
                         <View style={styles.modalView}>
+                            <View>
+                                {LottieAnimation}
+                            </View>
                             <View style={styles.menssage}>
                                 <Text style={styles.textMenssage}>
                                     {message}

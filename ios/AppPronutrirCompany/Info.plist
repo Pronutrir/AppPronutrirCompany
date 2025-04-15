@@ -40,7 +40,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) Gostaria de acessar sua camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) Gostaria de usar seu microfone (para vídeos)</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -80,7 +80,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>CodePushDeploymentKey</key>
+	<key>CodePushDeploymentKey</key>
 	<string>$(CODEPUSH_KEY)</string>
 </dict>
 </plist>

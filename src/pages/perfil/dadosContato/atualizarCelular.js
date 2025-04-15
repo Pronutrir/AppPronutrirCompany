@@ -21,7 +21,7 @@ import Api from '../../../services/api';
 import moment from 'moment';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function atualizarCelular() {
+export default function AtualizarCelular() {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [loadingActive, setLoadingActive] = useState(false);
@@ -37,7 +37,7 @@ export default function atualizarCelular() {
     const atualizarPerfil = async (values) => {
         setLoadingActive(true);
         values.Celular = values.Celular.replace(/[() -]/g, '');
-        return Api.put(`PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
+        return Api.put(`v1/PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             nM_PESSOA_FISICA: usertasy.nM_PESSOA_FISICA,
             dT_ATUALIZACAO: moment().format(),

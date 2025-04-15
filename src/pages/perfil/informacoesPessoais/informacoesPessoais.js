@@ -20,7 +20,7 @@ import moment from 'moment';
 import Api from '../../../services/api';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export default function informacoesPessoais() {
+export default function InformacoesPessoais() {
     const { stateAuth, dispatchAuth } = useContext(AuthContext);
     const { usertasy } = stateAuth;
     const [modalActive, setModalActive] = useState(false);
@@ -36,7 +36,7 @@ export default function informacoesPessoais() {
     /*ATUALIZAR DADOS NA API*/
     const atualizarPerfil = async (values) => {
         setModalActive(true);
-        return Api.put(`PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
+        return Api.put(`v1/PessoaFisica/${usertasy.cD_PESSOA_FISICA}`, {
             cD_PESSOA_FISICA: usertasy.cD_PESSOA_FISICA,
             nM_PESSOA_FISICA: values.Nome,
             dT_ATUALIZACAO: moment().format(),

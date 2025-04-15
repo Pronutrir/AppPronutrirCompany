@@ -8,6 +8,11 @@ const createStyles = (theme: ThemeContextData) => {
       paddingVertical: 10,
       backgroundColor: theme.colors.BACKGROUND_2,
     },
+    menuPopUpStyleSearch: {
+      position: 'absolute',
+      alignSelf: 'auto',
+      right: 0,
+    },
   });
   return styles;
 };

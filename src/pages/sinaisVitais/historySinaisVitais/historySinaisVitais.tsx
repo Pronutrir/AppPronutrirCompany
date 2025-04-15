@@ -83,7 +83,7 @@ const HistorySinaisVitais: React.FC = () => {
 
   const [filterOptions, setFilterOptions] =
     useState<IFilterSinaisVitaisProfissional>({
-      cd_pessoa_fisica: usertasy.cD_PESSOA_FISICA,
+      cd_pessoa_fisica: '57850',
       dataInicio: moment().format('YYYY-MM-DD'),
       dataFinal: moment().format('YYYY-MM-DD'),
     });

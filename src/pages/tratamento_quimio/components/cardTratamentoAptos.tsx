@@ -22,6 +22,10 @@ import CheckMarkSvg from '../../../components/svgComponents/checkMarkSvg';
 import CheckMarkSvgEnd from '../../../components/svgComponents/checkMarkSvgEnd';
 import useTheme from '../../../hooks/useTheme';
 import CheckMarkMedical from '../../../components/svgComponents/checkMarkMedical';
+import ModalCentralize, {
+  ModalHandles,
+} from '../../../components/Modais/ModalCentralize';
+import CardObservacao from './cardlObservacao';
 
 type Props = {
   item: IAtendimentosAptosEnfermagem;
@@ -33,6 +37,7 @@ type Props = {
   refModalEndTratamento: React.RefObject<ModalHandlesCentralizedOptions>;
   refModalEntregaMedicamento: React.RefObject<ModalHandlesCentralizedOptions>;
   refModalEntregaPreMedicamento: React.RefObject<ModalHandlesCentralizedOptions>;
+  refModalInitPreMedicamento: React.RefObject<ModalHandlesCentralizedOptions>;
 };
 
 type IFilterSearch =
@@ -50,15 +55,17 @@ const CardTratamentoAptos = ({
   refModalEndTratamento,
   refModalEntregaMedicamento,
   refModalEntregaPreMedicamento,
+  refModalInitPreMedicamento,
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
 
   const theme = useTheme();
 
-  const [placeholder, setPlaceholder] = useState<IFilterSearch>();
+  const [placeholder] = useState<IFilterSearch>();
 
   const refMenuBotom = useRef<ModalHandlesMenu>(null);
+  const refmodalObservacoes = useRef<ModalHandles>(null);
 
   const MenuPopUpOptions = async (
     itemSelected: string,
@@ -66,8 +73,10 @@ const CardTratamentoAptos = ({
   ) => {
     switch (itemSelected) {
       case 'Sinais Vitais':
-        navigation.navigate('UpdateSinaisVitaisEnfermagem', {
+        navigation.navigate('UpdateSinais', {
           PessoaFisica: item,
+          GeraAtendimento: false,
+          Origin: 'Tratamento_enfermagem',
         });
         break;
       case 'Inicio tratamento':
@@ -114,28 +123,60 @@ const CardTratamentoAptos = ({
           );
         }
         break;
+      case 'Inicio pre-medicação':
+        {
+          setTimeout(
+            () => {
+              setSelectedItem(item);
+              refModalInitPreMedicamento.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+          );
+        }
+        break;
+      case 'Alterar Poltrona':
+        {
+          setTimeout(
+            () => {
+              setSelectedItem(item);
+              refmodalObservacoes.current?.openModal();
+            },
+            Platform.OS === 'android' ? 0 : 500,
+          );
+        }
+        break;
       default:
         break;
     }
   };
 
   const ActionsOptions = (item: IAtendimentosAptosEnfermagem) => {
-    const options = ['Sinais Vitais'];
+    const options = [];
     const {
       iE_PRE_MEDICACAO,
       dT_RECEBIMENTO_PRE_MEDIC,
       dT_ENTREGA_MEDICACAO,
       dT_INICIO_ADM,
       dT_FIM_ADM,
+      dT_INICIO_PRE_TRATAMENTO,
     } = item;
 
     if (
       iE_PRE_MEDICACAO > 0 &&
+      !dT_ENTREGA_MEDICACAO &&
       !dT_RECEBIMENTO_PRE_MEDIC &&
       !dT_INICIO_ADM &&
       !dT_FIM_ADM
     ) {
       options.push('Lib. pre-medicação');
+    } else if (
+      iE_PRE_MEDICACAO > 0 &&
+      !dT_INICIO_PRE_TRATAMENTO &&
+      dT_RECEBIMENTO_PRE_MEDIC &&
+      !dT_INICIO_ADM &&
+      !dT_FIM_ADM
+    ) {
+      options.push('Inicio pre-medicação');
     } else if (!dT_ENTREGA_MEDICACAO && !dT_INICIO_ADM && !dT_FIM_ADM) {
       options.push('Lib. medicação');
     } else if (dT_INICIO_ADM && !dT_FIM_ADM) {
@@ -143,6 +184,11 @@ const CardTratamentoAptos = ({
     } else if (!dT_INICIO_ADM) {
       options.push('Inicio tratamento');
     }
+
+    if (!dT_FIM_ADM) {
+      options.push('Sinais Vitais', 'Alterar Poltrona');
+    }
+
     return options;
   };
 
@@ -152,10 +198,12 @@ const CardTratamentoAptos = ({
       dT_ENTREGA_MEDICACAO,
       dT_INICIO_ADM,
       dT_FIM_ADM,
+      dT_INICIO_PRE_TRATAMENTO,
     } = item;
 
     switch (true) {
       case dT_RECEBIMENTO_PRE_MEDIC &&
+        !dT_INICIO_PRE_TRATAMENTO &&
         !dT_ENTREGA_MEDICACAO &&
         !dT_INICIO_ADM &&
         !dT_FIM_ADM:
@@ -165,6 +213,19 @@ const CardTratamentoAptos = ({
             IconText={'Pré-Entregue'}
             TextColor={theme.colors.WARNING}
             Icon={<CheckMarkMedical fill={theme.colors.WARNING} />}
+          />
+        );
+      case dT_RECEBIMENTO_PRE_MEDIC &&
+        dT_INICIO_PRE_TRATAMENTO &&
+        !dT_ENTREGA_MEDICACAO &&
+        !dT_INICIO_ADM &&
+        !dT_FIM_ADM:
+        return (
+          <CheckMarkComponent
+            Show={true}
+            IconText={'Pré-Iniciado'}
+            TextColor={theme.colors.GREENPRIMARY}
+            Icon={<CheckMarkMedical fill={theme.colors.GREENPRIMARY} />}
           />
         );
       case dT_ENTREGA_MEDICACAO && !dT_INICIO_ADM && !dT_FIM_ADM:
@@ -247,6 +308,9 @@ const CardTratamentoAptos = ({
         ItemSelected={placeholder}
         onpress={label => MenuPopUpOptions(label, item)}
       />
+      <ModalCentralize ref={refmodalObservacoes}>
+        <CardObservacao item={item} refmodalObservacoes={refmodalObservacoes} />
+      </ModalCentralize>
       <ActionsCheck />
     </TouchableOpacity>
   );

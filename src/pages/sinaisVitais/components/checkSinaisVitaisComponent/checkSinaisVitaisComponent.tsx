@@ -37,10 +37,10 @@ const createStyles = (theme: ThemeContextData) => {
     container: {
       position: 'absolute',
       right: 0,
-      bottom: -10,
-      padding: 5,
+      bottom: RFPercentage(-3),
       justifyContent: 'center',
       alignItems: 'center',
+      zIndex: 1
     },
     img: {
       alignSelf: 'center',

@@ -1,18 +1,31 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
-import { View, ScrollView, Text, Platform } from 'react-native';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
+import {
+  View,
+  Text,
+  Platform,
+  FlatList,
+  TouchableOpacity,
+  ListRenderItem,
+  useWindowDimensions,
+  Dimensions,
+} from 'react-native';
 import createStyles from './style';
-import SlideRanger from '../../../components/Slider/SlideRanger';
 import BtnCentered from '../../../components/buttons/BtnCentered';
 import ModalCentralizedOptions, {
   ModalHandles as ModalHandlesOptions,
 } from '../../../components/Modais/ModalCentralizedOptions';
-import Loading from '../../../components/Loading/Loading';
+import Loading, { LoadHandles } from '../../../components/Loading/Loading';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../routes/routeDashboard';
 import SinaisVitaisContext, {
   SinaisVitaisPost,
 } from '../../../contexts/sinaisVitaisContext';
-import moment from 'moment';
 import ShimmerPaceHolderSNMG from '../../../components/shimmerPlaceHolder/shimmerPaceHolderSNMG';
 import ModalAlertPaciente from '../../../components/Modais/ModalAlertPaciente';
 import {
@@ -25,11 +38,22 @@ import MenuPopUp from '../../../components/menuPopUp/menuPopUp';
 import ModalCentralize, {
   ModalHandles,
 } from '../../../components/Modais/ModalCentralize';
-import CardAlertaPesoPaciente from '../components/cardAlertaPesoPaciente/cardAlertaPesoPaciente';
 import CardObservacao from '../components/cardObservacao/cardlObservacao';
-import { useSenhaAtendimento } from '../../../hooks/usePainelAtendimento';
-import Checkbox from '../../../components/checkbox/checkbox';
+import PessoaFisicaComponent from '../components/pessoaFisicaComponent/pessoaFisicaComponent';
+import OptionAntropometria from '../components/cardOptionsSinaisVitais/OptionAntropometria';
+import OptionSinaisVitais from '../components/cardOptionsSinaisVitais/OptionSinaisVitais';
+import OptionRegistroDor from '../components/cardOptionsSinaisVitais/OptionRegistroDor';
+import { useKeyboardHeight } from '../../../hooks/useKeyboardHeight';
+import PrintBluetoothContext from '../../../contexts/printBluetoothContext';
+import { useGerarSenhaPainel } from '../../../hooks/usePainelSenha';
+import AuthContext from '../../../contexts/auth';
+import OptionEscalaFlebite from '../components/cardOptionsSinaisVitais/OptionEscalaFlebite';
 import { RFPercentage } from 'react-native-responsive-fontsize';
+import NotificationGlobalContext from '../../../contexts/notificationGlobalContext';
+import NotificationSimple, { ModalHandles as ModalHandlesNotificationSimples } from '../../../components/Notification/NotificationSimple';
+import AnimatedLottieView from 'lottie-react-native';
+import moment from 'moment';
+import ModalAlertaPeso, { ModalModalAlertaPesoHandles } from '../components/modalAlertaPeso/modalAlertaPeso';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'UpdateSinais'>;
 interface Props {
@@ -38,18 +62,39 @@ interface Props {
 
 const UpdateSinais: React.FC<Props> = ({
   route: {
-    params: { PessoaFisica, SinaisVitais, GeraSenhaOncologia },
+    params: { PessoaFisica, SinaisVitais, GeraAtendimento, Origin },
   },
 }: Props) => {
+  const deviceWidth = useWindowDimensions();
+
+  const {
+    stateAuth: {
+      PerfilSelected,
+    }
+  } = useContext(AuthContext);
+
+  const keyboardHeight = useKeyboardHeight();
+
   const refmodalObservacoes = useRef<ModalHandles>(null);
 
   const refPesoMediaPaciente = useRef<number | null>(null);
 
-  const [prioridade, setPrioridade] = useState(1);
+  const refFlatlistMenu = useRef<FlatList<number>>(null);
+
+  const refFlatlistPages = useRef<FlatList<PropsPage>>(null);
+
+  const RefNotificationSimple = useRef<ModalHandlesNotificationSimples>(null);
 
   const styles = useThemeAwareObject(createStyles);
 
   const navigation = useNavigation();
+  const { stateAuth, stateAuth: { UnidadeSelected } } = useContext(AuthContext);
+
+  const { printSenha } = useContext(PrintBluetoothContext);
+  const { addNotification } = useContext(NotificationGlobalContext);
+
+  const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
+
   const {
     AddSinaisVitais,
     GetSinaisVitais,
@@ -58,33 +103,39 @@ const UpdateSinais: React.FC<Props> = ({
   } = useContext(SinaisVitaisContext);
 
   const { data: historicoSinaisVitais } = useSinaisVitaisHistory({
-    nomePaciente: PessoaFisica.nM_PESSOA_FISICA,
+    cdPaciente: PessoaFisica.cD_PESSOA_FISICA,
+    dataInicio: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    dataFinal: moment().format('YYYY-MM-DD'),
+    rows: 3,
+    pagina: 1
   });
 
   const { refetch: refetchSinaisVitais } = useSinaisVitaisAll();
 
-  const { mutateAsync } = useSenhaAtendimento({
-    prioridade: prioridade,
-    servico: 3,
-    unidade: 1,
-    cliente: {
-      documento: PessoaFisica?.nR_ATENDIMENTO?.toString(),
-      nome: PessoaFisica.nM_PESSOA_FISICA,
-    },
-  });
-
-  const [activeModal, setActiveModal] = useState<boolean>(false);
+  const loadingRef = useRef<LoadHandles>(null);
   const [activeShimmer, setActiveShimmer] = useState<boolean>(false);
 
   const refModalOptions = useRef<ModalHandlesOptions>(null);
-  const refModalOptionsAtendimento = useRef<ModalHandlesOptions>(null);
-  const refModalCentralizeVariacaoPeso = useRef<ModalHandlesOptions>(null);
+  const refModalOptionsRegra = useRef<ModalHandlesOptions>(null);
+  const refModalAlertaPeso = useRef<ModalModalAlertaPesoHandles>(null);
+  const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null);
 
   const [Peso, setPeso] = useState(0);
   const [Altura, setAltura] = useState(0);
-  const [temperatura, setTemperatura] = useState(0);
   const [oxigenacao, setOxigenacao] = useState(0);
   const [observacao, setObservacao] = useState<string>('');
+  const [dor, setDor] = useState(0);
+  const [msnAlert, setMensAlerta] = useState<string | undefined>();
+
+  const [pageSelected, setPageSelected] = useState(0);
+
+  //params Antropometria
+  const [pas, setPas] = useState(0);
+  const [pad, setPad] = useState(0);
+  const [pam, setPam] = useState(0);
+  const [fc, setFc] = useState(0);
+  const [fr, setFr] = useState(0);
+  const [temperatura, setTemperatura] = useState(0);
 
   const ChangerProperty = () => {
     let x = false;
@@ -98,7 +149,7 @@ const UpdateSinais: React.FC<Props> = ({
   };
 
   const SinaisVitaisUpdate = async () => {
-    setActiveModal(true);
+    loadingRef.current?.openModal();
     await UpdateSinaisVitais({
       cD_PACIENTE: SinaisVitais.cD_PACIENTE,
       nR_SEQUENCIA: SinaisVitais.nR_SEQUENCIA,
@@ -106,43 +157,89 @@ const UpdateSinais: React.FC<Props> = ({
       qT_PESO: Peso <= 0 ? null : Peso,
       qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
       qT_TEMP: temperatura <= 30 ? null : temperatura,
+      cD_ESCALA_DOR: 'FEVA',
+      qT_ESCALA_DOR: dor,
+      qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
+      qT_FREQ_RESP: fr <= 12 ? null : fr,
+      qT_PAM: pam <= 0 ? null : pam,
+      qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
+      qT_PA_SISTOLICA: pas <= 40 ? null : pas,
       dS_OBSERVACAO: observacao,
     });
     refetchSinaisVitais;
-    setActiveModal(false);
+    loadingRef.current?.closeModal();
     navigation.goBack();
   };
 
   const PostSinaisVitais = async () => {
-    setActiveModal(true);
-
+    loadingRef.current?.openModal();
     const dataSinaisVitais: SinaisVitaisPost = {
       cD_PACIENTE: PessoaFisica.cD_PESSOA_FISICA,
       qT_ALTURA_CM: Altura <= 0 ? null : Altura,
       qT_PESO: Peso <= 0 ? null : Peso,
       qT_SATURACAO_O2: oxigenacao <= 50 ? null : oxigenacao,
       qT_TEMP: temperatura <= 30 ? null : temperatura,
+      cD_ESCALA_DOR: 'FEVA',
+      qT_ESCALA_DOR: dor ? dor : 0,
+      qT_FREQ_CARDIACA: fc <= 0 ? null : fc,
+      qT_FREQ_RESP: fr <= 12 ? null : fr,
+      qT_PAM: pam <= 0 ? null : pam,
+      qT_PA_DIASTOLICA: pad <= 40 ? null : pad,
+      qT_PA_SISTOLICA: pas <= 40 ? null : pas,
       dS_OBSERVACAO: observacao ? observacao : null,
       cD_ESTABELECIMENTO: PessoaFisica.cD_ESTABELECIMENTO,
-      cD_MEDICO_RESP: PessoaFisica.cD_MEDICO_RESP,
+      cD_MEDICO_RESP: PessoaFisica.cD_MEDICO_RESP ?? null,
+      nM_PESSOA_FISICA: PessoaFisica.nM_PESSOA_FISICA,
+      dT_NASCIMENTO: PessoaFisica.dT_NASCIMENTO
     };
 
-    if (GeraSenhaOncologia) {
-      const result = await AddSinaisVitaisAtendimento(dataSinaisVitais);
-      if (result) PessoaFisica.nR_ATENDIMENTO = result.nR_ATENDIMENTO;
+    if (GeraAtendimento && PerfilSelected?.cD_PERFIL == 2354 && UnidadeSelected?.cD_ESTABELECIMENTO == 7) {
+      await AddSinaisVitaisAtendimento(dataSinaisVitais);
     } else {
       await AddSinaisVitais(dataSinaisVitais);
     }
     refetchSinaisVitais;
-    setActiveModal(false);
+    loadingRef.current?.closeModal();
     navigation.goBack();
-    /* GeraSenhaOncologia
-            ? refModalOptionsAtendimento.current?.openModal()
-            : navigation.goBack(); */
+  };
+
+  const gerarSenha = async (seqFila: number) => {
+    if (seqFila === 0) {
+      addNotification({
+        message: 'Médico sem agenda vinculada a fila no painel de senhas!',
+        status: 'error',
+      });
+      return;
+    }
+
+    const { cD_ESTABELECIMENTO, cD_PESSOA_FISICA, nR_SEQ_FILA_SENHA } = PessoaFisica;
+    const { PerfilSelected } = stateAuth;
+
+    const senhaData = {
+      cD_ESTABELECIMENTO_P: cD_ESTABELECIMENTO,
+      cD_PESSOA_FISICA_P: cD_PESSOA_FISICA,
+      iE_SENHA_PRIORITARIA_P: 'N',
+      nR_SEQ_FILA_P: Origin === 'Tratamento' ? nR_SEQ_FILA_SENHA : seqFila,
+      nM_USUARIO_P: PerfilSelected?.nM_USUARIO ?? 'appMobile',
+    };
+
+    refModalCentralizeSenha.current?.closeModal();
+
+    try {
+      loadingRef.current?.openModal();
+      const result = await mutateAsyncGerarSenha(senhaData);
+      await printSenha(result, PessoaFisica?.nM_PESSOA_FISICA);
+    } catch (error) {
+      loadingRef.current?.closeModal();
+    } finally {
+      loadingRef.current?.closeModal();
+    }
   };
 
   const MenuPopUpOptions = async (itemSelected: string) => {
     switch (itemSelected) {
+      case 'Gerar senha': Origin === 'Tratamento' ? gerarSenha(1) : refModalCentralizeSenha.current?.openModal()
+        break;
       case 'Histórico':
         navigation.navigate('EndSinaisVitais', {
           cdPaciente: SinaisVitais?.cD_PACIENTE
@@ -188,6 +285,11 @@ const UpdateSinais: React.FC<Props> = ({
         SinaisVitais.qT_SATURACAO_O2 ? SinaisVitais.qT_SATURACAO_O2 : 0,
       );
       setObservacao(SinaisVitais.dS_OBSERVACAO);
+      setDor(SinaisVitais.qT_ESCALA_DOR);
+      setPad(SinaisVitais.qT_PA_DIASTOLICA);
+      setPas(SinaisVitais.qT_PA_SISTOLICA);
+      setFc(SinaisVitais.qT_FREQ_CARDIACA);
+      setFr(SinaisVitais.qT_FREQ_RESP);
       setActiveShimmer(true);
     } else {
       GetSinaisVitais(PessoaFisica.cD_PESSOA_FISICA)
@@ -214,20 +316,52 @@ const UpdateSinais: React.FC<Props> = ({
   };
 
   const variacaoPercentualPaciente = () => {
-    if (refPesoMediaPaciente.current && Peso) {
-      const percentual = (Peso / refPesoMediaPaciente.current - 1) * 100;
-      if (percentual > 10 || percentual < -10) {
-        refModalCentralizeVariacaoPeso.current?.openModal();
-      } else {
-        refModalOptions.current?.openModal();
-      }
-    } else {
+    // Verificar se temos o peso atual e a média histórica
+    const pesoAtual = Peso;
+    const pesoMedio = refPesoMediaPaciente.current;
+
+    // Se não tivermos algum dos valores necessários, vá direto para confirmação
+    if (!pesoAtual) {
       refModalOptions.current?.openModal();
+      return;
     }
+
+    if (!pesoMedio) {
+      refModalAlertaPeso.current?.openModal({ title: "Paciente não possue histórico!" });
+      return;
+    }
+
+    // Calcular a variação percentual do peso
+    const percentualVariacao = calcularPercentualVariacao(pesoAtual, pesoMedio);
+    const temVariacaoSignificativa = Math.abs(percentualVariacao) > 10;
+
+    // Definir parâmetros do modal com base na variação
+    const modalParams = {
+      title: temVariacaoSignificativa
+        ? "Paciente apresenta variação de peso!"
+        : "Histórico de Peso do Paciente",
+      historicoSinaisVitais,
+      pesoAtual,
+      pesoMedio,
+      percentualVariacao
+    };
+
+    // Abrir o modal com os parâmetros apropriados
+    refModalAlertaPeso.current?.openModal(modalParams);
+  };
+
+  /**
+ * Calcula o percentual de variação entre dois valores
+ * @param valorAtual - Valor atual para comparação
+ * @param valorReferencia - Valor de referência para base do cálculo
+ * @returns Percentual de variação (positivo para aumento, negativo para diminuição)
+ */
+  const calcularPercentualVariacao = (valorAtual: number, valorReferencia: number): number => {
+    return ((valorAtual / valorReferencia) - 1) * 100;
   };
 
   const modalOptions = () => {
-    refModalCentralizeVariacaoPeso.current?.closeModal();
+    refModalAlertaPeso.current?.closeModal();
     setTimeout(
       () => {
         refModalOptions.current?.openModal();
@@ -240,16 +374,171 @@ const UpdateSinais: React.FC<Props> = ({
     if (historicoSinaisVitais) {
       mediaPesoPaciente(historicoSinaisVitais);
     }
+    selected(0, 'scrollToIndex');
   }, [historicoSinaisVitais]);
+
+  const refView0 = useRef<TouchableOpacity>(null);
+  const refView1 = useRef<TouchableOpacity>(null);
+  const refView2 = useRef<TouchableOpacity>(null);
+  const refView3 = useRef<TouchableOpacity>(null);
+
+  interface PropsPage {
+    Index: number;
+    Name: string;
+    Ref: React.RefObject<TouchableOpacity>;
+  }
+
+  const [pages] = useState<PropsPage[]>([
+    {
+      Index: 0,
+      Name: 'Geral',
+      Ref: refView0,
+    },
+    {
+      Index: 1,
+      Name: 'Sinais vitais',
+      Ref: refView1,
+    },
+    {
+      Index: 2,
+      Name: 'Registro de dor',
+      Ref: refView2,
+    },
+    {
+      Index: 3,
+      Name: 'Escala Flebite',
+      Ref: refView3,
+    },
+  ]);
+
+  const renderItemMenu: ListRenderItem<any> = ({
+    item: { Name, Index, Ref },
+  }) => (
+    <TouchableOpacity
+      ref={Ref}
+      style={styles.btn}
+      onPress={() => selected(Index, 'scrollToIndex')}>
+      <Text style={styles.textBtn}>{Name}</Text>
+    </TouchableOpacity>
+  );
+
+  const getItemLayout = (data: any | null | undefined, index: number) => {
+    return {
+      length: deviceWidth.width,
+      offset: deviceWidth.width * index,
+      index,
+    };
+  };
+
+  type scroll = 'scrollToIndex' | 'scrollToIndexMenu';
+
+  const scrollToIndex = (index: number) => {
+    refFlatlistPages.current?.scrollToIndex({ animated: true, index: index });
+  };
+
+  const scrollToIndexMenu = (index: number) => {
+    refFlatlistMenu.current?.scrollToIndex({
+      animated: true,
+      index: index,
+    });
+  };
+
+  const selected = useCallback((index: number, type?: scroll) => {
+    setPageSelected(index);
+    if (type === 'scrollToIndex') {
+      scrollToIndex(index);
+    }
+    scrollToIndexMenu(index);
+
+    if (index === 0) {
+      refView0.current?.setNativeProps({ style: styles.btnSelected });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 1) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btnSelected });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 2) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btnSelected });
+      refView3.current?.setNativeProps({ style: styles.btn });
+    }
+    if (index === 3) {
+      refView0.current?.setNativeProps({ style: styles.btn });
+      refView1.current?.setNativeProps({ style: styles.btn });
+      refView2.current?.setNativeProps({ style: styles.btn });
+      refView3.current?.setNativeProps({ style: styles.btnSelected });
+    }
+  }, []);
+
+  const filterMsnAlertAviso = (msn: string, tipo: 'Peso' | 'Altura') => {
+    setMensAlerta(`${tipo} - ${msn}`);
+    refModalOptionsRegra.current?.openModal();
+  };
+
+  const filterMsnAlertBloqueio = (msn: string, tipo: 'Peso' | 'Altura') => {
+    setMensAlerta(`${tipo} - ${msn}`);
+    RefNotificationSimple.current?.openModal();
+  };
+
+  const renderItemSinaisVitais: ListRenderItem<PropsPage> = ({
+    item: { Name },
+  }) => {
+    switch (Name) {
+      case 'Geral':
+        return (
+          <OptionAntropometria
+            Altura={Altura}
+            setAltura={setAltura}
+            Peso={Peso}
+            setPeso={setPeso}
+            Temperatura={temperatura}
+            setTemperatura={setTemperatura}
+            Oxigigenacao={oxigenacao}
+            setOxigigenacao={setOxigenacao}
+            enviarAlertaAviso={(msn, tipo) => filterMsnAlertAviso(msn, tipo)}
+            enviarAlertaBloqueio={(msn, tipo) => filterMsnAlertBloqueio(msn, tipo)}
+          />
+        );
+      case 'Sinais vitais':
+        return (
+          <OptionSinaisVitais
+            Pas={pas}
+            setPas={setPas}
+            Pad={pad}
+            setPad={setPad}
+            setPam={setPam}
+            Fc={fc}
+            setFc={setFc}
+            Fr={fr}
+            setFr={setFr}
+          />
+        );
+      case 'Registro de dor':
+        return <OptionRegistroDor Dor={dor} setDor={setDor} />;
+      case 'Escala Flebite':
+        return <OptionEscalaFlebite item={PessoaFisica} />;
+      default:
+        return <Text></Text>;
+    }
+  };
+
+  const filterOptionsMenu = (): Array<string> => {
+    switch (Origin) {
+      case "Consulta": return ['Gerar senha', 'Histórico', 'Acompanhantes', 'Observações']
+      case "Tratamento": return ['Gerar senha', 'Histórico', 'Acompanhantes', 'Observações']
+      default: return ['Histórico', 'Acompanhantes', 'Observações']
+    }
+  }
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.MenuOptions}>
         <ModalAlertPaciente
           codPacient={
             SinaisVitais?.cD_PACIENTE
@@ -257,97 +546,66 @@ const UpdateSinais: React.FC<Props> = ({
               : PessoaFisica?.cD_PESSOA_FISICA
           }
         />
-        <View>
-          <MenuPopUp
-            btnLabels={['Histórico', 'Acompanhantes', 'Observações']}
-            onpress={item => MenuPopUpOptions(item)}
+        <MenuPopUp
+          btnLabels={filterOptionsMenu()}
+          onpress={item => MenuPopUpOptions(item)}
+        />
+      </View>
+      <View style={styles.person}>
+        <PessoaFisicaComponent
+          PessoaFisica={{
+            nM_PESSOA_FISICA: PessoaFisica?.nM_PESSOA_FISICA,
+            dT_NASCIMENTO: PessoaFisica?.dT_NASCIMENTO,
+          }}
+        />
+        {Origin == 'Tratamento_enfermagem' && (
+          <View
+            style={{ flexDirection: 'row', paddingVertical: RFPercentage(1) }}>
+            <Text style={styles.label}>Número do Atendimento: </Text>
+            <Text style={styles.text}>{PessoaFisica.nR_ATENDIMENTO}</Text>
+          </View>
+        )}
+      </View>
+      <View style={styles.box_sinais_vitais}>
+        <View style={styles.box1}>
+          <FlatList
+            ref={refFlatlistMenu}
+            data={pages}
+            keyExtractor={item => item.Index.toString()}
+            renderItem={renderItemMenu}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
           />
         </View>
-      </View>
-      <ScrollView style={styles.box}>
-        <View style={styles.item1}>
-          <View style={styles.boxLabel}>
-            <Text style={styles.label}>Nome: </Text>
-            <Text style={styles.text}>
-              {SinaisVitais?.nM_PESSOA_FISICA
-                ? SinaisVitais?.nM_PESSOA_FISICA
-                : PessoaFisica?.nM_PESSOA_FISICA}
-            </Text>
-          </View>
-          <View style={styles.boxLabel}>
-            <Text style={styles.label}>Nascimento: </Text>
-            <Text style={styles.text}>
-              {moment(
-                SinaisVitais?.dT_NASCIMENTO
-                  ? SinaisVitais?.dT_NASCIMENTO
-                  : PessoaFisica?.dT_NASCIMENTO,
-              ).format('DD-MM-YYYY')}
-            </Text>
-          </View>
-        </View>
-        <View>
+        <View style={styles.box2}>
           {activeShimmer ? (
-            <>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Altura'}
-                  medida={'cm'}
-                  step={1}
-                  valueMin={0}
-                  valueMax={300}
-                  valueRanger={Altura}
-                  setValueRanger={value => setAltura(value)}
-                />
-              </View>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Peso'}
-                  medida={'kg'}
-                  step={0.1}
-                  valueMin={0}
-                  valueMax={200}
-                  valueRanger={Peso}
-                  setValueRanger={value => setPeso(value)}
-                />
-              </View>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Temperatura'}
-                  medida={'°C'}
-                  step={0.1}
-                  valueMin={30}
-                  valueMax={42}
-                  valueRanger={temperatura}
-                  setValueRanger={value => setTemperatura(value)}
-                />
-              </View>
-              <View style={styles.item2}>
-                <SlideRanger
-                  label={'Oximetria'}
-                  medida={'SpO²'}
-                  step={1}
-                  valueMin={50}
-                  valueMax={100}
-                  valueRanger={oxigenacao}
-                  setValueRanger={value => setOxigenacao(value)}
-                />
-              </View>
-              <View style={styles.item3}>
-                <BtnCentered
-                  SizeText={18}
-                  labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
-                  //onPress={() => setActiveModalOptions(true)}
-                  onPress={() => variacaoPercentualPaciente()}
-                  enabled={ChangerProperty()}
-                />
-              </View>
-            </>
+            <FlatList
+              ref={refFlatlistPages}
+              data={pages}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={renderItemSinaisVitais}
+              scrollEnabled={false}
+              horizontal={true}
+              pagingEnabled={false}
+              showsHorizontalScrollIndicator={false}
+              nestedScrollEnabled
+              scrollEventThrottle={16}
+              getItemLayout={getItemLayout}
+            />
           ) : (
             Array(4).fill(<ShimmerPaceHolderSNMG />)
           )}
         </View>
-      </ScrollView>
-      <Loading activeModal={activeModal} />
+      </View>
+      {keyboardHeight == 0 && pageSelected != 3 && (
+        <BtnCentered
+          SizeText={18}
+          labelBtn={SinaisVitais ? 'Atualizar' : 'Adicionar'}
+          onPress={() => variacaoPercentualPaciente()}
+          enabled={ChangerProperty()}
+        />
+      )}
+      <Loading ref={loadingRef} />
       <ModalCentralizedOptions
         ref={refModalOptions}
         message={
@@ -359,40 +617,10 @@ const UpdateSinais: React.FC<Props> = ({
           SinaisVitais ? SinaisVitaisUpdate() : PostSinaisVitais()
         }
       />
-      <ModalCentralizedOptions
-        ref={refModalOptionsAtendimento}
-        message={'Gerar senha para atendimento ?'}
-        onpress={() => {
-          mutateAsync();
-          navigation.goBack();
-        }}
-        onStartShouldResponder={false}
-        onpressCancel={() => navigation.goBack()}>
-        <View
-          style={{
-            flexDirection: 'row',
-            margin: RFPercentage(3),
-          }}>
-          <Checkbox
-            isChecked={prioridade == 1}
-            onPress={() => setPrioridade(1)}
-            text="Normal"
-          />
-          <Checkbox
-            isChecked={prioridade == 2}
-            onPress={() => setPrioridade(2)}
-            text="Prioridade"
-          />
-        </View>
-      </ModalCentralizedOptions>
-      <ModalCentralize ref={refModalCentralizeVariacaoPeso}>
-        <CardAlertaPesoPaciente
-          historicoSinaisVitais={historicoSinaisVitais?.filter(
-            (item, index) => index <= 2,
-          )}
-          onpress={() => modalOptions()}
-        />
-      </ModalCentralize>
+      <ModalAlertaPeso
+        ref={refModalAlertaPeso}
+        onConfirm={modalOptions}
+      />
       <ModalCentralize ref={refmodalObservacoes}>
         <CardObservacao
           observacao={observacao}
@@ -400,6 +628,41 @@ const UpdateSinais: React.FC<Props> = ({
           onpress={() => refmodalObservacoes.current?.closeModal()}
         />
       </ModalCentralize>
+      <ModalCentralize style={{ width: RFPercentage(30), height: RFPercentage(30), justifyContent: 'space-around' }} ref={refModalCentralizeSenha}>
+        <BtnCentered labelBtn='Normal' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[0])} enabled={true} />
+        <BtnCentered labelBtn='Prioridade' SizeText={18} onPress={() => gerarSenha(PessoaFisica.seQ_FILAS_SENHA[1])} enabled={true} />
+      </ModalCentralize>
+      <NotificationSimple
+        ref={RefNotificationSimple}
+        message={msnAlert}
+        title='Alerta!'
+        LottieAnimation={
+          <AnimatedLottieView
+            source={require('../../../assets/Animacoes/AnimationBlock.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: Dimensions.get('screen').width / 6, height: Dimensions.get('screen').width / 6 }}
+          />
+        }
+        onpress={() => {
+          msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+        }} />
+      <ModalCentralizedOptions
+        ref={refModalOptionsRegra}
+        message={msnAlert ?? 'Verifique os parâmetros dos sinais vitais!'}
+        onpress={() => console.log('Salvar')}
+        onpressCancel={() => {
+          msnAlert?.includes('Peso') ? setPeso(0) : setAltura(0)
+        }}
+        LottieAnimation={
+          <AnimatedLottieView
+            source={require('../../../assets/Animacoes/alert-notification.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: Dimensions.get('screen').width / 4, height: Dimensions.get('screen').width / 4 }}
+          />
+        }
+      />
     </View>
   );
 };

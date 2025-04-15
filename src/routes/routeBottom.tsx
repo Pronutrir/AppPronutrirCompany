@@ -1,88 +1,49 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import {
     BuscaStackNavigator,
     UserStackNavigator,
-    DashBoardNavigator,
 } from './routeDashboard';
-import DrawerOpen from '../components/drawerOpen/DrawerOpen';
-import HomeImg from '../assets/svg/Home.svg';
-import LupaImg from '../assets/svg/Lupa.svg';
-import UserImg from '../assets/svg/avatar.svg';
-import useTheme from '../hooks/useTheme';
-import { Text } from 'react-native';
+
+import MyTabBar from '../components/tabBar/MyTabBar';
+import DashBoard from '../pages/dashBoard/dashBoard';
+
 
 const Tab = createBottomTabNavigator();
 
-const RouteBottom: React.FC = () => {
-    const theme = useTheme();
-
+export default function RouteBottom() {
     return (
-        <Tab.Navigator
-            initialRouteName={'Inicio'}
-            tabBarOptions={{
-                activeTintColor: theme.colors.GREENPRIMARY,
-                labelPosition: 'below-icon',
-            }}
-            screenOptions={({ route }) => ({
-                tabBarLabel: ({ color }) => {
-                    return (
-                        <Text
-                            style={{
-                                color: color,
-                                /* paddingBottom: 5, */
-                                fontSize: theme.typography.SIZE.fontysize10,
-                                fontFamily: theme.typography.FONTES.Regular,
-                                letterSpacing: theme.typography.LETTERSPACING.S,
-                            }}>
-                            {route.name}
-                        </Text>
-                    );
-                },
-                tabBarIcon: ({ color }) => {
-                    const size = 20;
-                    switch (route.name) {
-                        case 'Inicio':
-                            return (
-                                <HomeImg
-                                    fill={color}
-                                    width={size}
-                                    height={size}
-                                />
-                            );
-
-                        case 'Busca':
-                            return (
-                                <LupaImg
-                                    fill={color}
-                                    width={size}
-                                    height={size}
-                                />
-                            );
-
-                        case 'Perfil':
-                            return (
-                                <UserImg
-                                    fill={color}
-                                    width={size}
-                                    height={size}
-                                />
-                            );
-                    }
-                },
-            })}>
+        <Tab.Navigator initialRouteName='inicio' tabBar={(props: BottomTabBarProps) => <MyTabBar {...props} />}>
             <Tab.Screen
-                name="Menu"
-                component={DrawerOpen}
-                options={() => ({
-                    tabBarButton: () => <DrawerOpen />,
-                })}
+                name="menu"
+                component={DashBoard}
+                options={{
+                    headerShown: false,
+                }}
             />
-            <Tab.Screen name="Inicio" component={DashBoardNavigator} />
-            <Tab.Screen name="Busca" component={BuscaStackNavigator} />
-            <Tab.Screen name="Perfil" component={UserStackNavigator} />
+            <Tab.Screen
+                name="inicio"
+                component={DashBoard}
+                options={{
+                    headerShown: false
+                }}
+            />
+            <Tab.Screen
+                name="busca"
+                component={BuscaStackNavigator}
+                options={{
+                    headerShown: false,
+                    tabBarStyle: { display: 'none' }
+                }}
+            />
+            <Tab.Screen
+                name="perfil"
+                component={UserStackNavigator}
+                options={{
+                    headerShown: false,
+                    tabBarStyle: { display: 'none' }
+                }}
+            />
         </Tab.Navigator>
-    );
-};
-
-export default RouteBottom;
+    )
+}

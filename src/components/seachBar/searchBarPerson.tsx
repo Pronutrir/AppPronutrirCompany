@@ -1,7 +1,12 @@
 import React from 'react';
 import SearchBar from 'react-native-dynamic-search-bar';
 import { ThemeContextData } from '../../contexts/themeContext';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import {
+  Dimensions,
+  KeyboardTypeOptions,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { useThemeAwareObject } from '../../hooks/useThemedStyles';
 
@@ -15,6 +20,7 @@ interface Props {
   placeholder?: string;
   spinnerVisibility?: boolean;
   value: string | undefined;
+  keyboardType?: KeyboardTypeOptions;
 }
 
 const SearchBarPerson = ({
@@ -22,6 +28,7 @@ const SearchBarPerson = ({
   onClean,
   placeholder = 'Digite o texto',
   spinnerVisibility = false,
+  keyboardType = 'default',
   value = '',
 }: Props) => {
   const styles = useThemeAwareObject(createStyles);
@@ -40,6 +47,7 @@ const SearchBarPerson = ({
         onChangeText={text => onChangeText(text)}
         onClearPress={() => onClean()}
         selectionColor="#fff"
+        keyboardType={keyboardType}
         value={value}
         /* keyboardType={
                         filterSelected.filter === 'DATA DE NASCIMENTO'
@@ -69,7 +77,7 @@ const createStyles = (theme: ThemeContextData) => {
       fontFamily: theme.typography.FONTES.Regular,
       letterSpacing: theme.typography.LETTERSPACING.S,
       color: theme.colors.TEXT_TERTIARY,
-      fontSize: theme.typography.SIZE.fontysize16,
+      fontSize: theme.typography.SIZE.fontysize14,
     },
     clearIconImageStyle: {
       width: RFPercentage(2),

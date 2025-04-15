@@ -56,7 +56,7 @@ const MyCarousel: React.FC = () => {
     };
 
     const getPostagemInsta = () => {
-        Api.get<IInstagram[]>('Social/GetFeedsInst')
+        Api.get<IInstagram[]>('v1/Social/GetFeedsInst')
             .then((response) => {
                 const { data } = response;
 

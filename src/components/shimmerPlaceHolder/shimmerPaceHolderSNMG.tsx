@@ -48,7 +48,6 @@ export default ShimmerPaceHolderSNMG;
 
 const styles = StyleSheet.create({
     ContainerRanger: {
-        flex: 1,
         paddingVertical: RFPercentage(1),
         alignItems: 'stretch',
         justifyContent: 'center',

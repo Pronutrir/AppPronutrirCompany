@@ -3,6 +3,7 @@ import NotificationGlobalContext from '../contexts/notificationGlobalContext';
 import { useMutation, useQuery } from 'react-query';
 import Api from '../services/api';
 import AuthContext from '../contexts/auth';
+
 interface IPropsInitAtendimento {
   nR_SEQ_ATENDIMENTO: number;
   NM_USUARIO: string;
@@ -34,7 +35,9 @@ export interface IAtendimentosAptosEnfermagem {
   dS_PROTOCOLO_ONCO: string;
   nR_CICLO: number;
   dS_DIA_CICLO: string;
+  NR_SEQ_LOCAL: number;
   dS_ACOMODACAO: string;
+  dT_ACOMODACAO_PACIENTE: string;
   nM_PESSOA_FISICA: string;
   cD_PESSOA_FISICA: number;
   dT_NASCIMENTO: string;
@@ -43,8 +46,37 @@ export interface IAtendimentosAptosEnfermagem {
   dT_INICIO_ADM: string;
   dT_FIM_ADM: string;
   dT_ENTREGA_MEDICACAO: string;
+  dT_INICIO_PRE_TRATAMENTO: string;
   dT_REAL: string;
   dT_ALTA: string;
+}
+interface IPostEntregaMedicamento {
+  NR_SEQ_ATENDIMENTO: number;
+  NM_USUARIO: string;
+}
+interface IPostIniciarPréTratamento extends IPostEntregaMedicamento {
+  cD_ESTABELECIMENTO: number;
+}
+
+interface IPropsDefinicaoAcomodacao {
+  NR_SEQ_PACIENTE_P: number;
+  NR_SEQ_ATENDIMENTO_P: number;
+  CD_ACOMODACAO_P: number;
+  DT_ACOMODACAO_P?: string;
+  DT_PREVISTA_P?: string;
+  DT_REAL_P?: string;
+  NM_USUARIO_P: string;
+  CD_ESTABELECIMENTO_P: number;
+}
+export interface IPropsAcomodacao {
+  nR_SEQUENCIA: 20;
+  cD_ESTABELECIMENTO: 7;
+  dS_LOCAL: 'APARTAMENTO - 01';
+  dS_ABREV: 'APT 01';
+  iE_SITUACAO: 'A';
+}
+interface IResponseListAcomodacao {
+  result: IPropsAcomodacao[];
 }
 const useGetAtendimentosAptosEnfermagem = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
@@ -54,15 +86,16 @@ const useGetAtendimentosAptosEnfermagem = () => {
     async () => {
       const { result } = (
         await Api.get<IResponseAtendimentosAptosEnfermagem>(
-          `AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
+          `v1/AtendimentoPaciente/ObterAtendimentosAptosEnfermagem/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
         )
       ).data;
+
       return result.sort((a, b) => {
         return a.nM_PESSOA_FISICA < b.nM_PESSOA_FISICA
           ? -1
           : a.nM_PESSOA_FISICA > b.nM_PESSOA_FISICA
-          ? 1
-          : 0;
+            ? 1
+            : 0;
       });
     },
     {
@@ -84,9 +117,9 @@ const useInitAtendimento = () => {
   return useMutation(
     (item: IPropsInitAtendimento) => {
       return Api.put(
-        `AtendimentoPaciente/IniciarAtendimentoQuimioterapia/${
-          item.nR_SEQ_ATENDIMENTO
-        }/${stateAuth.PerfilSelected?.nM_USUARIO}/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}?${item.nR_SEQ_AGENDA ?? ''}`,
+        `v1/AtendimentoPaciente/IniciarAtendimentoQuimioterapia/${item.nR_SEQ_ATENDIMENTO
+        }/${stateAuth.PerfilSelected?.nM_USUARIO}/${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO
+        }?${item.nR_SEQ_AGENDA ?? ''}`,
       );
     },
     {
@@ -110,7 +143,7 @@ const useEndAtendimento = () => {
   return useMutation(
     (item: IPropsEndAtendimento) => {
       return Api.put(
-        'AtendimentoPaciente/FinalizarAtendimentoQuimioterapia',
+        'v1/AtendimentoPaciente/FinalizarAtendimentoQuimioterapia',
         item,
       );
     },
@@ -130,23 +163,25 @@ const useEndAtendimento = () => {
     },
   );
 };
-
-interface IPostEntregaMedicamento {
-  NR_SEQ_ATENDIMENTO: number;
-  NM_USUARIO: string;
+interface IPropsVincularAtendimento {
+  cd_pessoa_fisica: string;
+  nr_atendimento: number;
+  estabelecimento: number;
+  setorAtendimento: number;
+  nm_usuario: string;
 }
 const useEntregaMedicamento = () => {
   const { addAlert } = useContext(NotificationGlobalContext);
   return useMutation(
     (item: IPostEntregaMedicamento) => {
       return Api.post(
-        `AtendimentoPaciente/MedicacaoPaciente/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
+        `v1/AtendimentoPaciente/MedicacaoPaciente/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
       );
     },
     {
       onSuccess: () => {
         addAlert({
-          message: 'Entrega realizada com sucesso!',
+          message: 'Entrega do medicamento realizada com sucesso!',
           status: 'sucess',
         });
       },
@@ -165,13 +200,13 @@ const useEntregaPreMedicamento = () => {
   return useMutation(
     (item: IPostEntregaMedicamento) => {
       return Api.post(
-        `AtendimentoPaciente/PreMedicacaoPacienteEntregue/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
+        `v1/AtendimentoPaciente/PreMedicacaoPacienteEntregue/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}`,
       );
     },
     {
       onSuccess: () => {
         addAlert({
-          message: 'Entrega realizada com sucesso!',
+          message: 'Entrega do pré-medicamento realizada com sucesso!',
           status: 'sucess',
         });
       },
@@ -185,10 +220,92 @@ const useEntregaPreMedicamento = () => {
   );
 };
 
+const useInitPreMedicamento = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPostIniciarPréTratamento) => {
+      return Api.post(
+        `v1/AtendimentoPaciente/AdministrarPreTratamento/${item.NR_SEQ_ATENDIMENTO}/${item.NM_USUARIO}/${item.cD_ESTABELECIMENTO}`,
+      );
+    },
+    {
+      onSuccess: () => {
+        addAlert({
+          message: 'Inicio pré-medicamento realizado com sucesso!',
+          status: 'sucess',
+        });
+      },
+      onError: () => {
+        addAlert({
+          message: 'Error ao inicioar o pré-medicamento tente mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+const useVincularAtendimento = () => {
+  return useMutation((item: IPropsVincularAtendimento) => {
+    return Api.post(
+      `v1/AtendimentoPaciente/VincularAtendimentoPaciente/${item.cd_pessoa_fisica}/${item.nr_atendimento}/${item.estabelecimento}/${item.setorAtendimento}/${item.nm_usuario}`,
+    );
+  });
+};
+
+const useDefinicaoAcomodacao = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  return useMutation(
+    (item: IPropsDefinicaoAcomodacao) => {
+      return Api.post<IPropsDefinicaoAcomodacao>(
+        'v1/LocalAdmQuimioterapia/DefinirAcomodacaoQuimio',
+        item,
+      );
+    },
+    {
+      onError: ({ message }) => {
+        addAlert({
+          message: message,
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
+const UseListLocalAcomodacao = () => {
+  const { addAlert } = useContext(NotificationGlobalContext);
+  const { stateAuth } = useContext(AuthContext);
+  return useQuery(
+    'ListLocalAcomodacao',
+    async () => {
+      const { result } = (
+        await Api.get<IResponseListAcomodacao>(
+          `v1/LocalAdmQuimioterapia/ListarLocalAdmQT?estabelecimento=${stateAuth.UnidadeSelected?.cD_ESTABELECIMENTO}`,
+        )
+      ).data;
+      return result;
+    },
+    {
+      staleTime: 60 * 30000, // 30 minuto
+      onError: () => {
+        addAlert({
+          message: 'Error ao carregar as acomodações, tentar mais tarde!',
+          status: 'error',
+        });
+      },
+    },
+  );
+};
+
 export {
   useInitAtendimento,
   useGetAtendimentosAptosEnfermagem,
   useEndAtendimento,
   useEntregaMedicamento,
   useEntregaPreMedicamento,
+  useVincularAtendimento,
+  useInitPreMedicamento,
+  useDefinicaoAcomodacao,
+  UseListLocalAcomodacao,
 };
