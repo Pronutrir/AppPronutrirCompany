@@ -43,7 +43,7 @@ const CardConsultasComponent: React.FC<Props> = ({
 
   const { addNotification } = useContext(NotificationGlobalContext);
   const { printSenha } = useContext(PrintBluetoothContext);
-  const { stateAuth } = useContext(AuthContext);
+  const { stateAuth: { PerfilSelected } } = useContext(AuthContext);
 
   const { refetch } = useGetAgendaConsultas();
   const { mutateAsync: mutateAsyncGerarSenha } = useGerarSenhaPainel();
@@ -63,7 +63,7 @@ const CardConsultasComponent: React.FC<Props> = ({
           cD_PESSOA_FISICA_P: item.cD_PESSOA_FISICA,
           iE_SENHA_PRIORITARIA_P: 'N',
           nR_SEQ_FILA_P: nR_SEQ_FILA_P,
-          nM_USUARIO_P: stateAuth.usertasy.nM_USUARIO,
+          nM_USUARIO_P: PerfilSelected?.nM_USUARIO ?? 'appMobile',
         });
         loadingRef.current?.closeModal();
         await printSenha(result, item.nM_PESSOA_FISICA);

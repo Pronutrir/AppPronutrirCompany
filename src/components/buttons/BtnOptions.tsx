@@ -25,6 +25,10 @@ interface Props {
     valueText?: string;
     onPress?(): void;
     disable?: boolean;
+    colors?: string[];
+    textColor?: string;
+    buttonWidth?: number | string;
+    buttonHeight?: number | string;
 }
 
 const BtnOptions: React.FC<Props> = ({
@@ -33,17 +37,34 @@ const BtnOptions: React.FC<Props> = ({
         ('');
     },
     disable = false,
+    colors,
+    textColor,
+    buttonWidth,
+    buttonHeight,
 }: Props) => {
     const styleOpacity = useSharedValue(1);
 
     const theme = useTheme();
     const styles = useThemeAwareObject(createStyles);
 
+    const gradientColors = colors || [
+        theme.colors.GREENPRIMARY,
+        theme.colors.GREENLIGHT,
+    ];
+
+    const finalTextColor = textColor || theme.colors.TEXT_TERTIARY;
+
+    const customButtonStyle = {
+        width: buttonWidth || screenWidth / 4,
+        height: buttonHeight || screenHeight / 20,
+    };
+
     const animatedStyles = useAnimatedStyle(() => {
         return {
             opacity: styleOpacity.value,
         };
     });
+
     return (
         <View style={styles.container}>
             <Pressable
@@ -54,16 +75,13 @@ const BtnOptions: React.FC<Props> = ({
                     (styleOpacity.value = withTiming(1, { duration: 100 }))
                 }
                 disabled={disable}
-                style={[styles.btn, disable && styles.disabledBtn]}
+                style={[styles.btn, customButtonStyle, disable && styles.disabledBtn]}
                 onPress={onPress}>
                 <Animated.View style={[styles.viewBtn, animatedStyles]}>
                     <LinearGradient
                         style={styles.linearGradient}
-                        colors={[
-                            theme.colors.GREENPRIMARY,
-                            theme.colors.GREENLIGHT,
-                        ]}>
-                        <Text style={styles.text}>{valueText}</Text>
+                        colors={gradientColors}>
+                        <Text style={[styles.text, { color: finalTextColor }]}>{valueText}</Text>
                     </LinearGradient>
                 </Animated.View>
             </Pressable>
@@ -83,7 +101,6 @@ const createStyles = (theme: ThemeContextData) => {
             fontSize: theme.typography.SIZE.fontysize14,
             fontFamily: theme.typography.FONTES.Bold,
             letterSpacing: theme.typography.LETTERSPACING.S,
-            color: theme.colors.TEXT_TERTIARY,
         },
         linearGradient: {
             flex: 1,
@@ -92,8 +109,6 @@ const createStyles = (theme: ThemeContextData) => {
             borderRadius: 10,
         },
         btn: {
-            width: screenWidth / 4,
-            height: screenHeight / 20,
             borderRadius: 10,
             marginVertical: 5,
             ...Platform.select({

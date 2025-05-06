@@ -45,7 +45,7 @@ export interface IAgendaConsulta {
   nM_USUARIO_CONFIRM: string;
   counT_SVMP: number;
   nR_SEQ_FILA_SENHA: string;
-  seQ_FILAS_SENHA: number[]
+  seQ_FILAS_SENHA: number[];
   Medicos: IMedico[];
 }
 interface IResponseAgendaConsulta {
@@ -59,38 +59,6 @@ export interface IMedico {
 export interface IResultAgendaConsultas {
   result: IAgendaConsulta[];
   medicos: IMedico[];
-}
-
-export interface IResponseAgendasPaciente {
-  result: IAgendaPaciente[];
-}
-
-export interface IAgendaPaciente {
-  origem: string,
-  seQ_FILAS_SENHA: number[],
-  cD_PESSOA_FISICA: string,
-  nM_PESSOA_FISICA: string,
-  dT_NASCIMENTO: string,
-  dT_AGENDA: string,
-  cD_MEDICO: number,
-  nM_GUERRA_MEDICO: string,
-  cD_ESPECIALIDADE_CD_PROTOCOLO: number,
-  especialidadE_PROTOCOLO: string,
-  cD_ESTABELECIMENTO: number;
-}
-
-const useAgendasPaciente = () => {
-  return useQuery(
-    'agendasFullPaciente',
-    async () => {
-      const result = (
-        await Api.get<IAgendaPaciente[]>("v2/AgendaConsulta/GetAgendasPaciente")).data;
-
-      console.log('result', result);
-
-      return result;
-    }
-  )
 }
 
 const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
@@ -107,12 +75,15 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
         await Api.get<IResponseAgendaConsulta>(
           `v1/AgendaConsultas/FilterAgendamentosGeral/${moment().format(
             'YYYY-MM-DD',
-          )},${moment().format('YYYY-MM-DD')}?${filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
-          }${filter?.dS_ESPECIALIDADE
-            ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
-            : ''
-          }&semStatusAgenda='C'&codEstabelecimento=${UnidadeSelected?.cD_ESTABELECIMENTO
-          }&rows=500`,
+          )},${moment().format('YYYY-MM-DD')}?${
+            filter?.nM_GUERRA ? `&nomeMedico=${filter.nM_GUERRA}` : ''
+          }${
+            filter?.dS_ESPECIALIDADE
+              ? `&descEspecialidade=${filter.dS_ESPECIALIDADE}`
+              : ''
+          }&semStatusAgenda='C'&codEstabelecimento=${
+            UnidadeSelected?.cD_ESTABELECIMENTO
+          }&rows=500&cacheKey=true`,
         )
       ).data;
 
@@ -134,8 +105,8 @@ const useGetAgendaConsultas = (filter?: IFilterConsultas) => {
             return a.nM_GUERRA < b.nM_GUERRA
               ? -1
               : a.nM_GUERRA > b.nM_GUERRA
-                ? 1
-                : 0;
+              ? 1
+              : 0;
           }),
       };
     },
