@@ -571,6 +571,7 @@ const UpdateSinaisVitais: React.FC<Props> = ({
             (item, index) => index <= 2,
           )}
           onpress={() => modalOptions()}
+          onpressCancel={() => refModalCentralizeVariacaoPeso.current?.closeModal()}
         />
       </ModalCentralize>
       <ModalCentralize ref={refmodalObservacoes}>

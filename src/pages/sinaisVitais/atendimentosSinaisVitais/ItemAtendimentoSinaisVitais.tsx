@@ -8,6 +8,7 @@ import { IAgendaPaciente } from '../../../hooks/useAgendaConsultas';
 import { useThemeAwareObject } from '../../../hooks/useThemedStyles';
 import CheckSinaisVitaisComponent from '../components/checkSinaisVitaisComponent/checkSinaisVitaisComponent';
 import PressableRipple from '../../../components/ripple/PressableRipple';
+import CheckPVSinaisVitaisComponent from '../components/checkPVSinaisVitaisComponent/checkPVSinaisVitaisComponent';
 
 interface ItemAtendimentoSinaisVitaisProps {
     item: IAgendaPaciente;
@@ -62,6 +63,9 @@ const ItemAtendimentoSinaisVitais: React.FC<ItemAtendimentoSinaisVitaisProps> = 
             style={styles.container}
         >
             <View style={styles.cardContent}>
+                <View style={[ styles.iconContainer, { position: 'absolute', bottom: 0, left: 10 } ]}>
+                    <CheckPVSinaisVitaisComponent Item={item.counT_SVMP} />
+                </View>
                 <View style={styles.iconContainer}>
                     <HistorySvg
                         width={iconSize}
@@ -190,10 +194,10 @@ const createStyles = (theme: ThemeContextData) => {
             alignItems: 'center',
             width: iconDimension,
             height: iconDimension,
-            borderRadius: iconDimension / 2,
-            backgroundColor: theme.colors.BACKGROUND_2,
-            borderWidth: isVerySmallDevice ? 0.5 : 1,
-            borderColor: theme.colors.GREENLIGHT,
+            //borderRadius: iconDimension / 2,
+            //backgroundColor: theme.colors.BACKGROUND_2,
+            //borderWidth: isVerySmallDevice ? 0.5 : 1,
+            //borderColor: theme.colors.GREENLIGHT,
         },
         infoContainer: {
             flex: 1,

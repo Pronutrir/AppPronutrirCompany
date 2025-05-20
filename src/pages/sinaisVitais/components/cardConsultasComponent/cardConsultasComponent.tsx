@@ -52,7 +52,7 @@ const CardConsultasComponent: React.FC<Props> = ({
   /* const refModalCentralizeSenha = useRef<ModalHandlesOptions>(null); */
   /* const selectItem = useRef<IAgendaConsulta | null>(null); */
 
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [ refreshing, setRefreshing ] = useState<boolean>(false);
 
   const handleGerarSenha = async (item: IAgendaConsulta, nR_SEQ_FILA_P: number) => {
     try {
@@ -81,9 +81,9 @@ const CardConsultasComponent: React.FC<Props> = ({
 
   const handleGerarSenhaOptions = (item: IAgendaConsulta, option: string) => {
     switch (option) {
-      case "Gerar senha normal": handleGerarSenha(item, item.seQ_FILAS_SENHA[0]);
+      case "Gerar senha normal": handleGerarSenha(item, item.seQ_FILAS_SENHA[ 0 ]);
         break;
-      case "Gerar senha Prioridade": handleGerarSenha(item, item.seQ_FILAS_SENHA[1]);
+      case "Gerar senha Prioridade": handleGerarSenha(item, item.seQ_FILAS_SENHA[ 1 ]);
         break;
     }
   }
@@ -118,12 +118,12 @@ const CardConsultasComponent: React.FC<Props> = ({
           containerStyle={styles.menuPopUpStyle}
           ref={MenuPopUpRef}
           btnVisible={false}
-          btnLabels={['Gerar senha normal', 'Gerar senha Prioridade']}
+          btnLabels={[ 'Gerar senha normal', 'Gerar senha Prioridade' ]}
           onpress={(options) => handleGerarSenhaOptions(item, options)}
         />
       </PressableRipple>
     );
-  }, [dataSourceConsultas]);
+  }, [ dataSourceConsultas ]);
 
   const renderConsultaInfo = (label: string, value: string | undefined) => (
     <View style={styles.item}>
@@ -139,7 +139,7 @@ const CardConsultasComponent: React.FC<Props> = ({
         <Item key={index.toString()} item={item} index={index} />
       </CardSimples>
     )
-  }, [dataSourceConsultas]);
+  }, [ dataSourceConsultas ]);
 
   const renderItemEmpty = () => (
     <CardSimples styleCardContainer={styles.cardStyle}>

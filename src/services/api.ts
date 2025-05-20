@@ -6,7 +6,7 @@ import { InternalServerError } from './apiInterageMedicamentos';
 const BASE_URLS = {
   production: 'https://servicesapp.pronutrir.com.br/apitasy/api/',
   test: 'https://servicesapp.pronutrir.com.br/apitasytest/api/',
-  test_local: 'https://5287bvqb-44326.brs.devtunnels.ms/api/'
+  test_local: 'https://5287bvqb-44326.brs.devtunnels.ms/api/',
 };
 
 // Create Axios instance with default configuration
@@ -22,19 +22,20 @@ const Api = axios.create({
 Api.interceptors.response.use(
   (response: AxiosResponse<unknown>) => response,
   ({ response }: { response: AxiosResponse<string> }) => {
-
     // Centralized error handling for specific status codes
     if ([401, 409, 500].includes(response.status)) {
       return Promise.reject(new InternalServerError(response.data));
     }
 
     // Generic error handling
-    return Promise.reject(new InternalServerError('An unexpected error occurred.'));
+    return Promise.reject(
+      new InternalServerError('An unexpected error occurred.'),
+    );
   },
 );
 
 // Request Interceptor
-Api.interceptors.request.use(async (req) => {
+Api.interceptors.request.use(async req => {
   try {
     // Check for common headers and refresh token if needed
     if (req.headers && 'common' in req.headers) {

@@ -71,6 +71,13 @@ const AtendimentosSinaisVitais = () => {
         return data1 === data2;
     };
 
+    const normalizarTexto = (texto:string) => {
+        return texto
+                .normalize("NFD")              // Decompõe os caracteres com acento
+                .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
+                .toLowerCase();               // Converte tudo para minúsculas
+    }
+
     const Search = (name: string, prop: Props_Search) => {
         if (prop === 'dT_NASCIMENTO') {
             const result = Atendimentos?.filter(value =>
@@ -78,8 +85,7 @@ const AtendimentosSinaisVitais = () => {
             );
             return result;
         } else {
-            const result = Atendimentos?.filter(item =>
-                item[prop].toLocaleLowerCase().includes(name.toLocaleLowerCase()),
+            const result = Atendimentos?.filter(item => normalizarTexto(item[prop]).includes(normalizarTexto(name)),
             );
             return result;
         }
